@@ -1,0 +1,151 @@
+{
+  "id": 4,
+  "stageName": "The Elder Grove",
+  "story": "boss_intro",
+  "checkpoint": {
+    "x": 340,
+    "y": 566
+  },
+  "design": {
+    "role": "MASTERY",
+    "primaryMechanic": "Boss pattern reading and arena movement",
+    "playerBrief": "Watch Thornwold\u2019s warning roots, move through the opening, then attack.",
+    "safePathIntent": "Arena platforms give multiple safe landing positions between root attacks.",
+    "riskPathIntent": "Closer attack positions shorten the fight but demand faster reads.",
+    "restBeatIntent": "Boss attack cooldowns create deliberate windows to reposition and recover."
+  },
+  "platforms": [
+    {
+      "x": 0,
+      "y": 620,
+      "width": 2300,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 420,
+      "y": 480,
+      "width": 170,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 760,
+      "y": 410,
+      "width": 150,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1100,
+      "y": 480,
+      "width": 170,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1450,
+      "y": 410,
+      "width": 150,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    }
+  ],
+  "pickups": [
+    {
+      "x": 250,
+      "y": 558,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 400,
+      "y": 558,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 550,
+      "y": 558,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 700,
+      "y": 558,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 850,
+      "y": 558,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 1000,
+      "y": 558,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 1150,
+      "y": 558,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 1300,
+      "y": 558,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 1450,
+      "y": 558,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 1600,
+      "y": 558,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 835,
+      "y": 360,
+      "gem": true,
+      "route": "RISK"
+    }
+  ],
+  "foes": [],
+  "hazards": [],
+  "boss": {
+    "x": 1920,
+    "y": 540,
+    "name": "Thornwold, Corrupted Guardian",
+    "world": 1
+  },
+  "environment": {
+    "windZones": [],
+    "heatZones": [],
+    "icicleSpawners": []
+  },
+  "secrets": []
+}

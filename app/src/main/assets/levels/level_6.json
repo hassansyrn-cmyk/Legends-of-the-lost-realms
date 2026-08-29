@@ -1,0 +1,393 @@
+{
+  "id": 6,
+  "stageName": "Temple of Keys",
+  "story": "none",
+  "checkpoint": {
+    "x": 925,
+    "y": 566
+  },
+  "design": {
+    "role": "DEVELOP",
+    "primaryMechanic": "Vertical ruins, timing, and sustained movement",
+    "playerBrief": "Climb the temple in short bursts: stable landing, then the next ascent.",
+    "safePathIntent": "Lower ruin platforms offer a conservative route through the temple.",
+    "riskPathIntent": "Upper pickups reward vertical timing and confident movement.",
+    "restBeatIntent": "A wide platform breaks up each climbing sequence."
+  },
+  "platforms": [
+    {
+      "x": 0,
+      "y": 620,
+      "width": 300,
+      "crumble": false,
+      "material": "SAND",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 390,
+      "y": 620,
+      "width": 290,
+      "crumble": false,
+      "material": "SAND",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 780,
+      "y": 620,
+      "width": 320,
+      "crumble": false,
+      "material": "SAND",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1210,
+      "y": 620,
+      "width": 270,
+      "crumble": false,
+      "material": "SAND",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1595,
+      "y": 620,
+      "width": 295,
+      "crumble": false,
+      "material": "SAND",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1980,
+      "y": 620,
+      "width": 320,
+      "crumble": false,
+      "material": "SAND",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 250,
+      "y": 475,
+      "width": 105,
+      "crumble": true,
+      "material": "SAND",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 455,
+      "y": 420,
+      "width": 120,
+      "crumble": false,
+      "material": "SAND",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 655,
+      "y": 355,
+      "width": 105,
+      "crumble": true,
+      "material": "SAND",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 880,
+      "y": 455,
+      "width": 125,
+      "crumble": false,
+      "material": "SAND",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1080,
+      "y": 380,
+      "width": 120,
+      "crumble": true,
+      "material": "SAND",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1325,
+      "y": 445,
+      "width": 130,
+      "crumble": false,
+      "material": "SAND",
+      "moveX": 62,
+      "moveY": 0,
+      "moveSpeed": 1.15
+    },
+    {
+      "x": 1515,
+      "y": 350,
+      "width": 110,
+      "crumble": true,
+      "material": "SAND",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1710,
+      "y": 415,
+      "width": 125,
+      "crumble": false,
+      "material": "SAND",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1905,
+      "y": 345,
+      "width": 125,
+      "crumble": false,
+      "material": "SAND",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    }
+  ],
+  "pickups": [
+    {
+      "x": 160,
+      "y": 560,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 230,
+      "y": 560,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 250,
+      "y": 425,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 296,
+      "y": 425,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 450,
+      "y": 370,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 498,
+      "y": 370,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 546,
+      "y": 370,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 650,
+      "y": 305,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 696,
+      "y": 305,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 742,
+      "y": 305,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1070,
+      "y": 330,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1118,
+      "y": 330,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1166,
+      "y": 330,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1505,
+      "y": 300,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1551,
+      "y": 300,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1597,
+      "y": 300,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1895,
+      "y": 295,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1943,
+      "y": 295,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1991,
+      "y": 295,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 2040,
+      "y": 560,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 2110,
+      "y": 560,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 2180,
+      "y": 560,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 705,
+      "y": 300,
+      "gem": true,
+      "route": "RISK"
+    },
+    {
+      "x": 1565,
+      "y": 294,
+      "gem": true,
+      "route": "RISK"
+    },
+    {
+      "x": 1565,
+      "y": 286,
+      "gem": true,
+      "route": "SECRET",
+      "secretId": "dunes_sun_cache",
+      "secretRewardGems": 2
+    }
+  ],
+  "foes": [
+    {
+      "x": 535,
+      "y": 386,
+      "kind": 2
+    },
+    {
+      "x": 960,
+      "y": 421,
+      "kind": 2
+    },
+    {
+      "x": 1420,
+      "y": 411,
+      "kind": 5
+    },
+    {
+      "x": 1775,
+      "y": 381,
+      "kind": 6
+    }
+  ],
+  "hazards": [
+    {
+      "left": 570,
+      "top": 592,
+      "right": 650,
+      "bottom": 620
+    },
+    {
+      "left": 1375,
+      "top": 592,
+      "right": 1450,
+      "bottom": 620
+    },
+    {
+      "left": 1805,
+      "top": 592,
+      "right": 1875,
+      "bottom": 620
+    }
+  ],
+  "boss": null,
+  "environment": {
+    "windZones": [
+      {
+        "left": 1450,
+        "top": 280,
+        "right": 1640,
+        "bottom": 620,
+        "forceX": -100
+      }
+    ],
+    "heatZones": [
+      {
+        "left": 1215,
+        "top": 570,
+        "right": 1280,
+        "bottom": 620
+      }
+    ],
+    "icicleSpawners": []
+  },
+  "secrets": [
+    {
+      "id": "dunes_sun_cache",
+      "hint": "A high-risk route hides an ancient realm cache.",
+      "rewardGems": 2
+    }
+  ]
+}

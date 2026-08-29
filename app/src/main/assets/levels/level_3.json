@@ -1,0 +1,295 @@
+{
+  "id": 3,
+  "stageName": "Rootbound Ruins",
+  "story": "none",
+  "checkpoint": {
+    "x": 1290,
+    "y": 566
+  },
+  "design": {
+    "role": "COMBINE",
+    "primaryMechanic": "Dash, wall movement, and combat choices",
+    "playerBrief": "Combine dash movement, wall control, and a decisive blade strike.",
+    "safePathIntent": "Lower platforms keep forward progress possible with standard jumps.",
+    "riskPathIntent": "Upper pickups reward a more confident dash or wall-assisted route.",
+    "restBeatIntent": "A stable platform follows each demanding movement section before combat pressure resumes."
+  },
+  "platforms": [
+    {
+      "x": 0,
+      "y": 620,
+      "width": 475,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 555,
+      "y": 620,
+      "width": 345,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 980,
+      "y": 620,
+      "width": 350,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1425,
+      "y": 620,
+      "width": 310,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1820,
+      "y": 620,
+      "width": 480,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 315,
+      "y": 455,
+      "width": 130,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 585,
+      "y": 420,
+      "width": 125,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 805,
+      "y": 345,
+      "width": 125,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1040,
+      "y": 440,
+      "width": 135,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1280,
+      "y": 355,
+      "width": 130,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1510,
+      "y": 420,
+      "width": 130,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1880,
+      "y": 355,
+      "width": 155,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    }
+  ],
+  "pickups": [
+    {
+      "x": 185,
+      "y": 560,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 255,
+      "y": 560,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 325,
+      "y": 560,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 305,
+      "y": 405,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 355,
+      "y": 405,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 405,
+      "y": 405,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 795,
+      "y": 295,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 845,
+      "y": 295,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 895,
+      "y": 295,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1270,
+      "y": 305,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1322,
+      "y": 305,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1374,
+      "y": 305,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1870,
+      "y": 305,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1925,
+      "y": 305,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1980,
+      "y": 305,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 865,
+      "y": 270,
+      "gem": true,
+      "route": "RISK"
+    },
+    {
+      "x": 1940,
+      "y": 275,
+      "gem": true,
+      "route": "RISK"
+    },
+    {
+      "x": 1555,
+      "y": 322,
+      "gem": true,
+      "route": "SECRET",
+      "secretId": "verdant_ancient_cache",
+      "secretRewardGems": 2
+    }
+  ],
+  "foes": [
+    {
+      "x": 690,
+      "y": 384,
+      "kind": 0
+    },
+    {
+      "x": 865,
+      "y": 309,
+      "kind": 1
+    },
+    {
+      "x": 1580,
+      "y": 384,
+      "kind": 0
+    }
+  ],
+  "hazards": [
+    {
+      "left": 830,
+      "top": 592,
+      "right": 880,
+      "bottom": 620
+    },
+    {
+      "left": 1600,
+      "top": 592,
+      "right": 1690,
+      "bottom": 620
+    }
+  ],
+  "boss": null,
+  "environment": {
+    "windZones": [],
+    "heatZones": [],
+    "icicleSpawners": []
+  },
+  "secrets": [
+    {
+      "id": "verdant_ancient_cache",
+      "hint": "A high-risk route hides an ancient realm cache.",
+      "rewardGems": 2
+    }
+  ]
+}

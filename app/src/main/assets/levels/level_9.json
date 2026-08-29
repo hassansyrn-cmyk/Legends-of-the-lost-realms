@@ -1,0 +1,399 @@
+{
+  "id": 9,
+  "stageName": "Crystal Hollow",
+  "story": "none",
+  "checkpoint": {
+    "x": 850,
+    "y": 566
+  },
+  "design": {
+    "role": "COMBINE",
+    "primaryMechanic": "Ice movement, enemy pressure, and precise climbing",
+    "playerBrief": "Chain ice control, climbing, and combat through the crystal route.",
+    "safePathIntent": "A grounded route remains available when the high crystal line feels too risky.",
+    "riskPathIntent": "Higher gems reward exact landings and efficient movement under enemy pressure.",
+    "restBeatIntent": "Wide crystal shelves create recovery moments between combined challenges."
+  },
+  "platforms": [
+    {
+      "x": 0,
+      "y": 620,
+      "width": 270,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 355,
+      "y": 620,
+      "width": 265,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 725,
+      "y": 620,
+      "width": 245,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1080,
+      "y": 620,
+      "width": 320,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1515,
+      "y": 620,
+      "width": 270,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1880,
+      "y": 620,
+      "width": 420,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 220,
+      "y": 475,
+      "width": 100,
+      "crumble": true,
+      "material": "ICE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 415,
+      "y": 425,
+      "width": 115,
+      "crumble": false,
+      "material": "ICE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 600,
+      "y": 355,
+      "width": 105,
+      "crumble": true,
+      "material": "ICE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 810,
+      "y": 445,
+      "width": 125,
+      "crumble": false,
+      "material": "ICE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1000,
+      "y": 370,
+      "width": 110,
+      "crumble": true,
+      "material": "ICE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1215,
+      "y": 430,
+      "width": 130,
+      "crumble": false,
+      "material": "ICE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1420,
+      "y": 345,
+      "width": 115,
+      "crumble": true,
+      "material": "ICE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1615,
+      "y": 400,
+      "width": 125,
+      "crumble": false,
+      "material": "ICE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1800,
+      "y": 330,
+      "width": 120,
+      "crumble": true,
+      "material": "ICE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    }
+  ],
+  "pickups": [
+    {
+      "x": 150,
+      "y": 560,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 218,
+      "y": 560,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 220,
+      "y": 425,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 264,
+      "y": 425,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 410,
+      "y": 375,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 456,
+      "y": 375,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 502,
+      "y": 375,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 595,
+      "y": 305,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 639,
+      "y": 305,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 683,
+      "y": 305,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 995,
+      "y": 320,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1041,
+      "y": 320,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1087,
+      "y": 320,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1410,
+      "y": 295,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1454,
+      "y": 295,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1498,
+      "y": 295,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1790,
+      "y": 280,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1836,
+      "y": 280,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1882,
+      "y": 280,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1980,
+      "y": 560,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 2048,
+      "y": 560,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 2116,
+      "y": 560,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 655,
+      "y": 295,
+      "gem": true,
+      "route": "RISK"
+    },
+    {
+      "x": 1475,
+      "y": 282,
+      "gem": true,
+      "route": "RISK"
+    },
+    {
+      "x": 1465,
+      "y": 278,
+      "gem": true,
+      "route": "SECRET",
+      "secretId": "frost_crystal_cache",
+      "secretRewardGems": 2
+    }
+  ],
+  "foes": [
+    {
+      "x": 485,
+      "y": 391,
+      "kind": 3
+    },
+    {
+      "x": 875,
+      "y": 411,
+      "kind": 4
+    },
+    {
+      "x": 1280,
+      "y": 396,
+      "kind": 7
+    },
+    {
+      "x": 1670,
+      "y": 366,
+      "kind": 4
+    }
+  ],
+  "hazards": [
+    {
+      "left": 535,
+      "top": 592,
+      "right": 605,
+      "bottom": 620
+    },
+    {
+      "left": 1110,
+      "top": 592,
+      "right": 1180,
+      "bottom": 620
+    },
+    {
+      "left": 1680,
+      "top": 592,
+      "right": 1755,
+      "bottom": 620
+    }
+  ],
+  "boss": null,
+  "environment": {
+    "windZones": [
+      {
+        "left": 1410,
+        "top": 190,
+        "right": 1580,
+        "bottom": 620,
+        "forceX": -110
+      }
+    ],
+    "heatZones": [],
+    "icicleSpawners": [
+      {
+        "x": 650,
+        "spawnY": 120,
+        "landingY": 570,
+        "interval": 3.1
+      },
+      {
+        "x": 1475,
+        "spawnY": 125,
+        "landingY": 570,
+        "interval": 2.7
+      }
+    ]
+  },
+  "secrets": [
+    {
+      "id": "frost_crystal_cache",
+      "hint": "A high-risk route hides an ancient realm cache.",
+      "rewardGems": 2
+    }
+  ]
+}

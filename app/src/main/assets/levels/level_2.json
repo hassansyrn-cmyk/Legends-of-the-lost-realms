@@ -1,0 +1,271 @@
+{
+  "id": 2,
+  "stageName": "Whispering Falls",
+  "story": "none",
+  "checkpoint": {
+    "x": 1100,
+    "y": 566
+  },
+  "design": {
+    "role": "DEVELOP",
+    "primaryMechanic": "Basic combat while moving through short hazards",
+    "playerBrief": "Read one foe at a time, strike, then cross the next gap.",
+    "safePathIntent": "Ground route keeps jump spacing forgiving while basic attacks are introduced.",
+    "riskPathIntent": "Elevated coin lines invite a jump after clearing nearby foes.",
+    "restBeatIntent": "Each enemy encounter is separated by a short traversal segment."
+  },
+  "platforms": [
+    {
+      "x": 0,
+      "y": 620,
+      "width": 340,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 435,
+      "y": 620,
+      "width": 355,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 875,
+      "y": 620,
+      "width": 355,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1320,
+      "y": 620,
+      "width": 340,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1750,
+      "y": 620,
+      "width": 550,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 290,
+      "y": 480,
+      "width": 105,
+      "crumble": true,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 555,
+      "y": 430,
+      "width": 120,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 785,
+      "y": 370,
+      "width": 110,
+      "crumble": true,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1015,
+      "y": 448,
+      "width": 120,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1415,
+      "y": 410,
+      "width": 120,
+      "crumble": true,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1645,
+      "y": 470,
+      "width": 100,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    }
+  ],
+  "pickups": [
+    {
+      "x": 170,
+      "y": 560,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 245,
+      "y": 560,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 290,
+      "y": 430,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 338,
+      "y": 430,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 555,
+      "y": 380,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 607,
+      "y": 380,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 659,
+      "y": 380,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1005,
+      "y": 398,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1057,
+      "y": 398,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1109,
+      "y": 398,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1405,
+      "y": 360,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1455,
+      "y": 360,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1505,
+      "y": 360,
+      "gem": false,
+      "route": "RISK"
+    },
+    {
+      "x": 1810,
+      "y": 555,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 1880,
+      "y": 555,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 1950,
+      "y": 555,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 1190,
+      "y": 348,
+      "gem": true,
+      "route": "RISK"
+    }
+  ],
+  "foes": [
+    {
+      "x": 620,
+      "y": 394,
+      "kind": 1
+    },
+    {
+      "x": 1090,
+      "y": 412,
+      "kind": 0
+    },
+    {
+      "x": 1510,
+      "y": 376,
+      "kind": 0
+    }
+  ],
+  "hazards": [
+    {
+      "left": 705,
+      "top": 592,
+      "right": 778,
+      "bottom": 620
+    },
+    {
+      "left": 1525,
+      "top": 592,
+      "right": 1600,
+      "bottom": 620
+    }
+  ],
+  "boss": null,
+  "environment": {
+    "windZones": [],
+    "heatZones": [],
+    "icicleSpawners": []
+  },
+  "secrets": []
+}

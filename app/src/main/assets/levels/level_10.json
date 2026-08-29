@@ -1,0 +1,161 @@
+{
+  "id": 10,
+  "stageName": "Crown of Winter",
+  "story": "boss_intro",
+  "checkpoint": {
+    "x": 315,
+    "y": 566
+  },
+  "design": {
+    "role": "MASTERY",
+    "primaryMechanic": "Final boss pattern recognition, wind windows, and arena control",
+    "playerBrief": "Climb above frost lanes, use the wind window, then finish Vyrn.",
+    "safePathIntent": "Arena platforms preserve multiple escape options from frost lanes.",
+    "riskPathIntent": "Close counterattacks during phase-two wind windows trade safety for faster damage.",
+    "restBeatIntent": "Readable pauses between Vyrn\u2019s lane attacks allow a fair reset."
+  },
+  "platforms": [
+    {
+      "x": 0,
+      "y": 620,
+      "width": 2300,
+      "crumble": false,
+      "material": "STONE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 360,
+      "y": 480,
+      "width": 150,
+      "crumble": false,
+      "material": "ICE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 690,
+      "y": 395,
+      "width": 135,
+      "crumble": false,
+      "material": "ICE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1000,
+      "y": 485,
+      "width": 150,
+      "crumble": false,
+      "material": "ICE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1335,
+      "y": 390,
+      "width": 135,
+      "crumble": false,
+      "material": "ICE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    },
+    {
+      "x": 1645,
+      "y": 465,
+      "width": 160,
+      "crumble": false,
+      "material": "ICE",
+      "moveX": 0,
+      "moveY": 0,
+      "moveSpeed": 0
+    }
+  ],
+  "pickups": [
+    {
+      "x": 250,
+      "y": 558,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 415,
+      "y": 558,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 580,
+      "y": 558,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 745,
+      "y": 558,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 910,
+      "y": 558,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 1075,
+      "y": 558,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 1240,
+      "y": 558,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 1405,
+      "y": 558,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 1570,
+      "y": 558,
+      "gem": false,
+      "route": "SAFE"
+    },
+    {
+      "x": 760,
+      "y": 342,
+      "gem": true,
+      "route": "RISK"
+    },
+    {
+      "x": 1405,
+      "y": 338,
+      "gem": true,
+      "route": "RISK"
+    }
+  ],
+  "foes": [],
+  "hazards": [],
+  "boss": {
+    "x": 1920,
+    "y": 540,
+    "name": "Vyrn, the Icebound Maw",
+    "world": 3
+  },
+  "environment": {
+    "windZones": [],
+    "heatZones": [],
+    "icicleSpawners": []
+  },
+  "secrets": []
+}
