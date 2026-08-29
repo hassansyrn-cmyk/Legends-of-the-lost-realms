@@ -465,20 +465,43 @@ public class GameView extends View {
         float phaseSpeed = boss.phase == 3 ? profile.phaseThreeSpeed
                 : boss.phase == 2 ? profile.phaseTwoSpeed : profile.phaseOneSpeed;
         boss.cooldown -= dt * frostScale; if (boss.hitLock > 0) boss.hitLock -= dt;
-        boss.x += boss.dir * phaseSpeed * frostScale * dt;
-        if (boss.x < 1740 || boss.x > 2070) boss.dir *= -1;
-        if (Math.abs(px - boss.x) < 72 && Math.abs(py - boss.y) < 75) damage(boss.phase);
+        boolean locomotionLocked = boss.chargeTelegraph > 0 || boss.chargeTime > 0 || boss.leapTelegraph > 0 || boss.leapTime > 0;
+        if (!locomotionLocked) {
+            boss.x += boss.dir * phaseSpeed * frostScale * dt;
+            if (boss.x < 1740 || boss.x > 2070) boss.dir *= -1;
+        }
+        updateBossCharge(dt, frostScale);
+        updateBossLeap(dt, frostScale);
+        if (boss.rangedCooldown > 0) boss.rangedCooldown -= dt * frostScale;
+        if (Math.abs(px - boss.x) < 72 && Math.abs(py - boss.y) < 75) damage(boss.chargeTime > 0 ? 2 : boss.phase);
         boolean bossAirStrike = CombatSystem.canHitFromAir(
                 airAttack, px, py, boss.x, boss.y, 110, 90, 92, 70);
         boolean bossGroundStrike = CombatSystem.canHitFromGround(
                 airAttack, facingLeft, px, py, boss.x, boss.y,
                 chargedAttack ? 158 : attackStage >= 4 ? 152 : attackStage >= 2 ? 140 : 118, 90);
         if (attackTime > 0 && (bossGroundStrike || bossAirStrike) && boss.hitLock<=0) { boss.hp -= CombatSystem.comboDamage(attackStage, save.attackRank(), chargedAttack, counterTime > 0); boss.hitLock=.20f; hitFxTime = .18f; hitPause = chargedAttack || attackStage >= 4 ? .11f : .070f; fxX = boss.x; fxY = boss.y - 25; triggerSquash(false, chargedAttack || attackStage >= 4 ? .12f : .085f); triggerShake(chargedAttack || attackStage >= 4 ? 8.5f : 6.4f, chargedAttack || attackStage >= 4 ? .13f : .10f); spawnJuiceParticles(boss.x, boss.y - 25, Color.rgb(255, 178, 96), chargedAttack || attackStage >= 4 ? 18 : 11, chargedAttack || attackStage >= 4 ? 205f : 170f); triggerCombatCallout(boss.x, boss.y - 25, true); if(counterTime>0) counterTime=0; if(airAttack){vy=-390;canDouble=true;airAttack=false;} audio.impact(); }
-        if (boss.cooldown <= 0) {
+        // Smarter targeting: the boss reads player distance and phase to choose between its
+        // ranged, charge, leap-slam, and hazard-lane attacks instead of firing a fixed rotation.
+        float distToPlayer = Math.abs(px - boss.x);
+        boolean canAct = boss.chargeTelegraph <= 0 && boss.chargeTime <= 0 && boss.leapTelegraph <= 0 && boss.leapTime <= 0;
+        if (canAct && boss.rangedCooldown <= 0 && distToPlayer > 420) {
+            fireBossProjectile();
+            boss.rangedCooldown = boss.phase == 3 ? 1.35f : boss.phase == 2 ? 1.7f : 2.2f;
+        } else if (canAct && boss.cooldown <= 0) {
             audio.bossWarning();
             float target=Math.max(90,Math.min(2180,px));
             int cycle = boss.attackCycle++;
-            if (boss.world==1) { // Thornwold: root lanes become a wall in phase three.
+            // Close range favors the charge/leap melee attacks; mid/far range favors hazard lanes.
+            boolean preferMelee = distToPlayer < 340;
+            boolean useCharge = preferMelee && (boss.phase >= 2 || cycle % 3 == 0);
+            boolean useLeap = preferMelee && !useCharge && (boss.phase >= 2 && cycle % 2 == 0);
+            if (useCharge) {
+                startBossCharge(target);
+                boss.cooldown = boss.phase==3?1.35f:boss.phase==2?1.7f:2.05f;
+            } else if (useLeap) {
+                startBossLeap(target);
+                boss.cooldown = boss.phase==3?1.45f:boss.phase==2?1.85f:2.2f;
+            } else if (boss.world==1) { // Thornwold: root lanes become a wall in phase three.
                 boss.cooldown=boss.phase==1?2.10f:boss.phase==2?1.42f:1.02f;
                 float hx=boss.x+(boss.dir>0?60:-120);
                 hazards.add(new Hazard(hx,555,hx+85,620,.78f,.42f,1));
@@ -498,6 +521,72 @@ public class GameView extends View {
             }
         }
         if (boss.hp <= 0) boss.hp = 0;
+    }
+
+    /** Telegraphed horizontal rush toward the player's lane; deals bonus contact damage mid-charge. */
+    private void startBossCharge(float target) {
+        boss.chargeTelegraph = .46f;
+        boss.chargeVX = Math.signum(target - boss.x) * (boss.phase == 3 ? 620f : 520f);
+        boss.dir = Math.signum(boss.chargeVX) != 0 ? Math.signum(boss.chargeVX) : boss.dir;
+        spawnJuiceParticles(boss.x, boss.y - 20, data.accent, 8, 90f);
+    }
+
+    private void updateBossCharge(float dt, float frostScale) {
+        if (boss.chargeTelegraph > 0) {
+            boss.chargeTelegraph -= dt * frostScale;
+            if (boss.chargeTelegraph <= 0) {
+                boss.chargeTime = .62f;
+                triggerShake(4.5f, .08f);
+                audio.impact();
+            }
+        } else if (boss.chargeTime > 0) {
+            boss.chargeTime -= dt * frostScale;
+            boss.x += boss.chargeVX * frostScale * dt;
+            boss.x = Math.max(1700, Math.min(2110, boss.x));
+            if (boss.chargeTime <= 0) boss.dir = -Math.signum(boss.chargeVX);
+        }
+    }
+
+    /** Telegraphed leap that slams down, spawning a wide shockwave hazard under the landing point. */
+    private void startBossLeap(float target) {
+        boss.leapTelegraph = .5f;
+        boss.leapStartY = boss.y;
+        boss.leapSlammed = false;
+        spawnJuiceParticles(boss.x, boss.y - 20, data.accent, 8, 90f);
+    }
+
+    private void updateBossLeap(float dt, float frostScale) {
+        if (boss.leapTelegraph > 0) {
+            boss.leapTelegraph -= dt * frostScale;
+            if (boss.leapTelegraph <= 0) boss.leapTime = .62f;
+        } else if (boss.leapTime > 0) {
+            boss.leapTime -= dt * frostScale;
+            float t = 1f - Math.max(0f, boss.leapTime / .62f);
+            // Simple up-then-down arc: peak at the midpoint, back to leapStartY at t=1.
+            float arc = (float) Math.sin(Math.PI * t);
+            boss.y = boss.leapStartY + boss.leapPeakOffset * arc;
+            if (t >= .5f && !boss.leapSlammed) {
+                boss.leapSlammed = true;
+                boss.y = boss.leapStartY;
+                float lx = boss.x;
+                hazards.add(new Hazard(lx-150,555,lx+150,620,.5f,0f,boss.world));
+                triggerShake(8.5f, .14f);
+                triggerCombatCallout(boss.x, boss.y - 25, true);
+                spawnJuiceParticles(boss.x, boss.y, data.accent, 16, 200f);
+                audio.impact();
+            }
+            if (boss.leapTime <= 0) boss.y = boss.leapStartY;
+        }
+    }
+
+    /** World-flavored ranged attack fired when the player is out of melee range. */
+    private void fireBossProjectile() {
+        float dx = px - boss.x, dy = (py - 22) - (boss.y - 40);
+        float len = Math.max(1f, (float) Math.sqrt(dx*dx + dy*dy));
+        float speed = boss.phase == 3 ? 340f : 300f;
+        enemyProjectiles.add(new EnemyProjectile(boss.x, boss.y - 40, dx/len*speed, dy/len*speed));
+        triggerCombatCallout(boss.x, boss.y - 60, true);
+        audio.bossWarning();
     }
 
     private void startLevel(int id) {
@@ -1452,55 +1541,59 @@ public class GameView extends View {
     }
 
     // ---- FOREST ----
-    private static final Rect FOREST_HEAD_SRC = new Rect(110, 7, 482, 400);
-    private static final Rect FOREST_TORSO_SRC = new Rect(577, 49, 925, 479);
-    private static final Rect FOREST_ARM_R_SRC = new Rect(1092, 40, 1326, 480);
-    private static final Rect FOREST_ARM_L_SRC = new Rect(219, 523, 439, 947);
-    private static final Rect FOREST_LEG_A_SRC = new Rect(550, 520, 795, 955);
-    private static final Rect FOREST_LEG_B_SRC = new Rect(1083, 532, 1331, 950);
+    // Regions below are pixel rects into the repacked side-profile rig sheet
+    // (boss_forest_rig_parts.png): a tight 2-row grid of head/torso/armA at top,
+    // armB/legA/legB below. Joint offsets were hand-calibrated against rendered
+    // previews so parts visually socket together through the full animation cycle.
+    private static final Rect FOREST_HEAD_SRC = new Rect(0, 0, 260, 342);
+    private static final Rect FOREST_TORSO_SRC = new Rect(260, 0, 450, 513);
+    private static final Rect FOREST_ARM_A_SRC = new Rect(497, 0, 662, 406);
+    private static final Rect FOREST_ARM_B_SRC = new Rect(0, 513, 149, 885);
+    private static final Rect FOREST_LEG_A_SRC = new Rect(260, 513, 497, 979);
+    private static final Rect FOREST_LEG_B_SRC = new Rect(497, 513, 722, 993);
     private static final BossRig FOREST_RIG = new BossRig(
-        FOREST_TORSO_SRC, 131.429f, 162.398f, -65.715f, -282.396f,
-        new RigPart(FOREST_HEAD_SRC, 140.493f, 148.424f, 0.470f, 0.970f),
-        new RigPart(FOREST_ARM_R_SRC, 88.375f, 166.175f, 0.550f, 0.060f),
-        new RigPart(FOREST_ARM_L_SRC, 83.087f, 160.132f, 0.420f, 0.060f),
-        new RigPart(FOREST_LEG_A_SRC, 92.529f, 164.286f, 0.500f, 0.030f),
-        new RigPart(FOREST_LEG_B_SRC, 93.662f, 157.866f, 0.240f, 0.040f),
-        -3.943f, -271.028f, -52.572f, -261.285f, 52.572f, -261.285f,
-        -30.229f, -144.358f, 30.229f, -144.358f);
+        FOREST_TORSO_SRC, 89.869f, 242.647f, -44.935f, -403.068f,
+        new RigPart(FOREST_HEAD_SRC, 122.979f, 161.764f, 0.65f, 0.92f),
+        new RigPart(FOREST_ARM_B_SRC, 78.044f, 192.036f, 0.30f, 0.05f),
+        new RigPart(FOREST_ARM_A_SRC, 78.044f, 192.036f, 0.30f, 0.05f),
+        new RigPart(FOREST_LEG_A_SRC, 112.100f, 220.416f, 0.48f, 0.03f),
+        new RigPart(FOREST_LEG_B_SRC, 112.100f, 220.416f, 0.48f, 0.03f),
+        17.0f, -325.0f, 31.454f, -369.656f, -31.454f, -369.656f,
+        17.974f, -213.803f, -17.974f, -213.803f);
 
     // ---- STONE ----
-    private static final Rect STONE_HEAD_SRC = new Rect(227, 141, 415, 350);
-    private static final Rect STONE_TORSO_SRC = new Rect(592, 62, 937, 455);
-    private static final Rect STONE_ARM_R_SRC = new Rect(1090, 53, 1317, 495);
-    private static final Rect STONE_ARM_L_SRC = new Rect(198, 520, 431, 955);
-    private static final Rect STONE_LEG_A_SRC = new Rect(616, 515, 815, 894);
-    private static final Rect STONE_LEG_B_SRC = new Rect(1089, 513, 1307, 905);
+    private static final Rect STONE_HEAD_SRC = new Rect(0, 0, 191, 214);
+    private static final Rect STONE_TORSO_SRC = new Rect(194, 0, 435, 466);
+    private static final Rect STONE_ARM_A_SRC = new Rect(476, 0, 663, 450);
+    private static final Rect STONE_ARM_B_SRC = new Rect(0, 466, 194, 880);
+    private static final Rect STONE_LEG_A_SRC = new Rect(194, 466, 476, 931);
+    private static final Rect STONE_LEG_B_SRC = new Rect(476, 466, 761, 946);
     private static final BossRig STONE_RIG = new BossRig(
-        STONE_TORSO_SRC, 173.549f, 197.695f, -86.775f, -330.137f,
-        new RigPart(STONE_HEAD_SRC, 94.572f, 105.136f, 0.500f, 0.920f),
-        new RigPart(STONE_ARM_R_SRC, 114.190f, 222.344f, 0.500f, 0.050f),
-        new RigPart(STONE_ARM_L_SRC, 117.209f, 218.823f, 0.600f, 0.050f),
-        new RigPart(STONE_LEG_A_SRC, 100.105f, 190.653f, 0.330f, 0.040f),
-        new RigPart(STONE_LEG_B_SRC, 109.663f, 197.192f, 0.220f, 0.030f),
-        0.000f, -318.275f, -69.420f, -298.506f, 69.420f, -298.506f,
-        -45.123f, -168.027f, 45.123f, -168.027f);
+        STONE_TORSO_SRC, 120.325f, 232.662f, -60.163f, -406.674f,
+        new RigPart(STONE_HEAD_SRC, 95.361f, 106.845f, 0.65f, 0.92f),
+        new RigPart(STONE_ARM_B_SRC, 93.364f, 224.673f, 0.25f, 0.05f),
+        new RigPart(STONE_ARM_A_SRC, 93.364f, 224.673f, 0.25f, 0.05f),
+        new RigPart(STONE_LEG_A_SRC, 140.795f, 232.163f, 0.35f, 0.03f),
+        new RigPart(STONE_LEG_B_SRC, 140.795f, 232.163f, 0.35f, 0.03f),
+        10.0f, -358.0f, 40.0f, -378.0f, -40.0f, -378.0f,
+        35.0f, -230.0f, -35.0f, -230.0f);
 
     // ---- ICE ----
-    private static final Rect ICE_HEAD_SRC = new Rect(173, 82, 430, 417);
-    private static final Rect ICE_TORSO_SRC = new Rect(585, 38, 947, 467);
-    private static final Rect ICE_ARM_R_SRC = new Rect(1128, 54, 1290, 449);
-    private static final Rect ICE_ARM_L_SRC = new Rect(227, 514, 383, 907);
-    private static final Rect ICE_LEG_A_SRC = new Rect(644, 539, 849, 929);
-    private static final Rect ICE_LEG_B_SRC = new Rect(1122, 547, 1330, 925);
+    private static final Rect ICE_HEAD_SRC = new Rect(0, 0, 220, 310);
+    private static final Rect ICE_TORSO_SRC = new Rect(220, 0, 497, 555);
+    private static final Rect ICE_ARM_A_SRC = new Rect(501, 0, 688, 460);
+    private static final Rect ICE_ARM_B_SRC = new Rect(0, 555, 190, 994);
+    private static final Rect ICE_LEG_A_SRC = new Rect(220, 555, 501, 1016);
+    private static final Rect ICE_LEG_B_SRC = new Rect(501, 555, 796, 1034);
     private static final BossRig ICE_RIG = new BossRig(
-        ICE_TORSO_SRC, 152.324f, 180.517f, -76.162f, -294.340f,
-        new RigPart(ICE_HEAD_SRC, 108.142f, 140.963f, 0.500f, 0.920f),
-        new RigPart(ICE_ARM_R_SRC, 68.167f, 166.210f, 0.620f, 0.100f),
-        new RigPart(ICE_ARM_L_SRC, 65.642f, 165.368f, 0.220f, 0.080f),
-        new RigPart(ICE_LEG_A_SRC, 86.261f, 164.106f, 0.520f, 0.050f),
-        new RigPart(ICE_LEG_B_SRC, 87.523f, 159.057f, 0.320f, 0.050f),
-        0.000f, -285.314f, -60.930f, -261.847f, 60.930f, -261.847f,
-        -33.511f, -140.901f, 33.511f, -140.901f);
+        ICE_TORSO_SRC, 125.796f, 252.046f, -62.898f, -392.111f,
+        new RigPart(ICE_HEAD_SRC, 99.910f, 140.783f, 0.65f, 0.92f),
+        new RigPart(ICE_ARM_B_SRC, 84.924f, 208.903f, 0.25f, 0.05f),
+        new RigPart(ICE_ARM_A_SRC, 84.924f, 208.903f, 0.25f, 0.05f),
+        new RigPart(ICE_LEG_A_SRC, 127.613f, 209.357f, 0.48f, 0.03f),
+        new RigPart(ICE_LEG_B_SRC, 127.613f, 209.357f, 0.48f, 0.03f),
+        12.0f, -345.0f, 30.0f, -355.0f, -30.0f, -355.0f,
+        22.0f, -250.0f, -22.0f, -250.0f);
 
     private static BossRig rigFor(int world) { return world == 1 ? FOREST_RIG : world == 2 ? STONE_RIG : ICE_RIG; }
 
@@ -1515,6 +1608,13 @@ public class GameView extends View {
         float bossGroundY = boss.y + 80f + bob;
         if (boss.burnTime > 0) { p.setColor(Color.argb(95,255,126,58)); c.drawCircle(x,bossGroundY-148,126+5*(float)Math.sin(animationClock*8f),p); }
         if (boss.frostSlowTime > 0) { p.setColor(Color.argb(85,142,232,255)); c.drawCircle(x,bossGroundY-148,132,p); }
+        if (boss.chargeTelegraph > 0 || boss.leapTelegraph > 0) {
+            // Bright pulsing ring reads clearly as "an attack is about to fire" independent of hazard tells.
+            float telegraphT = boss.chargeTelegraph > 0 ? boss.chargeTelegraph / .46f : boss.leapTelegraph / .5f;
+            float ringPulse = 1f + .12f * (float) Math.sin(animationClock * 16f);
+            p.setColor(Color.argb((int) (150 * (1f - telegraphT) + 60), 255, 210, 90));
+            c.drawCircle(x, bossGroundY - 148, (118 + 20 * (1f - telegraphT)) * ringPulse, p);
+        }
         drawSkeletalBoss(c, rigSheet, rig, x, bossGroundY, phase, bossFacingScale);
         // Keep the boss label and health bar safely above the tallest sprite frame.
         float bossHudY = boss.y - 380 + bob;
@@ -1528,9 +1628,10 @@ public class GameView extends View {
     private void drawSkeletalBoss(Canvas c, Bitmap rigSheet, BossRig rig, float x, float groundY, float phase, float facingScale) {
         float breath = (float) Math.sin(phase * 1.35f);
         float stride = (float) Math.sin(phase * 1.8f);
-        float charge = boss.transitionTime > 0 ? 1f : boss.cooldown < .44f ? .72f : 0f;
+        float charge = boss.transitionTime > 0 ? 1f : (boss.chargeTelegraph > 0 || boss.leapTelegraph > 0) ? 1f : boss.cooldown < .44f ? .72f : 0f;
+        float dash = boss.chargeTime > 0 ? 1f : 0f;
         float hurt = boss.hitLock > 0 ? 1f : 0f;
-        float torsoTilt = breath * 1.4f - charge * 5f + hurt * 3.5f;
+        float torsoTilt = breath * 1.4f - charge * 5f + hurt * 3.5f + dash * (boss.dir >= 0 ? 8f : -8f);
         float leftArmAngle = -stride * 8f - charge * 30f + hurt * 10f;
         float rightArmAngle = stride * 8f + charge * 24f - hurt * 15f;
         float leftLegAngle = stride * 4.8f;
@@ -1896,5 +1997,16 @@ public class GameView extends View {
         }
         RectF rect() { return new RectF(x - 10, y - 10, x + 10, y + 10); }
     }
-    private static class Boss { float x,y,dir=-1,cooldown=1.8f,hitLock,burnTime,burnTick,frostSlowTime,transitionTime;int hp=24,maxHp=24,phase=1,world,attackCycle;String name;Boss(float x,float y,String n,int w){this.x=x;this.y=y;name=n;world=w;} }
+    private static class Boss {
+        float x,y,dir=-1,cooldown=1.8f,hitLock,burnTime,burnTick,frostSlowTime,transitionTime;
+        int hp=24,maxHp=24,phase=1,world,attackCycle;
+        String name;
+        // Charge attack: boss rushes horizontally at high speed toward the player's last known lane.
+        float chargeTelegraph, chargeTime, chargeVX, chargeDamageLock;
+        // Leap-slam attack: boss rises then slams down, spawning a wider shockwave hazard on landing.
+        float leapTelegraph, leapTime; boolean leapSlammed; float leapStartY, leapPeakOffset=-130f;
+        // Ranged attack cooldown, tracked independently so it can interleave with melee attacks.
+        float rangedCooldown = 2.4f;
+        Boss(float x,float y,String n,int w){this.x=x;this.y=y;name=n;world=w;}
+    }
 }
