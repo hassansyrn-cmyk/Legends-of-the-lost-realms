@@ -176,8 +176,35 @@ public class GameView extends View {
         audio.startMusic(context);
     }
 
-    public void pauseGame() { pausedBySystem = true; audio.pauseMusic(); }
-    public void resumeGame() { pausedBySystem = false; if (screen != PAUSE) audio.resumeMusic(); lastNanos = System.nanoTime(); }
+    public void pauseGame() {
+        pausedBySystem = true;
+        inputHandler.clear();
+        refreshHeld();
+        cancelAttackHold();
+        audio.pauseMusic();
+    }
+    public void resumeGame() {
+        pausedBySystem = false;
+        if (screen != PAUSE) audio.resumeMusic();
+        lastNanos = System.nanoTime();
+    }
+    /** Handles the Android back button without unexpectedly closing an active run. */
+    public void handleBack() {
+        inputHandler.clear();
+        refreshHeld();
+        cancelAttackHold();
+        if (screen == LEVEL) {
+            screen = PAUSE;
+            audio.pauseMusic();
+        } else if (screen == PAUSE) {
+            screen = LEVEL;
+            audio.resumeMusic();
+        } else if (screen != SPLASH && screen != MENU) {
+            screen = MENU;
+            audio.menu();
+        }
+    }
+
 
     @Override protected void onDraw(Canvas raw) {
         super.onDraw(raw);
