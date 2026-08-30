@@ -9,10 +9,10 @@
   "design": {
     "role": "DEVELOP",
     "primaryMechanic": "Vertical ruins, timing, and sustained movement",
-    "playerBrief": "Climb the temple in short bursts: stable landing, then the next ascent.",
-    "safePathIntent": "Lower ruin platforms offer a conservative route through the temple.",
-    "riskPathIntent": "Upper pickups reward vertical timing and confident movement.",
-    "restBeatIntent": "A wide platform breaks up each climbing sequence."
+    "playerBrief": "Climb in bursts, wait out each hot key chamber, then ride the shifting altar.",
+    "safePathIntent": "Six lower temple courts provide a conservative line around four floor traps.",
+    "riskPathIntent": "Alternating brittle stairs, a moving altar, wind, and the sun cache form a sustained upper route.",
+    "restBeatIntent": "Wide courts at the checkpoint and exit split the two longest mixed-enemy climbs."
   },
   "platforms": [
     {
@@ -340,6 +340,11 @@
       "x": 1775,
       "y": 381,
       "kind": 6
+    },
+    {
+      "x": 2050,
+      "y": 566,
+      "kind": 5
     }
   ],
   "hazards": [
@@ -359,6 +364,12 @@
       "left": 1805,
       "top": 592,
       "right": 1875,
+      "bottom": 620
+    },
+    {
+      "left": 1015,
+      "top": 592,
+      "right": 1070,
       "bottom": 620
     }
   ],

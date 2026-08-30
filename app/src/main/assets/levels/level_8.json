@@ -9,10 +9,10 @@
   "design": {
     "role": "INTRODUCE",
     "primaryMechanic": "Ice traction, wind-assisted movement, and vertical paths",
-    "playerBrief": "Use the mountain\u2019s momentum: control your landing before the wind carries you on.",
-    "safePathIntent": "The lower path introduces slippery movement with space to correct direction.",
-    "riskPathIntent": "High routes and gems reward confident jumps while wind pressure is active.",
-    "restBeatIntent": "Flat ledges separate vertical pushes and let the player reset movement."
+    "playerBrief": "Set your footing on the lower ice, then ride the lift between the two icicle lanes.",
+    "safePathIntent": "Five broad stone shelves introduce traction and falling ice with generous correction room.",
+    "riskPathIntent": "A vertical lift and brittle windward summit lead through the gem-rich upper line.",
+    "restBeatIntent": "Flat shelves before each wind pocket let momentum settle before the next climb."
   },
   "platforms": [
     {
@@ -102,8 +102,8 @@
       "crumble": false,
       "material": "ICE",
       "moveX": 0,
-      "moveY": 0,
-      "moveSpeed": 0
+      "moveY": -55,
+      "moveSpeed": 1.05
     },
     {
       "x": 1115,
@@ -119,7 +119,7 @@
       "x": 1360,
       "y": 305,
       "width": 130,
-      "crumble": false,
+      "crumble": true,
       "material": "ICE",
       "moveX": 0,
       "moveY": 0,

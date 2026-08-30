@@ -9,10 +9,10 @@
   "design": {
     "role": "MASTERY",
     "primaryMechanic": "Final boss pattern recognition, wind windows, and arena control",
-    "playerBrief": "Climb above frost lanes, use the wind window, then finish Vyrn.",
-    "safePathIntent": "Arena platforms preserve multiple escape options from frost lanes.",
-    "riskPathIntent": "Close counterattacks during phase-two wind windows trade safety for faster damage.",
-    "restBeatIntent": "Readable pauses between Vyrn\u2019s lane attacks allow a fair reset."
+    "playerBrief": "Rotate above four frost seams, ride the center lift, and counter Vyrn when the crosswind fades.",
+    "safePathIntent": "Alternating ice terraces keep at least two escapes available from every frost lane.",
+    "riskPathIntent": "The moving center perch and inward-blowing wind create fast but exposed counter windows.",
+    "restBeatIntent": "Clear outer shelves and staggered icicle timing preserve fair resets between phases."
   },
   "platforms": [
     {
@@ -52,8 +52,8 @@
       "crumble": false,
       "material": "ICE",
       "moveX": 0,
-      "moveY": 0,
-      "moveSpeed": 0
+      "moveY": -55,
+      "moveSpeed": 1.25
     },
     {
       "x": 1335,
@@ -145,17 +145,70 @@
     }
   ],
   "foes": [],
-  "hazards": [],
+  "hazards": [
+    {
+      "left": 545,
+      "top": 592,
+      "right": 610,
+      "bottom": 620
+    },
+    {
+      "left": 875,
+      "top": 592,
+      "right": 940,
+      "bottom": 620
+    },
+    {
+      "left": 1215,
+      "top": 592,
+      "right": 1280,
+      "bottom": 620
+    },
+    {
+      "left": 1535,
+      "top": 592,
+      "right": 1600,
+      "bottom": 620
+    }
+  ],
   "boss": {
     "x": 1920,
     "y": 540,
-    "name": "Vyrn, the Icebound Maw",
+    "name": "Whiteout Queen",
     "world": 3
   },
   "environment": {
-    "windZones": [],
+    "windZones": [
+      {
+        "left": 650,
+        "top": 250,
+        "right": 980,
+        "bottom": 620,
+        "forceX": 90
+      },
+      {
+        "left": 1260,
+        "top": 245,
+        "right": 1580,
+        "bottom": 620,
+        "forceX": -90
+      }
+    ],
     "heatZones": [],
-    "icicleSpawners": []
+    "icicleSpawners": [
+      {
+        "x": 905,
+        "spawnY": 125,
+        "landingY": 570,
+        "interval": 3.5
+      },
+      {
+        "x": 1565,
+        "spawnY": 120,
+        "landingY": 570,
+        "interval": 3.1
+      }
+    ]
   },
   "secrets": []
 }

@@ -9,10 +9,10 @@
   "design": {
     "role": "INTRODUCE",
     "primaryMechanic": "Movement, safe jumps, and landing control",
-    "playerBrief": "Learn movement and safe jumps before the grove fights back.",
-    "safePathIntent": "Wide ground platforms establish movement and timing with no forced precision jump at the start.",
-    "riskPathIntent": "Raised platform coins reward optional jump practice without blocking the route.",
-    "restBeatIntent": "A clear landing stretch follows the first elevated jump before the first foe."
+    "playerBrief": "Follow the mosslight across two gentle root breaks, then try the optional canopy line.",
+    "safePathIntent": "Wide stone shelves, short gaps, and isolated root traps teach movement without forced precision.",
+    "riskPathIntent": "The canopy coins and lone gem preview elevated rewards above the protected trail.",
+    "restBeatIntent": "Long clear shelves separate each root patch and the two single-foe encounters."
   },
   "platforms": [
     {
@@ -215,6 +215,12 @@
       "left": 1040,
       "top": 592,
       "right": 1110,
+      "bottom": 620
+    },
+    {
+      "left": 1590,
+      "top": 592,
+      "right": 1640,
       "bottom": 620
     }
   ],

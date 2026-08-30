@@ -1,7 +1,8 @@
 import json
 from pathlib import Path
 
-ROOT = Path('/home/ubuntu/lost-realms/app/src/main/assets/levels')
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+ROOT = PROJECT_ROOT / 'app/src/main/assets/levels'
 BOSS_LEVELS = {4, 7, 10}
 VALID_STORIES = {'none', 'realm_intro', 'boss_intro'}
 VALID_DESIGN_ROLES = {'INTRODUCE', 'DEVELOP', 'COMBINE', 'MASTERY'}
@@ -12,6 +13,10 @@ VALID_PLATFORM_MATERIALS = {'STONE', 'SAND', 'ICE'}
 REQUIRED_ENVIRONMENT_FIELDS = {'windZones', 'heatZones', 'icicleSpawners'}
 REQUIRED_PHASE4_ARCHETYPES = {5, 6, 7}
 present_enemy_kinds = set()
+EXPECTED_MIN_FOES = {1: 2, 2: 3, 3: 4, 5: 3, 6: 5, 8: 4, 9: 6}
+EXPECTED_MIN_HAZARDS = {1: 1, 2: 2, 3: 3, 4: 2, 5: 3, 6: 4, 7: 3, 8: 3, 9: 4, 10: 4}
+REQUIRED_MOVING_LEVELS = {3, 5, 6, 8, 9, 10}
+REQUIRED_CRUMBLE_LEVELS = {2, 3, 5, 6, 8, 9}
 REQUIRED_DESIGN_FIELDS = {
     'role',
     'primaryMechanic',
@@ -50,12 +55,21 @@ for level_id in range(1, 11):
     if not data.get('platforms'):
         raise SystemExit(f'No platforms in {path.name}')
     for platform in data['platforms']:
-        if platform['width'] <= 0 or not 0 <= platform['x'] <= 2300 or not 0 <= platform['y'] <= 720:
+        if platform['width'] <= 0 or not 0 <= platform['x'] or platform['x'] + platform['width'] > 2300 or not 0 <= platform['y'] <= 720:
             raise SystemExit(f'Invalid platform in {path.name}: {platform}')
         if platform.get('material') not in VALID_PLATFORM_MATERIALS:
             raise SystemExit(f'Invalid platform material in {path.name}: {platform}')
         if not all(isinstance(platform.get(key), (int, float)) for key in ('moveX', 'moveY', 'moveSpeed')):
             raise SystemExit(f'Invalid platform movement metadata in {path.name}: {platform}')
+        moving = platform['moveX'] != 0 or platform['moveY'] != 0
+        if moving != (platform['moveSpeed'] > 0):
+            raise SystemExit(f'Inconsistent platform movement in {path.name}: {platform}')
+        if abs(platform['moveX']) > 160 or abs(platform['moveY']) > 140 or platform['moveSpeed'] > 2:
+            raise SystemExit(f'Unsafe platform movement envelope in {path.name}: {platform}')
+    if level_id in REQUIRED_MOVING_LEVELS and not any(p['moveX'] or p['moveY'] for p in data['platforms']):
+        raise SystemExit(f'Missing moving platform challenge in {path.name}')
+    if level_id in REQUIRED_CRUMBLE_LEVELS and not any(p['crumble'] for p in data['platforms']):
+        raise SystemExit(f'Missing crumbling platform challenge in {path.name}')
     pickup_routes = set()
     for pickup in data.get('pickups', []):
         if not 0 <= pickup['x'] <= 2300 or not 0 <= pickup['y'] <= 720:
@@ -93,12 +107,16 @@ for level_id in range(1, 11):
     if level_id in {8, 9} and (not environment['windZones'] or not environment['icicleSpawners']):
         raise SystemExit(f'Frozen Peaks identity missing in {path.name}')
     for foe in data.get('foes', []):
-        if foe['kind'] not in set(range(8)) or not 0 <= foe['x'] <= 2300:
+        if foe['kind'] not in set(range(8)) or not 0 <= foe['x'] <= 2300 or not 0 <= foe['y'] <= 720:
             raise SystemExit(f'Invalid foe in {path.name}: {foe}')
         present_enemy_kinds.add(foe['kind'])
+    if len(data.get('foes', [])) < EXPECTED_MIN_FOES.get(level_id, 0):
+        raise SystemExit(f'Enemy combination is too sparse in {path.name}')
     for hazard in data.get('hazards', []):
         if not (0 <= hazard['left'] < hazard['right'] <= 2300 and 0 <= hazard['top'] < hazard['bottom'] <= 720):
             raise SystemExit(f'Invalid hazard in {path.name}: {hazard}')
+    if len(data.get('hazards', [])) < EXPECTED_MIN_HAZARDS[level_id]:
+        raise SystemExit(f'Realm obstacle coverage is too sparse in {path.name}')
     has_boss = data.get('boss') is not None
     if has_boss != (level_id in BOSS_LEVELS):
         raise SystemExit(f'Boss placement mismatch in {path.name}')

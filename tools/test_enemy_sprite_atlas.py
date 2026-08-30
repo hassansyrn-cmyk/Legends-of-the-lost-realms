@@ -1,31 +1,40 @@
 from pathlib import Path
 from PIL import Image
 
-ROOT = Path('/home/ubuntu/lost-realms')
-ATLAS = ROOT / 'app/src/main/res/drawable-nodpi/enemy_archetype_motion_atlas.png'
-GAME_VIEW = (ROOT / 'app/src/main/java/com/manus/lostrealms/GameView.java').read_text(encoding='utf-8')
+ROOT = Path(__file__).resolve().parents[1]
+RES = ROOT / "app/src/main/res/drawable-nodpi"
+GAME_VIEW = (ROOT / "app/src/main/java/com/manus/lostrealms/GameView.java").read_text(encoding="utf-8")
 
-image = Image.open(ATLAS).convert('RGBA')
-if image.size != (1536, 2304):
-    raise SystemExit(f'Unexpected atlas dimensions: {image.size}; expected 1536x2304.')
+ENEMIES = (
+    "enemy_moss_premium.png",
+    "enemy_ember_moth_premium.png",
+    "enemy_dune_premium.png",
+    "enemy_frost_premium.png",
+    "enemy_wisp_premium.png",
+    "enemy_aegis_premium.png",
+    "enemy_brute_premium.png",
+    "enemy_caster_premium.png",
+)
 
-frame_width, frame_height = 384, 384
-for row in range(6):
-    for column in range(4):
-        frame = image.crop((column * frame_width, row * frame_height, (column + 1) * frame_width, (row + 1) * frame_height))
-        alpha_count = sum(pixel[3] > 0 for pixel in frame.get_flattened_data())
-        if alpha_count < 1200:
-            raise SystemExit(f'Atlas frame row {row}, column {column} is unexpectedly empty ({alpha_count} opaque pixels).')
+for name in ENEMIES:
+    image = Image.open(RES / name).convert("RGBA")
+    if image.size != (384, 384):
+        raise SystemExit(f"{name}: expected 384x384, got {image.size}")
+    alpha = image.getchannel("A")
+    if alpha.getbbox() is None or alpha.getextrema()[0] != 0:
+        raise SystemExit(f"{name}: expected visible art on a true transparent canvas")
+    if sum(value > 0 for value in alpha.get_flattened_data()) < 5000:
+        raise SystemExit(f"{name}: visible character area is unexpectedly small")
 
 required = [
-    'R.drawable.enemy_archetype_motion_atlas',
-    'int atlasRow = e.kind - EnemyController.FAST_SKIRMISHER;',
-    'int atlasColumn = e.hurtTime > 0 ? 3 : (attacking || warning ? 2',
-    'drawImageTransform(c, enemyMotionAtlas, source',
+    "R.drawable.enemies_motion_sheet",
+    "enemyFrame(e)",
+    "drawImageTransform(c,enemySpriteSheet,enemyFrame(",
+    "e.state==EnemyController.HIT_REACTION",
 ]
 for marker in required:
     if marker not in GAME_VIEW:
-        raise SystemExit(f'Missing enemy-atlas renderer marker: {marker}')
+        raise SystemExit(f"Missing premium enemy renderer marker: {marker}")
 
-print('Enemy sprite atlas: OK')
-print('Validated 6 rows × 4 animation poses, alpha-bearing cells, and GameView routing for enemy kinds 2–7.')
+print("Premium enemy art: OK")
+print("Validated eight source enemies and state-driven sprite-sheet routing.")

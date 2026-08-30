@@ -9,10 +9,10 @@
   "design": {
     "role": "DEVELOP",
     "primaryMechanic": "Basic combat while moving through short hazards",
-    "playerBrief": "Read one foe at a time, strike, then cross the next gap.",
-    "safePathIntent": "Ground route keeps jump spacing forgiving while basic attacks are introduced.",
-    "riskPathIntent": "Elevated coin lines invite a jump after clearing nearby foes.",
-    "restBeatIntent": "Each enemy encounter is separated by a short traversal segment."
+    "playerBrief": "Clear each sentry, then commit to the ruin ledges before they crumble.",
+    "safePathIntent": "The waterfall floor keeps every mandatory gap forgiving while encounters remain separated.",
+    "riskPathIntent": "Three short brittle-ledged climbs create optional combat-and-jump timing tests.",
+    "restBeatIntent": "Broad stone islands reset the pace after every foe and crumble sequence."
   },
   "platforms": [
     {
@@ -81,9 +81,9 @@
       "width": 120,
       "crumble": false,
       "material": "STONE",
-      "moveX": 0,
+      "moveX": 35,
       "moveY": 0,
-      "moveSpeed": 0
+      "moveSpeed": 0.8
     },
     {
       "x": 785,

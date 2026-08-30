@@ -1,0 +1,13 @@
+Legends of the Lost Realms
+Build 5.0.0
+
+This build contains the Visual Rebirth:
+- 34 optimized premium runtime assets for Aster, eight enemies, three bosses,
+  three realms, platforms, traps, checkpoint, map, collectibles, and HUD.
+- Readable seven-state enemy combat with committed attacks and punish windows.
+- Realm-specific multi-phase boss combos and power-created vulnerabilities.
+- Re-authored ten-level campaign with progressive hazards and verified routes.
+
+Verify the build by checking:
+- The main menu displays "VISUAL REBIRTH • BUILD 5.0.0".
+- app/build.gradle contains versionName '5.0.0' and versionCode 60.

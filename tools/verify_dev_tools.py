@@ -1,6 +1,7 @@
 from pathlib import Path
 
-root = Path('/home/ubuntu/lost-realms/app/src/main/java/com/manus/lostrealms')
+project_root = Path(__file__).resolve().parents[1]
+root = project_root / 'app/src/main/java/com/manus/lostrealms'
 view = (root / 'GameView.java').read_text(encoding='utf-8')
 renderer = (root / 'GameRenderer.java').read_text(encoding='utf-8')
 ui = (root / 'UIRenderer.java').read_text(encoding='utf-8')
