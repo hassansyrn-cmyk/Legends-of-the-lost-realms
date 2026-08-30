@@ -13,10 +13,10 @@ required_markers = [
     "realmBackgroundSheet != null",
     "float parallax = cameraX * .035f;",
     "drawPremiumPlatform(c, pl, x, bob);",
-    "float surfaceY = rect.bottom;",
-    "RectF trapDestination = new RectF(mid-half-30, surfaceY-164, mid+half+30, surfaceY+3);",
+    "float surfaceY = supportingSurfaceY((rect.left + rect.right) * .5f, rect.bottom);",
+    "RectF trapDestination = new RectF(mid-half-30, surfaceY-167, mid+half+30, surfaceY);",
     "drawImageBottomScaled(c, worldSpriteSheet, worldFrame(trapRow, trapFrame), trapDestination, rise);",
-    "float checkpointBaseY = checkpointMarkerY + 54f;",
+    "float checkpointBaseY = supportingSurfaceY(checkpointMarkerX, checkpointMarkerY + 54f);",
     "worldFrame(3, checkpointFrame)",
     "effectFrame(0,",
 ]

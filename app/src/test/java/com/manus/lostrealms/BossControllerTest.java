@@ -3,15 +3,36 @@ package com.manus.lostrealms;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 public class BossControllerTest {
     @Test
-    public void healthThresholdsCreateThreeDistinctPhases() {
-        assertEquals(1, BossController.phaseForHealth(24, 24, 1));
-        assertEquals(2, BossController.phaseForHealth(14, 24, 1));
-        assertEquals(3, BossController.phaseForHealth(6, 24, 1));
+    public void campaignBossesExposeAllThreePhasesAtExpectedHealthTransitions() {
+        int[] levelIds = {4, 7, 10};
+        int[] expectedWorlds = {1, 2, 3};
+        String[] expectedNames = {"Thornwold", "Akaros", "Vyrn"};
+        int maxHealth = 24;
+
+        for (int index = 0; index < levelIds.length; index++) {
+            LevelData level = LevelData.get(levelIds[index]);
+            BossController.Profile profile = BossController.profile(level.world);
+            int phaseTwoHealth = (int) (profile.phaseTwoThreshold * maxHealth);
+            int phaseThreeHealth = (int) (profile.phaseThreeThreshold * maxHealth);
+
+            assertEquals(levelIds[index], level.id);
+            assertEquals(expectedWorlds[index], level.world);
+            assertTrue(level.boss);
+            assertTrue(level.bossName.startsWith(expectedNames[index]));
+            assertEquals(1, BossController.phaseForHealth(maxHealth, maxHealth, level.world));
+            assertEquals(2, BossController.phaseForHealth(phaseTwoHealth, maxHealth, level.world));
+            assertEquals(3, BossController.phaseForHealth(phaseThreeHealth, maxHealth, level.world));
+            assertEquals(1, BossController.phaseForHealth(
+                    phaseTwoHealth + 1, maxHealth, level.world));
+            assertEquals(2, BossController.phaseForHealth(
+                    phaseThreeHealth + 1, maxHealth, level.world));
+        }
     }
 
     @Test

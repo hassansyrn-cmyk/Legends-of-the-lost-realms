@@ -11,7 +11,7 @@ REQUIRED_SECRET_LEVELS = {3, 6, 9}
 present_secret_ids = set()
 VALID_PLATFORM_MATERIALS = {'STONE', 'SAND', 'ICE'}
 REQUIRED_ENVIRONMENT_FIELDS = {'windZones', 'heatZones', 'icicleSpawners'}
-REQUIRED_PHASE4_ARCHETYPES = {5, 6, 7}
+REQUIRED_CAMPAIGN_ARCHETYPES = set(range(8))
 present_enemy_kinds = set()
 EXPECTED_MIN_FOES = {1: 2, 2: 3, 3: 4, 5: 3, 6: 5, 8: 4, 9: 6}
 EXPECTED_MIN_HAZARDS = {1: 1, 2: 2, 3: 3, 4: 2, 5: 3, 6: 4, 7: 3, 8: 3, 9: 4, 10: 4}
@@ -124,8 +124,9 @@ for level_id in range(1, 11):
 if len(present_secret_ids) != len(REQUIRED_SECRET_LEVELS):
     raise SystemExit('Missing required Phase 8 secret caches in level data')
 
-if not REQUIRED_PHASE4_ARCHETYPES.issubset(present_enemy_kinds):
-    raise SystemExit('Missing required Phase 4 enemy archetypes in level data')
+if not REQUIRED_CAMPAIGN_ARCHETYPES.issubset(present_enemy_kinds):
+    missing = sorted(REQUIRED_CAMPAIGN_ARCHETYPES - present_enemy_kinds)
+    raise SystemExit(f'Missing campaign enemy archetypes in level data: {missing}')
 
 print('Level data test: OK')
-print('Validated 10 JSON levels: metadata, curriculum, SAFE/RISK routes, platform materials, environment contracts, enemy archetypes, Phase 4 coverage, Phase 8 secrets, bounds, and boss placement.')
+print('Validated 10 JSON levels: metadata, curriculum, SAFE/RISK routes, platform materials, environment contracts, enemy archetypes 0-7, Phase 8 secrets, bounds, and boss placement.')

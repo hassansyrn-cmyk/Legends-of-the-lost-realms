@@ -19,10 +19,10 @@ python3 tools/test_sprite_sheet_contract.py
 bash tools/test_pure_java_controllers.sh
 bash tools/test_scene_rules.sh
 
-if [[ -x "$ROOT/gradlew" ]] && [[ -f "$ROOT/gradle/wrapper/gradle-wrapper.jar" ]]; then
-    GRADLE="$ROOT/gradlew"
-elif command -v gradle >/dev/null 2>&1; then
+if command -v gradle >/dev/null 2>&1; then
     GRADLE="$(command -v gradle)"
+elif [[ -x "$ROOT/gradlew" ]] && [[ -f "$ROOT/gradle/wrapper/gradle-wrapper.jar" ]]; then
+    GRADLE="$ROOT/gradlew"
 else
     echo "Gradle is required. Install Gradle or restore gradle/wrapper/gradle-wrapper.jar." >&2
     exit 1

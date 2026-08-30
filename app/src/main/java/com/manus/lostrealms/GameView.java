@@ -176,35 +176,8 @@ public class GameView extends View {
         audio.startMusic(context);
     }
 
-    public void pauseGame() {
-        pausedBySystem = true;
-        inputHandler.clear();
-        refreshHeld();
-        cancelAttackHold();
-        audio.pauseMusic();
-    }
-    public void resumeGame() {
-        pausedBySystem = false;
-        if (screen != PAUSE) audio.resumeMusic();
-        lastNanos = System.nanoTime();
-    }
-    /** Handles the Android back button without unexpectedly closing an active run. */
-    public void handleBack() {
-        inputHandler.clear();
-        refreshHeld();
-        cancelAttackHold();
-        if (screen == LEVEL) {
-            screen = PAUSE;
-            audio.pauseMusic();
-        } else if (screen == PAUSE) {
-            screen = LEVEL;
-            audio.resumeMusic();
-        } else if (screen != SPLASH && screen != MENU) {
-            screen = MENU;
-            audio.menu();
-        }
-    }
-
+    public void pauseGame() { pausedBySystem = true; audio.pauseMusic(); }
+    public void resumeGame() { pausedBySystem = false; if (screen != PAUSE) audio.resumeMusic(); lastNanos = System.nanoTime(); }
 
     @Override protected void onDraw(Canvas raw) {
         super.onDraw(raw);
@@ -1603,18 +1576,20 @@ public class GameView extends View {
                 p.setColor(Color.argb((int)(50+120*warningProgress),Color.red(warnColor),Color.green(warnColor),Color.blue(warnColor)));
                 c.drawOval(new RectF(mid-half-12,rect.top-13,mid+half+12,rect.bottom+12),p);
             }
-            float surfaceY = rect.bottom;
+            float surfaceY = supportingSurfaceY((rect.left + rect.right) * .5f, rect.bottom);
              int trapRow = Math.max(0, Math.min(2, data.world - 1));
-             int trapFrame = frameIndex(animationClock, 4, 7.5f, rect.left * .01f);
-            RectF trapDestination = new RectF(mid-half-30, surfaceY-164, mid+half+30, surfaceY+3);
+             int trapFrame = h.active()
+                     ? 1 + frameIndex(animationClock, 3, 7.5f, rect.left * .01f)
+                     : Math.min(2, (int)(3f * h.age / Math.max(.01f, h.warning)));
+            RectF trapDestination = new RectF(mid-half-30, surfaceY-167, mid+half+30, surfaceY);
              drawImageBottomScaled(c, worldSpriteSheet, worldFrame(trapRow, trapFrame), trapDestination, rise);
         }
         float flag=checkpointMarkerX-cameraX;
         if(flag>-80&&flag<VW) {
-            float checkpointBaseY = checkpointMarkerY + 54f;
+            float checkpointBaseY = supportingSurfaceY(checkpointMarkerX, checkpointMarkerY + 54f);
             if(checkpointActive) { p.setColor(Color.argb(82,93,236,207)); c.drawCircle(flag+18,checkpointBaseY-112,52,p); p.setColor(Color.argb(225,253,232,111)); c.drawCircle(flag+18,checkpointBaseY-112,9,p); }
             float shrinePulse = checkpointActive ? 1f + .025f*(float)Math.sin(animationClock*5f) : 1f;
-             int checkpointFrame = frameIndex(animationClock, 4, 5.5f, 0);
+             int checkpointFrame = (checkpointActive ? 2 : 0) + frameIndex(animationClock, 2, 5.5f, 0);
              drawImageTransform(c, worldSpriteSheet, worldFrame(3, checkpointFrame),
                      new RectF(flag-48,checkpointBaseY-182,flag+84,checkpointBaseY), 0, shrinePulse, shrinePulse);
         }
@@ -2084,18 +2059,29 @@ public class GameView extends View {
         return Math.max(0,Math.min(count-1,(int)(progress*count)));
     }
     private int enemyFrame(Foe enemy){
-        if(enemy.state==EnemyController.ATTACK)return 4;
-        if(enemy.state==EnemyController.WINDUP||enemy.state==EnemyController.NOTICE)return 3;
+        if(enemy.state==EnemyController.ATTACK)return 4 + frameIndex(enemy.stateTime,2,12f,0);
+        if(enemy.state==EnemyController.WINDUP||enemy.state==EnemyController.NOTICE)return 3 + frameIndex(enemy.stateTime,2,8f,0);
         if(enemy.state==EnemyController.HIT_REACTION)return 5;
-        if(enemy.state==EnemyController.RECOVERY)return 2;
-        return frameIndex(animationClock,3,enemy.state==EnemyController.PATROL?8f:5f,enemy.x*.01f);
+        if(enemy.state==EnemyController.RECOVERY)return 2 + frameIndex(enemy.stateTime,2,7f,0);
+        if(enemy.state==EnemyController.PATROL)return 1 + frameIndex(animationClock,2,8f,enemy.x*.01f);
+        return frameIndex(animationClock,2,5f,enemy.x*.01f);
     }
     private int bossFrame(Boss target){
         if(target.hitLock>0)return 5;
-        if(target.state==BossController.State.ATTACK_EXECUTE)return 4;
-        if(target.state==BossController.State.ATTACK_WINDUP)return 3;
-        if(target.state==BossController.State.ATTACK_RECOVERY)return 2;
+        if(target.state==BossController.State.ATTACK_EXECUTE)return 4 + frameIndex(target.stateTime,2,10f,0);
+        if(target.state==BossController.State.ATTACK_WINDUP)return 3 + frameIndex(target.stateTime,2,7f,0);
+        if(target.state==BossController.State.ATTACK_RECOVERY)return 2 + frameIndex(target.stateTime,2,6f,0);
         return frameIndex(animationClock,3,target.phase==1?4f:6f,target.world*.21f);
+    }
+    private float supportingSurfaceY(float worldX, float fallbackY){
+        float best=fallbackY;
+        float bestDistance=Float.MAX_VALUE;
+        for(Platform platform:platforms){
+            if(worldX<platform.x-2f||worldX>platform.x+platform.w+2f)continue;
+            float distance=Math.abs(platform.y-fallbackY);
+            if(distance<bestDistance&&distance<=72f){best=platform.y;bestDistance=distance;}
+        }
+        return best;
     }
     private VisualStyle.Theme theme(){ return VisualStyle.forWorld(data == null ? 1 : data.world); }
     private void panel(Canvas c,float l,float t,float r,float b){VisualStyle.Theme theme=theme();p.setColor(theme.uiPanel);c.drawRoundRect(l,t,r,b,22,22,p);stroke.setColor(theme.uiStroke);c.drawRoundRect(l,t,r,b,22,22,stroke);}

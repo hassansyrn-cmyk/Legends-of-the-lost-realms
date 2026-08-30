@@ -14,6 +14,13 @@ def alpha_bounds(frame):
     return frame.getchannel("A").getbbox()
 
 
+def silhouette_delta(left, right):
+    left_alpha = left.getchannel("A").point(lambda value: 255 if value >= 48 else 0)
+    right_alpha = right.getchannel("A").point(lambda value: 255 if value >= 48 else 0)
+    changed = ImageChops.difference(left_alpha, right_alpha)
+    return (left.width * left.height - changed.histogram()[0]) / (left.width * left.height)
+
+
 for name, spec in CONTRACT.items():
     image = Image.open(RES / spec["file"]).convert("RGBA")
     cell_w, cell_h = spec["cell"]
@@ -44,18 +51,27 @@ for name, spec in CONTRACT.items():
             if max(bottoms) - min(bottoms) > max(8, int(cell_h * .09)):
                 raise SystemExit(f"{name}: unstable bottom anchor in row {row}: {bottoms}")
 
-    # Every animated row must contain actual frame variation.
+    # Every animated row must change its visible silhouette. A color twinkle or
+    # a one-pixel translation is not a readable character pose.
     if spec["cols"] > 1:
         for row in range(spec["rows"]):
-            first = image.crop((0, row * cell_h, cell_w, (row + 1) * cell_h))
-            changed = False
-            for column in range(1, spec["cols"]):
-                frame = image.crop((column * cell_w, row * cell_h, (column + 1) * cell_w, (row + 1) * cell_h))
-                if ImageChops.difference(first, frame).getbbox():
-                    changed = True
-                    break
-            if not changed:
-                raise SystemExit(f"{name}: row {row} repeats one static frame")
+            frames = [
+                image.crop((column * cell_w, row * cell_h, (column + 1) * cell_w, (row + 1) * cell_h))
+                for column in range(spec["cols"])
+            ]
+            strongest_change = max(
+                silhouette_delta(frames[index], frames[index + 1])
+                for index in range(len(frames) - 1)
+            )
+            threshold = .001 if name in ("platforms_motion_sheet", "collectibles_motion_sheet", "effects_motion_sheet") else .0025
+            if strongest_change < threshold:
+                raise SystemExit(
+                    f"{name}: row {row} lacks a readable pose change ({strongest_change:.4f})"
+                )
+
+for name in ("aster_motion_sheet", "enemies_motion_sheet", "bosses_motion_sheet", "world_motion_sheet"):
+    if f'rebuild_character_sheet("{name}"' in GAME_VIEW:
+        raise SystemExit(f"{name}: runtime must not procedurally fake complete-frame movement")
 
 for marker in (
     "frameIndex(animationClock",

@@ -4,9 +4,15 @@ on:
   push:
     branches: [ main ]
   workflow_dispatch:
+    inputs:
+      publish_release:
+        description: Publish the APK and metadata as a public prerelease
+        required: false
+        type: boolean
+        default: true
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build-debug-apk:
@@ -47,14 +53,117 @@ jobs:
         run: |
           gradle :app:assembleDebug
 
-      - name: Rename APK
+      - name: Read build metadata
+        id: metadata
         shell: bash
-        run: cp app/build/outputs/apk/debug/app-debug.apk Legends_of_the_Lost_Realms_v4.11.4-debug.apk
+        run: |
+          APPLICATION_ID="$(sed -n "s/^[[:space:]]*applicationId[[:space:]]*'\([^']*\)'.*/\1/p" app/build.gradle | head -n 1)"
+          VERSION_CODE="$(sed -n "s/^[[:space:]]*versionCode[[:space:]]*\([0-9]*\).*/\1/p" app/build.gradle | head -n 1)"
+          VERSION_NAME="$(sed -n "s/^[[:space:]]*versionName[[:space:]]*'\([^']*\)'.*/\1/p" app/build.gradle | head -n 1)"
+          SHORT_SHA="${GITHUB_SHA::7}"
+          APK_NAME="Legends_of_the_Lost_Realms_v${VERSION_NAME}_${SHORT_SHA}-debug.apk"
+          ARTIFACT_NAME="Legends-of-the-Lost-Realms-v${VERSION_NAME}-${SHORT_SHA}-debug-apk"
+
+          test -n "$APPLICATION_ID"
+          test -n "$VERSION_CODE"
+          test -n "$VERSION_NAME"
+
+          {
+            echo "application_id=$APPLICATION_ID"
+            echo "version_code=$VERSION_CODE"
+            echo "version_name=$VERSION_NAME"
+            echo "short_sha=$SHORT_SHA"
+            echo "apk_name=$APK_NAME"
+            echo "artifact_name=$ARTIFACT_NAME"
+            echo "release_tag=debug-v${VERSION_NAME}-${SHORT_SHA}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Package debug APK with source metadata
+        shell: bash
+        run: |
+          cp app/build/outputs/apk/debug/app-debug.apk "${{ steps.metadata.outputs.apk_name }}"
+          cat > APK_BUILD_METADATA.txt <<EOF
+          Legends of the Lost Realms debug APK
+          Package: ${{ steps.metadata.outputs.application_id }}
+          Version name: ${{ steps.metadata.outputs.version_name }}
+          Version code: ${{ steps.metadata.outputs.version_code }}
+          Source revision: ${GITHUB_SHA}
+          Workflow run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
+          EOF
 
       - name: Upload Debug APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Legends-of-the-Lost-Realms-v4.11.4-debug-apk
-          path: Legends_of_the_Lost_Realms_v4.11.4-debug.apk
+          name: ${{ steps.metadata.outputs.artifact_name }}
+          path: |
+            ${{ steps.metadata.outputs.apk_name }}
+            APK_BUILD_METADATA.txt
           if-no-files-found: error
           retention-days: 30
+
+      - name: Publish public debug release
+        if: github.event_name == 'workflow_dispatch' && inputs.publish_release == true
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+
+          TAG="${{ steps.metadata.outputs.release_tag }}"
+          APK="${{ steps.metadata.outputs.apk_name }}"
+          METADATA="APK_BUILD_METADATA.txt"
+
+          cleanup_failed_release() {
+            status=$?
+            if [[ "$status" -ne 0 ]]; then
+              echo "Release publication failed; removing any partial release and tag for ${TAG}."
+              set +e
+              gh release delete "$TAG" \
+                --repo "$GITHUB_REPOSITORY" \
+                --yes \
+                --cleanup-tag
+              set -e
+            fi
+            exit "$status"
+          }
+          trap cleanup_failed_release EXIT
+
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release ${TAG} already exists; refusing to overwrite it." >&2
+            exit 1
+          fi
+
+          test -s "$APK"
+          test -s "$METADATA"
+
+          gh release create "$TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "Legends of the Lost Realms v${{ steps.metadata.outputs.version_name }} debug build" \
+            --notes "Debug APK for physical-device combat validation.
+
+          Package: ${{ steps.metadata.outputs.application_id }}
+          Version name: ${{ steps.metadata.outputs.version_name }}
+          Version code: ${{ steps.metadata.outputs.version_code }}
+          Source revision: ${GITHUB_SHA}
+          Workflow run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" \
+            --prerelease \
+            --latest=false \
+            "$APK" \
+            "$METADATA"
+
+          asset_count="$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets | length')"
+          test "$asset_count" -eq 2
+          gh release view "$TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --json assets \
+            --jq '.assets[].name' |
+            grep -Fx "$APK"
+          gh release view "$TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --json assets \
+            --jq '.assets[].name' |
+            grep -Fx "$METADATA"
+
+          trap - EXIT
+          echo "Published ${TAG} with ${asset_count} verified release assets."

@@ -16,7 +16,6 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         hideSystemBars();
         gameView = new GameView(this);
         setContentView(gameView);
@@ -38,15 +37,6 @@ public class MainActivity extends Activity {
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) hideSystemBars();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (gameView != null) {
-            gameView.handleBack();
-        } else {
-            super.onBackPressed();
-        }
     }
 
     @Override
