@@ -14,8 +14,8 @@ android {
         applicationId 'com.manus.lostrealms'
         minSdk 24
         targetSdk 35
-        versionCode 49
-        versionName '4.11.4'
+        versionCode 50
+        versionName '4.12.0'
     }
 
     buildTypes {

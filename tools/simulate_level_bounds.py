@@ -2,7 +2,8 @@ import json
 from collections import deque
 from pathlib import Path
 
-ROOT = Path('/home/ubuntu/lost-realms/app/src/main/assets/levels')
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+ROOT = PROJECT_ROOT / 'app/src/main/assets/levels'
 SPAWN_X = 120
 GOAL_X = 2000
 MAX_GAP = 480

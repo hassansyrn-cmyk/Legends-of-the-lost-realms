@@ -1,7 +1,8 @@
 from pathlib import Path
 from PIL import Image
 
-RES = Path('/home/ubuntu/lost-realms/app/src/main/res/drawable-nodpi')
+ROOT = Path(__file__).resolve().parents[1]
+RES = ROOT / 'app/src/main/res/drawable-nodpi'
 for name in ('boss_forest_rig_parts.png', 'boss_stone_rig_parts.png', 'boss_ice_rig_parts.png'):
     image = Image.open(RES / name).convert('RGBA')
     if image.size != (1536, 1024):

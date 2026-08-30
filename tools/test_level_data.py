@@ -1,7 +1,8 @@
 import json
 from pathlib import Path
 
-ROOT = Path('/home/ubuntu/lost-realms/app/src/main/assets/levels')
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+ROOT = PROJECT_ROOT / 'app/src/main/assets/levels'
 BOSS_LEVELS = {4, 7, 10}
 VALID_STORIES = {'none', 'realm_intro', 'boss_intro'}
 VALID_DESIGN_ROLES = {'INTRODUCE', 'DEVELOP', 'COMBINE', 'MASTERY'}

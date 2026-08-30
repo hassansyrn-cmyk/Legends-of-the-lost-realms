@@ -21,7 +21,7 @@ for name, expected_size in required.items():
     if image.size != expected_size:
         raise SystemExit(f'{name}: expected {expected_size}, got {image.size}')
     alpha = image.getchannel('A')
-    if alpha.getbbox() is None or min(alpha.getdata()) != 0:
+    if alpha.getbbox() is None or alpha.getextrema()[0] != 0:
         raise SystemExit(f'{name}: expected a true transparent background')
 
 sheet = Image.open(RES / 'trap_platform_motion_sheet.png').convert('RGBA')

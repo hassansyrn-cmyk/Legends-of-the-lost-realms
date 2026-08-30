@@ -1,7 +1,7 @@
 from pathlib import Path
 from PIL import Image
 
-ROOT = Path('/home/ubuntu/lost-realms')
+ROOT = Path(__file__).resolve().parents[1]
 ATLAS = ROOT / 'app/src/main/res/drawable-nodpi/enemy_archetype_motion_atlas.png'
 GAME_VIEW = (ROOT / 'app/src/main/java/com/manus/lostrealms/GameView.java').read_text(encoding='utf-8')
 

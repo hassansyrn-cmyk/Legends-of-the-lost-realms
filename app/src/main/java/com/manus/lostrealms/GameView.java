@@ -353,49 +353,45 @@ public class GameView extends View {
             if (e.frozen > 0) { e.frozen -= dt; continue; }
             float dx = px - e.x;
             if (e.kind == EnemyController.GROUND_PATROLLER) {
-                if (e.state == 0) { e.x += e.dir * e.speed * dt; if (e.x < e.minX || e.x > e.maxX) e.dir *= -1; if (Math.abs(dx) < 175 && Math.abs(py-e.y)<88) { e.state=1; e.stateTime=.34f; e.dir=dx<0?-1:1; audio.enemyWarning(); } }
+                if (e.state == 0) { e.x += e.dir * e.speed * dt; if (e.x < e.minX || e.x > e.maxX) e.dir *= -1; if (EnemyController.canNotice(e.kind, dx, py-e.y)) { e.state=1; e.stateTime=e.behavior.windupSeconds; e.dir=dx<0?-1:1; audio.enemyWarning(); } }
                 else if (e.state == 1) { e.stateTime -= dt; if (e.stateTime <= 0) { e.state=2; e.stateTime=.30f; audio.enemyDash(); } }
                 else { e.x += e.dir * 245 * dt; e.stateTime -= dt; if (e.stateTime <= 0 || e.x < e.minX-45 || e.x > e.maxX+45) { e.state=0; e.dir*=-1; } }
             } else if (e.kind == EnemyController.FLYING_SWOOOPER) {
-                if (e.state == 0) { e.y = e.baseY + (float)Math.sin(animationClock*3.7f+e.x*.02f)*18; if (Math.abs(dx)<235 && Math.abs(py-e.y)<135) { e.state=1; e.stateTime=.42f; e.dir=dx<0?-1:1; e.targetX=px; e.targetY=py+18; audio.enemyWarning(); } }
+                if (e.state == 0) { e.y = e.baseY + (float)Math.sin(animationClock*3.7f+e.x*.02f)*18; if (EnemyController.canNotice(e.kind, dx, py-e.y)) { e.state=1; e.stateTime=e.behavior.windupSeconds; e.dir=dx<0?-1:1; e.targetX=px; e.targetY=py+18; audio.enemyWarning(); } }
                 else if (e.state == 1) { e.stateTime -= dt; if (e.stateTime<=0) { e.state=2; e.stateTime=.34f; audio.enemySwoop(); } }
                 else { e.x = approach(e.x,e.targetX,275*dt); e.y = approach(e.y,e.targetY,225*dt); e.stateTime -= dt; if (e.stateTime<=0) { e.state=0; e.baseY=e.y; } }
             } else if (e.kind == EnemyController.FAST_SKIRMISHER) {
-                if (e.state == 0) { e.x += e.dir * e.speed * dt; if (e.x < e.minX || e.x > e.maxX) e.dir *= -1; if (Math.abs(dx)<210 && Math.abs(py-e.y)<90) { e.state=1; e.stateTime=.46f; e.dir=dx<0?-1:1; e.targetX=px; audio.enemyWarning(); } }
+                if (e.state == 0) { e.x += e.dir * e.speed * dt; if (e.x < e.minX || e.x > e.maxX) e.dir *= -1; if (EnemyController.canNotice(e.kind, dx, py-e.y)) { e.state=1; e.stateTime=e.behavior.windupSeconds; e.dir=dx<0?-1:1; e.targetX=px; audio.enemyWarning(); } }
                 else if (e.state == 1) { e.stateTime-=dt; if(e.stateTime<=0){e.state=2;e.stateTime=.34f;audio.enemyDash();} }
                 else if (e.state == 2) { e.x=approach(e.x,e.targetX,360*dt); e.stateTime-=dt; if(e.stateTime<=0){e.state=3;e.stateTime=.24f;} }
                 else { e.x -= e.dir*150*dt; e.stateTime-=dt; if(e.stateTime<=0)e.state=0; }
             } else if (e.kind == EnemyController.FROST_SENTINEL) {
-                if (e.state == 0) { e.y=e.baseY+(float)Math.sin(animationClock*2.5f+e.x*.015f)*10; if(Math.abs(dx)<150&&Math.abs(py-e.y)<95){e.state=1;e.stateTime=.58f;audio.enemyWarning();} }
+                if (e.state == 0) { e.y=e.baseY+(float)Math.sin(animationClock*2.5f+e.x*.015f)*10; if(EnemyController.canNotice(e.kind, dx, py-e.y)){e.state=1;e.stateTime=e.behavior.windupSeconds;audio.enemyWarning();} }
                 else if (e.state == 1) { e.stateTime-=dt; if(e.stateTime<=0){e.state=2;e.stateTime=.22f;audio.enemySwoop();} }
                 else if (e.state == 2) { if(Math.abs(px-e.x)<115&&Math.abs(py-e.y)<90) damage(2); e.stateTime-=dt; if(e.stateTime<=0)e.state=0; }
             } else if (e.kind == EnemyController.WIND_WISP) {
-                if(e.state==0){e.x+=e.dir*e.speed*dt;if(e.x<e.minX||e.x>e.maxX)e.dir*=-1;if(Math.abs(dx)<260&&Math.abs(py-e.y)<125){e.state=1;e.stateTime=.38f;e.dir=dx<0?-1:1;e.targetX=px;e.targetY=py;audio.enemyWarning();}}
+                if(e.state==0){e.x+=e.dir*e.speed*dt;if(e.x<e.minX||e.x>e.maxX)e.dir*=-1;if(EnemyController.canNotice(e.kind, dx, py-e.y)){e.state=1;e.stateTime=e.behavior.windupSeconds;e.dir=dx<0?-1:1;e.targetX=px;e.targetY=py;audio.enemyWarning();}}
                 else if(e.state==1){e.stateTime-=dt;if(e.stateTime<=0){e.state=2;e.stateTime=.28f;audio.enemyDash();}}
                 else {e.x=approach(e.x,e.targetX,405*dt);e.y=approach(e.y,e.targetY,320*dt);e.stateTime-=dt;if(e.stateTime<=0){e.state=0;e.baseY=e.y;}}
             } else if (e.kind == EnemyController.SHIELD_GUARD) {
-                if (e.state == 0) { e.x += e.dir * e.speed * dt; if (e.x < e.minX || e.x > e.maxX) e.dir *= -1; if (Math.abs(dx) < 180 && Math.abs(py-e.y)<90) { e.state=1; e.stateTime=.52f; e.dir=dx<0?-1:1; audio.enemyWarning(); } }
+                if (e.state == 0) { e.x += e.dir * e.speed * dt; if (e.x < e.minX || e.x > e.maxX) e.dir *= -1; if (EnemyController.canNotice(e.kind, dx, py-e.y)) { e.state=1; e.stateTime=e.behavior.windupSeconds; e.dir=dx<0?-1:1; audio.enemyWarning(); } }
                 else if (e.state == 1) { e.stateTime -= dt; if (e.stateTime <= 0) { e.state=2; e.stateTime=.26f; audio.enemyDash(); } }
                 else { e.x += e.dir * 118 * dt; e.stateTime -= dt; if (e.stateTime <= 0) e.state=0; }
             } else if (e.kind == EnemyController.HEAVY_BRUTE) {
-                if (e.state == 0) { e.x += e.dir * e.speed * dt; if (e.x < e.minX || e.x > e.maxX) e.dir *= -1; if (Math.abs(dx) < 205 && Math.abs(py-e.y)<100) { e.state=1; e.stateTime=.72f; e.dir=dx<0?-1:1; audio.enemyWarning(); } }
+                if (e.state == 0) { e.x += e.dir * e.speed * dt; if (e.x < e.minX || e.x > e.maxX) e.dir *= -1; if (EnemyController.canNotice(e.kind, dx, py-e.y)) { e.state=1; e.stateTime=e.behavior.windupSeconds; e.dir=dx<0?-1:1; audio.enemyWarning(); } }
                 else if (e.state == 1) { e.stateTime -= dt; if (e.stateTime <= 0) { e.state=2; e.stateTime=.28f; audio.enemyDash(); } }
                 else { if (Math.abs(px-e.x)<92 && Math.abs(py-e.y)<95) damage(2); e.stateTime -= dt; if (e.stateTime <= 0) { e.state=3; e.stateTime=.42f; } }
                 if (e.state == 3) { e.stateTime -= dt; if (e.stateTime <= 0) e.state=0; }
             } else { // Rune Caster: a long telegraph followed by one readable projectile.
                 e.y = e.baseY + (float)Math.sin(animationClock*2.1f+e.x*.018f)*6;
-                if (e.state == 0 && Math.abs(dx) < 315 && Math.abs(py-e.y) < 165) { e.state=1; e.stateTime=.66f; e.dir=dx<0?-1:1; e.targetX=px; e.targetY=py+18; audio.enemyWarning(); }
+                if (e.state == 0 && EnemyController.canNotice(e.kind, dx, py-e.y)) { e.state=1; e.stateTime=e.behavior.windupSeconds; e.dir=dx<0?-1:1; e.targetX=px; e.targetY=py+18; audio.enemyWarning(); }
                 else if (e.state == 1) { e.stateTime -= dt; if (e.stateTime <= 0) { e.state=2; e.stateTime=.16f; audio.enemySwoop(); } }
                 else if (e.state == 2) { e.stateTime -= dt; if (e.stateTime <= 0) { float shotDx=e.targetX-e.x, shotDy=e.targetY-e.y; float length=Math.max(1f,(float)Math.sqrt(shotDx*shotDx+shotDy*shotDy)); enemyProjectiles.add(new EnemyProjectile(e.x,e.y-18,shotDx/length*265f,shotDy/length*265f)); e.state=3; e.stateTime=.58f; } }
                 else if (e.state == 3) { e.stateTime -= dt; if (e.stateTime <= 0) e.state=0; }
             }
-            boolean committedContactAttack = (e.kind == EnemyController.GROUND_PATROLLER
-                    || e.kind == EnemyController.FLYING_SWOOOPER
-                    || e.kind == EnemyController.FAST_SKIRMISHER
-                    || e.kind == EnemyController.WIND_WISP
-                    || e.kind == EnemyController.SHIELD_GUARD
-                    || e.kind == EnemyController.HEAVY_BRUTE) && e.state == 2;
-            if (Math.abs(px - e.x) < (e.kind == EnemyController.HEAVY_BRUTE ? 54 : 44) && Math.abs(py - e.y) < 48) damage(committedContactAttack ? 2 : 1);
+            if (Math.abs(px - e.x) < (e.kind == EnemyController.HEAVY_BRUTE ? 54 : 44) && Math.abs(py - e.y) < 48) {
+                damage(EnemyController.contactDamage(e.kind, e.state));
+            }
             float reach = chargedAttack ? 152 : attackStage >= 4 ? 148 : attackStage >= 2 ? 126 : 104;
             boolean airStrikeHit = CombatSystem.canHitFromAir(airAttack, px, py, e.x, e.y, 86, 68, 82, 58);
             boolean groundStrikeHit = CombatSystem.canHitFromGround(airAttack, facingLeft, px, py, e.x, e.y, reach, 72);
@@ -451,53 +447,167 @@ public class GameView extends View {
         if (boss.frostSlowTime > 0) boss.frostSlowTime -= dt;
         float frostScale = boss.frostSlowTime > 0 ? .58f : 1f;
         BossController.Profile profile = BossController.profile(boss.world);
-        int nextPhase = boss.hp <= boss.maxHp * profile.phaseThreeThreshold ? 3
-                : boss.hp <= boss.maxHp * profile.phaseTwoThreshold ? 2 : 1;
+        int nextPhase = BossController.phaseForHealth(boss.hp, boss.maxHp, boss.world);
         if (nextPhase != boss.phase) {
             boss.phase = nextPhase;
             boss.transitionTime = .72f;
             boss.cooldown = Math.max(boss.cooldown, .52f);
+            boss.state = BossController.State.PHASE_TRANSITION;
+            boss.stateTime = .72f;
             audio.bossWarning();
             triggerShake(7.2f, .12f);
             spawnJuiceParticles(boss.x, boss.y - 34, data.accent, 15, 165f);
         }
-        if (boss.transitionTime > 0) boss.transitionTime -= dt;
+        if (boss.transitionTime > 0) {
+            boss.transitionTime -= dt;
+            boss.stateTime = Math.max(0, boss.stateTime - dt);
+            if (boss.transitionTime <= 0) {
+                boss.state = BossController.State.OBSERVE;
+                boss.cooldown = Math.min(boss.cooldown, .42f);
+            }
+        }
         float phaseSpeed = boss.phase == 3 ? profile.phaseThreeSpeed
                 : boss.phase == 2 ? profile.phaseTwoSpeed : profile.phaseOneSpeed;
         boss.cooldown -= dt * frostScale; if (boss.hitLock > 0) boss.hitLock -= dt;
-        boss.x += boss.dir * phaseSpeed * frostScale * dt;
-        if (boss.x < 1740 || boss.x > 2070) boss.dir *= -1;
+        updateBossState(dt, frostScale, phaseSpeed);
         if (Math.abs(px - boss.x) < 72 && Math.abs(py - boss.y) < 75) damage(boss.phase);
         boolean bossAirStrike = CombatSystem.canHitFromAir(
                 airAttack, px, py, boss.x, boss.y, 110, 90, 92, 70);
         boolean bossGroundStrike = CombatSystem.canHitFromGround(
                 airAttack, facingLeft, px, py, boss.x, boss.y,
                 chargedAttack ? 158 : attackStage >= 4 ? 152 : attackStage >= 2 ? 140 : 118, 90);
-        if (attackTime > 0 && (bossGroundStrike || bossAirStrike) && boss.hitLock<=0) { boss.hp -= CombatSystem.comboDamage(attackStage, save.attackRank(), chargedAttack, counterTime > 0); boss.hitLock=.20f; hitFxTime = .18f; hitPause = chargedAttack || attackStage >= 4 ? .11f : .070f; fxX = boss.x; fxY = boss.y - 25; triggerSquash(false, chargedAttack || attackStage >= 4 ? .12f : .085f); triggerShake(chargedAttack || attackStage >= 4 ? 8.5f : 6.4f, chargedAttack || attackStage >= 4 ? .13f : .10f); spawnJuiceParticles(boss.x, boss.y - 25, Color.rgb(255, 178, 96), chargedAttack || attackStage >= 4 ? 18 : 11, chargedAttack || attackStage >= 4 ? 205f : 170f); triggerCombatCallout(boss.x, boss.y - 25, true); if(counterTime>0) counterTime=0; if(airAttack){vy=-390;canDouble=true;airAttack=false;} audio.impact(); }
-        if (boss.cooldown <= 0) {
-            audio.bossWarning();
-            float target=Math.max(90,Math.min(2180,px));
-            int cycle = boss.attackCycle++;
-            if (boss.world==1) { // Thornwold: root lanes become a wall in phase three.
-                boss.cooldown=boss.phase==1?2.10f:boss.phase==2?1.42f:1.02f;
-                float hx=boss.x+(boss.dir>0?60:-120);
-                hazards.add(new Hazard(hx,555,hx+85,620,.78f,.42f,1));
-                if(boss.phase>=2) hazards.add(new Hazard(hx+(boss.dir>0?118:-118),555,hx+(boss.dir>0?203:-33),620,.78f,.42f,1));
-                if(boss.phase==3) hazards.add(new Hazard(target-58,555,target+58,620,.88f,.48f,1));
-            } else if (boss.world==2) { // Akaros: sand slams spread from one lane to a quake pattern.
-                boss.cooldown=boss.phase==1?1.90f:boss.phase==2?1.32f:1.00f;
-                hazards.add(new Hazard(target-48,555,target+48,620,1.02f,.62f,2));
-                if(boss.phase>=2) hazards.add(new Hazard(target+(cycle%2==0?108:-108)-42,555,target+(cycle%2==0?108:-108)+42,620,1.02f,.62f,2));
-                if(boss.phase==3) hazards.add(new Hazard(target-175,555,target-95,620,1.02f,.62f,2));
-            } else { // Vyrn: widening ice lanes and gusts force movement between safe gaps.
-                boss.cooldown=boss.phase==1?1.65f:boss.phase==2?1.18f: .92f;
-                hazards.add(new Hazard(target-145,555,target-55,620,.94f,.50f,3));
-                hazards.add(new Hazard(target+55,555,target+145,620,.94f,.50f,3));
-                if(boss.phase>=2) windTime=Math.max(windTime,.60f);
-                if(boss.phase==3) { hazards.add(new Hazard(target-35,555,target+35,620,.94f,.50f,3)); windTime=Math.max(windTime,1.05f); }
+        if (attackTime > 0 && (bossGroundStrike || bossAirStrike) && boss.hitLock<=0) {
+            boss.hp -= CombatSystem.comboDamage(attackStage, save.attackRank(), chargedAttack, counterTime > 0);
+            boss.hitLock=.20f;
+            if (chargedAttack || attackStage >= 4 || counterTime > 0) {
+                boss.state = BossController.State.STAGGER;
+                boss.stateTime = counterTime > 0 ? .34f : .22f;
             }
+            hitFxTime = .18f; hitPause = chargedAttack || attackStage >= 4 ? .11f : .070f; fxX = boss.x; fxY = boss.y - 25; triggerSquash(false, chargedAttack || attackStage >= 4 ? .12f : .085f); triggerShake(chargedAttack || attackStage >= 4 ? 8.5f : 6.4f, chargedAttack || attackStage >= 4 ? .13f : .10f); spawnJuiceParticles(boss.x, boss.y - 25, Color.rgb(255, 178, 96), chargedAttack || attackStage >= 4 ? 18 : 11, chargedAttack || attackStage >= 4 ? 205f : 170f); triggerCombatCallout(boss.x, boss.y - 25, true); if(counterTime>0) counterTime=0; if(airAttack){vy=-390;canDouble=true;airAttack=false;} audio.impact();
         }
         if (boss.hp <= 0) boss.hp = 0;
+    }
+
+    private void updateBossState(float dt, float frostScale, float phaseSpeed) {
+        if (boss.state == BossController.State.PHASE_TRANSITION) return;
+        if (boss.state == BossController.State.STAGGER) {
+            boss.stateTime -= dt;
+            if (boss.stateTime <= 0) {
+                boss.state = BossController.State.RETREAT;
+                boss.stateTime = .30f;
+            }
+            return;
+        }
+        if (boss.state == BossController.State.ATTACK_WINDUP) {
+            boss.stateTime -= dt * frostScale;
+            if (boss.stateTime <= 0) {
+                boss.state = BossController.State.ATTACK_EXECUTE;
+                boss.stateTime = boss.attack.activeSeconds;
+                executeBossAttack(boss.attack);
+            }
+            return;
+        }
+        if (boss.state == BossController.State.ATTACK_EXECUTE) {
+            boss.stateTime -= dt * frostScale;
+            if (boss.stateTime <= 0) {
+                boss.state = BossController.State.ATTACK_RECOVERY;
+                boss.stateTime = boss.attack.recoverySeconds;
+            }
+            return;
+        }
+        if (boss.state == BossController.State.ATTACK_RECOVERY) {
+            boss.stateTime -= dt * frostScale;
+            boss.x -= boss.dir * phaseSpeed * .32f * frostScale * dt;
+            if (boss.stateTime <= 0) boss.state = BossController.State.OBSERVE;
+            clampBossArena();
+            return;
+        }
+
+        float dx = px - boss.x;
+        float distance = Math.abs(dx);
+        boss.dir = dx < 0 ? -1 : 1;
+        if (distance > 310f) {
+            boss.state = BossController.State.APPROACH;
+            boss.x += boss.dir * phaseSpeed * frostScale * dt;
+        } else if (distance < 135f) {
+            boss.state = BossController.State.RETREAT;
+            boss.x -= boss.dir * phaseSpeed * .66f * frostScale * dt;
+        } else {
+            boss.state = BossController.State.OBSERVE;
+            boss.x += boss.dir * phaseSpeed * .20f * frostScale * dt;
+        }
+        clampBossArena();
+
+        if (boss.cooldown <= 0) {
+            boss.attack = BossController.chooseAttack(
+                    boss.world,
+                    boss.phase,
+                    dx,
+                    py - boss.y,
+                    vx,
+                    dodgeTime > 0,
+                    boss.previousAttack,
+                    boss.attackCycle++);
+            boss.previousAttack = boss.attack;
+            boss.state = BossController.State.ATTACK_WINDUP;
+            boss.stateTime = boss.attack.windupSeconds;
+            boss.cooldown = BossController.decisionCooldown(boss.phase, boss.attack);
+            audio.bossWarning();
+        }
+    }
+
+    private void clampBossArena() {
+        boss.x = Math.max(1740, Math.min(2070, boss.x));
+    }
+
+    private void executeBossAttack(BossController.Attack attack) {
+        float target = Math.max(90, Math.min(2180, px + vx * .18f));
+        int cycle = boss.attackCycle;
+        switch (attack) {
+            case ROOT_STRIKE: {
+                float rootX = boss.x + boss.dir * 72f;
+                hazards.add(new Hazard(rootX - 44, 555, rootX + 44, 620, .82f, .24f, 1));
+                break;
+            }
+            case ROOT_WALL:
+                hazards.add(new Hazard(target - 55, 555, target + 55, 620, .96f, .38f, 1));
+                if (boss.phase >= 2) hazards.add(new Hazard(target + (cycle % 2 == 0 ? 132 : -132) - 42, 555, target + (cycle % 2 == 0 ? 132 : -132) + 42, 620, .96f, .38f, 1));
+                break;
+            case ROOT_STORM:
+                hazards.add(new Hazard(target - 58, 555, target + 58, 620, 1.08f, .44f, 1));
+                hazards.add(new Hazard(target - 235, 555, target - 145, 620, 1.08f, .44f, 1));
+                hazards.add(new Hazard(target + 145, 555, target + 235, 620, 1.08f, .44f, 1));
+                break;
+            case STONE_SLAM: {
+                float slamX = boss.x + boss.dir * 76f;
+                hazards.add(new Hazard(slamX - 64, 555, slamX + 64, 620, .94f, .32f, 2));
+                break;
+            }
+            case QUAKE_LANE:
+                hazards.add(new Hazard(target - 52, 555, target + 52, 620, 1.12f, .48f, 2));
+                if (boss.phase >= 2) hazards.add(new Hazard(target + (cycle % 2 == 0 ? 128 : -128) - 44, 555, target + (cycle % 2 == 0 ? 128 : -128) + 44, 620, 1.12f, .48f, 2));
+                break;
+            case FALLING_DEBRIS:
+                hazards.add(new Hazard(target - 190, 555, target - 110, 620, 1.20f, .56f, 2));
+                hazards.add(new Hazard(target - 40, 555, target + 40, 620, 1.20f, .56f, 2));
+                hazards.add(new Hazard(target + 110, 555, target + 190, 620, 1.20f, .56f, 2));
+                break;
+            case ICE_LANE:
+                hazards.add(new Hazard(target - 118, 555, target - 38, 620, .98f, .36f, 3));
+                hazards.add(new Hazard(target + 38, 555, target + 118, 620, .98f, .36f, 3));
+                break;
+            case FROST_WAVE:
+                hazards.add(new Hazard(target - 180, 555, target - 90, 620, 1.04f, .42f, 3));
+                hazards.add(new Hazard(target + 90, 555, target + 180, 620, 1.04f, .42f, 3));
+                windTime = Math.max(windTime, .62f);
+                break;
+            case WHITEOUT:
+                hazards.add(new Hazard(target - 210, 555, target - 125, 620, 1.18f, .52f, 3));
+                hazards.add(new Hazard(target - 42, 555, target + 42, 620, 1.18f, .52f, 3));
+                hazards.add(new Hazard(target + 125, 555, target + 210, 620, 1.18f, .52f, 3));
+                windTime = Math.max(windTime, 1.12f);
+                break;
+        }
     }
 
     private void startLevel(int id) {
@@ -585,6 +695,7 @@ public class GameView extends View {
             if (grounded && Math.abs(py + 54 - platform.y) < 9
                     && px + 26 > platform.x && px - 26 < platform.x + platform.w) {
                 px += platform.frameDeltaX;
+                    py += platform.frameDeltaY;
             }
         }
         for (IcicleSpawner spawner : icicleSpawners) {
@@ -1515,6 +1626,14 @@ public class GameView extends View {
         float bossGroundY = boss.y + 80f + bob;
         if (boss.burnTime > 0) { p.setColor(Color.argb(95,255,126,58)); c.drawCircle(x,bossGroundY-148,126+5*(float)Math.sin(animationClock*8f),p); }
         if (boss.frostSlowTime > 0) { p.setColor(Color.argb(85,142,232,255)); c.drawCircle(x,bossGroundY-148,132,p); }
+        if (boss.state == BossController.State.ATTACK_WINDUP && boss.attack != null) {
+            float telegraphProgress = 1f - Math.max(0f, boss.stateTime) / boss.attack.windupSeconds;
+            p.setStyle(Paint.Style.STROKE);
+            p.setStrokeWidth(5f);
+            p.setColor(Color.argb((int)(105 + telegraphProgress * 120), 255, 213, 112));
+            c.drawCircle(x, bossGroundY - 148, 108 + telegraphProgress * 28, p);
+            p.setStyle(Paint.Style.FILL);
+        }
         drawSkeletalBoss(c, rigSheet, rig, x, bossGroundY, phase, bossFacingScale);
         // Keep the boss label and health bar safely above the tallest sprite frame.
         float bossHudY = boss.y - 380 + bob;
@@ -1523,12 +1642,17 @@ public class GameView extends View {
         BossController.Profile profile=BossController.profile(boss.world);
         String phaseName=boss.phase==1?"Awakening":boss.phase==2?profile.phaseTwoName:profile.phaseThreeName;
         centeredAt(c,boss.name+" • "+phaseName, x, bossHudY-15, 14, Color.WHITE);
+        if (boss.state == BossController.State.ATTACK_WINDUP && boss.attack != null) {
+            centeredAt(c, boss.attack.displayName.toUpperCase(java.util.Locale.US), x, bossHudY + 35, 12, Color.rgb(255, 222, 139));
+        }
     }
 
     private void drawSkeletalBoss(Canvas c, Bitmap rigSheet, BossRig rig, float x, float groundY, float phase, float facingScale) {
         float breath = (float) Math.sin(phase * 1.35f);
         float stride = (float) Math.sin(phase * 1.8f);
-        float charge = boss.transitionTime > 0 ? 1f : boss.cooldown < .44f ? .72f : 0f;
+        float charge = boss.transitionTime > 0 ? 1f
+                : boss.state == BossController.State.ATTACK_WINDUP ? .72f
+                : boss.state == BossController.State.ATTACK_EXECUTE ? 1f : 0f;
         float hurt = boss.hitLock > 0 ? 1f : 0f;
         float torsoTilt = breath * 1.4f - charge * 5f + hurt * 3.5f;
         float leftArmAngle = -stride * 8f - charge * 30f + hurt * 10f;
@@ -1817,7 +1941,7 @@ public class GameView extends View {
     }
 
     private static class Platform {
-        float x, y, w, h, life = 2.6f, baseX, baseY, moveX, moveY, moveSpeed, frameDeltaX;
+        float x, y, w, h, life = 2.6f, baseX, baseY, moveX, moveY, moveSpeed, frameDeltaX, frameDeltaY;
         boolean crumble;
         String material;
 
@@ -1836,12 +1960,14 @@ public class GameView extends View {
 
         void update(float clock) {
             float previousX = x;
+            float previousY = y;
             if (moveSpeed > 0) {
                 float wave = (float)Math.sin(clock * moveSpeed + baseX * .01f);
                 x = baseX + moveX * wave;
                 y = baseY + moveY * wave;
             }
             frameDeltaX = x - previousX;
+            frameDeltaY = y - previousY;
         }
     }
 
@@ -1879,10 +2005,12 @@ public class GameView extends View {
         float x, y, baseY, targetX, targetY, minX, maxX, dir = 1, speed, hurtTime, hitLock, stateTime;
         int kind, hp, state;
         float frozen, burnTime, burnTick;
+        EnemyController.Archetype behavior;
 
         Foe(float x, float y, int kind) {
             EnemyController.Archetype archetype = EnemyController.archetype(kind);
             this.x = x; this.y = y; this.baseY = y; this.kind = kind;
+            this.behavior = archetype;
             minX = x - 65; maxX = x + 65;
             speed = archetype.patrolSpeed;
             hp = archetype.maxHealth;
@@ -1896,5 +2024,13 @@ public class GameView extends View {
         }
         RectF rect() { return new RectF(x - 10, y - 10, x + 10, y + 10); }
     }
-    private static class Boss { float x,y,dir=-1,cooldown=1.8f,hitLock,burnTime,burnTick,frostSlowTime,transitionTime;int hp=24,maxHp=24,phase=1,world,attackCycle;String name;Boss(float x,float y,String n,int w){this.x=x;this.y=y;name=n;world=w;} }
+    private static class Boss {
+        float x,y,dir=-1,cooldown=1.8f,hitLock,burnTime,burnTick,frostSlowTime,transitionTime,stateTime;
+        int hp=24,maxHp=24,phase=1,world,attackCycle;
+        String name;
+        BossController.State state = BossController.State.OBSERVE;
+        BossController.Attack attack;
+        BossController.Attack previousAttack;
+        Boss(float x,float y,String n,int w){this.x=x;this.y=y;name=n;world=w;}
+    }
 }

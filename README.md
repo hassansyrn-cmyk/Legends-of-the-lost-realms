@@ -2,6 +2,14 @@
 
 **Legends of the Lost Realms** is an original landscape Android 2D fantasy platformer. This illustrated build contains ten short handcrafted-style levels across the Verdant Kingdom, Burning Dunes, and Frozen Peaks; local save data; touch controls; collectible coins and realm gems; fire, ice, and wind powers; checkpoints; upgrades; and three multi-phase boss encounters.
 
+## Tactical Boss AI Foundation v4.12.0
+
+The three guardians now use an explicit combat state machine rather than continuously pacing and firing on a timer. They observe, approach, retreat, telegraph, execute, recover, stagger, and transition between phases. Attack choice considers range, vertical position, player velocity, dodge behavior, boss phase, and the previous attack, while deterministic tie-breaking keeps behavior testable and prevents immediate repeats. Each guardian now has close-range, lane-control, and final-phase pressure attacks with distinct windup and recovery timing. Dangerous actions display a named telegraph and expanding warning pulse before arena hazards become active. Charged finishers and perfect-dodge counters can briefly stagger a guardian without interrupting cinematic phase transitions.
+
+Enemy combat tuning now has a single profile for each of the eight existing archetypes. Detection range, vertical awareness, warning time, health, patrol speed, contact damage, and committed-attack rules are no longer duplicated through the scene loop. This preserves the established Moss Crawler, Ember Moth, Dune Skirmisher, Frost Sentinel, Wind Wisp, Aegis Guard, Stone Brute, and Rune Caster behaviors while making future balancing safer. Moving platforms also carry Aster vertically as well as horizontally.
+
+`tools/test_pure_java_controllers.sh` compiles and executes the tactical decision layer without Android, allowing boss and enemy rules to be verified even when an Android SDK is unavailable.
+
 ## Illustrated Asset Refresh
 
 The gameplay renderer now uses original illustrated assets rather than simplified Canvas shapes for Aster, four enemy varieties, three boss variants, world scenery, platforms, spikes, checkpoints, coins, and realm gems. The Android-ready resources are optimized copies under `app/src/main/res/drawable-nodpi/`; the corresponding original art is retained under `art/`. This revision validates genuine PNG alpha transparency before packaging, so the generated assets no longer render with checkerboard or white backing boxes.
