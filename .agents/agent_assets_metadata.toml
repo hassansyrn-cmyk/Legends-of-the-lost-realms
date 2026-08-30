@@ -1,0 +1,16 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "6vqlN0PBXJYUJW0rVQBEW"
+uri = "file://Legends-of-the-Lost-Realms-github.zip"
+type = "unspecified"
+title = "Legends of the Lost Realms — GitHub ZIP"
+description = "GitHub-ready source archive with the current Android game, runtime assets, level data, tests, tools, documentation, and project configuration. Generated caches, installed dependencies, build output, and non-runtime reference artwork are excluded."
+logical_id = "99b0c29b-a9fc-4851-ad7b-55ba793ff462"
+content_hash = "sha256:33fec4ad2d95d19c39010e4ca38079e4829f62a4d54ddc28d7005aef808a5689"
+size = 74868530
+mtime_ms = 1788009477119
+storage_uri = "gcs://replit-rams-assets-sisko/rams/assets/repl:a4aa5632-0f54-482b-9dd8-2d4ea84fe188/99b0c29b-a9fc-4851-ad7b-55ba793ff462/370225e6-9b65-4cea-a16d-61b5cd29b467"
+storage_version_token = "1788009484706933"
+content_type = "application/octet-stream"

@@ -1,0 +1,11 @@
+Legends of the Lost Realms
+Build 4.12.0
+
+This build contains the Tactical Combat Pass:
+- Tactical multi-state boss encounters with attack-specific telegraphs.
+- Centralized, testable profiles for all eight enemy archetypes.
+- Vertical moving-platform carry for the player.
+
+Verify the build by checking:
+- The main menu displays "TACTICAL COMBAT PASS • BUILD 4.12.0".
+- app/build.gradle contains versionName '4.12.0' and versionCode 50.

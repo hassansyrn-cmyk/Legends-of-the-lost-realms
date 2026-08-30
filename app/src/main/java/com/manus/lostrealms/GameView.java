@@ -1041,6 +1041,7 @@ public class GameView extends View {
         button(c, 92, 335, 355, 405, "PLAY", Color.rgb(42,170,135));
         button(c, 92, 425, 355, 485, "UPGRADES", Color.rgb(55,107,144));
         button(c, 92, 505, 355, 565, "SETTINGS", Color.rgb(76,92,118));
+        text(c, "TACTICAL COMBAT PASS  •  BUILD 4.12.0", 92, 315, 13, Color.rgb(255, 222, 139));
         text(c, "Progress saved locally", 92, 620, 16, Color.rgb(190,216,209));
         badge(c, 1055, 72, "10 LEVELS"); badge(c, 1055, 118, "3 WORLDS");
         button(c, 1060, 600, 1235, 660, "DEV TOOLS", Color.rgb(82, 72, 126));
@@ -1809,7 +1810,7 @@ public class GameView extends View {
         drawImageAlpha(c,superHudBox,null,new RectF(662,27,693,58),78); p.setColor(Color.rgb(103,236,255));c.drawCircle(677,43,8,p);text(c,""+gemsRun,692,50,19,Color.WHITE);
         drawStageProgress(c);
         panel(c,950,18,1115,72); drawImage(c,uiEnergyBolt,null,new RectF(956,21,982,68)); text(c,powers[power],990,45,18,Color.rgb(232,250,244)); p.setColor(Color.rgb(36,55,68)); c.drawRoundRect(990,53,1100,61,4,4,p); p.setColor(Color.rgb(100,224,248)); c.drawRoundRect(990,53,990+110*(energy/maxEnergy),61,4,4,p); button(c,1140,18,1260,72,"II",Color.rgb(51,77,102));
-        if (data.boss && boss!=null && boss.hp>0) { panel(c,430,85,850,118); p.setColor(Color.rgb(75,43,51));c.drawRoundRect(445,94,835,109,7,7,p);p.setColor(Color.rgb(218,76,76));c.drawRoundRect(445,94,445+390*boss.hp/(float)boss.maxHp,109,7,7,p);centered(c,boss.name+" • Phase "+boss.phase,138,16,Color.WHITE); }
+        if (data.boss && boss!=null && boss.hp>0) { panel(c,430,85,850,118); p.setColor(Color.rgb(75,43,51));c.drawRoundRect(445,94,835,109,7,7,p);p.setColor(Color.rgb(218,76,76));c.drawRoundRect(445,94,445+390*boss.hp/(float)boss.maxHp,109,7,7,p);centered(c,boss.name+" • Phase "+boss.phase,138,16,Color.WHITE); if (boss.state == BossController.State.ATTACK_WINDUP && boss.attack != null) centeredAt(c, "TELEGRAPH  •  "+boss.attack.displayName.toUpperCase(java.util.Locale.US), 640, 158, 12, Color.rgb(255,222,139)); }
         if(screen==LEVEL)drawControls(c);
     }
 

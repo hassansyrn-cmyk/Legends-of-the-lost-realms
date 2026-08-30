@@ -4,6 +4,8 @@
 
 ## Tactical Boss AI Foundation v4.12.0
 
+The main menu visibly identifies this build as `TACTICAL COMBAT PASS • BUILD 4.12.0`. `BUILD_VERSION.txt` provides a quick source/build verification checklist for GitHub uploads.
+
 The three guardians now use an explicit combat state machine rather than continuously pacing and firing on a timer. They observe, approach, retreat, telegraph, execute, recover, stagger, and transition between phases. Attack choice considers range, vertical position, player velocity, dodge behavior, boss phase, and the previous attack, while deterministic tie-breaking keeps behavior testable and prevents immediate repeats. Each guardian now has close-range, lane-control, and final-phase pressure attacks with distinct windup and recovery timing. Dangerous actions display a named telegraph and expanding warning pulse before arena hazards become active. Charged finishers and perfect-dodge counters can briefly stagger a guardian without interrupting cinematic phase transitions.
 
 Enemy combat tuning now has a single profile for each of the eight existing archetypes. Detection range, vertical awareness, warning time, health, patrol speed, contact damage, and committed-attack rules are no longer duplicated through the scene loop. This preserves the established Moss Crawler, Ember Moth, Dune Skirmisher, Frost Sentinel, Wind Wisp, Aegis Guard, Stone Brute, and Rune Caster behaviors while making future balancing safer. Moving platforms also carry Aster vertically as well as horizontally.
