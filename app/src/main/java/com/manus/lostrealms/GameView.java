@@ -55,7 +55,10 @@ public class GameView extends View {
     private static final int BOSS_CELL = 384;
     private static final int PLATFORM_CELL_W = 384, PLATFORM_CELL_H = 160;
     private static final int WORLD_CELL_W = 192, WORLD_CELL_H = 256;
-    private static final float WORLD_CELL_BOTTOM_PAD = 10f;
+    // Fresh world sprites have a four-pixel transparent safety band. Mapping
+    // that band to the destination keeps the authored base exactly on the
+    // platform contact line instead of leaving a visible floating gap.
+    private static final float WORLD_CELL_BOTTOM_PAD = 4f;
     private static final int COLLECTIBLE_CELL = 128;
     private static final int EFFECT_CELL = 192;
     private static final int UI_CELL = 128;
@@ -1578,8 +1581,8 @@ public class GameView extends View {
             float surfaceY = supportingSurfaceY((rect.left + rect.right) * .5f, rect.bottom);
             int trapRow = Math.max(0, Math.min(2, data.world - 1));
             int trapFrame = h.active()
-                    ? 1 + frameIndex(animationClock, 3, 7.5f, rect.left * .01f)
-                    : Math.min(2, (int)(3f * h.age / Math.max(.01f, h.warning)));
+                    ? 2 + frameIndex(animationClock, 2, 8.5f, rect.left * .01f)
+                    : h.age > 0 ? 1 : 0;
             float trapHeight = 167f;
             float trapBottom = surfaceY + trapHeight * WORLD_CELL_BOTTOM_PAD / WORLD_CELL_H;
             RectF trapDestination = new RectF(mid-half-30, trapBottom-trapHeight, mid+half+30, trapBottom);
@@ -1852,6 +1855,7 @@ public class GameView extends View {
 
     private void drawPlayer(Canvas c) {
         float x=px-cameraX; if(invincible>0 && ((int)(invincible*18)%2==0) && screen!=GAMEOVER) return;
+        boolean moving=grounded&&Math.abs(vx)>22;
         boolean running=grounded&&Math.abs(vx)>55;
         boolean dashing=dashTime>0, sliding=slideTime>0&&grounded;
         float width=148f;
@@ -1859,9 +1863,12 @@ public class GameView extends View {
         RectF dest=new RectF(x-width/2,py-110,x+width/2,py+66);
         int heroRow;
         float heroFps;
-        if(screen==GAMEOVER||hurtTime>0){heroRow=3;heroFps=9f;}
-        else if(attackTime>0){heroRow=2;heroFps=14f;}
-        else if(!grounded||dashing||sliding||running){heroRow=1;heroFps=running?13f:9f;}
+        if(screen==GAMEOVER){heroRow=6;heroFps=7f;}
+        else if(hurtTime>0){heroRow=5;heroFps=10f;}
+        else if(attackTime>0){heroRow=3;heroFps=14f;}
+        else if(!grounded){heroRow=4;heroFps=9f;}
+        else if(dashing||sliding||running){heroRow=2;heroFps=14f;}
+        else if(moving){heroRow=1;heroFps=10f;}
         else {heroRow=0;heroFps=6f;}
         int heroFrame=frameIndex(animationClock,8,heroFps,attackTime>0?attackStage*.37f:0f);
         drawImageTransform(c,asterMotionSheet,asterFrame(heroRow,heroFrame),dest,0,facingLeft?-1f:1f,1f);
@@ -2032,19 +2039,22 @@ public class GameView extends View {
         // Keep every state on a contiguous pose range. The shared clock also
         // prevents a countdown timer from making a loop play backwards.
         if(enemy.state==EnemyController.HIT_REACTION)return 5;
-        if(enemy.state==EnemyController.ATTACK)return 3 + frameIndex(animationClock,3,10f,enemy.x*.01f);
-        if(enemy.state==EnemyController.WINDUP)return 2 + frameIndex(animationClock,2,7f,enemy.x*.01f);
+        if(enemy.state==EnemyController.ATTACK)return 4 + frameIndex(animationClock,2,10f,enemy.x*.01f);
+        if(enemy.state==EnemyController.WINDUP)return 3;
         if(enemy.state==EnemyController.NOTICE)return 2;
         if(enemy.state==EnemyController.RECOVERY)return 5;
-        if(enemy.state==EnemyController.PATROL)return frameIndex(animationClock,3,7.5f,enemy.x*.01f);
+        if(enemy.state==EnemyController.PATROL)return 2 + frameIndex(animationClock,2,7.5f,enemy.x*.01f);
         return frameIndex(animationClock,2,5f,enemy.x*.01f);
     }
     private int bossFrame(Boss target){
-        if(target.hitLock>0)return 5;
-        if(target.state==BossController.State.ATTACK_EXECUTE)return 4 + frameIndex(animationClock,2,10f,target.x*.01f);
-        if(target.state==BossController.State.ATTACK_WINDUP)return 3 + frameIndex(animationClock,2,7f,target.x*.01f);
-        if(target.state==BossController.State.ATTACK_RECOVERY)return 2 + frameIndex(animationClock,2,6f,target.x*.01f);
-        return frameIndex(animationClock,3,target.phase==1?4f:6f,target.world*.21f);
+        if(target.hitLock>0 || target.state==BossController.State.STAGGER)return 5;
+        if(target.state==BossController.State.ATTACK_EXECUTE)return 3 + frameIndex(animationClock,2,10f,target.x*.01f);
+        if(target.state==BossController.State.ATTACK_WINDUP
+                || target.state==BossController.State.PHASE_TRANSITION)return 2;
+        if(target.state==BossController.State.ATTACK_RECOVERY)return 5;
+        if(target.state==BossController.State.APPROACH
+                || target.state==BossController.State.RETREAT)return 1;
+        return frameIndex(animationClock,2,target.phase==1?4f:6f,target.world*.21f);
     }
     private float supportingSurfaceY(float worldX, float fallbackY){
         float best=fallbackY;

@@ -46,10 +46,10 @@ frame_helpers = GAME_VIEW[frame_start:frame_end]
 if "enemy.stateTime" in frame_helpers or "target.stateTime" in frame_helpers:
     raise SystemExit("state frame selection must not reverse when countdown timers decrease")
 for marker in (
-    "EnemyController.ATTACK)return 3 + frameIndex(animationClock,3",
-    "EnemyController.PATROL)return frameIndex(animationClock,3",
-    "State.ATTACK_EXECUTE)return 4 + frameIndex(animationClock,2",
-    "State.ATTACK_WINDUP)return 3 + frameIndex(animationClock,2",
+    "EnemyController.ATTACK)return 4 + frameIndex(animationClock,2",
+    "EnemyController.PATROL)return 2 + frameIndex(animationClock,2",
+    "State.ATTACK_EXECUTE)return 3 + frameIndex(animationClock,2",
+    "State.PHASE_TRANSITION)return 2;",
 ):
     if marker not in frame_helpers:
         raise SystemExit(f"Missing ordered state frame marker: {marker}")
