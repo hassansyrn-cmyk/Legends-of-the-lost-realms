@@ -16,6 +16,7 @@ python3 tools/test_boss_hud_layout.py
 python3 tools/test_layout_background_fix.py
 python3 tools/test_uploaded_asset_integration.py
 python3 tools/test_sprite_sheet_contract.py
+python3 tools/test_sprite_render_contract.py
 bash tools/test_pure_java_controllers.sh
 bash tools/test_scene_rules.sh
 

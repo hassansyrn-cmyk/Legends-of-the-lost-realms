@@ -91,6 +91,28 @@ def align_bottom(image: Image.Image, target_bottom: int) -> Image.Image:
     return canvas
 
 
+def validate_pose_sheet(path: Path, cell_w: int, cell_h: int, rows: int, columns: int) -> None:
+    """Fail generation if a pose loop starts resizing or losing its contact line."""
+    sheet = Image.open(path).convert("RGBA")
+    for row in range(rows):
+        boxes = []
+        for column in range(columns):
+            pose = frame(sheet, column, row, cell_w, cell_h)
+            box = alpha_box(pose)
+            if box[0] <= 0 or box[1] <= 0 or box[2] >= cell_w or box[3] >= cell_h:
+                raise RuntimeError(f"{path.name}: pose touches cell edge at row {row}, column {column}")
+            boxes.append(box)
+        bottoms = [box[3] for box in boxes]
+        widths = [box[2] - box[0] for box in boxes]
+        heights = [box[3] - box[1] for box in boxes]
+        if max(bottoms) - min(bottoms) > max(8, int(cell_h * .09)):
+            raise RuntimeError(f"{path.name}: unstable contact line in row {row}: {bottoms}")
+        if (max(widths) - min(widths)) / max(widths) > .24:
+            raise RuntimeError(f"{path.name}: unstable footprint width in row {row}: {widths}")
+        if (max(heights) - min(heights)) / max(heights) > .24:
+            raise RuntimeError(f"{path.name}: unstable footprint height in row {row}: {heights}")
+
+
 def rebuild_aster() -> None:
     path = RES / "aster_motion_sheet.png"
     old = clean_source(path.name)
@@ -108,6 +130,7 @@ def rebuild_aster() -> None:
             warped = align_bottom(anchored_warp(source, *pose), cell - 10)
             output.alpha_composite(warped, (column * cell, row * cell))
     output.save(path)
+    validate_pose_sheet(path, cell, cell, 4, 8)
 
 
 def rebuild_character_sheet(filename: str, cell: int, rows: int) -> None:
@@ -124,6 +147,7 @@ def rebuild_character_sheet(filename: str, cell: int, rows: int) -> None:
             warped = align_bottom(anchored_warp(source, *scaled), cell - 10)
             output.alpha_composite(warped, (column * cell, row * cell))
     output.save(path)
+    validate_pose_sheet(path, cell, cell, rows, 6)
 
 
 def rebuild_world() -> None:
@@ -148,6 +172,7 @@ def rebuild_world() -> None:
             warped = align_bottom(warped, cell_h - 10)
             output.alpha_composite(warped, (column * cell_w, row * cell_h))
     output.save(path)
+    validate_pose_sheet(path, cell_w, cell_h, 4, 4)
 
 
 if __name__ == "__main__":
