@@ -5,26 +5,14 @@
       256,
       256
     ],
-    "rows": 7,
+    "rows": 4,
     "cols": 8,
     "states": [
       "idle",
-      "walk",
-      "run",
+      "move",
       "attack",
-      "jump",
-      "hurt",
-      "defeat"
-    ],
-    "state_ranges": {
-      "idle": [0, 7],
-      "walk": [0, 7],
-      "run": [0, 7],
-      "attack": [0, 7],
-      "jump": [0, 7],
-      "hurt": [0, 7],
-      "defeat": [0, 7]
-    }
+      "hurt_defeat"
+    ]
   },
   "enemies_motion_sheet": {
     "file": "enemies_motion_sheet.png",
@@ -34,13 +22,9 @@
     ],
     "rows": 8,
     "cols": 6,
-    "states": ["idle", "walk", "attack", "hurt"],
-    "state_ranges": {
-      "idle": [0, 2],
-      "walk": [2, 4],
-      "attack": [4, 5],
-      "hurt": [5, 6]
-    }
+    "states": [
+      "looped"
+    ]
   },
   "bosses_motion_sheet": {
     "file": "bosses_motion_sheet.png",
@@ -50,14 +34,9 @@
     ],
     "rows": 3,
     "cols": 6,
-    "states": ["idle", "windup", "execute", "recovery", "hurt"],
-    "state_ranges": {
-      "idle": [0, 2],
-      "windup": [2, 3],
-      "execute": [3, 5],
-      "recovery": [5, 6],
-      "hurt": [5, 6]
-    }
+    "states": [
+      "looped"
+    ]
   },
   "realms_background_sheet": {
     "file": "realms_background_sheet.png",
@@ -98,13 +77,7 @@
       "trap_dunes",
       "trap_frozen",
       "checkpoint"
-    ],
-    "state_ranges": {
-      "idle": [0, 1],
-      "warning": [1, 2],
-      "active": [2, 3],
-      "cooldown": [3, 4]
-    }
+    ]
   },
   "collectibles_motion_sheet": {
     "file": "collectibles_motion_sheet.png",

@@ -30,7 +30,7 @@ required = [
     "R.drawable.enemies_motion_sheet",
     "enemyFrame(e)",
     "drawImageTransform(c,enemySpriteSheet,enemyFrame(",
-    "enemy.state==EnemyController.HIT_REACTION",
+    "e.state==EnemyController.HIT_REACTION",
 ]
 for marker in required:
     if marker not in GAME_VIEW:

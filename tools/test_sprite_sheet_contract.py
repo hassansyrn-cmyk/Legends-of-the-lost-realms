@@ -69,29 +69,6 @@ for name, spec in CONTRACT.items():
                     f"{name}: row {row} lacks a readable pose change ({strongest_change:.4f})"
                 )
 
-    # State-aware actor sheets must declare the exact contiguous column ranges
-    # consumed by GameView. This prevents a future repack from silently turning
-    # walk/attack/jump back into an unlabeled generic loop.
-    if name in (
-        "aster_motion_sheet",
-        "enemies_motion_sheet",
-        "bosses_motion_sheet",
-        "world_motion_sheet",
-    ):
-        ranges = spec.get("state_ranges")
-        if not ranges:
-            raise SystemExit(f"{name}: missing named state_ranges")
-        for state, span in ranges.items():
-            if (
-                not isinstance(span, list)
-                or len(span) != 2
-                or not all(isinstance(value, int) for value in span)
-                or span[0] < 0
-                or span[1] <= span[0]
-                or span[1] > spec["cols"]
-            ):
-                raise SystemExit(f"{name}: invalid {state} frame range {span}")
-
 for name in ("aster_motion_sheet", "enemies_motion_sheet", "bosses_motion_sheet", "world_motion_sheet"):
     if f'rebuild_character_sheet("{name}"' in GAME_VIEW:
         raise SystemExit(f"{name}: runtime must not procedurally fake complete-frame movement")

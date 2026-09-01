@@ -50,15 +50,16 @@ public class GameView extends View {
     // Runtime art is packed into fixed-cell sheets to keep texture switches predictable.
     private final Bitmap asterMotionSheet, enemySpriteSheet, bossSpriteSheet, realmBackgroundSheet,
             platformSpriteSheet, worldSpriteSheet, collectibleSpriteSheet, effectsSpriteSheet, uiSpriteSheet;
+    // Fallback character art uses one clean, opaque subject per archetype; motion is applied
+    // procedurally in Canvas so malformed sprite-sheet padding cannot make characters ghostly.
+    private final Bitmap heroPremiumSprite;
+    private final Bitmap[] enemyPremiumSprites = new Bitmap[8];
+    private final Bitmap[] bossPremiumSprites = new Bitmap[3];
     private static final int ASTER_CELL = 256;
     private static final int ENEMY_CELL = 192;
     private static final int BOSS_CELL = 384;
     private static final int PLATFORM_CELL_W = 384, PLATFORM_CELL_H = 160;
     private static final int WORLD_CELL_W = 192, WORLD_CELL_H = 256;
-    // Fresh world sprites have a four-pixel transparent safety band. Mapping
-    // that band to the destination keeps the authored base exactly on the
-    // platform contact line instead of leaving a visible floating gap.
-    private static final float WORLD_CELL_BOTTOM_PAD = 4f;
     private static final int COLLECTIBLE_CELL = 128;
     private static final int EFFECT_CELL = 192;
     private static final int UI_CELL = 128;
@@ -177,6 +178,18 @@ public class GameView extends View {
         collectibleSpriteSheet = BitmapFactory.decodeResource(getResources(), R.drawable.collectibles_motion_sheet);
         effectsSpriteSheet = BitmapFactory.decodeResource(getResources(), R.drawable.effects_motion_sheet);
         uiSpriteSheet = BitmapFactory.decodeResource(getResources(), R.drawable.ui_motion_sheet);
+        heroPremiumSprite = BitmapFactory.decodeResource(getResources(), R.drawable.aster_premium);
+        enemyPremiumSprites[0] = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_moss_premium);
+        enemyPremiumSprites[1] = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_ember_moth_premium);
+        enemyPremiumSprites[2] = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_dune_premium);
+        enemyPremiumSprites[3] = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_frost_premium);
+        enemyPremiumSprites[4] = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_wisp_premium);
+        enemyPremiumSprites[5] = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_aegis_premium);
+        enemyPremiumSprites[6] = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_brute_premium);
+        enemyPremiumSprites[7] = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_caster_premium);
+        bossPremiumSprites[0] = BitmapFactory.decodeResource(getResources(), R.drawable.boss_heartwood_premium);
+        bossPremiumSprites[1] = BitmapFactory.decodeResource(getResources(), R.drawable.boss_sunscar_premium);
+        bossPremiumSprites[2] = BitmapFactory.decodeResource(getResources(), R.drawable.boss_whiteout_premium);
         audio.startMusic(context);
     }
 
@@ -1572,31 +1585,30 @@ public class GameView extends View {
         }
         for (Hazard h: hazards) {
             RectF rect=h.rect(); float x=rect.left-cameraX, pulse = 1f + .07f * (float)Math.sin(animationClock*5f+rect.left*.03f), mid=(x+rect.right-cameraX)*.5f, half=(rect.right-rect.left)*.5f*pulse;
+            float rise = 1f;
             if (!h.active()) {
                 float warningProgress = h.age / Math.max(.01f, h.warning);
+                rise = .18f + .82f * warningProgress;
                 int warnColor=h.style==1?Color.rgb(114,238,141):h.style==2?Color.rgb(255,188,80):h.style==3?Color.rgb(126,225,255):Color.rgb(255,186,64);
                 p.setColor(Color.argb((int)(50+120*warningProgress),Color.red(warnColor),Color.green(warnColor),Color.blue(warnColor)));
                 c.drawOval(new RectF(mid-half-12,rect.top-13,mid+half+12,rect.bottom+12),p);
             }
             float surfaceY = supportingSurfaceY((rect.left + rect.right) * .5f, rect.bottom);
-            int trapRow = Math.max(0, Math.min(2, data.world - 1));
-            int trapFrame = h.active()
-                    ? 2 + frameIndex(animationClock, 2, 8.5f, rect.left * .01f)
-                    : h.age > 0 ? 1 : 0;
-            float trapHeight = 167f;
-            float trapBottom = surfaceY + trapHeight * WORLD_CELL_BOTTOM_PAD / WORLD_CELL_H;
-            RectF trapDestination = new RectF(mid-half-30, trapBottom-trapHeight, mid+half+30, trapBottom);
-            drawImage(c, worldSpriteSheet, worldFrame(trapRow, trapFrame), trapDestination);
+             int trapRow = Math.max(0, Math.min(2, data.world - 1));
+             int trapFrame = h.active()
+                     ? 1 + frameIndex(animationClock, 3, 7.5f, rect.left * .01f)
+                     : Math.min(2, (int)(3f * h.age / Math.max(.01f, h.warning)));
+            RectF trapDestination = new RectF(mid-half-30, surfaceY-167, mid+half+30, surfaceY);
+             drawImageBottomScaled(c, worldSpriteSheet, worldFrame(trapRow, trapFrame), trapDestination, rise);
         }
         float flag=checkpointMarkerX-cameraX;
         if(flag>-80&&flag<VW) {
             float checkpointBaseY = supportingSurfaceY(checkpointMarkerX, checkpointMarkerY + 54f);
             if(checkpointActive) { p.setColor(Color.argb(82,93,236,207)); c.drawCircle(flag+18,checkpointBaseY-112,52,p); p.setColor(Color.argb(225,253,232,111)); c.drawCircle(flag+18,checkpointBaseY-112,9,p); }
-            int checkpointFrame = (checkpointActive ? 2 : 0) + frameIndex(animationClock, 2, 5.5f, 0);
-            float checkpointHeight = 182f;
-            float checkpointBottom = checkpointBaseY + checkpointHeight * WORLD_CELL_BOTTOM_PAD / WORLD_CELL_H;
-            drawImage(c, worldSpriteSheet, worldFrame(3, checkpointFrame),
-                    new RectF(flag-48,checkpointBottom-checkpointHeight,flag+84,checkpointBottom));
+            float shrinePulse = checkpointActive ? 1f + .025f*(float)Math.sin(animationClock*5f) : 1f;
+             int checkpointFrame = (checkpointActive ? 2 : 0) + frameIndex(animationClock, 2, 5.5f, 0);
+             drawImageTransform(c, worldSpriteSheet, worldFrame(3, checkpointFrame),
+                     new RectF(flag-48,checkpointBaseY-182,flag+84,checkpointBaseY), 0, shrinePulse, shrinePulse);
         }
     }
 
@@ -1679,10 +1691,17 @@ public class GameView extends View {
             float scale = e.kind==EnemyController.HEAVY_BRUTE?1.34f:e.kind==EnemyController.SHIELD_GUARD?1.12f:
                     e.kind==EnemyController.WIND_WISP?.9f:e.kind==EnemyController.FLYING_SWOOOPER?1.08f:1f;
             float width=104f*scale, height=118f*scale;
-            float bottom=(e.kind==EnemyController.FLYING_SWOOOPER||e.kind==EnemyController.FROST_SENTINEL||e.kind==EnemyController.WIND_WISP)?e.y+34:e.y+45;
+            float bottom=(e.kind==EnemyController.FLYING_SWOOOPER||e.kind==EnemyController.FROST_SENTINEL||e.kind==EnemyController.WIND_WISP)?e.y+34+bob:e.y+45+bob;
+            float squash=1f+.035f*(float)Math.sin(phase);
+            float attackLean=attacking?(e.dir>0?8f:-8f):e.state==EnemyController.RECOVERY?(e.dir>0?-4f:4f):0f;
+            float hitScale=e.state==EnemyController.HIT_REACTION?.90f:1f;
+            // Premium enemy art faces right by default; enemies always look toward Aster.
+            float facing = px < e.x ? -squash : squash;
             int enemyFrame = enemyFrame(e);
-            drawImageTransform(c,enemySpriteSheet,enemyFrame(Math.max(0,Math.min(7,e.kind)), enemyFrame),
-                    new RectF(x-width/2,bottom-height,x+width/2,bottom),0,e.dir<0?-1f:1f,1f);
+            Bitmap enemyArt = enemyPremiumSprites[Math.max(0, Math.min(enemyPremiumSprites.length - 1, e.kind))];
+            drawImageTransformAlpha(c, enemyArt,
+                    new RectF(x-width/2,bottom-height,x+width/2,bottom), attackLean,
+                    facing*hitScale, (2f-squash)*hitScale, 255);
             if (e.burnTime > 0) { p.setColor(Color.argb(105, 255, 120, 52)); c.drawCircle(x, e.y - 11 + bob, 46 + 3*(float)Math.sin(animationClock*8f), p); }
             if (e.hurtTime > 0) { p.setColor(Color.argb(92, 255, 240, 177)); c.drawCircle(x, e.y - 12 + bob, 38, p); }
             if(e.frozen>0) { p.setColor(Color.argb(95,142,232,255)); c.drawCircle(x,e.y-5+bob,44,p); }
@@ -1777,9 +1796,10 @@ public class GameView extends View {
 
     private void drawBoss(Canvas c) {
         if (boss==null)return;
-        float x=boss.x-cameraX;
-        float bossFacingScale = px < boss.x ? -1f : 1f;
-        float bossGroundY = boss.y + 80f;
+        float x=boss.x-cameraX, phase=animationClock*(boss.phase==2?3.4f:2.1f), bob=(float)Math.sin(phase)*4f;
+        // boss_*_premium art faces left by default; flip only when the player is to the right.
+        float bossFacingScale = px < boss.x ? 1f : -1f;
+        float bossGroundY = boss.y + 80f + bob;
         if (boss.burnTime > 0) { p.setColor(Color.argb(95,255,126,58)); c.drawCircle(x,bossGroundY-148,126+5*(float)Math.sin(animationClock*8f),p); }
         if (boss.frostSlowTime > 0) { p.setColor(Color.argb(85,142,232,255)); c.drawCircle(x,bossGroundY-148,132,p); }
         if (boss.exposedTime > 0 || boss.armorCrackedTime > 0
@@ -1797,14 +1817,19 @@ public class GameView extends View {
             c.drawCircle(x, bossGroundY - 148, 108 + telegraphProgress * 28, p);
             p.setStyle(Paint.Style.FILL);
         }
+        float breath=1f+.018f*(float)Math.sin(phase*1.35f);
+        float charge=boss.state==BossController.State.ATTACK_WINDUP?.65f:
+                boss.state==BossController.State.ATTACK_EXECUTE?1f:0f;
+        float hurt=boss.hitLock>0?.92f:1f;
         float bossWidth=boss.world==3?330f:300f;
         float bossHeight=boss.world==3?356f:330f;
+        float lean=(px<boss.x?-1f:1f)*(charge*7f-(boss.hitLock>0?5f:0f));
         RectF bossDestination=new RectF(x-bossWidth/2,bossGroundY-bossHeight,x+bossWidth/2,bossGroundY);
-        int bossFrame = bossFrame(boss);
-        drawImageTransform(c,bossSpriteSheet,bossFrame(Math.max(0,Math.min(2,boss.world-1)), bossFrame),
-                bossDestination,0,bossFacingScale,1f);
+        Bitmap bossArt = bossPremiumSprites[Math.max(0, Math.min(bossPremiumSprites.length - 1, boss.world - 1))];
+        drawImageTransformAlpha(c, bossArt, bossDestination, lean,
+                bossFacingScale*hurt/breath, breath*hurt, 255);
         // Keep the boss label and health bar safely above the tallest sprite frame.
-        float bossHudY = boss.y - 380;
+        float bossHudY = boss.y - 380 + bob;
         p.setColor(Color.argb(230,255,255,255)); c.drawRect(x-96, bossHudY, x+96, bossHudY+13, p);
         p.setColor(Color.rgb(211,64,68)); c.drawRect(x-96, bossHudY, x-96+192*(boss.hp/(float)boss.maxHp), bossHudY+13, p);
         BossController.Profile profile=BossController.profile(boss.world);
@@ -1855,24 +1880,38 @@ public class GameView extends View {
 
     private void drawPlayer(Canvas c) {
         float x=px-cameraX; if(invincible>0 && ((int)(invincible*18)%2==0) && screen!=GAMEOVER) return;
-        boolean moving=grounded&&Math.abs(vx)>22;
+        float stride=(float)Math.sin(animationClock*11f), idle=(float)Math.sin(animationClock*2.1f);
         boolean running=grounded&&Math.abs(vx)>55;
         boolean dashing=dashTime>0, sliding=slideTime>0&&grounded;
-        float width=148f;
+        float width; float bob; float lean;
+        if(screen==GAMEOVER){width=150;bob=12;lean=82;}
+        else if(hurtTime>0){width=148;bob=0;lean=facingLeft?8:-8;}
+        else if(attackTime>0){width=airAttack?166:(chargedAttack?188:attackStage>=4?190:attackStage==3?178:attackStage==2?172:160);bob=0;lean=facingLeft?12:-12;}
+        else if(dashing||sliding){width=dashing?154:145;bob=sliding?5:0;lean=facingLeft?-9:9;}
+        else if(!grounded){width=142;bob=-3;lean=facingLeft?5:-5;}
+        else if(running){width=148;bob=Math.abs(stride)*3f;lean=stride*2.4f;}
+        else {width=145;bob=idle*1.8f;lean=idle*1.2f;}
+        float land = Math.max(0, landingPulse / .14f);
+        float sx=(running?1f+stride*.016f:1f-idle*.01f) - land*.075f, sy=(running?1f-stride*.02f:1f+idle*.012f) + land*.14f;
+        if (JUICE_ENABLED && playerSquashTime > 0) {
+            float squash = Math.min(1f, playerSquashTime / (playerSquashLanding ? .12f : .085f));
+            if (playerSquashLanding) { sx += .10f * squash; sy -= .13f * squash; }
+            else { sx -= .055f * squash; sy += .075f * squash; }
+        }
         if(grounded){p.setColor(Color.argb(72,3,12,16));c.drawOval(new RectF(x-width*.31f,py+48,x+width*.31f,py+61),p);}
-        RectF dest=new RectF(x-width/2,py-110,x+width/2,py+66);
+        // The clean 512px hero portrait has stable transparent bounds, so the silhouette
+        // no longer jumps sideways as different sheet cells are selected.
+        width *= 1.18f;
+        RectF dest=new RectF(x-width/2,py-110+bob,x+width/2,py+66+bob);
         int heroRow;
         float heroFps;
-        if(screen==GAMEOVER){heroRow=6;heroFps=7f;}
-        else if(hurtTime>0){heroRow=5;heroFps=10f;}
-        else if(attackTime>0){heroRow=3;heroFps=14f;}
-        else if(!grounded){heroRow=4;heroFps=9f;}
-        else if(dashing||sliding||running){heroRow=2;heroFps=14f;}
-        else if(moving){heroRow=1;heroFps=10f;}
+        if(screen==GAMEOVER||hurtTime>0){heroRow=3;heroFps=9f;}
+        else if(attackTime>0){heroRow=2;heroFps=14f;}
+        else if(!grounded||dashing||sliding||running){heroRow=1;heroFps=running?13f:9f;}
         else {heroRow=0;heroFps=6f;}
-        int heroFrame=frameIndex(animationClock,8,heroFps,attackTime>0?attackStage*.37f:0f);
-        drawImageTransform(c,asterMotionSheet,asterFrame(heroRow,heroFrame),dest,0,facingLeft?-1f:1f,1f);
-        if(powerTime>0){p.setColor(Color.argb(80,Color.red(data.accent),Color.green(data.accent),Color.blue(data.accent)));c.drawCircle(x,py+25,65+4*(float)Math.sin(animationClock*9f),p);}
+        drawImageTransformAlpha(c, heroPremiumSprite, dest, lean,
+                facingLeft ? -sx : sx, sy, 255);
+        if(powerTime>0){p.setColor(Color.argb(80,Color.red(data.accent),Color.green(data.accent),Color.blue(data.accent)));c.drawCircle(x,py+25+bob,65+4*(float)Math.sin(animationClock*9f),p);}
     }
 
     private void drawEffects(Canvas c) {
@@ -2017,6 +2056,14 @@ public class GameView extends View {
         c.save();c.rotate(degrees,cx,cy);c.scale(scaleX,scaleY,cx,cy);
         p.setAlpha(Math.max(0,Math.min(255,alpha)));c.drawBitmap(image,source,destination,p);p.setAlpha(255);c.restore();
     }
+    private void drawImageBottomScaled(Canvas c, Bitmap image, Rect source, RectF destination, float scaleY) {
+        if (image == null) return;
+        c.save();
+        c.scale(1f, scaleY, destination.centerX(), destination.bottom);
+        p.setAlpha(255);
+        c.drawBitmap(image, source, destination, p);
+        c.restore();
+    }
     private static Rect cell(int column,int row,int width,int height){return new Rect(column*width,row*height,(column+1)*width,(row+1)*height);}
     private static Rect asterFrame(int row,int frame){return cell(frame,row,ASTER_CELL,ASTER_CELL);}
     private static Rect enemyFrame(int row,int frame){return cell(frame,row,ENEMY_CELL,ENEMY_CELL);}
@@ -2036,25 +2083,19 @@ public class GameView extends View {
         return Math.max(0,Math.min(count-1,(int)(progress*count)));
     }
     private int enemyFrame(Foe enemy){
-        // Keep every state on a contiguous pose range. The shared clock also
-        // prevents a countdown timer from making a loop play backwards.
+        if(enemy.state==EnemyController.ATTACK)return 4 + frameIndex(enemy.stateTime,2,12f,0);
+        if(enemy.state==EnemyController.WINDUP||enemy.state==EnemyController.NOTICE)return 3 + frameIndex(enemy.stateTime,2,8f,0);
         if(enemy.state==EnemyController.HIT_REACTION)return 5;
-        if(enemy.state==EnemyController.ATTACK)return 4 + frameIndex(animationClock,2,10f,enemy.x*.01f);
-        if(enemy.state==EnemyController.WINDUP)return 3;
-        if(enemy.state==EnemyController.NOTICE)return 2;
-        if(enemy.state==EnemyController.RECOVERY)return 5;
-        if(enemy.state==EnemyController.PATROL)return 2 + frameIndex(animationClock,2,7.5f,enemy.x*.01f);
+        if(enemy.state==EnemyController.RECOVERY)return 2 + frameIndex(enemy.stateTime,2,7f,0);
+        if(enemy.state==EnemyController.PATROL)return 1 + frameIndex(animationClock,2,8f,enemy.x*.01f);
         return frameIndex(animationClock,2,5f,enemy.x*.01f);
     }
     private int bossFrame(Boss target){
-        if(target.hitLock>0 || target.state==BossController.State.STAGGER)return 5;
-        if(target.state==BossController.State.ATTACK_EXECUTE)return 3 + frameIndex(animationClock,2,10f,target.x*.01f);
-        if(target.state==BossController.State.ATTACK_WINDUP
-                || target.state==BossController.State.PHASE_TRANSITION)return 2;
-        if(target.state==BossController.State.ATTACK_RECOVERY)return 5;
-        if(target.state==BossController.State.APPROACH
-                || target.state==BossController.State.RETREAT)return 1;
-        return frameIndex(animationClock,2,target.phase==1?4f:6f,target.world*.21f);
+        if(target.hitLock>0)return 5;
+        if(target.state==BossController.State.ATTACK_EXECUTE)return 4 + frameIndex(target.stateTime,2,10f,0);
+        if(target.state==BossController.State.ATTACK_WINDUP)return 3 + frameIndex(target.stateTime,2,7f,0);
+        if(target.state==BossController.State.ATTACK_RECOVERY)return 2 + frameIndex(target.stateTime,2,6f,0);
+        return frameIndex(animationClock,3,target.phase==1?4f:6f,target.world*.21f);
     }
     private float supportingSurfaceY(float worldX, float fallbackY){
         float best=fallbackY;

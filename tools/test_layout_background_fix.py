@@ -14,10 +14,9 @@ required_markers = [
     "float parallax = cameraX * .035f;",
     "drawPremiumPlatform(c, pl, x, bob);",
     "float surfaceY = supportingSurfaceY((rect.left + rect.right) * .5f, rect.bottom);",
-    "float trapBottom = surfaceY + trapHeight * WORLD_CELL_BOTTOM_PAD / WORLD_CELL_H;",
-    "drawImage(c, worldSpriteSheet, worldFrame(trapRow, trapFrame), trapDestination);",
+    "RectF trapDestination = new RectF(mid-half-30, surfaceY-167, mid+half+30, surfaceY);",
+    "drawImageBottomScaled(c, worldSpriteSheet, worldFrame(trapRow, trapFrame), trapDestination, rise);",
     "float checkpointBaseY = supportingSurfaceY(checkpointMarkerX, checkpointMarkerY + 54f);",
-    "float checkpointBottom = checkpointBaseY + checkpointHeight * WORLD_CELL_BOTTOM_PAD / WORLD_CELL_H;",
     "worldFrame(3, checkpointFrame)",
     "effectFrame(0,",
 ]
