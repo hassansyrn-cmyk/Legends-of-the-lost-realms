@@ -1677,7 +1677,8 @@ public class GameView extends View {
             float phase=animationClock*(e.kind==1?5.2f:3.4f)+e.x*.025f, x=e.x-cameraX; if(x<-120||x>VW+120)continue;
             boolean attacking=e.state==EnemyController.ATTACK;
             boolean warning=e.state==EnemyController.NOTICE||e.state==EnemyController.WINDUP;
-            float bob=((e.kind==1||e.kind==3||e.kind==7)?(float)Math.sin(phase)*8:(float)Math.sin(phase)*2f);
+            // Four clearly visible procedural pose beats, while the destination stays centered.
+            float bob=((e.kind==1||e.kind==3||e.kind==7)?(float)Math.sin(phase)*10:(float)Math.sin(phase)*6f);
             if(warning) { int warnColor=EnemyController.archetype(e.kind).accentColor; p.setColor(Color.argb(96,Color.red(warnColor),Color.green(warnColor),Color.blue(warnColor))); c.drawCircle(x,e.y-22+bob,42+4*(float)Math.sin(animationClock*14f),p); }
             if(e.state==EnemyController.NOTICE) {
                 text(c,"!",x-5,e.y-82+bob,22,Color.WHITE);
@@ -1692,7 +1693,7 @@ public class GameView extends View {
                     e.kind==EnemyController.WIND_WISP?.9f:e.kind==EnemyController.FLYING_SWOOOPER?1.08f:1f;
             float width=104f*scale, height=118f*scale;
             float bottom=(e.kind==EnemyController.FLYING_SWOOOPER||e.kind==EnemyController.FROST_SENTINEL||e.kind==EnemyController.WIND_WISP)?e.y+34+bob:e.y+45+bob;
-            float squash=1f+.035f*(float)Math.sin(phase);
+            float squash=1f+.075f*(float)Math.sin(phase);
             float attackLean=attacking?(e.dir>0?8f:-8f):e.state==EnemyController.RECOVERY?(e.dir>0?-4f:4f):0f;
             float hitScale=e.state==EnemyController.HIT_REACTION?.90f:1f;
             // Premium enemy art faces right by default; enemies always look toward Aster.
@@ -1796,7 +1797,8 @@ public class GameView extends View {
 
     private void drawBoss(Canvas c) {
         if (boss==null)return;
-        float x=boss.x-cameraX, phase=animationClock*(boss.phase==2?3.4f:2.1f), bob=(float)Math.sin(phase)*4f;
+                    float x=boss.x-cameraX, phase=animationClock*(boss.phase==2?3.8f:2.6f), bob=(float)Math.sin(phase)*7f;
+
         // boss_*_premium art faces left by default; flip only when the player is to the right.
         float bossFacingScale = px < boss.x ? 1f : -1f;
         float bossGroundY = boss.y + 80f + bob;
@@ -1817,13 +1819,14 @@ public class GameView extends View {
             c.drawCircle(x, bossGroundY - 148, 108 + telegraphProgress * 28, p);
             p.setStyle(Paint.Style.FILL);
         }
-        float breath=1f+.018f*(float)Math.sin(phase*1.35f);
+        float breath=1f+.045f*(float)Math.sin(phase*1.35f);
         float charge=boss.state==BossController.State.ATTACK_WINDUP?.65f:
                 boss.state==BossController.State.ATTACK_EXECUTE?1f:0f;
         float hurt=boss.hitLock>0?.92f:1f;
         float bossWidth=boss.world==3?330f:300f;
         float bossHeight=boss.world==3?356f:330f;
-        float lean=(px<boss.x?-1f:1f)*(charge*7f-(boss.hitLock>0?5f:0f));
+        float lean=(px<boss.x?-1f:1f)*(charge*7f-(boss.hitLock>0?5f:0f))
+                + (float)Math.sin(phase*1.1f)*3.5f;
         RectF bossDestination=new RectF(x-bossWidth/2,bossGroundY-bossHeight,x+bossWidth/2,bossGroundY);
         Bitmap bossArt = bossPremiumSprites[Math.max(0, Math.min(bossPremiumSprites.length - 1, boss.world - 1))];
         drawImageTransformAlpha(c, bossArt, bossDestination, lean,
@@ -1889,10 +1892,10 @@ public class GameView extends View {
         else if(attackTime>0){width=airAttack?166:(chargedAttack?188:attackStage>=4?190:attackStage==3?178:attackStage==2?172:160);bob=0;lean=facingLeft?12:-12;}
         else if(dashing||sliding){width=dashing?154:145;bob=sliding?5:0;lean=facingLeft?-9:9;}
         else if(!grounded){width=142;bob=-3;lean=facingLeft?5:-5;}
-        else if(running){width=148;bob=Math.abs(stride)*3f;lean=stride*2.4f;}
+        else if(running){width=148;bob=Math.abs(stride)*9f;lean=stride*5.5f;}
         else {width=145;bob=idle*1.8f;lean=idle*1.2f;}
         float land = Math.max(0, landingPulse / .14f);
-        float sx=(running?1f+stride*.016f:1f-idle*.01f) - land*.075f, sy=(running?1f-stride*.02f:1f+idle*.012f) + land*.14f;
+        float sx=(running?1f+stride*.04f:1f-idle*.018f) - land*.075f, sy=(running?1f-stride*.05f:1f+idle*.02f) + land*.14f;
         if (JUICE_ENABLED && playerSquashTime > 0) {
             float squash = Math.min(1f, playerSquashTime / (playerSquashLanding ? .12f : .085f));
             if (playerSquashLanding) { sx += .10f * squash; sy -= .13f * squash; }
