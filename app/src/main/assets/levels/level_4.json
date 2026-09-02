@@ -9,10 +9,10 @@
   "design": {
     "role": "MASTERY",
     "primaryMechanic": "Boss pattern reading and arena movement",
-    "playerBrief": "Watch Thornwold\u2019s warning roots, move through the opening, then attack.",
-    "safePathIntent": "Arena platforms give multiple safe landing positions between root attacks.",
-    "riskPathIntent": "Closer attack positions shorten the fight but demand faster reads.",
-    "restBeatIntent": "Boss attack cooldowns create deliberate windows to reposition and recover."
+    "playerBrief": "Read Thornwold\u2019s roots, rotate through the four perches, then counter from the clear lane.",
+    "safePathIntent": "Alternating high and low perches bypass two permanent root beds and preserve retreat options.",
+    "riskPathIntent": "Ground-level counter lanes shorten the fight but cross the guardian\u2019s root coverage.",
+    "restBeatIntent": "The outer arena and elevated stones provide deliberate reset positions between attacks."
   },
   "platforms": [
     {
@@ -135,11 +135,24 @@
     }
   ],
   "foes": [],
-  "hazards": [],
+  "hazards": [
+    {
+      "left": 620,
+      "top": 592,
+      "right": 710,
+      "bottom": 620
+    },
+    {
+      "left": 1285,
+      "top": 592,
+      "right": 1375,
+      "bottom": 620
+    }
+  ],
   "boss": {
     "x": 1920,
     "y": 540,
-    "name": "Thornwold, Corrupted Guardian",
+    "name": "Heartwood Colossus",
     "world": 1
   },
   "environment": {

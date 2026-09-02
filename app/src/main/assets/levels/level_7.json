@@ -9,10 +9,10 @@
   "design": {
     "role": "MASTERY",
     "primaryMechanic": "Dune guardian telegraphs and hazard avoidance",
-    "playerBrief": "Read Akaros\u2019s marked ground, evade the slam, then counterattack.",
-    "safePathIntent": "Arena spacing supports lateral dodges and clear sightlines to the boss.",
-    "riskPathIntent": "Attacking at close range creates faster damage opportunities during small safe windows.",
-    "restBeatIntent": "Boss cooldowns provide planned reset time before the next marked strike."
+    "playerBrief": "Track Akaros across three scorched lanes and use the sandstone terraces during each slam.",
+    "safePathIntent": "Six alternating terraces bridge the permanent heat scars and preserve long dodge lanes.",
+    "riskPathIntent": "The low center line offers faster counters while exposing three marked ground zones.",
+    "restBeatIntent": "The arena edges and high terraces remain clear reset spaces after every slam."
   },
   "platforms": [
     {
@@ -145,16 +145,48 @@
     }
   ],
   "foes": [],
-  "hazards": [],
+  "hazards": [
+    {
+      "left": 535,
+      "top": 592,
+      "right": 610,
+      "bottom": 620
+    },
+    {
+      "left": 900,
+      "top": 592,
+      "right": 975,
+      "bottom": 620
+    },
+    {
+      "left": 1535,
+      "top": 592,
+      "right": 1610,
+      "bottom": 620
+    }
+  ],
   "boss": {
     "x": 1920,
     "y": 540,
-    "name": "Akaros, Stone Warden",
+    "name": "Sunscar Titan",
     "world": 2
   },
   "environment": {
     "windZones": [],
-    "heatZones": [],
+    "heatZones": [
+      {
+        "left": 535,
+        "top": 570,
+        "right": 610,
+        "bottom": 620
+      },
+      {
+        "left": 1535,
+        "top": 570,
+        "right": 1610,
+        "bottom": 620
+      }
+    ],
     "icicleSpawners": []
   },
   "secrets": []

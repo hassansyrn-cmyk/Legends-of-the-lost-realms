@@ -1,6 +1,7 @@
 from pathlib import Path
 
-source = Path('/home/ubuntu/lost-realms/app/src/main/java/com/manus/lostrealms/SaveManager.java').read_text(encoding='utf-8')
+project_root = Path(__file__).resolve().parents[1]
+source = (project_root / 'app/src/main/java/com/manus/lostrealms/SaveManager.java').read_text(encoding='utf-8')
 required = [
     'CURRENT_SCHEMA_VERSION = 5',
     'migrateIfNeeded()',

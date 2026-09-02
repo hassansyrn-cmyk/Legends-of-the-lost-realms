@@ -9,10 +9,10 @@
   "design": {
     "role": "COMBINE",
     "primaryMechanic": "Ice movement, enemy pressure, and precise climbing",
-    "playerBrief": "Chain ice control, climbing, and combat through the crystal route.",
-    "safePathIntent": "A grounded route remains available when the high crystal line feels too risky.",
-    "riskPathIntent": "Higher gems reward exact landings and efficient movement under enemy pressure.",
-    "restBeatIntent": "Wide crystal shelves create recovery moments between combined challenges."
+    "playerBrief": "Chain the crystal stairs before they fall, then fight through the crossing wind.",
+    "safePathIntent": "Six grounded caverns remain available around four spike seams and the denser patrols.",
+    "riskPathIntent": "Five brittle steps, a moving crystal, two icicle lanes, and the hidden cache form the expert line.",
+    "restBeatIntent": "Wide stone caverns isolate each two-enemy combination and restore traction."
   },
   "platforms": [
     {
@@ -131,9 +131,9 @@
       "width": 130,
       "crumble": false,
       "material": "ICE",
-      "moveX": 0,
+      "moveX": 55,
       "moveY": 0,
-      "moveSpeed": 0
+      "moveSpeed": 1.2
     },
     {
       "x": 1420,
@@ -340,6 +340,16 @@
       "x": 1670,
       "y": 366,
       "kind": 4
+    },
+    {
+      "x": 635,
+      "y": 319,
+      "kind": 3
+    },
+    {
+      "x": 1845,
+      "y": 294,
+      "kind": 7
     }
   ],
   "hazards": [
@@ -359,6 +369,12 @@
       "left": 1680,
       "top": 592,
       "right": 1755,
+      "bottom": 620
+    },
+    {
+      "left": 1300,
+      "top": 592,
+      "right": 1355,
       "bottom": 620
     }
   ],

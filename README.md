@@ -2,9 +2,23 @@
 
 **Legends of the Lost Realms** is an original landscape Android 2D fantasy platformer. This illustrated build contains ten short handcrafted-style levels across the Verdant Kingdom, Burning Dunes, and Frozen Peaks; local save data; touch controls; collectible coins and realm gems; fire, ice, and wind powers; checkpoints; upgrades; and three multi-phase boss encounters.
 
+## Visual Rebirth v5.0.0
+
+The main menu visibly identifies this build as `VISUAL REBIRTH • BUILD 5.0.0`. This is a user-visible content and art replacement rather than an internal-only controller pass.
+
+Thirty-four new optimized runtime assets replace the visible hero, enemy roster, realm bosses, realm backgrounds, map, platforms, traps, checkpoint shrine, collectibles, attack control, primary HUD icons, combat effects, and launcher icon. They use true alpha transparency where appropriate and stay within the validated mobile bitmap budget. Large legacy enemy, boss, trap, checkpoint, background, and action-effect atlases are no longer decoded at runtime.
+
+All eight enemy archetypes now follow readable patrol, notice, windup, attack, recovery, reposition, and hit-reaction states. Contact damage is limited to committed attacks. Each archetype receives a distinct attack pattern, a visible warning, a recovery punish window, and level-based health, speed, projectile, timing, and damage scaling.
+
+The three bosses are now the Heartwood Colossus, Sunscar Titan, and Whiteout Queen. Each uses realm-specific multi-stage attacks, deterministic phase-two and phase-three follow-up combos, anti-repeat rules, full telegraphs, and visible recovery vulnerabilities. Ember, Frost, and Gale produce different boss reactions rather than only generic damage.
+
+The ten JSON levels were re-authored with additional realm hazards, mixed enemy encounters, moving and crumbling routes, and progressively denser obstacle combinations. The headless simulator verifies every platform, checkpoint, pickup route, secret reward, foe or boss surface, and goal against the movement envelope.
+
+`tools/test_pure_java_controllers.sh` validates combat without Android. The Python asset suite validates all replacement dimensions, transparency, renderer routing, and the decoded memory budget. `BUILD_VERSION.txt` provides a quick source/build verification checklist.
+
 ## Illustrated Asset Refresh
 
-The gameplay renderer now uses original illustrated assets rather than simplified Canvas shapes for Aster, four enemy varieties, three boss variants, world scenery, platforms, spikes, checkpoints, coins, and realm gems. The Android-ready resources are optimized copies under `app/src/main/res/drawable-nodpi/`; the corresponding original art is retained under `art/`. This revision validates genuine PNG alpha transparency before packaging, so the generated assets no longer render with checkerboard or white backing boxes.
+The gameplay renderer now uses original standalone illustrations rather than simplified Canvas shapes or legacy motion atlases for Aster, all eight enemy archetypes, three named bosses, scenery, platforms, realm hazards, checkpoints, collectibles, combat effects, and HUD elements. Android-ready copies live under `app/src/main/res/drawable-nodpi/`; high-resolution generation sources are retained under `attached_assets/generated_images/`. Automated checks validate PNG transparency, dimensions, renderer references, and decoded memory cost.
 
 ## Motion and Sound Refresh
 

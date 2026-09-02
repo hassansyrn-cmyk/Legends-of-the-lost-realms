@@ -1,0 +1,122 @@
+{
+  "aster_motion_sheet": {
+    "file": "aster_motion_sheet.png",
+    "cell": [
+      256,
+      256
+    ],
+    "rows": 4,
+    "cols": 8,
+    "states": [
+      "idle",
+      "move",
+      "attack",
+      "hurt_defeat"
+    ]
+  },
+  "enemies_motion_sheet": {
+    "file": "enemies_motion_sheet.png",
+    "cell": [
+      192,
+      192
+    ],
+    "rows": 8,
+    "cols": 6,
+    "states": [
+      "looped"
+    ]
+  },
+  "bosses_motion_sheet": {
+    "file": "bosses_motion_sheet.png",
+    "cell": [
+      384,
+      384
+    ],
+    "rows": 3,
+    "cols": 6,
+    "states": [
+      "looped"
+    ]
+  },
+  "realms_background_sheet": {
+    "file": "realms_background_sheet.png",
+    "cell": [
+      1280,
+      720
+    ],
+    "rows": 3,
+    "cols": 1,
+    "states": [
+      "verdant",
+      "dunes",
+      "frozen"
+    ]
+  },
+  "platforms_motion_sheet": {
+    "file": "platforms_motion_sheet.png",
+    "cell": [
+      384,
+      160
+    ],
+    "rows": 3,
+    "cols": 4,
+    "states": [
+      "looped"
+    ]
+  },
+  "world_motion_sheet": {
+    "file": "world_motion_sheet.png",
+    "cell": [
+      192,
+      256
+    ],
+    "rows": 4,
+    "cols": 4,
+    "states": [
+      "trap_verdant",
+      "trap_dunes",
+      "trap_frozen",
+      "checkpoint"
+    ]
+  },
+  "collectibles_motion_sheet": {
+    "file": "collectibles_motion_sheet.png",
+    "cell": [
+      128,
+      128
+    ],
+    "rows": 2,
+    "cols": 8,
+    "states": [
+      "coin",
+      "gem"
+    ]
+  },
+  "effects_motion_sheet": {
+    "file": "effects_motion_sheet.png",
+    "cell": [
+      192,
+      192
+    ],
+    "rows": 3,
+    "cols": 6,
+    "states": [
+      "dash",
+      "slash",
+      "sparkle"
+    ]
+  },
+  "ui_motion_sheet": {
+    "file": "ui_motion_sheet.png",
+    "cell": [
+      128,
+      128
+    ],
+    "rows": 2,
+    "cols": 4,
+    "states": [
+      "attack_heart_empty_shield",
+      "energy_coin_gem_accent"
+    ]
+  }
+}

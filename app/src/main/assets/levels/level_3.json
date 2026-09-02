@@ -9,10 +9,10 @@
   "design": {
     "role": "COMBINE",
     "primaryMechanic": "Dash, wall movement, and combat choices",
-    "playerBrief": "Combine dash movement, wall control, and a decisive blade strike.",
-    "safePathIntent": "Lower platforms keep forward progress possible with standard jumps.",
-    "riskPathIntent": "Upper pickups reward a more confident dash or wall-assisted route.",
-    "restBeatIntent": "A stable platform follows each demanding movement section before combat pressure resumes."
+    "playerBrief": "Dash through the roots below or chain the shifting ruin steps above the patrols.",
+    "safePathIntent": "Five lower stone islands preserve a readable route around three narrow root beds.",
+    "riskPathIntent": "A moving shelf, brittle summit, paired gems, and hidden cache reward route commitment.",
+    "restBeatIntent": "Stable lower islands divide the moving, crumbling, and mixed-enemy tests."
   },
   "platforms": [
     {
@@ -101,15 +101,15 @@
       "width": 135,
       "crumble": false,
       "material": "STONE",
-      "moveX": 0,
+      "moveX": 45,
       "moveY": 0,
-      "moveSpeed": 0
+      "moveSpeed": 1
     },
     {
       "x": 1280,
       "y": 355,
       "width": 130,
-      "crumble": false,
+      "crumble": true,
       "material": "STONE",
       "moveX": 0,
       "moveY": 0,
@@ -263,6 +263,11 @@
       "x": 1580,
       "y": 384,
       "kind": 0
+    },
+    {
+      "x": 1115,
+      "y": 404,
+      "kind": 1
     }
   ],
   "hazards": [
@@ -276,6 +281,12 @@
       "left": 1600,
       "top": 592,
       "right": 1690,
+      "bottom": 620
+    },
+    {
+      "left": 1170,
+      "top": 592,
+      "right": 1225,
       "bottom": 620
     }
   ],

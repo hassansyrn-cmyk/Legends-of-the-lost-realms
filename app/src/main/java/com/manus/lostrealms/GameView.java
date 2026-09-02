@@ -44,8 +44,24 @@ public class GameView extends View {
     private final GameRenderer gameRenderer = new GameRenderer();
     private final EnemyController enemyController = new EnemyController();
     private final BossController bossController = new BossController();
+    private final EnemySceneAdapter enemySceneAdapter;
     private final Bitmap splashArt, mapArt, verdantArt, dunesArt, frozenArt, verdantFar, verdantMid, verdantPlatform, verdantThorns, verdantCoin, verdantGem, verdantLevelBackdrop, jungleStageBackground, jungleGroundPlatform, jungleFloatingPlatform, verdantWaterfallBackdrop, icePlatformMotionSheet, goldenPlatformMotionSheet, hangingIceSpikesMotionSheet, trapPlatformMotionSheet;
-    private final Bitmap asterIdleSheet, asterRunSheet, asterJump, asterAttackSheet, asterHurtSheet, asterDefeatSheet, enemySheet, enemyMotionAtlas, mossCrawlerSheet, emberMothSheet, worldProps, worldPropsClean, attackButton, uiHeartFull, uiHeartEmpty, uiShield, uiEnergyBolt, fxSwordHit, fxTrail, fxCoinSparkle, coinNew, gemNew, superHeartFull, superHeartEmpty, superHudBox, superHitLine, bossSheet, bossMotionAtlas, bossForestRigParts, bossStoneRigParts, bossIceRigParts, worldInteractiveAtlas, collectiblesFxAtlas, actionFxAtlas;
+    private final Bitmap asterIdleSheet, asterRunSheet, asterJump, asterAttackSheet, asterHurtSheet, asterDefeatSheet, enemySheet, enemyMotionAtlas, emberMothSheet, worldProps, worldPropsClean, attackButton, uiHeartFull, uiHeartEmpty, uiShield, uiEnergyBolt, fxSwordHit, fxTrail, fxCoinSparkle, coinNew, gemNew, superHeartFull, superHeartEmpty, superHudBox, superHitLine, bossSheet, bossMotionAtlas, bossForestRigParts, bossStoneRigParts, bossIceRigParts, worldInteractiveAtlas, collectiblesFxAtlas, actionFxAtlas;
+    // Runtime art is packed into fixed-cell sheets to keep texture switches predictable.
+    private final Bitmap asterMotionSheet, enemySpriteSheet, bossSpriteSheet, realmBackgroundSheet,
+            platformSpriteSheet, worldSpriteSheet, collectibleSpriteSheet, effectsSpriteSheet, uiSpriteSheet,
+            mossCrawlerSheet, stoneBruteSheet;
+    // aster_motion_sheet / moss_mask_crawler_sheet / stone_brute_sheet share one premium layout:
+    // 8 columns x 6 rows, 181x181px cells, rows = idle, walk, run, attack, hurt, death.
+    private static final int ASTER_CELL = 181;
+    private static final int PREMIUM_ENEMY_CELL = 181;
+    private static final int ENEMY_CELL = 192;
+    private static final int BOSS_CELL = 384;
+    private static final int PLATFORM_CELL_W = 384, PLATFORM_CELL_H = 160;
+    private static final int WORLD_CELL_W = 192, WORLD_CELL_H = 256;
+    private static final int COLLECTIBLE_CELL = 128;
+    private static final int EFFECT_CELL = 192;
+    private static final int UI_CELL = 128;
     private final Random rng = new Random(23);
     private final ArrayList<Platform> platforms = new ArrayList<>();
     private final ArrayList<Pickup> pickups = new ArrayList<>();
@@ -86,60 +102,83 @@ public class GameView extends View {
         save = new SaveManager(context);
         audio = new GameAudio();
         audio.configure(save.musicEnabled(), save.sfxEnabled());
-        splashArt = BitmapFactory.decodeResource(getResources(), R.drawable.verdant_splash);
-        mapArt = BitmapFactory.decodeResource(getResources(), R.drawable.realm_map);
-        verdantArt = BitmapFactory.decodeResource(getResources(), R.drawable.verdant_splash);
-        dunesArt = BitmapFactory.decodeResource(getResources(), R.drawable.burning_dunes);
-        frozenArt = BitmapFactory.decodeResource(getResources(), R.drawable.frozen_peaks);
-        verdantFar = BitmapFactory.decodeResource(getResources(), R.drawable.verdant_far);
-        verdantMid = BitmapFactory.decodeResource(getResources(), R.drawable.verdant_mid);
-        verdantPlatform = BitmapFactory.decodeResource(getResources(), R.drawable.verdant_platform);
-        verdantThorns = BitmapFactory.decodeResource(getResources(), R.drawable.verdant_thorns);
-        verdantCoin = BitmapFactory.decodeResource(getResources(), R.drawable.verdant_coin);
-        verdantGem = BitmapFactory.decodeResource(getResources(), R.drawable.verdant_gem);
-        verdantLevelBackdrop = BitmapFactory.decodeResource(getResources(), R.drawable.verdant_level_backdrop);
-        jungleStageBackground = BitmapFactory.decodeResource(getResources(), R.drawable.jungle_stage_background);
-        jungleGroundPlatform = BitmapFactory.decodeResource(getResources(), R.drawable.jungle_ground_platform);
-        jungleFloatingPlatform = BitmapFactory.decodeResource(getResources(), R.drawable.jungle_floating_platform);
-        verdantWaterfallBackdrop = BitmapFactory.decodeResource(getResources(), R.drawable.verdant_waterfall_backdrop);
-        icePlatformMotionSheet = BitmapFactory.decodeResource(getResources(), R.drawable.ice_platform_motion_sheet);
-        goldenPlatformMotionSheet = BitmapFactory.decodeResource(getResources(), R.drawable.golden_platform_motion_sheet);
-        hangingIceSpikesMotionSheet = BitmapFactory.decodeResource(getResources(), R.drawable.hanging_ice_spikes_motion_sheet);
-        trapPlatformMotionSheet = BitmapFactory.decodeResource(getResources(), R.drawable.trap_platform_motion_sheet);
-        asterIdleSheet = BitmapFactory.decodeResource(getResources(), R.drawable.aster_idle_sheet);
-        asterRunSheet = BitmapFactory.decodeResource(getResources(), R.drawable.aster_run_sheet);
-        asterJump = BitmapFactory.decodeResource(getResources(), R.drawable.aster_jump);
-        asterAttackSheet = BitmapFactory.decodeResource(getResources(), R.drawable.aster_attack_sheet);
-        asterHurtSheet = BitmapFactory.decodeResource(getResources(), R.drawable.aster_hurt_sheet);
-        asterDefeatSheet = BitmapFactory.decodeResource(getResources(), R.drawable.aster_defeat_sheet);
-        enemySheet = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_sheet);
-        enemyMotionAtlas = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_archetype_motion_atlas);
+        enemySceneAdapter = new EnemySceneAdapter(new EnemySceneAdapter.Hooks() {
+            @Override public float playerX() { return px; }
+            @Override public float playerY() { return py; }
+            @Override public void warning() { audio.enemyWarning(); }
+            @Override public void dash() { audio.enemyDash(); }
+            @Override public void swoop() { audio.enemySwoop(); }
+            @Override public void damage(int amount) { GameView.this.damage(amount); }
+            @Override public void projectile(float x, float y, float vx, float vy) {
+                enemyProjectiles.add(new EnemyProjectile(x, y, vx, vy));
+            }
+        });
+        splashArt = BitmapFactory.decodeResource(getResources(), R.drawable.realm_verdant_premium);
+        mapArt = BitmapFactory.decodeResource(getResources(), R.drawable.realm_map_premium);
+        verdantArt = splashArt;
+        dunesArt = null;
+        frozenArt = null;
+        verdantFar = null;
+        verdantMid = null;
+        verdantPlatform = null;
+        verdantThorns = null;
+        verdantCoin = null;
+        verdantGem = null;
+        verdantLevelBackdrop = null;
+        jungleStageBackground = null;
+        jungleGroundPlatform = null;
+        jungleFloatingPlatform = null;
+        verdantWaterfallBackdrop = null;
+        icePlatformMotionSheet = null;
+        goldenPlatformMotionSheet = null;
+        hangingIceSpikesMotionSheet = null;
+        trapPlatformMotionSheet = null;
+        asterIdleSheet = null;
+        asterRunSheet = null;
+        asterJump = null;
+        asterAttackSheet = null;
+        asterHurtSheet = null;
+        asterDefeatSheet = null;
+        enemySheet = null;
+        enemyMotionAtlas = null;
+        emberMothSheet = null;
+        worldProps = null;
+        worldPropsClean = null;
+        attackButton = null;
+        uiHeartFull = null;
+        uiHeartEmpty = null;
+        uiShield = null;
+        uiEnergyBolt = null;
+        fxSwordHit = null;
+        fxTrail = null;
+        fxCoinSparkle = null;
+        actionFxAtlas = null;
+        coinNew = null;
+        gemNew = null;
+        superHeartFull = null;
+        superHeartEmpty = null;
+        superHudBox = null;
+        superHitLine = null;
+        bossSheet = null;
+        bossMotionAtlas = null;
+        bossForestRigParts = null;
+        bossStoneRigParts = null;
+        bossIceRigParts = null;
+        worldInteractiveAtlas = null;
+        collectiblesFxAtlas = null;
+        // One decode per animated family keeps texture switches predictable on Android.
+        asterMotionSheet = BitmapFactory.decodeResource(getResources(), R.drawable.aster_motion_sheet);
+        enemySpriteSheet = BitmapFactory.decodeResource(getResources(), R.drawable.enemies_motion_sheet);
+        bossSpriteSheet = BitmapFactory.decodeResource(getResources(), R.drawable.bosses_motion_sheet);
+        realmBackgroundSheet = BitmapFactory.decodeResource(getResources(), R.drawable.realms_background_sheet);
+        platformSpriteSheet = BitmapFactory.decodeResource(getResources(), R.drawable.platforms_motion_sheet);
+        worldSpriteSheet = BitmapFactory.decodeResource(getResources(), R.drawable.world_motion_sheet);
+        collectibleSpriteSheet = BitmapFactory.decodeResource(getResources(), R.drawable.collectibles_motion_sheet);
+        effectsSpriteSheet = BitmapFactory.decodeResource(getResources(), R.drawable.effects_motion_sheet);
+        uiSpriteSheet = BitmapFactory.decodeResource(getResources(), R.drawable.ui_motion_sheet);
+        // Premium per-character sheets (idle/walk/run/attack/hurt/death, 8x6 @ 181px):
         mossCrawlerSheet = BitmapFactory.decodeResource(getResources(), R.drawable.moss_mask_crawler_sheet);
-        emberMothSheet = BitmapFactory.decodeResource(getResources(), R.drawable.ember_moth_sheet);
-        worldProps = BitmapFactory.decodeResource(getResources(), R.drawable.world_props);
-        worldPropsClean = BitmapFactory.decodeResource(getResources(), R.drawable.world_props_clean);
-        attackButton = BitmapFactory.decodeResource(getResources(), R.drawable.attack_button_blue);
-        uiHeartFull = BitmapFactory.decodeResource(getResources(), R.drawable.ui_heart_full_new);
-        uiHeartEmpty = BitmapFactory.decodeResource(getResources(), R.drawable.ui_heart_empty_new);
-        uiShield = BitmapFactory.decodeResource(getResources(), R.drawable.ui_shield_new);
-        uiEnergyBolt = BitmapFactory.decodeResource(getResources(), R.drawable.ui_energy_bolt_new);
-        fxSwordHit = BitmapFactory.decodeResource(getResources(), R.drawable.fx_sword_hit);
-        fxTrail = BitmapFactory.decodeResource(getResources(), R.drawable.fx_trail);
-        fxCoinSparkle = BitmapFactory.decodeResource(getResources(), R.drawable.fx_coin_sparkle);
-        actionFxAtlas = BitmapFactory.decodeResource(getResources(), R.drawable.action_fx_motion_atlas);
-        coinNew = BitmapFactory.decodeResource(getResources(), R.drawable.coin_gold_new);
-        gemNew = BitmapFactory.decodeResource(getResources(), R.drawable.realm_gem_blue_new);
-        superHeartFull = BitmapFactory.decodeResource(getResources(), R.drawable.super_heart_full);
-        superHeartEmpty = BitmapFactory.decodeResource(getResources(), R.drawable.super_heart_empty);
-        superHudBox = BitmapFactory.decodeResource(getResources(), R.drawable.super_hud_box);
-        superHitLine = BitmapFactory.decodeResource(getResources(), R.drawable.super_hit_line);
-        bossSheet = BitmapFactory.decodeResource(getResources(), R.drawable.boss_sheet);
-        bossMotionAtlas = BitmapFactory.decodeResource(getResources(), R.drawable.boss_motion_atlas);
-        bossForestRigParts = BitmapFactory.decodeResource(getResources(), R.drawable.boss_forest_rig_parts);
-        bossStoneRigParts = BitmapFactory.decodeResource(getResources(), R.drawable.boss_stone_rig_parts);
-        bossIceRigParts = BitmapFactory.decodeResource(getResources(), R.drawable.boss_ice_rig_parts);
-        worldInteractiveAtlas = BitmapFactory.decodeResource(getResources(), R.drawable.world_interactives_motion_atlas);
-        collectiblesFxAtlas = BitmapFactory.decodeResource(getResources(), R.drawable.collectibles_fx_motion_atlas);
+        stoneBruteSheet = BitmapFactory.decodeResource(getResources(), R.drawable.stone_brute_sheet);
         audio.startMusic(context);
     }
 
@@ -302,8 +341,8 @@ public class GameView extends View {
         updatePickups();
         enemyController.update(this, dt);
         bossController.update(this, dt);
-        Iterator<Hazard> hazardIt=hazards.iterator(); RectF playerHitbox=playerRect();
-        while(hazardIt.hasNext()){ Hazard h=hazardIt.next(); h.age+=dt; if(h.age>=h.life){hazardIt.remove(); continue;} if(h.active()&&RectF.intersects(playerHitbox,h.rect())) damage(1); }
+         Iterator<Hazard> hazardIt=hazards.iterator(); RectF playerHitbox=playerRect();
+         while(hazardIt.hasNext()){ Hazard h=hazardIt.next(); h.age=EnvironmentRules.advanceAge(h.age,dt); if(EnvironmentRules.hazardExpired(h.age,h.life)){hazardIt.remove(); continue;} if(h.active()&&RectF.intersects(playerHitbox,h.rect())) damage(1); }
         applyHeatZones(playerHitbox);
         if (!data.boss && px > 2145) completeLevel();
         if (data.boss && boss != null && boss.hp <= 0 && px > 2125) completeLevel();
@@ -342,6 +381,159 @@ public class GameView extends View {
             if (e.hitLock > 0) e.hitLock -= dt;
             if (e.burnTime > 0) {
                 e.burnTime -= dt;
+                if ((e.burnTick -= dt) <= 0) {
+                    e.hp -= PowerSystem.emberTickDamage(save.attackRank());
+                    e.burnTick = PowerSystem.emberTickInterval();
+                    e.hurtTime = .12f;
+                    spawnJuiceParticles(e.x, e.y - 18, Color.rgb(255, 130, 62), 4, 88f);
+                }
+            }
+            if (e.frozen > 0) {
+                e.frozen -= dt;
+            } else {
+                enemySceneAdapter.updateBehavior(e, dt, animationClock, currentLevel);
+            }
+
+            if (EnemyController.isCommittedContactAttack(e.kind, e.state)
+                    && Math.abs(px - e.x) < (e.kind == EnemyController.HEAVY_BRUTE ? 58 : 44)
+                    && Math.abs(py - e.y) < 52) {
+                damage(EnemyController.scaledContactDamage(e.kind, e.state, currentLevel));
+            }
+            float reach = chargedAttack ? 152 : attackStage >= 4 ? 148 : attackStage >= 2 ? 126 : 104;
+            boolean airStrikeHit = CombatSystem.canHitFromAir(airAttack, px, py, e.x, e.y, 86, 68, 82, 58);
+            boolean groundStrikeHit = CombatSystem.canHitFromGround(airAttack, facingLeft, px, py, e.x, e.y, reach, 72);
+            boolean shieldBlocks = e.kind == EnemyController.SHIELD_GUARD && groundStrikeHit && !airAttack
+                    && e.state != EnemyController.RECOVERY && e.state != EnemyController.HIT_REACTION
+                    && ((e.dir < 0 && px < e.x) || (e.dir > 0 && px > e.x));
+            if (attackTime > 0 && (groundStrikeHit || airStrikeHit) && e.hitLock <= 0) {
+                if (shieldBlocks) {
+                    e.hitLock=.14f; triggerShake(2.4f,.045f); audio.impact();
+                } else {
+                    e.hp -= CombatSystem.comboDamage(attackStage, save.attackRank(), chargedAttack, counterTime > 0);
+                    energy=Math.min(maxEnergy,energy+5f);
+                    e.hurtTime = .22f;
+                    e.hitLock = .20f;
+                    e.state = EnemyController.HIT_REACTION;
+                    e.stateTime = chargedAttack || counterTime > 0 ? .30f : .18f;
+                    hitFxTime = .18f;
+                    hitPause = chargedAttack || attackStage >= 4 ? .085f : .055f;
+                    fxX = e.x; fxY = e.y - 18;
+                    triggerSquash(false, chargedAttack || attackStage >= 4 ? .10f : .07f);
+                    triggerShake(chargedAttack || attackStage >= 4 ? 6.2f : 4.4f, chargedAttack || attackStage >= 4 ? .095f : .075f);
+                    spawnJuiceParticles(e.x, e.y - 18, Color.rgb(255, 230, 145), chargedAttack || attackStage >= 4 ? 11 : 6, chargedAttack || attackStage >= 4 ? 175f : 135f);
+                    triggerCombatCallout(e.x, e.y - 18, false);
+                    if(counterTime>0) counterTime=0;
+                    if(airAttack){vy=-430;canDouble=true;airAttack=false;}
+                    audio.impact();
+                }
+            }
+        }
+        updateEnemyProjectiles(dt);
+        for (Foe foe : foes) {
+            if (foe.hp <= 0) spawnJuiceParticles(foe.x, foe.y - 14,
+                    EnemyController.archetype(foe.kind).accentColor, 10, 145f);
+        }
+        int remaining = foes.size();
+        foes.removeIf(e -> e.hp <= 0);
+        if (foes.size() < remaining) {
+            save.recordEnemyDefeats(remaining - foes.size());
+            audio.enemyDefeat();
+        }
+    }
+
+    private void updateFoeBehavior(Foe e, float dx, float dt) {
+        float timing = EnemyController.timingScale(currentLevel);
+        if (e.state == EnemyController.HIT_REACTION) {
+            e.x -= e.dir * 72f * dt;
+            if ((e.stateTime -= dt) <= 0) setFoeState(e, EnemyController.RECOVERY, e.behavior.recoverySeconds * .65f);
+            return;
+        }
+        if (e.state == EnemyController.PATROL) {
+            if (e.kind == EnemyController.FLYING_SWOOOPER || e.kind == EnemyController.FROST_SENTINEL
+                    || e.kind == EnemyController.RUNE_CASTER) {
+                float frequency = e.kind == EnemyController.FLYING_SWOOOPER ? 3.7f : 2.2f;
+                e.y = e.baseY + (float)Math.sin(animationClock * frequency + e.x * .018f)
+                        * (e.kind == EnemyController.FLYING_SWOOOPER ? 18f : 8f);
+            } else {
+                e.x += e.dir * e.speed * dt;
+                if (e.x < e.minX || e.x > e.maxX) e.dir *= -1;
+            }
+            if (EnemyController.canNotice(e.kind, dx, py - e.y)) {
+                e.dir = dx < 0 ? -1 : 1;
+                setFoeState(e, EnemyController.NOTICE, e.behavior.noticeSeconds * timing);
+                audio.enemyWarning();
+            }
+            return;
+        }
+        if (e.state == EnemyController.NOTICE) {
+            e.dir = dx < 0 ? -1 : 1;
+            if ((e.stateTime -= dt) <= 0) setFoeState(e, EnemyController.WINDUP, e.behavior.windupSeconds * timing);
+            return;
+        }
+        if (e.state == EnemyController.WINDUP) {
+            if (e.kind != EnemyController.FAST_SKIRMISHER) e.dir = dx < 0 ? -1 : 1;
+            if ((e.stateTime -= dt) <= 0) {
+                e.targetX = px; e.targetY = py + 18; e.didAttack = false;
+                setFoeState(e, EnemyController.ATTACK, e.behavior.attackSeconds);
+                if (e.kind == EnemyController.FLYING_SWOOOPER || e.kind == EnemyController.FROST_SENTINEL
+                        || e.kind == EnemyController.RUNE_CASTER) audio.enemySwoop(); else audio.enemyDash();
+            }
+            return;
+        }
+        if (e.state == EnemyController.ATTACK) {
+            runFoeAttack(e, dt);
+            if ((e.stateTime -= dt) <= 0) setFoeState(e, EnemyController.RECOVERY, e.behavior.recoverySeconds);
+            return;
+        }
+        if (e.state == EnemyController.RECOVERY) {
+            if ((e.stateTime -= dt) <= 0) setFoeState(e, EnemyController.REPOSITION, e.behavior.repositionSeconds);
+            return;
+        }
+        float retreat = e.kind == EnemyController.FAST_SKIRMISHER ? 190f
+                : e.kind == EnemyController.SHIELD_GUARD ? 82f
+                : e.kind == EnemyController.HEAVY_BRUTE ? 55f : 120f;
+        e.x -= e.dir * retreat * (e.kind == EnemyController.FLYING_SWOOOPER ? .45f : 1f) * dt;
+        if (e.kind == EnemyController.FLYING_SWOOOPER || e.kind == EnemyController.WIND_WISP)
+            e.y = approach(e.y, e.baseY, 150f * dt);
+        if ((e.stateTime -= dt) <= 0) {
+            e.x = Math.max(e.minX - 70, Math.min(e.maxX + 70, e.x));
+            setFoeState(e, EnemyController.PATROL, 0);
+        }
+    }
+
+    private void runFoeAttack(Foe e, float dt) {
+        float speedScale = EnemyController.speedScale(currentLevel);
+        if (e.kind == EnemyController.GROUND_PATROLLER) e.x += e.dir * 245f * speedScale * dt;
+        else if (e.kind == EnemyController.FLYING_SWOOOPER) {
+            e.x = approach(e.x,e.targetX,300f*speedScale*dt); e.y = approach(e.y,e.targetY,245f*speedScale*dt);
+        } else if (e.kind == EnemyController.FAST_SKIRMISHER) e.x=approach(e.x,e.targetX,390f*speedScale*dt);
+        else if (e.kind == EnemyController.WIND_WISP) {
+            e.x=approach(e.x,e.targetX,430f*speedScale*dt); e.y=approach(e.y,e.targetY,340f*speedScale*dt);
+        } else if (e.kind == EnemyController.SHIELD_GUARD) e.x += e.dir * 138f * speedScale * dt;
+        else if (e.kind == EnemyController.FROST_SENTINEL && !e.didAttack) {
+            if(Math.abs(px-e.x)<115&&Math.abs(py-e.y)<90) damage(2); e.didAttack=true;
+        } else if (e.kind == EnemyController.HEAVY_BRUTE) {
+            // Committed contact below owns this hit, avoiding double damage.
+        } else if (e.kind == EnemyController.RUNE_CASTER && !e.didAttack) {
+            float shotDx=e.targetX-e.x, shotDy=e.targetY-e.y;
+            float length=Math.max(1f,(float)Math.sqrt(shotDx*shotDx+shotDy*shotDy));
+            float shotSpeed=265f*speedScale;
+            enemyProjectiles.add(new EnemyProjectile(e.x,e.y-18,shotDx/length*shotSpeed,shotDy/length*shotSpeed));
+            e.didAttack=true;
+        }
+    }
+
+    private void setFoeState(Foe e, int state, float duration) {
+        e.state=state; e.stateTime=duration;
+    }
+
+    @SuppressWarnings("unused")
+    private void updateFoesLegacy(float dt) {
+        for (Foe e : foes) {
+            if (e.hurtTime > 0) e.hurtTime -= dt;
+            if (e.hitLock > 0) e.hitLock -= dt;
+            if (e.burnTime > 0) {
+                e.burnTime -= dt;
                 e.burnTick -= dt;
                 if (e.burnTick <= 0) {
                     e.hp -= PowerSystem.emberTickDamage(save.attackRank());
@@ -353,49 +545,45 @@ public class GameView extends View {
             if (e.frozen > 0) { e.frozen -= dt; continue; }
             float dx = px - e.x;
             if (e.kind == EnemyController.GROUND_PATROLLER) {
-                if (e.state == 0) { e.x += e.dir * e.speed * dt; if (e.x < e.minX || e.x > e.maxX) e.dir *= -1; if (Math.abs(dx) < 175 && Math.abs(py-e.y)<88) { e.state=1; e.stateTime=.34f; e.dir=dx<0?-1:1; audio.enemyWarning(); } }
+                if (e.state == 0) { e.x += e.dir * e.speed * dt; if (e.x < e.minX || e.x > e.maxX) e.dir *= -1; if (EnemyController.canNotice(e.kind, dx, py-e.y)) { e.state=1; e.stateTime=e.behavior.windupSeconds; e.dir=dx<0?-1:1; audio.enemyWarning(); } }
                 else if (e.state == 1) { e.stateTime -= dt; if (e.stateTime <= 0) { e.state=2; e.stateTime=.30f; audio.enemyDash(); } }
                 else { e.x += e.dir * 245 * dt; e.stateTime -= dt; if (e.stateTime <= 0 || e.x < e.minX-45 || e.x > e.maxX+45) { e.state=0; e.dir*=-1; } }
             } else if (e.kind == EnemyController.FLYING_SWOOOPER) {
-                if (e.state == 0) { e.y = e.baseY + (float)Math.sin(animationClock*3.7f+e.x*.02f)*18; if (Math.abs(dx)<235 && Math.abs(py-e.y)<135) { e.state=1; e.stateTime=.42f; e.dir=dx<0?-1:1; e.targetX=px; e.targetY=py+18; audio.enemyWarning(); } }
+                if (e.state == 0) { e.y = e.baseY + (float)Math.sin(animationClock*3.7f+e.x*.02f)*18; if (EnemyController.canNotice(e.kind, dx, py-e.y)) { e.state=1; e.stateTime=e.behavior.windupSeconds; e.dir=dx<0?-1:1; e.targetX=px; e.targetY=py+18; audio.enemyWarning(); } }
                 else if (e.state == 1) { e.stateTime -= dt; if (e.stateTime<=0) { e.state=2; e.stateTime=.34f; audio.enemySwoop(); } }
                 else { e.x = approach(e.x,e.targetX,275*dt); e.y = approach(e.y,e.targetY,225*dt); e.stateTime -= dt; if (e.stateTime<=0) { e.state=0; e.baseY=e.y; } }
             } else if (e.kind == EnemyController.FAST_SKIRMISHER) {
-                if (e.state == 0) { e.x += e.dir * e.speed * dt; if (e.x < e.minX || e.x > e.maxX) e.dir *= -1; if (Math.abs(dx)<210 && Math.abs(py-e.y)<90) { e.state=1; e.stateTime=.46f; e.dir=dx<0?-1:1; e.targetX=px; audio.enemyWarning(); } }
+                if (e.state == 0) { e.x += e.dir * e.speed * dt; if (e.x < e.minX || e.x > e.maxX) e.dir *= -1; if (EnemyController.canNotice(e.kind, dx, py-e.y)) { e.state=1; e.stateTime=e.behavior.windupSeconds; e.dir=dx<0?-1:1; e.targetX=px; audio.enemyWarning(); } }
                 else if (e.state == 1) { e.stateTime-=dt; if(e.stateTime<=0){e.state=2;e.stateTime=.34f;audio.enemyDash();} }
                 else if (e.state == 2) { e.x=approach(e.x,e.targetX,360*dt); e.stateTime-=dt; if(e.stateTime<=0){e.state=3;e.stateTime=.24f;} }
                 else { e.x -= e.dir*150*dt; e.stateTime-=dt; if(e.stateTime<=0)e.state=0; }
             } else if (e.kind == EnemyController.FROST_SENTINEL) {
-                if (e.state == 0) { e.y=e.baseY+(float)Math.sin(animationClock*2.5f+e.x*.015f)*10; if(Math.abs(dx)<150&&Math.abs(py-e.y)<95){e.state=1;e.stateTime=.58f;audio.enemyWarning();} }
+                if (e.state == 0) { e.y=e.baseY+(float)Math.sin(animationClock*2.5f+e.x*.015f)*10; if(EnemyController.canNotice(e.kind, dx, py-e.y)){e.state=1;e.stateTime=e.behavior.windupSeconds;audio.enemyWarning();} }
                 else if (e.state == 1) { e.stateTime-=dt; if(e.stateTime<=0){e.state=2;e.stateTime=.22f;audio.enemySwoop();} }
                 else if (e.state == 2) { if(Math.abs(px-e.x)<115&&Math.abs(py-e.y)<90) damage(2); e.stateTime-=dt; if(e.stateTime<=0)e.state=0; }
             } else if (e.kind == EnemyController.WIND_WISP) {
-                if(e.state==0){e.x+=e.dir*e.speed*dt;if(e.x<e.minX||e.x>e.maxX)e.dir*=-1;if(Math.abs(dx)<260&&Math.abs(py-e.y)<125){e.state=1;e.stateTime=.38f;e.dir=dx<0?-1:1;e.targetX=px;e.targetY=py;audio.enemyWarning();}}
+                if(e.state==0){e.x+=e.dir*e.speed*dt;if(e.x<e.minX||e.x>e.maxX)e.dir*=-1;if(EnemyController.canNotice(e.kind, dx, py-e.y)){e.state=1;e.stateTime=e.behavior.windupSeconds;e.dir=dx<0?-1:1;e.targetX=px;e.targetY=py;audio.enemyWarning();}}
                 else if(e.state==1){e.stateTime-=dt;if(e.stateTime<=0){e.state=2;e.stateTime=.28f;audio.enemyDash();}}
                 else {e.x=approach(e.x,e.targetX,405*dt);e.y=approach(e.y,e.targetY,320*dt);e.stateTime-=dt;if(e.stateTime<=0){e.state=0;e.baseY=e.y;}}
             } else if (e.kind == EnemyController.SHIELD_GUARD) {
-                if (e.state == 0) { e.x += e.dir * e.speed * dt; if (e.x < e.minX || e.x > e.maxX) e.dir *= -1; if (Math.abs(dx) < 180 && Math.abs(py-e.y)<90) { e.state=1; e.stateTime=.52f; e.dir=dx<0?-1:1; audio.enemyWarning(); } }
+                if (e.state == 0) { e.x += e.dir * e.speed * dt; if (e.x < e.minX || e.x > e.maxX) e.dir *= -1; if (EnemyController.canNotice(e.kind, dx, py-e.y)) { e.state=1; e.stateTime=e.behavior.windupSeconds; e.dir=dx<0?-1:1; audio.enemyWarning(); } }
                 else if (e.state == 1) { e.stateTime -= dt; if (e.stateTime <= 0) { e.state=2; e.stateTime=.26f; audio.enemyDash(); } }
                 else { e.x += e.dir * 118 * dt; e.stateTime -= dt; if (e.stateTime <= 0) e.state=0; }
             } else if (e.kind == EnemyController.HEAVY_BRUTE) {
-                if (e.state == 0) { e.x += e.dir * e.speed * dt; if (e.x < e.minX || e.x > e.maxX) e.dir *= -1; if (Math.abs(dx) < 205 && Math.abs(py-e.y)<100) { e.state=1; e.stateTime=.72f; e.dir=dx<0?-1:1; audio.enemyWarning(); } }
+                if (e.state == 0) { e.x += e.dir * e.speed * dt; if (e.x < e.minX || e.x > e.maxX) e.dir *= -1; if (EnemyController.canNotice(e.kind, dx, py-e.y)) { e.state=1; e.stateTime=e.behavior.windupSeconds; e.dir=dx<0?-1:1; audio.enemyWarning(); } }
                 else if (e.state == 1) { e.stateTime -= dt; if (e.stateTime <= 0) { e.state=2; e.stateTime=.28f; audio.enemyDash(); } }
                 else { if (Math.abs(px-e.x)<92 && Math.abs(py-e.y)<95) damage(2); e.stateTime -= dt; if (e.stateTime <= 0) { e.state=3; e.stateTime=.42f; } }
                 if (e.state == 3) { e.stateTime -= dt; if (e.stateTime <= 0) e.state=0; }
             } else { // Rune Caster: a long telegraph followed by one readable projectile.
                 e.y = e.baseY + (float)Math.sin(animationClock*2.1f+e.x*.018f)*6;
-                if (e.state == 0 && Math.abs(dx) < 315 && Math.abs(py-e.y) < 165) { e.state=1; e.stateTime=.66f; e.dir=dx<0?-1:1; e.targetX=px; e.targetY=py+18; audio.enemyWarning(); }
+                if (e.state == 0 && EnemyController.canNotice(e.kind, dx, py-e.y)) { e.state=1; e.stateTime=e.behavior.windupSeconds; e.dir=dx<0?-1:1; e.targetX=px; e.targetY=py+18; audio.enemyWarning(); }
                 else if (e.state == 1) { e.stateTime -= dt; if (e.stateTime <= 0) { e.state=2; e.stateTime=.16f; audio.enemySwoop(); } }
                 else if (e.state == 2) { e.stateTime -= dt; if (e.stateTime <= 0) { float shotDx=e.targetX-e.x, shotDy=e.targetY-e.y; float length=Math.max(1f,(float)Math.sqrt(shotDx*shotDx+shotDy*shotDy)); enemyProjectiles.add(new EnemyProjectile(e.x,e.y-18,shotDx/length*265f,shotDy/length*265f)); e.state=3; e.stateTime=.58f; } }
                 else if (e.state == 3) { e.stateTime -= dt; if (e.stateTime <= 0) e.state=0; }
             }
-            boolean committedContactAttack = (e.kind == EnemyController.GROUND_PATROLLER
-                    || e.kind == EnemyController.FLYING_SWOOOPER
-                    || e.kind == EnemyController.FAST_SKIRMISHER
-                    || e.kind == EnemyController.WIND_WISP
-                    || e.kind == EnemyController.SHIELD_GUARD
-                    || e.kind == EnemyController.HEAVY_BRUTE) && e.state == 2;
-            if (Math.abs(px - e.x) < (e.kind == EnemyController.HEAVY_BRUTE ? 54 : 44) && Math.abs(py - e.y) < 48) damage(committedContactAttack ? 2 : 1);
+            if (Math.abs(px - e.x) < (e.kind == EnemyController.HEAVY_BRUTE ? 54 : 44) && Math.abs(py - e.y) < 48) {
+                damage(EnemyController.contactDamage(e.kind, e.state));
+            }
             float reach = chargedAttack ? 152 : attackStage >= 4 ? 148 : attackStage >= 2 ? 126 : 104;
             boolean airStrikeHit = CombatSystem.canHitFromAir(airAttack, px, py, e.x, e.y, 86, 68, 82, 58);
             boolean groundStrikeHit = CombatSystem.canHitFromGround(airAttack, facingLeft, px, py, e.x, e.y, reach, 72);
@@ -449,55 +637,190 @@ public class GameView extends View {
             }
         }
         if (boss.frostSlowTime > 0) boss.frostSlowTime -= dt;
+        if (boss.exposedTime > 0) boss.exposedTime -= dt;
+        if (boss.armorCrackedTime > 0) boss.armorCrackedTime -= dt;
         float frostScale = boss.frostSlowTime > 0 ? .58f : 1f;
         BossController.Profile profile = BossController.profile(boss.world);
-        int nextPhase = boss.hp <= boss.maxHp * profile.phaseThreeThreshold ? 3
-                : boss.hp <= boss.maxHp * profile.phaseTwoThreshold ? 2 : 1;
+        int nextPhase = BossController.phaseForHealth(boss.hp, boss.maxHp, boss.world);
         if (nextPhase != boss.phase) {
             boss.phase = nextPhase;
             boss.transitionTime = .72f;
             boss.cooldown = Math.max(boss.cooldown, .52f);
+            boss.state = BossController.State.PHASE_TRANSITION;
+            boss.stateTime = .72f;
             audio.bossWarning();
             triggerShake(7.2f, .12f);
             spawnJuiceParticles(boss.x, boss.y - 34, data.accent, 15, 165f);
         }
-        if (boss.transitionTime > 0) boss.transitionTime -= dt;
+        if (boss.transitionTime > 0) {
+            boss.transitionTime -= dt;
+            boss.stateTime = Math.max(0, boss.stateTime - dt);
+            if (boss.transitionTime <= 0) {
+                boss.state = BossController.State.OBSERVE;
+                boss.cooldown = Math.min(boss.cooldown, .42f);
+            }
+        }
         float phaseSpeed = boss.phase == 3 ? profile.phaseThreeSpeed
                 : boss.phase == 2 ? profile.phaseTwoSpeed : profile.phaseOneSpeed;
         boss.cooldown -= dt * frostScale; if (boss.hitLock > 0) boss.hitLock -= dt;
-        boss.x += boss.dir * phaseSpeed * frostScale * dt;
-        if (boss.x < 1740 || boss.x > 2070) boss.dir *= -1;
+        updateBossState(dt, frostScale, phaseSpeed);
         if (Math.abs(px - boss.x) < 72 && Math.abs(py - boss.y) < 75) damage(boss.phase);
         boolean bossAirStrike = CombatSystem.canHitFromAir(
                 airAttack, px, py, boss.x, boss.y, 110, 90, 92, 70);
         boolean bossGroundStrike = CombatSystem.canHitFromGround(
                 airAttack, facingLeft, px, py, boss.x, boss.y,
                 chargedAttack ? 158 : attackStage >= 4 ? 152 : attackStage >= 2 ? 140 : 118, 90);
-        if (attackTime > 0 && (bossGroundStrike || bossAirStrike) && boss.hitLock<=0) { boss.hp -= CombatSystem.comboDamage(attackStage, save.attackRank(), chargedAttack, counterTime > 0); boss.hitLock=.20f; hitFxTime = .18f; hitPause = chargedAttack || attackStage >= 4 ? .11f : .070f; fxX = boss.x; fxY = boss.y - 25; triggerSquash(false, chargedAttack || attackStage >= 4 ? .12f : .085f); triggerShake(chargedAttack || attackStage >= 4 ? 8.5f : 6.4f, chargedAttack || attackStage >= 4 ? .13f : .10f); spawnJuiceParticles(boss.x, boss.y - 25, Color.rgb(255, 178, 96), chargedAttack || attackStage >= 4 ? 18 : 11, chargedAttack || attackStage >= 4 ? 205f : 170f); triggerCombatCallout(boss.x, boss.y - 25, true); if(counterTime>0) counterTime=0; if(airAttack){vy=-390;canDouble=true;airAttack=false;} audio.impact(); }
-        if (boss.cooldown <= 0) {
-            audio.bossWarning();
-            float target=Math.max(90,Math.min(2180,px));
-            int cycle = boss.attackCycle++;
-            if (boss.world==1) { // Thornwold: root lanes become a wall in phase three.
-                boss.cooldown=boss.phase==1?2.10f:boss.phase==2?1.42f:1.02f;
-                float hx=boss.x+(boss.dir>0?60:-120);
-                hazards.add(new Hazard(hx,555,hx+85,620,.78f,.42f,1));
-                if(boss.phase>=2) hazards.add(new Hazard(hx+(boss.dir>0?118:-118),555,hx+(boss.dir>0?203:-33),620,.78f,.42f,1));
-                if(boss.phase==3) hazards.add(new Hazard(target-58,555,target+58,620,.88f,.48f,1));
-            } else if (boss.world==2) { // Akaros: sand slams spread from one lane to a quake pattern.
-                boss.cooldown=boss.phase==1?1.90f:boss.phase==2?1.32f:1.00f;
-                hazards.add(new Hazard(target-48,555,target+48,620,1.02f,.62f,2));
-                if(boss.phase>=2) hazards.add(new Hazard(target+(cycle%2==0?108:-108)-42,555,target+(cycle%2==0?108:-108)+42,620,1.02f,.62f,2));
-                if(boss.phase==3) hazards.add(new Hazard(target-175,555,target-95,620,1.02f,.62f,2));
-            } else { // Vyrn: widening ice lanes and gusts force movement between safe gaps.
-                boss.cooldown=boss.phase==1?1.65f:boss.phase==2?1.18f: .92f;
-                hazards.add(new Hazard(target-145,555,target-55,620,.94f,.50f,3));
-                hazards.add(new Hazard(target+55,555,target+145,620,.94f,.50f,3));
-                if(boss.phase>=2) windTime=Math.max(windTime,.60f);
-                if(boss.phase==3) { hazards.add(new Hazard(target-35,555,target+35,620,.94f,.50f,3)); windTime=Math.max(windTime,1.05f); }
+        if (attackTime > 0 && (bossGroundStrike || bossAirStrike) && boss.hitLock<=0) {
+            int bossDamage = CombatSystem.comboDamage(attackStage, save.attackRank(), chargedAttack, counterTime > 0);
+            if (boss.exposedTime > 0 || boss.armorCrackedTime > 0
+                    || boss.state == BossController.State.ATTACK_RECOVERY) bossDamage++;
+            boss.hp -= bossDamage;
+            boss.hitLock=.20f;
+            if (chargedAttack || attackStage >= 4 || counterTime > 0) {
+                boss.state = BossController.State.STAGGER;
+                boss.stateTime = counterTime > 0 ? .34f : .22f;
             }
+            hitFxTime = .18f; hitPause = chargedAttack || attackStage >= 4 ? .11f : .070f; fxX = boss.x; fxY = boss.y - 25; triggerSquash(false, chargedAttack || attackStage >= 4 ? .12f : .085f); triggerShake(chargedAttack || attackStage >= 4 ? 8.5f : 6.4f, chargedAttack || attackStage >= 4 ? .13f : .10f); spawnJuiceParticles(boss.x, boss.y - 25, Color.rgb(255, 178, 96), chargedAttack || attackStage >= 4 ? 18 : 11, chargedAttack || attackStage >= 4 ? 205f : 170f); triggerCombatCallout(boss.x, boss.y - 25, true); if(counterTime>0) counterTime=0; if(airAttack){vy=-390;canDouble=true;airAttack=false;} audio.impact();
         }
         if (boss.hp <= 0) boss.hp = 0;
+    }
+
+    private void updateBossState(float dt, float frostScale, float phaseSpeed) {
+        if (boss.state == BossController.State.PHASE_TRANSITION) return;
+        if (boss.state == BossController.State.STAGGER) {
+            boss.stateTime -= dt;
+            if (boss.stateTime <= 0) {
+                boss.state = BossController.State.RETREAT;
+                boss.stateTime = .30f;
+            }
+            return;
+        }
+        if (boss.state == BossController.State.ATTACK_WINDUP) {
+            boss.stateTime -= dt * frostScale;
+            if (boss.stateTime <= 0) {
+                boss.state = BossController.State.ATTACK_EXECUTE;
+                boss.stateTime = boss.attack.activeSeconds;
+                executeBossAttack(boss.attack);
+            }
+            return;
+        }
+        if (boss.state == BossController.State.ATTACK_EXECUTE) {
+            boss.stateTime -= dt * frostScale;
+            if (boss.stateTime <= 0) {
+                boss.state = BossController.State.ATTACK_RECOVERY;
+                boss.stateTime = boss.attack.recoverySeconds;
+            }
+            return;
+        }
+        if (boss.state == BossController.State.ATTACK_RECOVERY) {
+            boss.stateTime -= dt * frostScale;
+            boss.x -= boss.dir * phaseSpeed * .32f * frostScale * dt;
+            if (boss.stateTime <= 0) {
+                if (boss.queuedAttack != null) {
+                    boss.attack = boss.queuedAttack;
+                    boss.queuedAttack = null;
+                    boss.previousAttack = boss.attack;
+                    boss.state = BossController.State.ATTACK_WINDUP;
+                    boss.stateTime = boss.attack.windupSeconds;
+                    audio.bossWarning();
+                } else {
+                    boss.state = BossController.State.OBSERVE;
+                }
+            }
+            clampBossArena();
+            return;
+        }
+
+        float dx = px - boss.x;
+        float distance = Math.abs(dx);
+        boss.dir = dx < 0 ? -1 : 1;
+        if (distance > 310f) {
+            boss.state = BossController.State.APPROACH;
+            boss.x += boss.dir * phaseSpeed * frostScale * dt;
+        } else if (distance < 135f) {
+            boss.state = BossController.State.RETREAT;
+            boss.x -= boss.dir * phaseSpeed * .66f * frostScale * dt;
+        } else {
+            boss.state = BossController.State.OBSERVE;
+            boss.x += boss.dir * phaseSpeed * .20f * frostScale * dt;
+        }
+        clampBossArena();
+
+        if (boss.cooldown <= 0) {
+            boss.attack = BossController.chooseAttack(
+                    boss.world,
+                    boss.phase,
+                    dx,
+                    py - boss.y,
+                    vx,
+                    dodgeTime > 0,
+                    boss.previousAttack,
+                    boss.attackCycle++);
+            boss.previousAttack = boss.attack;
+            boss.queuedAttack = BossController.comboFollowUp(
+                    boss.world, boss.phase, boss.attack, boss.attackCycle);
+            boss.state = BossController.State.ATTACK_WINDUP;
+            boss.stateTime = boss.attack.windupSeconds;
+            boss.cooldown = BossController.decisionCooldown(boss.phase, boss.attack);
+            if (boss.queuedAttack != null) {
+                boss.cooldown += BossController.decisionCooldown(boss.phase, boss.queuedAttack);
+            }
+            audio.bossWarning();
+        }
+    }
+
+    private void clampBossArena() {
+        boss.x = Math.max(1740, Math.min(2070, boss.x));
+    }
+
+    private void executeBossAttack(BossController.Attack attack) {
+        float target = Math.max(90, Math.min(2180, px + vx * .18f));
+        int cycle = boss.attackCycle;
+        switch (attack) {
+            case ROOT_STRIKE: {
+                float rootX = boss.x + boss.dir * 72f;
+                hazards.add(new Hazard(rootX - 44, 555, rootX + 44, 620, .82f, .24f, 1));
+                break;
+            }
+            case ROOT_WALL:
+                hazards.add(new Hazard(target - 55, 555, target + 55, 620, .96f, .38f, 1));
+                if (boss.phase >= 2) hazards.add(new Hazard(target + (cycle % 2 == 0 ? 132 : -132) - 42, 555, target + (cycle % 2 == 0 ? 132 : -132) + 42, 620, .96f, .38f, 1));
+                break;
+            case ROOT_STORM:
+                hazards.add(new Hazard(target - 58, 555, target + 58, 620, 1.08f, .44f, 1));
+                hazards.add(new Hazard(target - 235, 555, target - 145, 620, 1.08f, .44f, 1));
+                hazards.add(new Hazard(target + 145, 555, target + 235, 620, 1.08f, .44f, 1));
+                break;
+            case STONE_SLAM: {
+                float slamX = boss.x + boss.dir * 76f;
+                hazards.add(new Hazard(slamX - 64, 555, slamX + 64, 620, .94f, .32f, 2));
+                break;
+            }
+            case QUAKE_LANE:
+                hazards.add(new Hazard(target - 52, 555, target + 52, 620, 1.12f, .48f, 2));
+                if (boss.phase >= 2) hazards.add(new Hazard(target + (cycle % 2 == 0 ? 128 : -128) - 44, 555, target + (cycle % 2 == 0 ? 128 : -128) + 44, 620, 1.12f, .48f, 2));
+                break;
+            case FALLING_DEBRIS:
+                hazards.add(new Hazard(target - 190, 555, target - 110, 620, 1.20f, .56f, 2));
+                hazards.add(new Hazard(target - 40, 555, target + 40, 620, 1.20f, .56f, 2));
+                hazards.add(new Hazard(target + 110, 555, target + 190, 620, 1.20f, .56f, 2));
+                break;
+            case ICE_LANE:
+                hazards.add(new Hazard(target - 118, 555, target - 38, 620, .98f, .36f, 3));
+                hazards.add(new Hazard(target + 38, 555, target + 118, 620, .98f, .36f, 3));
+                break;
+            case FROST_WAVE:
+                hazards.add(new Hazard(target - 180, 555, target - 90, 620, 1.04f, .42f, 3));
+                hazards.add(new Hazard(target + 90, 555, target + 180, 620, 1.04f, .42f, 3));
+                windTime = Math.max(windTime, .62f);
+                break;
+            case WHITEOUT:
+                hazards.add(new Hazard(target - 210, 555, target - 125, 620, 1.18f, .52f, 3));
+                hazards.add(new Hazard(target - 42, 555, target + 42, 620, 1.18f, .52f, 3));
+                hazards.add(new Hazard(target + 125, 555, target + 210, 620, 1.18f, .52f, 3));
+                windTime = Math.max(windTime, 1.12f);
+                break;
+        }
     }
 
     private void startLevel(int id) {
@@ -529,7 +852,7 @@ public class GameView extends View {
             }
         }
         for (LevelLoader.FoeData foeData : definition.foes) {
-            foes.add(new Foe(foeData.x, foeData.y, foeData.kind));
+            foes.add(new Foe(foeData.x, foeData.y, foeData.kind, currentLevel));
         }
         for (LevelLoader.HazardData hazardData : definition.hazards) {
             addStaticHazard(
@@ -585,25 +908,27 @@ public class GameView extends View {
             if (grounded && Math.abs(py + 54 - platform.y) < 9
                     && px + 26 > platform.x && px - 26 < platform.x + platform.w) {
                 px += platform.frameDeltaX;
+                    py += platform.frameDeltaY;
             }
         }
         for (IcicleSpawner spawner : icicleSpawners) {
-            spawner.timer -= dt;
-            if (spawner.timer <= 0) {
+            if (EnvironmentRules.spawnerDue(spawner.timer, dt)) {
                 fallingIcicles.add(new FallingIcicle(spawner.x, spawner.spawnY, spawner.landingY));
-                spawner.timer += spawner.interval;
             }
+            spawner.timer = EnvironmentRules.nextSpawnerTimer(spawner.timer, dt, spawner.interval);
         }
         Iterator<FallingIcicle> iterator = fallingIcicles.iterator();
         RectF player = playerRect();
         while (iterator.hasNext()) {
             FallingIcicle icicle = iterator.next();
-            icicle.velocityY = Math.min(980f, icicle.velocityY + 1450f * dt);
-            icicle.y += icicle.velocityY * dt;
+            EnvironmentRules.IcicleMotion motion = EnvironmentRules.fallingIcicle(
+                    icicle.y, icicle.velocityY, dt, icicle.landingY);
+            icicle.y = motion.y;
+            icicle.velocityY = motion.velocityY;
             if (RectF.intersects(player, icicle.rect())) {
                 damage(1);
                 iterator.remove();
-            } else if (icicle.y >= icicle.landingY) {
+            } else if (motion.landed) {
                 triggerShake(2.4f, .05f);
                 spawnJuiceParticles(icicle.x, icicle.landingY, Color.rgb(164, 233, 255), 5, 80f);
                 iterator.remove();
@@ -836,6 +1161,7 @@ public class GameView extends View {
             enemyProjectiles.clear();
         }
         if (boss != null && boss.hp > 0 && Math.abs(px - boss.x) < 205 && Math.abs(py - boss.y) < 145) {
+            BossController.PowerReaction reaction = BossController.powerReaction(boss.world, power);
             if (power == PowerSystem.EMBER) {
                 boss.burnTime = Math.max(boss.burnTime, PowerSystem.emberDuration());
                 boss.burnTick = 0;
@@ -844,6 +1170,24 @@ public class GameView extends View {
             } else {
                 boss.x += PowerSystem.galeKnockback(boss.x - px) * .08f;
                 boss.cooldown += .25f;
+            }
+            if (reaction == BossController.PowerReaction.BURN_EXPOSED) {
+                boss.exposedTime = Math.max(boss.exposedTime, 2.2f);
+            } else if (reaction == BossController.PowerReaction.FROST_CRACKED) {
+                boss.armorCrackedTime = Math.max(boss.armorCrackedTime, 2.4f);
+                boss.state = BossController.State.STAGGER;
+                boss.stateTime = .34f;
+                boss.queuedAttack = null;
+            } else if (reaction == BossController.PowerReaction.MELT_INTERRUPTED) {
+                boss.exposedTime = Math.max(boss.exposedTime, 1.8f);
+                if (boss.state == BossController.State.ATTACK_WINDUP) {
+                    boss.state = BossController.State.STAGGER;
+                    boss.stateTime = .42f;
+                    boss.queuedAttack = null;
+                }
+            } else if (reaction == BossController.PowerReaction.GALE_DISPLACED) {
+                boss.queuedAttack = null;
+                boss.cooldown += boss.world == 2 ? .10f : .32f;
             }
             applied++;
         }
@@ -930,6 +1274,7 @@ public class GameView extends View {
         button(c, 92, 335, 355, 405, "PLAY", Color.rgb(42,170,135));
         button(c, 92, 425, 355, 485, "UPGRADES", Color.rgb(55,107,144));
         button(c, 92, 505, 355, 565, "SETTINGS", Color.rgb(76,92,118));
+        text(c, "VISUAL REBIRTH  •  BUILD 5.0.0", 92, 315, 13, Color.rgb(255, 222, 139));
         text(c, "Progress saved locally", 92, 620, 16, Color.rgb(190,216,209));
         badge(c, 1055, 72, "10 LEVELS"); badge(c, 1055, 118, "3 WORLDS");
         button(c, 1060, 600, 1235, 660, "DEV TOOLS", Color.rgb(82, 72, 126));
@@ -1065,7 +1410,8 @@ public class GameView extends View {
             else { title="THE FROZEN PEAKS"; line1="The final shard shines beyond Frostwind Climb, where the mountain never sleeps."; line2="The cold tests resolve, but the Heart still answers Aster's call."; }
         }
         float pulse=1f+.10f*(float)Math.sin(animationClock*4.5f);
-        drawImageTransform(c,gemNew,null,new RectF(586,202,694,310),animationClock*34f,pulse,pulse);
+        drawImageTransform(c,collectibleSpriteSheet,collectibleFrame(1,frameIndex(animationClock,8,8f,0)),
+                new RectF(586,202,694,310),animationClock*18f,pulse,pulse);
         centered(c, storyKind==2?"THE GUARDIAN SPEAKS":"THE HEART OF REALMS", 214, 13, Color.rgb(157,230,226));
         centered(c, title, 330, 34, data.accent);
         centered(c, line1, 390, 19, Color.WHITE);
@@ -1076,17 +1422,16 @@ public class GameView extends View {
 
     private void drawWorld(Canvas c) {
         p.setAlpha(255);
-        if (data.world == 1) drawVerdantLevelBackdrop(c);
-        else {
-            Bitmap background = data.world == 2 ? dunesArt : frozenArt;
-            if (background != null) {
-                float parallax = cameraX * 0.08f;
-                drawImage(c, background, null, new RectF(-parallax, 0, VW + 35 - parallax, VH));
-                overlay(c, Color.argb(92, 4, 16, 28));
-            } else c.drawColor(data.sky);
-        }
+        if (realmBackgroundSheet != null) {
+            float parallax = cameraX * .035f;
+            int worldRow = Math.max(0, Math.min(2, data.world - 1));
+            drawImage(c, realmBackgroundSheet,
+                    new Rect(0, worldRow * 720, 1280, (worldRow + 1) * 720),
+                    new RectF(-parallax, 0, VW + 48 - parallax, VH));
+            overlay(c, Color.argb(data.world == 2 ? 38 : 24, 4, 13, 24));
+        } else c.drawColor(data.sky);
         drawWorldAtmosphere(c);
-        p.setColor(Color.argb(110, 4, 17, 24)); c.drawRect(0, 570, VW, VH, p);
+        p.setColor(Color.argb(58, 4, 17, 24)); c.drawRect(0, 590, VW, VH, p);
         if (hurtFlash>0) overlay(c, Color.argb(80,255,50,45));
     }
 
@@ -1189,8 +1534,9 @@ public class GameView extends View {
         for (IcicleSpawner spawner : icicleSpawners) {
             float x = spawner.x - cameraX;
             if (x > -100 && x < VW + 100) {
-                Rect iceSpikeSource = new Rect(2 * 384, 0, 3 * 384, 384);
-                drawImage(c, hangingIceSpikesMotionSheet, iceSpikeSource, new RectF(x - 82, spawner.spawnY - 8, x + 82, spawner.spawnY + 158));
+                int frame = frameIndex(animationClock, 4, 6.5f, spawner.x * .01f);
+                drawImageTransform(c, worldSpriteSheet, worldFrame(2, frame),
+                        new RectF(x - 82, spawner.spawnY - 6, x + 82, spawner.spawnY + 158), 180f, 1f, 1f);
                 float pulse = 7 + 2 * (float)Math.sin(animationClock * 4f + spawner.x);
                 p.setColor(Color.argb(70, 175, 240, 255));
                 c.drawCircle(x, spawner.spawnY + 12, pulse, p);
@@ -1206,19 +1552,10 @@ public class GameView extends View {
 
     private void drawPlatforms(Canvas c) {
         drawEnvironmentalZones(c);
-        Rect platformArt = data.world == 2 ? new Rect(500, 200, 1024, 707) : new Rect(493, 547, 1024, 1000);
         for (Platform pl: platforms) {
             float x=pl.x-cameraX; if(x+pl.w<0||x>VW)continue;
             float bob = pl.crumble ? 0 : (float)Math.sin(animationClock * 1.45f + pl.x * .012f) * 1.8f;
-            if (pl.h < 80 && "ICE".equals(pl.material)) {
-                drawUploadedFloatingPlatform(c, icePlatformMotionSheet, pl, x, bob);
-            } else if (pl.h < 80 && "SAND".equals(pl.material)) {
-                drawUploadedFloatingPlatform(c, goldenPlatformMotionSheet, pl, x, bob);
-            } else if(data.world==1) {
-                Bitmap art=pl.h>=80?jungleGroundPlatform:jungleFloatingPlatform;
-                float top=pl.y-(pl.h>=80?46:31)+bob, bottom=pl.y+(pl.h>=80?94:66)+bob;
-                drawImage(c,art,null,new RectF(x-12,top,x+pl.w+12,bottom));
-            } else drawImage(c, worldProps, platformArt, new RectF(x, pl.y-34+bob, x+pl.w, pl.y+Math.max(48, pl.h)+bob));
+            drawPremiumPlatform(c, pl, x, bob);
             if ("ICE".equals(pl.material)) {
                 int iceColor = theme().iceMaterial;
                 p.setColor(Color.argb(118, Color.red(iceColor), Color.green(iceColor), Color.blue(iceColor)));
@@ -1237,39 +1574,54 @@ public class GameView extends View {
         }
         for (Hazard h: hazards) {
             RectF rect=h.rect(); float x=rect.left-cameraX, pulse = 1f + .07f * (float)Math.sin(animationClock*5f+rect.left*.03f), mid=(x+rect.right-cameraX)*.5f, half=(rect.right-rect.left)*.5f*pulse;
-            int trapColumn;
+            float rise = 1f;
             if (!h.active()) {
-                // A telegraphed boss trap visibly rises from a clear platform into its armed state.
                 float warningProgress = h.age / Math.max(.01f, h.warning);
-                trapColumn = Math.min(5, (int) (warningProgress * 6f));
+                rise = .18f + .82f * warningProgress;
                 int warnColor=h.style==1?Color.rgb(114,238,141):h.style==2?Color.rgb(255,188,80):h.style==3?Color.rgb(126,225,255):Color.rgb(255,186,64);
                 p.setColor(Color.argb((int)(50+120*warningProgress),Color.red(warnColor),Color.green(warnColor),Color.blue(warnColor)));
                 c.drawOval(new RectF(mid-half-12,rect.top-13,mid+half+12,rect.bottom+12),p);
-            } else {
-                // Pulse through tall, readable armed frames: 2 → 3 → 4 → 5 → 4 → 3.
-                int trapPulse = ((int) (animationClock * 4.2f + rect.left * .019f)) % 6;
-                trapColumn = trapPulse <= 3 ? 2 + trapPulse : 8 - trapPulse;
             }
-            Rect trapSource = new Rect(trapColumn * 256, 0, (trapColumn + 1) * 256, 342);
-            float surfaceY = rect.bottom;
-            drawImage(c, trapPlatformMotionSheet, trapSource, new RectF(mid - half - 26, surfaceY - 156, mid + half + 26, surfaceY + 4));
+            float surfaceY = supportingSurfaceY((rect.left + rect.right) * .5f, rect.bottom);
+             int trapRow = Math.max(0, Math.min(2, data.world - 1));
+             int trapFrame = h.active()
+                     ? 1 + frameIndex(animationClock, 3, 7.5f, rect.left * .01f)
+                     : Math.min(2, (int)(3f * h.age / Math.max(.01f, h.warning)));
+            RectF trapDestination = new RectF(mid-half-30, surfaceY-167, mid+half+30, surfaceY);
+             drawImageBottomScaled(c, worldSpriteSheet, worldFrame(trapRow, trapFrame), trapDestination, rise);
         }
         float flag=checkpointMarkerX-cameraX;
         if(flag>-80&&flag<VW) {
-            float checkpointBaseY = checkpointMarkerY + 54f;
+            float checkpointBaseY = supportingSurfaceY(checkpointMarkerX, checkpointMarkerY + 54f);
             if(checkpointActive) { p.setColor(Color.argb(82,93,236,207)); c.drawCircle(flag+18,checkpointBaseY-112,52,p); p.setColor(Color.argb(225,253,232,111)); c.drawCircle(flag+18,checkpointBaseY-112,9,p); }
-            // Restore the previous compact flag while preserving the current fixed platform anchor.
-            int checkpointFrame = checkpointActive ? 2 + ((int) (animationClock * 6f) % 2) : 0;
-            Rect checkpointSource = new Rect(checkpointFrame * 384, 0, (checkpointFrame + 1) * 384, 384);
-            drawImageTransform(c, worldInteractiveAtlas, checkpointSource, new RectF(flag - 38, checkpointBaseY - 192, flag + 90, checkpointBaseY), 0, 1f, 1f);
+            float shrinePulse = checkpointActive ? 1f + .025f*(float)Math.sin(animationClock*5f) : 1f;
+             int checkpointFrame = (checkpointActive ? 2 : 0) + frameIndex(animationClock, 2, 5.5f, 0);
+             drawImageTransform(c, worldSpriteSheet, worldFrame(3, checkpointFrame),
+                     new RectF(flag-48,checkpointBaseY-182,flag+84,checkpointBaseY), 0, shrinePulse, shrinePulse);
         }
     }
 
-    private void drawUploadedFloatingPlatform(Canvas c, Bitmap sheet, Platform platform, float screenX, float bob) {
-        int frame = platform.crumble ? Math.min(5, Math.max(0, (int)((2.6f - platform.life) / .52f))) : 0;
-        Rect source = new Rect(frame * 384, 0, (frame + 1) * 384, 384);
-        // The prepared sheet is top-anchored: the visible walkable top aligns with platform.y.
-        drawImage(c, sheet, source, new RectF(screenX - 16, platform.y - 12 + bob, screenX + platform.w + 16, platform.y + 154 + bob));
+    private void drawPremiumPlatform(Canvas c, Platform platform, float screenX, float bob) {
+        if (platformSpriteSheet == null) return;
+        int realmRow = Math.max(0, Math.min(2, data.world - 1));
+        int platformFrame = frameIndex(animationClock, 4, 3.2f, platform.x * .008f);
+        Rect source = platformFrame(realmRow, platformFrame);
+        float segmentWidth = Math.min(230f, Math.max(100f, platform.w));
+        float remaining = platform.w;
+        float left = screenX;
+        float bottom = platform.y + Math.max(58f, Math.min(118f, platform.h + 24f)) + bob;
+        float top = platform.y - 20f + bob;
+        while (remaining > .5f) {
+            float width = Math.min(segmentWidth, remaining);
+            drawImage(c, platformSpriteSheet, source, new RectF(left-5f, top, left+width+5f, bottom));
+            left += width;
+            remaining -= width;
+        }
+        if (platform.crumble) {
+            float warning = Math.max(0f, Math.min(1f, (2.6f-platform.life)/2.6f));
+            p.setColor(Color.argb((int)(45+140*warning),255,214,106));
+            c.drawRect(screenX+7,platform.y-4+bob,screenX+platform.w-7,platform.y+2+bob,p);
+        }
     }
 
     private void drawPickups(Canvas c) {
@@ -1296,121 +1648,52 @@ public class GameView extends View {
                 c.drawCircle(x, y, size * .74f + 3f * (float) Math.sin(phase * 1.25f), p);
                 p.setStyle(Paint.Style.FILL);
             }
-            if (k.gem) drawProceduralGemDrop(c, x, y, size * ("SECRET".equals(k.route) ? .52f : .46f), phase, "SECRET".equals(k.route));
-            else drawProceduralCoinDrop(c, x, y, size * .47f, phase);
+            int frame = frameIndex(animationClock, 8, k.gem ? 8.5f : 11f, k.x * .013f);
+            float pickupScale = "SECRET".equals(k.route) ? 1.18f : 1f;
+            RectF destination = new RectF(x-size*pickupScale, y-size*pickupScale,
+                    x+size*pickupScale, y+size*pickupScale);
+            drawImageTransform(c, collectibleSpriteSheet, collectibleFrame(k.gem ? 1 : 0, frame),
+                    destination, k.gem ? (float)Math.sin(phase)*4f : 0f, 1f, 1f);
+            int shimmerFrame = frameIndex(animationClock, 6, 13f, k.x * .02f);
+            drawImageTransformAlpha(c, effectsSpriteSheet, effectFrame(2, shimmerFrame),
+                    new RectF(x-size*1.25f,y-size*1.25f,x+size*1.25f,y+size*1.25f),
+                    phase*7f, 1f, 1f, k.gem ? 150 : 95);
         }
-    }
-
-    // Procedural vector drops: Canvas paths, gradients and transforms instead of sprite-sheet frames.
-    private void drawProceduralCoinDrop(Canvas c, float x, float y, float radius, float phase) {
-        float spin = .26f + .74f * Math.abs((float) Math.cos(phase * .55f));
-        c.save();
-        c.translate(x, y);
-        c.scale(spin, 1f);
-        p.setStyle(Paint.Style.FILL);
-        p.setShader(new RadialGradient(-radius * .30f, -radius * .34f, radius * 1.32f,
-                new int[]{Color.rgb(255, 250, 192), Color.rgb(255, 213, 52), Color.rgb(241, 154, 20), Color.rgb(139, 73, 8)},
-                new float[]{0f, .30f, .72f, 1f}, Shader.TileMode.CLAMP));
-        c.drawCircle(0, 0, radius, p);
-        p.setShader(null);
-        p.setStyle(Paint.Style.STROKE);
-        p.setStrokeWidth(1.8f);
-        p.setColor(Color.rgb(130, 75, 7));
-        c.drawCircle(0, 0, radius, p);
-        if (spin > .48f) {
-            p.setStyle(Paint.Style.FILL);
-            p.setTextAlign(Paint.Align.CENTER);
-            p.setTextSize(radius * 1.04f);
-            p.setColor(Color.rgb(255, 250, 222));
-            c.drawText("+", 0, radius * .34f, p);
-            p.setTextAlign(Paint.Align.LEFT);
-        }
-        p.setStyle(Paint.Style.FILL);
-        p.setColor(Color.argb(205, 255, 255, 238));
-        c.drawOval(new RectF(-radius * .47f, -radius * .56f, -radius * .06f, -radius * .30f), p);
-        c.restore();
-    }
-
-    private void drawProceduralGemDrop(Canvas c, float x, float y, float radius, float phase, boolean secret) {
-        float pulse = 1f + .055f * (float) Math.sin(phase * .75f);
-        int bright = secret ? Color.rgb(234, 174, 255) : Color.rgb(150, 246, 255);
-        int middle = secret ? Color.rgb(165, 83, 242) : Color.rgb(45, 175, 244);
-        int deep = secret ? Color.rgb(72, 26, 142) : Color.rgb(8, 76, 177);
-        c.save();
-        c.translate(x, y);
-        c.scale(pulse, pulse);
-        p.setStyle(Paint.Style.FILL);
-        p.setColor(Color.argb(66, Color.red(bright), Color.green(bright), Color.blue(bright)));
-        c.drawCircle(0, 0, radius * 1.36f, p);
-        Path crystal = new Path();
-        crystal.moveTo(0, -radius);
-        crystal.lineTo(radius * .78f, -radius * .18f);
-        crystal.lineTo(0, radius * 1.08f);
-        crystal.lineTo(-radius * .78f, -radius * .18f);
-        crystal.close();
-        p.setShader(new LinearGradient(0, -radius, 0, radius * 1.08f, bright, deep, Shader.TileMode.CLAMP));
-        c.drawPath(crystal, p);
-        p.setShader(null);
-        p.setStyle(Paint.Style.STROKE);
-        p.setStrokeWidth(1.55f);
-        p.setColor(Color.argb(235, 236, 255, 255));
-        c.drawPath(crystal, p);
-        p.setStyle(Paint.Style.FILL);
-        Path leftFacet = new Path();
-        leftFacet.moveTo(0, -radius * .88f);
-        leftFacet.lineTo(-radius * .62f, -radius * .13f);
-        leftFacet.lineTo(0, radius * .18f);
-        leftFacet.close();
-        p.setColor(Color.argb(145, 255, 255, 255));
-        c.drawPath(leftFacet, p);
-        Path rightFacet = new Path();
-        rightFacet.moveTo(0, -radius * .88f);
-        rightFacet.lineTo(radius * .62f, -radius * .13f);
-        rightFacet.lineTo(0, radius * .18f);
-        rightFacet.close();
-        p.setColor(Color.argb(118, Color.red(middle), Color.green(middle), Color.blue(middle)));
-        c.drawPath(rightFacet, p);
-        p.setColor(Color.argb(230, 255, 255, 255));
-        c.drawCircle(-radius * .24f, -radius * .36f, radius * .11f, p);
-        c.restore();
     }
 
     private void drawFoes(Canvas c) {
         for(Foe e:foes) {
             float phase=animationClock*(e.kind==1?5.2f:3.4f)+e.x*.025f, x=e.x-cameraX; if(x<-120||x>VW+120)continue;
-            boolean attacking=e.state==2||e.state==3;
-            boolean warning=e.state==1;
+            boolean attacking=e.state==EnemyController.ATTACK;
+            boolean warning=e.state==EnemyController.NOTICE||e.state==EnemyController.WINDUP;
             float bob=((e.kind==1||e.kind==3||e.kind==7)?(float)Math.sin(phase)*8:(float)Math.sin(phase)*2f);
             if(warning) { int warnColor=EnemyController.archetype(e.kind).accentColor; p.setColor(Color.argb(96,Color.red(warnColor),Color.green(warnColor),Color.blue(warnColor))); c.drawCircle(x,e.y-22+bob,42+4*(float)Math.sin(animationClock*14f),p); }
-            if(e.kind==3&&e.state==2){p.setColor(Color.argb(105,126,226,255));c.drawCircle(x,e.y-6+bob,58,p);}
-            if(e.kind==0 || e.kind==1) {
-                Bitmap sheet=e.kind==0?mossCrawlerSheet:emberMothSheet;
-                int frame=e.hurtTime>0?4:attacking?3:1+((int)(phase*1.15f)%2);
-                Rect source=new Rect(frame*512,0,frame*512+512,512);
-                float width=e.kind==0?86:108, height=e.kind==0?86:106;
-                float bottom=e.kind==0?e.y+42+bob:e.y+30+bob;
-                RectF destination=new RectF(x-width/2,bottom-height,x+width/2,bottom);
-                float facingScale=e.kind==0?(e.dir>0?-1f:1f):(e.dir<0?-1f:1f);
-                drawImageTransform(c,sheet,source,destination,attacking?(float)Math.sin(phase)*3f:0,facingScale,1f);
+            if(e.state==EnemyController.NOTICE) {
+                text(c,"!",x-5,e.y-82+bob,22,Color.WHITE);
+            } else if(e.state==EnemyController.WINDUP) {
+                p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(4);p.setColor(Color.argb(190,255,224,125));
+                c.drawCircle(x,e.y-18+bob,50+5*(float)Math.sin(animationClock*18f),p);p.setStyle(Paint.Style.FILL);
+            } else if(e.state==EnemyController.RECOVERY) {
+                p.setColor(Color.argb(90,126,255,188));c.drawOval(new RectF(x-34,e.y+35+bob,x+34,e.y+43+bob),p);
+            }
+            if(e.kind==3&&e.state==EnemyController.ATTACK){p.setColor(Color.argb(105,126,226,255));c.drawCircle(x,e.y-6+bob,58,p);}
+            float scale = e.kind==EnemyController.HEAVY_BRUTE?1.34f:e.kind==EnemyController.SHIELD_GUARD?1.12f:
+                    e.kind==EnemyController.WIND_WISP?.9f:e.kind==EnemyController.FLYING_SWOOOPER?1.08f:1f;
+            float width=104f*scale, height=118f*scale;
+            float bottom=(e.kind==EnemyController.FLYING_SWOOOPER||e.kind==EnemyController.FROST_SENTINEL||e.kind==EnemyController.WIND_WISP)?e.y+34+bob:e.y+45+bob;
+            float squash=1f+.035f*(float)Math.sin(phase);
+            float attackLean=attacking?(e.dir>0?8f:-8f):e.state==EnemyController.RECOVERY?(e.dir>0?-4f:4f):0f;
+            float hitScale=e.state==EnemyController.HIT_REACTION?.90f:1f;
+            float facing=e.dir<0?-squash:squash;
+            Bitmap premiumSheet = e.kind==EnemyController.GROUND_PATROLLER?mossCrawlerSheet
+                    :e.kind==EnemyController.HEAVY_BRUTE?stoneBruteSheet:null;
+            if(premiumSheet!=null){
+                drawImageTransform(c,premiumSheet,premiumEnemyFrame(premiumEnemyRow(e),premiumEnemyFrameIndex(e)),
+                        new RectF(x-width/2,bottom-height,x+width/2,bottom),attackLean,facing*hitScale,(2f-squash)*hitScale);
             } else {
-                // The shared atlas has six rows for kinds 2–7 and four animation poses per row.
-                int atlasRow = e.kind - EnemyController.FAST_SKIRMISHER;
-                int atlasColumn = e.hurtTime > 0 ? 3 : (attacking || warning ? 2 : ((int) (phase * 1.25f) % 2));
-                Rect source = new Rect(atlasColumn * 384, atlasRow * 384, (atlasColumn + 1) * 384, (atlasRow + 1) * 384);
-                float squash=1f+.045f*(float)Math.sin(phase);
-                float scale = e.kind == EnemyController.HEAVY_BRUTE ? 1.36f : e.kind == EnemyController.SHIELD_GUARD ? 1.10f : e.kind == EnemyController.WIND_WISP ? .88f : 1.0f;
-                if (e.kind == EnemyController.HEAVY_BRUTE) { p.setColor(Color.argb(70, 255, 106, 82)); c.drawCircle(x, e.y - 10 + bob, 58, p); }
-                if (e.kind == EnemyController.RUNE_CASTER) { p.setColor(Color.argb(78, 181, 161, 255)); c.drawCircle(x, e.y - 18 + bob, 46, p); }
-                float facingScale = e.dir < 0 ? -1f / squash : 1f / squash;
-                drawImageTransform(c, enemyMotionAtlas, source, new RectF(x-50*scale,e.y-72*scale+bob,x+50*scale,e.y+42*scale+bob), 0, facingScale, squash);
-                if (e.kind == EnemyController.SHIELD_GUARD) {
-                    p.setColor(Color.rgb(92, 219, 207));
-                    float shieldX = x + (e.dir > 0 ? 36 : -36);
-                    c.drawRoundRect(shieldX - 6, e.y - 36 + bob, shieldX + 6, e.y + 18 + bob, 6, 6, p);
-                } else if (e.kind == EnemyController.RUNE_CASTER) {
-                    p.setColor(Color.rgb(202, 183, 255));
-                    c.drawCircle(x + e.dir * 30, e.y - 28 + bob, 7 + 2*(float)Math.sin(phase*2), p);
-                }
+                int enemyFrame = enemyFrame(e);
+                drawImageTransform(c,enemySpriteSheet,enemyFrame(Math.max(0,Math.min(7,e.kind)), enemyFrame),
+                        new RectF(x-width/2,bottom-height,x+width/2,bottom),attackLean,facing*hitScale,(2f-squash)*hitScale);
             }
             if (e.burnTime > 0) { p.setColor(Color.argb(105, 255, 120, 52)); c.drawCircle(x, e.y - 11 + bob, 46 + 3*(float)Math.sin(animationClock*8f), p); }
             if (e.hurtTime > 0) { p.setColor(Color.argb(92, 255, 240, 177)); c.drawCircle(x, e.y - 12 + bob, 38, p); }
@@ -1507,15 +1790,41 @@ public class GameView extends View {
     private void drawBoss(Canvas c) {
         if (boss==null)return;
         float x=boss.x-cameraX, phase=animationClock*(boss.phase==2?3.4f:2.1f), bob=(float)Math.sin(phase)*4f;
-        // 2D skeletal-animation rig: independent head, torso, arms and legs are posed around shared
-        // joint points every frame, so parts stay visually attached through the whole animation cycle.
-        Bitmap rigSheet = boss.world == 1 ? bossForestRigParts : boss.world == 2 ? bossStoneRigParts : bossIceRigParts;
-        BossRig rig = rigFor(boss.world);
         float bossFacingScale = px < boss.x ? -1f : 1f;
         float bossGroundY = boss.y + 80f + bob;
         if (boss.burnTime > 0) { p.setColor(Color.argb(95,255,126,58)); c.drawCircle(x,bossGroundY-148,126+5*(float)Math.sin(animationClock*8f),p); }
         if (boss.frostSlowTime > 0) { p.setColor(Color.argb(85,142,232,255)); c.drawCircle(x,bossGroundY-148,132,p); }
-        drawSkeletalBoss(c, rigSheet, rig, x, bossGroundY, phase, bossFacingScale);
+        if (boss.exposedTime > 0 || boss.armorCrackedTime > 0
+                || boss.state == BossController.State.ATTACK_RECOVERY) {
+            int weakColor = boss.armorCrackedTime > 0 ? Color.rgb(142,232,255) : Color.rgb(126,255,188);
+            p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(5);p.setColor(weakColor);
+            c.drawCircle(x,bossGroundY-148,138+4*(float)Math.sin(animationClock*10f),p);
+            p.setStyle(Paint.Style.FILL);
+        }
+        if (boss.state == BossController.State.ATTACK_WINDUP && boss.attack != null) {
+            float telegraphProgress = 1f - Math.max(0f, boss.stateTime) / boss.attack.windupSeconds;
+            p.setStyle(Paint.Style.STROKE);
+            p.setStrokeWidth(5f);
+            p.setColor(Color.argb((int)(105 + telegraphProgress * 120), 255, 213, 112));
+            c.drawCircle(x, bossGroundY - 148, 108 + telegraphProgress * 28, p);
+            p.setStyle(Paint.Style.FILL);
+        }
+        float breath=1f+.018f*(float)Math.sin(phase*1.35f);
+        float charge=boss.state==BossController.State.ATTACK_WINDUP?.65f:
+                boss.state==BossController.State.ATTACK_EXECUTE?1f:0f;
+        float hurt=boss.hitLock>0?.92f:1f;
+        float bossWidth=boss.world==3?330f:300f;
+        float bossHeight=boss.world==3?356f:330f;
+        float lean=(px<boss.x?-1f:1f)*(charge*7f-(boss.hitLock>0?5f:0f));
+        RectF bossDestination=new RectF(x-bossWidth/2,bossGroundY-bossHeight,x+bossWidth/2,bossGroundY);
+        if(boss.world==1&&stoneBruteSheet!=null){
+            drawImageTransform(c,stoneBruteSheet,premiumEnemyFrame(premiumBossRow(boss),premiumBossFrameIndex(boss)),
+                    bossDestination,lean,bossFacingScale*hurt/breath,breath*hurt);
+        } else {
+            int bossFrame = bossFrame(boss);
+            drawImageTransform(c,bossSpriteSheet,bossFrame(Math.max(0,Math.min(2,boss.world-1)), bossFrame),
+                    bossDestination,lean,bossFacingScale*hurt/breath,breath*hurt);
+        }
         // Keep the boss label and health bar safely above the tallest sprite frame.
         float bossHudY = boss.y - 380 + bob;
         p.setColor(Color.argb(230,255,255,255)); c.drawRect(x-96, bossHudY, x+96, bossHudY+13, p);
@@ -1523,12 +1832,17 @@ public class GameView extends View {
         BossController.Profile profile=BossController.profile(boss.world);
         String phaseName=boss.phase==1?"Awakening":boss.phase==2?profile.phaseTwoName:profile.phaseThreeName;
         centeredAt(c,boss.name+" • "+phaseName, x, bossHudY-15, 14, Color.WHITE);
+        if (boss.state == BossController.State.ATTACK_WINDUP && boss.attack != null) {
+            centeredAt(c, boss.attack.displayName.toUpperCase(java.util.Locale.US), x, bossHudY + 35, 12, Color.rgb(255, 222, 139));
+        }
     }
 
     private void drawSkeletalBoss(Canvas c, Bitmap rigSheet, BossRig rig, float x, float groundY, float phase, float facingScale) {
         float breath = (float) Math.sin(phase * 1.35f);
         float stride = (float) Math.sin(phase * 1.8f);
-        float charge = boss.transitionTime > 0 ? 1f : boss.cooldown < .44f ? .72f : 0f;
+        float charge = boss.transitionTime > 0 ? 1f
+                : boss.state == BossController.State.ATTACK_WINDUP ? .72f
+                : boss.state == BossController.State.ATTACK_EXECUTE ? 1f : 0f;
         float hurt = boss.hitLock > 0 ? 1f : 0f;
         float torsoTilt = breath * 1.4f - charge * 5f + hurt * 3.5f;
         float leftArmAngle = -stride * 8f - charge * 30f + hurt * 10f;
@@ -1565,15 +1879,17 @@ public class GameView extends View {
         float x=px-cameraX; if(invincible>0 && ((int)(invincible*18)%2==0) && screen!=GAMEOVER) return;
         float stride=(float)Math.sin(animationClock*11f), idle=(float)Math.sin(animationClock*2.1f);
         boolean running=grounded&&Math.abs(vx)>55;
+        boolean walking=grounded&&!running&&Math.abs(vx)>8;
         boolean dashing=dashTime>0, sliding=slideTime>0&&grounded;
-        Bitmap sheet; Rect source; float width; float bob; float lean;
-        if(screen==GAMEOVER){sheet=asterDefeatSheet;int frame=defeatTime>.22f?1:0;source=new Rect(frame*512,0,frame*512+512,512);width=150;bob=0;lean=0;}
-        else if(hurtTime>0){sheet=asterHurtSheet;int frame=((int)(animationClock*9f))%2;source=new Rect(frame*512,0,frame*512+512,512);width=148;bob=0;lean=-4;}
-        else if(attackTime>0){sheet=asterAttackSheet;int frame=Math.min(2,(int)((attackDuration-attackTime)*12f));source=new Rect(frame*512,0,frame*512+512,512);width=airAttack?166:(chargedAttack?188:attackStage>=4?190:attackStage==3?178:attackStage==2?172:160);bob=0;lean=airAttack?-18:(chargedAttack?-14:attackStage>=4?-13:attackStage==3?-10:attackStage==2?-8:-4);}
-        else if(dashing||sliding){sheet=asterRunSheet;int frame=((int)(animationClock*18f))%8;source=new Rect(frame*512,0,frame*512+512,512);width=dashing?154:145;bob=sliding?4:0;lean=dashing?6:-8;}
-        else if(!grounded){sheet=asterJump;source=null;width=132;bob=0;lean=0;}
-        else if(running){sheet=asterRunSheet;int frame=((int)(animationClock*13f))%8;source=new Rect(frame*512,0,frame*512+512,512);width=142;bob=Math.abs(stride)*3f;lean=stride*1.6f;}
-        else {sheet=asterIdleSheet;source=new Rect(0,0,512,512);width=140;bob=idle*1.5f;lean=idle*1.1f;}
+        float width; float bob; float lean;
+        if(screen==GAMEOVER){width=150;bob=12;lean=82;}
+        else if(hurtTime>0){width=148;bob=0;lean=facingLeft?8:-8;}
+        else if(attackTime>0){width=airAttack?166:(chargedAttack?188:attackStage>=4?190:attackStage==3?178:attackStage==2?172:160);bob=0;lean=facingLeft?12:-12;}
+        else if(dashing||sliding){width=dashing?154:145;bob=sliding?5:0;lean=facingLeft?-9:9;}
+        else if(!grounded){width=142;bob=-3;lean=facingLeft?5:-5;}
+        else if(running){width=148;bob=Math.abs(stride)*3f;lean=stride*2.4f;}
+        else if(walking){width=146;bob=Math.abs(stride)*1.6f;lean=stride*1.3f;}
+        else {width=145;bob=idle*1.8f;lean=idle*1.2f;}
         float land = Math.max(0, landingPulse / .14f);
         float sx=(running?1f+stride*.016f:1f-idle*.01f) - land*.075f, sy=(running?1f-stride*.02f:1f+idle*.012f) + land*.14f;
         if (JUICE_ENABLED && playerSquashTime > 0) {
@@ -1581,9 +1897,37 @@ public class GameView extends View {
             if (playerSquashLanding) { sx += .10f * squash; sy -= .13f * squash; }
             else { sx -= .055f * squash; sy += .075f * squash; }
         }
-        if(grounded){p.setColor(Color.argb(72,3,12,16));c.drawOval(new RectF(x-width*.31f,py+48,x+width*.31f,py+61),p);}
-        RectF dest=new RectF(x-width/2,py-110+bob,x+width/2,py+66+bob);
-        drawImageTransform(c,sheet,source,dest,lean,facingLeft?-sx:sx,sy);
+        // The rendered platform surface sits ~10px above the collision line platform.y (its art
+        // has a small decorative overhang), and grounded py = platform.y-54, so the true ground
+        // line in player-space is py+44, not the old py+66 the previous art happened to line up
+        // with — shifted here (and the foot shadow with it) so feet land exactly on the visible
+        // platform edge instead of sinking into it.
+        if(grounded){p.setColor(Color.argb(72,3,12,16));c.drawOval(new RectF(x-width*.31f,py+26,x+width*.31f,py+39),p);}
+        RectF dest=new RectF(x-width/2,py-132+bob,x+width/2,py+44+bob);
+        // Rows on the premium aster_motion_sheet: 0 idle, 1 walk, 2 run/air, 3 attack, 4 hurt, 5 death.
+        int heroRow;
+        float heroFps;
+        int heroFrame;
+        if(screen==GAMEOVER){
+            heroRow=5;heroFps=9f;
+            heroFrame=Math.min(7,(int)(defeatTime*heroFps)); // plays once, holds on the final frame
+        } else if(hurtTime>0){
+            heroRow=4;heroFps=9f;
+            heroFrame=frameIndex(animationClock,8,heroFps,0f);
+        } else if(attackTime>0){
+            heroRow=3;heroFps=14f;
+            heroFrame=frameIndex(animationClock,8,heroFps,attackStage*.37f);
+        } else if(!grounded||dashing||sliding||running){
+            heroRow=2;heroFps=running?13f:9f;
+            heroFrame=frameIndex(animationClock,8,heroFps,0f);
+        } else if(walking){
+            heroRow=1;heroFps=8f;
+            heroFrame=frameIndex(animationClock,8,heroFps,0f);
+        } else {
+            heroRow=0;heroFps=6f;
+            heroFrame=frameIndex(animationClock,8,heroFps,0f);
+        }
+        drawImageTransform(c,asterMotionSheet,asterFrame(heroRow,heroFrame),dest,lean,facingLeft?-sx:sx,sy);
         if(powerTime>0){p.setColor(Color.argb(80,Color.red(data.accent),Color.green(data.accent),Color.blue(data.accent)));c.drawCircle(x,py+25+bob,65+4*(float)Math.sin(animationClock*9f),p);}
     }
 
@@ -1591,16 +1935,14 @@ public class GameView extends View {
         float playerX=px-cameraX;
         if (Math.abs(vx)>70 && grounded && screen==LEVEL) {
             float tailX=playerX+(facingLeft?35:-35);
-            int runFrame = ((int) (animationClock * 7f)) % 3;
-            Rect runSource = new Rect(runFrame * 544, 0, (runFrame + 1) * 544, 544);
-            // Anchor the visible ink of the trail at the player/ground contact line.
             float runContactY = py + 52f;
-            drawImageTransform(c, actionFxAtlas, runSource, new RectF(tailX-74, runContactY-21, tailX+74, runContactY+9), 0, facingLeft ? -.86f : .86f, .86f);
+            drawImageTransformAlpha(c, effectsSpriteSheet, effectFrame(0, frameIndex(animationClock,6,13f,0)),
+                    new RectF(tailX-74, runContactY-21, tailX+74, runContactY+9), 0, facingLeft ? -.86f : .86f, .86f, 130);
         }
         if (dashFxTime > 0) {
             float dashTail=playerX+(facingLeft?74:-74), strength=dashFxTime/.24f;
-            Rect dashSource = new Rect(2 * 544, 0, 3 * 544, 544);
-            drawImageTransform(c, actionFxAtlas, dashSource, new RectF(dashTail-118,py-62,dashTail+118,py+70), 0, facingLeft ? -1.18f : 1.18f, 1.18f);
+            drawImageTransformAlpha(c, effectsSpriteSheet, effectFrame(0, timedFrame(dashFxTime,.24f,6)),
+                    new RectF(dashTail-118,py-62,dashTail+118,py+70), 0, facingLeft ? -1.18f : 1.18f, 1.18f, Math.max(60,(int)(255*strength)));
             p.setColor(Color.argb((int)(95*strength),160,246,255));
             c.drawCircle(playerX+(facingLeft?44:-44),py+22,36+18*strength,p);
         }
@@ -1627,40 +1969,34 @@ public class GameView extends View {
             p.setColor(Color.argb((int)(72*alpha),Color.red(data.accent),Color.green(data.accent),Color.blue(data.accent))); c.drawRect(0,0,VW,VH,p);
             centered(c,"PHASE "+boss.phase+" • "+(boss.phase==1?"AWAKENING":boss.phase==2?BossController.profile(boss.world).phaseTwoName:BossController.profile(boss.world).phaseThreeName),186,24,Color.WHITE);
         }
-        if(airStrikeFxTime>0){float strength=airStrikeFxTime/.36f;drawImageAlpha(c,superHitLine,null,new RectF(playerX-16,py+18,playerX+16,py+142),Math.max(35,(int)(180*strength)));}
+        if(airStrikeFxTime>0){float strength=airStrikeFxTime/.36f;drawImageTransformAlpha(c,effectsSpriteSheet,effectFrame(1,timedFrame(airStrikeFxTime,.36f,6)),new RectF(playerX-44,py+8,playerX+44,py+146),90,1f,1f,Math.max(35,(int)(180*strength)));}
         if (wallSliding) {
             float wallX=playerX-wallDir*28;
-            drawImageAlpha(c,fxTrail,null,new RectF(wallX-28,py-42,wallX+28,py+38),92);
+            drawImageTransformAlpha(c,effectsSpriteSheet,effectFrame(0,frameIndex(animationClock,6,9f,0)),new RectF(wallX-28,py-42,wallX+28,py+38),90,wallDir,1f,92);
         }
         if (landingPulse > 0) {
             float pulse=landingPulse/.14f;
-            drawImageAlpha(c,fxTrail,null,new RectF(playerX-74,py+22,playerX+74,py+56),Math.max(0,(int)(130*pulse)));
+            drawImageTransformAlpha(c,effectsSpriteSheet,effectFrame(0,timedFrame(landingPulse,.14f,6)),new RectF(playerX-74,py+22,playerX+74,py+56),0,1f,1f,Math.max(0,(int)(130*pulse)));
         }
         if (swordFxTime>0) {
             float side=facingLeft?-1:1, x=playerX+side*66;
             float effectDuration = chargedAttack ? .34f : .20f;
             float progress = 1f - Math.max(0f, swordFxTime) / effectDuration;
-            int attackFrame = Math.min(3, (int) (progress * 4f));
-            Rect attackSource = new Rect(attackFrame * 544, 544, (attackFrame + 1) * 544, 1088);
             float scale=.76f+(.18f*(swordFxTime/effectDuration)) + (attackStage >= 4 ? .10f : 0f);
+            Rect slashFrame=effectFrame(1,Math.max(0,Math.min(5,(int)(progress*6f))));
             if(airAttack){
-                drawImageTransform(c,actionFxAtlas,attackSource,new RectF(playerX-72,py-2,playerX+72,py+142),90,scale,scale);
-                drawImageTransform(c,superHitLine,null,new RectF(playerX-16,py+35,playerX+18,py+120),90,1,1);
+                drawImageTransform(c,effectsSpriteSheet,slashFrame,new RectF(playerX-72,py-2,playerX+72,py+142),90,scale,scale);
             } else {
-                drawImageTransform(c,actionFxAtlas,attackSource,new RectF(x-72,py-66,x+72,py+78),side<0?-18:18,side*scale,scale);
-                drawImageTransform(c,superHitLine,null,new RectF(x-42,py+2,x+42,py+23),side<0?180:0,side,1f);
+                drawImageTransform(c,effectsSpriteSheet,slashFrame,new RectF(x-72,py-66,x+72,py+78),side<0?-18:18,side*scale,scale);
             }
         }
         if (hitFxTime>0) {
             float x=fxX-cameraX, scale=.76f+.36f*(hitFxTime/.18f);
-            Rect impactSource = new Rect(2 * 544, 544, 3 * 544, 1088);
-            drawImageTransform(c,actionFxAtlas,impactSource,new RectF(x-74,fxY-74,x+74,fxY+74),animationClock*34f,scale,scale);
+            drawImageTransform(c,effectsSpriteSheet,effectFrame(2,timedFrame(hitFxTime,.18f,6)),new RectF(x-74,fxY-74,x+74,fxY+74),animationClock*34f,scale,scale);
         }
         if (sparkleFxTime>0) {
             float x=fxX-cameraX, scale=.82f+.42f*(sparkleFxTime/.34f);
-            int sparkleFrame = Math.min(3, (int) ((1f - sparkleFxTime / .34f) * 4f));
-            Rect sparkleSource = new Rect(sparkleFrame * 544, 2 * 544, (sparkleFrame + 1) * 544, 3 * 544);
-            drawImageTransform(c,actionFxAtlas,sparkleSource,new RectF(x-66,fxY-66,x+66,fxY+66),0,scale,scale);
+            drawImageTransform(c,effectsSpriteSheet,effectFrame(2,timedFrame(sparkleFxTime,.34f,6)),new RectF(x-66,fxY-66,x+66,fxY+66),0,scale,scale);
         }
         drawJuiceParticles(c);
     }
@@ -1679,13 +2015,13 @@ public class GameView extends View {
     private void drawHud(Canvas c) {
         if(levelElapsed<3.2f){ float intro=Math.min(1f,levelElapsed/.25f); p.setColor(Color.argb((int)(210*intro),9,24,35));c.drawRoundRect(16,15,390,91,22,22,p);stroke.setColor(Color.argb((int)(130*intro),174,235,225));c.drawRoundRect(16,15,390,91,22,22,stroke);text(c,data.worldName,30,41,16,Color.WHITE);text(c,data.title,30,63,15,Color.rgb(196,226,219));text(c,levelDesignRole+"  •  "+data.mechanic,30,83,13,Color.rgb(152,229,230)); }
         if(levelElapsed<7.6f){float hint=Math.min(1f,levelElapsed/.35f);p.setColor(Color.argb((int)(175*hint),8,22,34));c.drawRoundRect(255,679,1025,711,14,14,p);centeredAt(c,"DASH DODGES HITS   •   ATTACK IN AIR: DIVE SLASH   •   WALL + JUMP: CLIMB",640,701,13,Color.rgb(216,245,240));}
-        panel(c,366,21,570,68); drawImage(c,uiShield,null,new RectF(374,28,402,60));
-        for(int i=0;i<maxHealth;i++) drawImage(c,i<health?superHeartFull:superHeartEmpty,null,new RectF(410+i*18,32,426+i*18,47));
-        drawImageAlpha(c,superHudBox,null,new RectF(580,27,611,58),78); p.setColor(Color.rgb(255,219,80));c.drawCircle(595,43,8,p);text(c,""+coinsRun,610,50,19,Color.WHITE);
-        drawImageAlpha(c,superHudBox,null,new RectF(662,27,693,58),78); p.setColor(Color.rgb(103,236,255));c.drawCircle(677,43,8,p);text(c,""+gemsRun,692,50,19,Color.WHITE);
+        panel(c,366,21,570,68); drawImage(c,uiSpriteSheet,uiFrame(3,0),new RectF(374,28,402,60));
+        for(int i=0;i<maxHealth;i++) drawImage(c,uiSpriteSheet,uiFrame(i<health?1:2,0),new RectF(410+i*18,32,426+i*18,47));
+        p.setColor(Color.argb(110,12,24,35));c.drawCircle(595,43,15,p);p.setColor(Color.rgb(255,219,80));c.drawCircle(595,43,8,p);text(c,""+coinsRun,610,50,19,Color.WHITE);
+        p.setColor(Color.argb(110,12,24,35));c.drawCircle(677,43,15,p);p.setColor(Color.rgb(103,236,255));c.drawCircle(677,43,8,p);text(c,""+gemsRun,692,50,19,Color.WHITE);
         drawStageProgress(c);
-        panel(c,950,18,1115,72); drawImage(c,uiEnergyBolt,null,new RectF(956,21,982,68)); text(c,powers[power],990,45,18,Color.rgb(232,250,244)); p.setColor(Color.rgb(36,55,68)); c.drawRoundRect(990,53,1100,61,4,4,p); p.setColor(Color.rgb(100,224,248)); c.drawRoundRect(990,53,990+110*(energy/maxEnergy),61,4,4,p); button(c,1140,18,1260,72,"II",Color.rgb(51,77,102));
-        if (data.boss && boss!=null && boss.hp>0) { panel(c,430,85,850,118); p.setColor(Color.rgb(75,43,51));c.drawRoundRect(445,94,835,109,7,7,p);p.setColor(Color.rgb(218,76,76));c.drawRoundRect(445,94,445+390*boss.hp/(float)boss.maxHp,109,7,7,p);centered(c,boss.name+" • Phase "+boss.phase,138,16,Color.WHITE); }
+        panel(c,950,18,1115,72); drawImage(c,uiSpriteSheet,uiFrame(0,1),new RectF(956,21,982,68)); text(c,powers[power],990,45,18,Color.rgb(232,250,244)); p.setColor(Color.rgb(36,55,68)); c.drawRoundRect(990,53,1100,61,4,4,p); p.setColor(Color.rgb(100,224,248)); c.drawRoundRect(990,53,990+110*(energy/maxEnergy),61,4,4,p); button(c,1140,18,1260,72,"II",Color.rgb(51,77,102));
+        if (data.boss && boss!=null && boss.hp>0) { panel(c,430,85,850,118); p.setColor(Color.rgb(75,43,51));c.drawRoundRect(445,94,835,109,7,7,p);p.setColor(Color.rgb(218,76,76));c.drawRoundRect(445,94,445+390*boss.hp/(float)boss.maxHp,109,7,7,p);centered(c,boss.name+" • Phase "+boss.phase,138,16,Color.WHITE); if (boss.state == BossController.State.ATTACK_WINDUP && boss.attack != null) centeredAt(c, "TELEGRAPH  •  "+boss.attack.displayName.toUpperCase(java.util.Locale.US), 640, 158, 12, Color.rgb(255,222,139)); }
         if(screen==LEVEL)drawControls(c);
     }
 
@@ -1710,7 +2046,7 @@ public class GameView extends View {
         int controlColor = theme().controlFill;
         p.setColor(Color.argb(110,Color.red(controlColor),Color.green(controlColor),Color.blue(controlColor))); c.drawCircle(91,626,51,p); c.drawCircle(204,626,51,p); c.drawCircle(960,545,46,p); c.drawCircle(1070,626,52,p); c.drawCircle(1188,626,52,p);
         p.setColor(Color.argb(190,185,237,236)); centeredAt(c,"‹",91,640,52,Color.WHITE); centeredAt(c,"›",204,640,52,Color.WHITE); centeredAt(c,"JUMP",1070,633,16,Color.WHITE); centeredAt(c,"POWER",1188,633,14,Color.WHITE); if(dashCooldown<=0){centeredAt(c,"×2",91,684,13,Color.rgb(165,245,224));centeredAt(c,"×2",204,684,13,Color.rgb(165,245,224));}
-        drawImage(c,attackButton,null,new RectF(914,499,1006,591));
+        drawImage(c,uiSpriteSheet,uiFrame(0,0),new RectF(914,499,1006,591));
         if (attackHolding) {
             float progress = Math.min(1f, chargeTime / .38f);
             p.setStyle(Paint.Style.STROKE); p.setStrokeWidth(4f);
@@ -1723,13 +2059,114 @@ public class GameView extends View {
         }
     }
 
-    private void upgradeCard(Canvas c,float x,float y,String title,String sub,String key,int rank,int accent){panel(c,x,y,x+290,y+360);Rect token=key.equals("attack")?new Rect(600,1067,800,1453):new Rect(773,967,1024,1453);float pulse=1f+.08f*(float)Math.sin(animationClock*3f+x*.01f);drawImageTransform(c,worldProps,token,new RectF(x+195,y+24,x+260,y+89),key.equals("attack")?animationClock*70:0,pulse,pulse);text(c,title,x+25,y+53,22,Color.WHITE);text(c,sub,x+25,y+84,15,Color.rgb(190,213,222));for(int i=0;i<3;i++){p.setColor(i<rank?accent:Color.rgb(64,84,103));c.drawCircle(x+55+i*42,y+145,13,p);}text(c,"Rank "+rank+" / 3",x+25,y+190,18,Color.WHITE);button(c,x+30,y+250,x+260,y+310,"BUY • 30",accent);}
-    private void upgradeGemCard(Canvas c,float x,float y,String title,String sub,int rank,int accent){panel(c,x,y,x+290,y+360);float pulse=1f+.08f*(float)Math.sin(animationClock*3f+x*.01f);drawImageTransform(c,gemNew,null,new RectF(x+195,y+24,x+260,y+89),animationClock*48,pulse,pulse);text(c,title,x+25,y+53,22,Color.WHITE);text(c,sub,x+25,y+84,15,Color.rgb(190,213,222));for(int i=0;i<3;i++){p.setColor(i<rank?accent:Color.rgb(64,84,103));c.drawCircle(x+55+i*42,y+145,13,p);}text(c,"Rank "+rank+" / 3",x+25,y+190,18,Color.WHITE);button(c,x+30,y+250,x+260,y+310,"BUY • 3 GEMS",accent);}
-    private void upgradeStarCard(Canvas c,float x,float y){int rank=save.relicRank(), threshold=save.relicThreshold();panel(c,x,y,x+650,y+180);float pulse=1f+.08f*(float)Math.sin(animationClock*3.4f);drawImageTransform(c,gemNew,null,new RectF(x+42,y+38,x+112,y+108),animationClock*48,pulse,pulse);text(c,"REALM RELIC",x+140,y+48,25,Color.rgb(255,229,126));text(c,"Spend no stars: each rank grants +1 max health, +10 energy, and cheaper powers.",x+140,y+76,15,Color.rgb(205,224,232));drawProgressStars(c,x+195,y+118,rank);text(c,"Realm Stars: "+save.totalStars()+" / "+(rank<3?String.valueOf(threshold):"MAX"),x+285,y+124,19,Color.WHITE);button(c,x+390,y+98,x+610,y+152,rank<3?"UNLOCK • "+threshold+" STARS":"MAX RANK",Color.rgb(159,120,218));}
+    private void upgradeCard(Canvas c,float x,float y,String title,String sub,String key,int rank,int accent){panel(c,x,y,x+290,y+360);Rect token=key.equals("attack")?uiFrame(0,0):uiFrame(0,1);float pulse=1f+.08f*(float)Math.sin(animationClock*3f+x*.01f);drawImageTransform(c,uiSpriteSheet,token,new RectF(x+195,y+24,x+260,y+89),key.equals("attack")?animationClock*70:0,pulse,pulse);text(c,title,x+25,y+53,22,Color.WHITE);text(c,sub,x+25,y+84,15,Color.rgb(190,213,222));for(int i=0;i<3;i++){p.setColor(i<rank?accent:Color.rgb(64,84,103));c.drawCircle(x+55+i*42,y+145,13,p);}text(c,"Rank "+rank+" / 3",x+25,y+190,18,Color.WHITE);button(c,x+30,y+250,x+260,y+310,"BUY • 30",accent);}
+    private void upgradeGemCard(Canvas c,float x,float y,String title,String sub,int rank,int accent){panel(c,x,y,x+290,y+360);float pulse=1f+.08f*(float)Math.sin(animationClock*3f+x*.01f);drawImageTransform(c,collectibleSpriteSheet,collectibleFrame(1,frameIndex(animationClock,8,8f,x*.01f)),new RectF(x+195,y+24,x+260,y+89),animationClock*24,pulse,pulse);text(c,title,x+25,y+53,22,Color.WHITE);text(c,sub,x+25,y+84,15,Color.rgb(190,213,222));for(int i=0;i<3;i++){p.setColor(i<rank?accent:Color.rgb(64,84,103));c.drawCircle(x+55+i*42,y+145,13,p);}text(c,"Rank "+rank+" / 3",x+25,y+190,18,Color.WHITE);button(c,x+30,y+250,x+260,y+310,"BUY • 3 GEMS",accent);}
+    private void upgradeStarCard(Canvas c,float x,float y){int rank=save.relicRank(), threshold=save.relicThreshold();panel(c,x,y,x+650,y+180);float pulse=1f+.08f*(float)Math.sin(animationClock*3.4f);drawImageTransform(c,collectibleSpriteSheet,collectibleFrame(1,frameIndex(animationClock,8,8f,0)),new RectF(x+42,y+38,x+112,y+108),animationClock*24,pulse,pulse);text(c,"REALM RELIC",x+140,y+48,25,Color.rgb(255,229,126));text(c,"Spend no stars: each rank grants +1 max health, +10 energy, and cheaper powers.",x+140,y+76,15,Color.rgb(205,224,232));drawProgressStars(c,x+195,y+118,rank);text(c,"Realm Stars: "+save.totalStars()+" / "+(rank<3?String.valueOf(threshold):"MAX"),x+285,y+124,19,Color.WHITE);button(c,x+390,y+98,x+610,y+152,rank<3?"UNLOCK • "+threshold+" STARS":"MAX RANK",Color.rgb(159,120,218));}
 
     private void drawImage(Canvas c, Bitmap image, Rect source, RectF destination) { if (image != null) { p.setAlpha(255); c.drawBitmap(image, source, destination, p); } }
     private void drawImageAlpha(Canvas c, Bitmap image, Rect source, RectF destination, int alpha) { if (image != null) { p.setAlpha(alpha); c.drawBitmap(image, source, destination, p); p.setAlpha(255); } }
     private void drawImageTransform(Canvas c, Bitmap image, Rect source, RectF destination, float degrees, float scaleX, float scaleY) { if (image == null) return; float cx=destination.centerX(),cy=destination.centerY();c.save();c.rotate(degrees,cx,cy);c.scale(scaleX,scaleY,cx,cy);p.setAlpha(255);c.drawBitmap(image,source,destination,p);c.restore(); }
+    private void drawImageTransformAlpha(Canvas c, Bitmap image, RectF destination, float degrees, float scaleX, float scaleY, int alpha) { if (image == null) return; float cx=destination.centerX(),cy=destination.centerY();c.save();c.rotate(degrees,cx,cy);c.scale(scaleX,scaleY,cx,cy);p.setAlpha(Math.max(0,Math.min(255,alpha)));c.drawBitmap(image,null,destination,p);p.setAlpha(255);c.restore(); }
+    private void drawImageTransformAlpha(Canvas c, Bitmap image, Rect source, RectF destination, float degrees, float scaleX, float scaleY, int alpha) {
+        if (image == null) return;
+        float cx=destination.centerX(),cy=destination.centerY();
+        c.save();c.rotate(degrees,cx,cy);c.scale(scaleX,scaleY,cx,cy);
+        p.setAlpha(Math.max(0,Math.min(255,alpha)));c.drawBitmap(image,source,destination,p);p.setAlpha(255);c.restore();
+    }
+    private void drawImageBottomScaled(Canvas c, Bitmap image, Rect source, RectF destination, float scaleY) {
+        if (image == null) return;
+        c.save();
+        c.scale(1f, scaleY, destination.centerX(), destination.bottom);
+        p.setAlpha(255);
+        c.drawBitmap(image, source, destination, p);
+        c.restore();
+    }
+    private static Rect cell(int column,int row,int width,int height){return new Rect(column*width,row*height,(column+1)*width,(row+1)*height);}
+    // 1px inset guards against GPU bilinear-filter bleed pulling in the adjacent cell's edge
+    // pixels (visible as a thin stray line along one side of a frame) — these three premium
+    // sheets pack cells edge-to-edge with no gutter, unlike the older atlases.
+    private static Rect asterFrame(int row,int frame){Rect r=cell(frame,row,ASTER_CELL,ASTER_CELL);r.inset(1,1);return r;}
+    private static Rect premiumEnemyFrame(int row,int frame){Rect r=cell(frame,row,PREMIUM_ENEMY_CELL,PREMIUM_ENEMY_CELL);r.inset(1,1);return r;}
+    private static Rect enemyFrame(int row,int frame){return cell(frame,row,ENEMY_CELL,ENEMY_CELL);}
+    private static Rect bossFrame(int row,int frame){return cell(frame,row,BOSS_CELL,BOSS_CELL);}
+    private static Rect platformFrame(int row,int frame){return cell(frame,row,PLATFORM_CELL_W,PLATFORM_CELL_H);}
+    private static Rect worldFrame(int row,int frame){return cell(frame,row,WORLD_CELL_W,WORLD_CELL_H);}
+    private static Rect collectibleFrame(int row,int frame){return cell(frame,row,COLLECTIBLE_CELL,COLLECTIBLE_CELL);}
+    private static Rect effectFrame(int row,int frame){return cell(frame,row,EFFECT_CELL,EFFECT_CELL);}
+    private static Rect uiFrame(int column,int row){return cell(column,row,UI_CELL,UI_CELL);}
+    private static int frameIndex(float clock,int count,float fps,float phase){
+        int frame=(int)Math.floor((clock+phase)*fps);
+        frame%=count;
+        return frame<0?frame+count:frame;
+    }
+    private static int timedFrame(float remaining,float duration,int count){
+        float progress=1f-Math.max(0f,Math.min(1f,remaining/Math.max(.001f,duration)));
+        return Math.max(0,Math.min(count-1,(int)(progress*count)));
+    }
+    private int enemyFrame(Foe enemy){
+        if(enemy.state==EnemyController.ATTACK)return 4 + frameIndex(enemy.stateTime,2,12f,0);
+        if(enemy.state==EnemyController.WINDUP||enemy.state==EnemyController.NOTICE)return 3 + frameIndex(enemy.stateTime,2,8f,0);
+        if(enemy.state==EnemyController.HIT_REACTION)return 5;
+        if(enemy.state==EnemyController.RECOVERY)return 2 + frameIndex(enemy.stateTime,2,7f,0);
+        if(enemy.state==EnemyController.PATROL)return 1 + frameIndex(animationClock,2,8f,enemy.x*.01f);
+        return frameIndex(animationClock,2,5f,enemy.x*.01f);
+    }
+    // moss_mask_crawler_sheet / stone_brute_sheet: same 8x6 @ 181px layout as the player
+    // (rows: 0 idle, 1 walk/patrol, 2 run/reposition, 3 windup+attack+recovery, 4 hurt, 5 death - unused for now).
+    // Row 3 is one continuous 8-frame windup->strike->recovery cycle, so all three combat
+    // states share it and only pick a different slice of its frames.
+    private int premiumEnemyRow(Foe enemy){
+        if(enemy.state==EnemyController.HIT_REACTION)return 4;
+        if(enemy.state==EnemyController.NOTICE||enemy.state==EnemyController.WINDUP
+                ||enemy.state==EnemyController.ATTACK||enemy.state==EnemyController.RECOVERY)return 3;
+        if(enemy.state==EnemyController.REPOSITION)return 2;
+        if(enemy.state==EnemyController.PATROL)return 1;
+        return 0;
+    }
+    private int premiumEnemyFrameIndex(Foe enemy){
+        if(enemy.state==EnemyController.HIT_REACTION)return frameIndex(enemy.stateTime,8,10f,0);
+        if(enemy.state==EnemyController.NOTICE||enemy.state==EnemyController.WINDUP)return frameIndex(enemy.stateTime,3,9f,0);
+        if(enemy.state==EnemyController.ATTACK)return 3+frameIndex(enemy.stateTime,3,11f,0);
+        if(enemy.state==EnemyController.RECOVERY)return 6+frameIndex(enemy.stateTime,2,7f,0);
+        if(enemy.state==EnemyController.REPOSITION)return frameIndex(animationClock,8,10f,enemy.x*.01f);
+        if(enemy.state==EnemyController.PATROL)return frameIndex(animationClock,8,8f,enemy.x*.01f);
+        return frameIndex(animationClock,8,5f,enemy.x*.01f);
+    }
+    private int bossFrame(Boss target){
+        if(target.hitLock>0)return 5;
+        if(target.state==BossController.State.ATTACK_EXECUTE)return 4 + frameIndex(target.stateTime,2,10f,0);
+        if(target.state==BossController.State.ATTACK_WINDUP)return 3 + frameIndex(target.stateTime,2,7f,0);
+        if(target.state==BossController.State.ATTACK_RECOVERY)return 2 + frameIndex(target.stateTime,2,6f,0);
+        return frameIndex(animationClock,3,target.phase==1?4f:6f,target.world*.21f);
+    }
+    // Heartwood Colossus (world 1) has a full premium sheet (idle/walk/run/attack/hurt/death) —
+    // reuses the same row layout and slicing scheme as premiumEnemyRow/FrameIndex.
+    private int premiumBossRow(Boss target){
+        if(target.hitLock>0||target.state==BossController.State.STAGGER)return 4;
+        if(target.state==BossController.State.ATTACK_WINDUP||target.state==BossController.State.ATTACK_EXECUTE
+                ||target.state==BossController.State.ATTACK_RECOVERY)return 3;
+        if(target.state==BossController.State.APPROACH||target.state==BossController.State.RETREAT)return 2;
+        return 0;
+    }
+    private int premiumBossFrameIndex(Boss target){
+        if(target.hitLock>0||target.state==BossController.State.STAGGER)return frameIndex(animationClock,8,10f,0);
+        if(target.state==BossController.State.ATTACK_WINDUP)return frameIndex(target.stateTime,3,9f,0);
+        if(target.state==BossController.State.ATTACK_EXECUTE)return 3+frameIndex(target.stateTime,3,11f,0);
+        if(target.state==BossController.State.ATTACK_RECOVERY)return 6+frameIndex(target.stateTime,2,7f,0);
+        if(target.state==BossController.State.APPROACH||target.state==BossController.State.RETREAT)
+            return frameIndex(animationClock,8,8f,target.world*.21f);
+        return frameIndex(animationClock,8,target.phase==1?4f:6f,target.world*.21f);
+    }
+    private float supportingSurfaceY(float worldX, float fallbackY){
+        float best=fallbackY;
+        float bestDistance=Float.MAX_VALUE;
+        for(Platform platform:platforms){
+            if(worldX<platform.x-2f||worldX>platform.x+platform.w+2f)continue;
+            float distance=Math.abs(platform.y-fallbackY);
+            if(distance<bestDistance&&distance<=72f){best=platform.y;bestDistance=distance;}
+        }
+        return best;
+    }
     private VisualStyle.Theme theme(){ return VisualStyle.forWorld(data == null ? 1 : data.world); }
     private void panel(Canvas c,float l,float t,float r,float b){VisualStyle.Theme theme=theme();p.setColor(theme.uiPanel);c.drawRoundRect(l,t,r,b,22,22,p);stroke.setColor(theme.uiStroke);c.drawRoundRect(l,t,r,b,22,22,stroke);}
     private void button(Canvas c,float l,float t,float r,float b,String s,int fill){p.setColor(fill);c.drawRoundRect(l,t,r,b,16,16,p);p.setColor(Color.argb(70,255,255,255));c.drawRoundRect(l+2,t+2,r-2,t+6,12,12,p);centeredAt(c,s,(l+r)/2,(t+b)/2+7,17,Color.WHITE);}
@@ -1817,7 +2254,7 @@ public class GameView extends View {
     }
 
     private static class Platform {
-        float x, y, w, h, life = 2.6f, baseX, baseY, moveX, moveY, moveSpeed, frameDeltaX;
+        float x, y, w, h, life = 2.6f, baseX, baseY, moveX, moveY, moveSpeed, frameDeltaX, frameDeltaY;
         boolean crumble;
         String material;
 
@@ -1836,12 +2273,13 @@ public class GameView extends View {
 
         void update(float clock) {
             float previousX = x;
-            if (moveSpeed > 0) {
-                float wave = (float)Math.sin(clock * moveSpeed + baseX * .01f);
-                x = baseX + moveX * wave;
-                y = baseY + moveY * wave;
-            }
-            frameDeltaX = x - previousX;
+            float previousY = y;
+            EnvironmentRules.PlatformMotion motion = EnvironmentRules.movingPlatform(
+                    baseX, baseY, moveX, moveY, moveSpeed, clock, previousX, previousY);
+            x = motion.x;
+            y = motion.y;
+            frameDeltaX = motion.deltaX;
+            frameDeltaY = motion.deltaY;
         }
     }
 
@@ -1875,17 +2313,20 @@ public class GameView extends View {
     }
     private static class Pickup { float x,y; boolean gem; String route, secretId; int secretRewardGems; Pickup(float x,float y,boolean gem,String route,String secretId,int secretRewardGems){this.x=x;this.y=y;this.gem=gem;this.route=route;this.secretId=secretId;this.secretRewardGems=secretRewardGems;} RectF rect(){return new RectF(x-16,y-16,x+16,y+16);} }
     private static class Hazard { float l,t,r,b,life,warning,age; int style; Hazard(float l,float t,float r,float b,float life,float warning){this(l,t,r,b,life,warning,0);} Hazard(float l,float t,float r,float b,float life,float warning,int style){this.l=l;this.t=t;this.r=r;this.b=b;this.life=life;this.warning=warning;this.style=style;} boolean active(){return age>=warning;} RectF rect(){return new RectF(l,t,r,b);} }
-    private static class Foe {
+    static class Foe {
         float x, y, baseY, targetX, targetY, minX, maxX, dir = 1, speed, hurtTime, hitLock, stateTime;
         int kind, hp, state;
         float frozen, burnTime, burnTick;
+        boolean didAttack;
+        EnemyController.Archetype behavior;
 
-        Foe(float x, float y, int kind) {
+        Foe(float x, float y, int kind, int level) {
             EnemyController.Archetype archetype = EnemyController.archetype(kind);
             this.x = x; this.y = y; this.baseY = y; this.kind = kind;
+            this.behavior = archetype;
             minX = x - 65; maxX = x + 65;
-            speed = archetype.patrolSpeed;
-            hp = archetype.maxHealth;
+            speed = archetype.patrolSpeed * EnemyController.speedScale(level);
+            hp = EnemyController.scaledHealth(kind, level);
         }
     }
 
@@ -1896,5 +2337,14 @@ public class GameView extends View {
         }
         RectF rect() { return new RectF(x - 10, y - 10, x + 10, y + 10); }
     }
-    private static class Boss { float x,y,dir=-1,cooldown=1.8f,hitLock,burnTime,burnTick,frostSlowTime,transitionTime;int hp=24,maxHp=24,phase=1,world,attackCycle;String name;Boss(float x,float y,String n,int w){this.x=x;this.y=y;name=n;world=w;} }
+    private static class Boss {
+        float x,y,dir=-1,cooldown=1.8f,hitLock,burnTime,burnTick,frostSlowTime,transitionTime,stateTime,exposedTime,armorCrackedTime;
+        int hp=24,maxHp=24,phase=1,world,attackCycle;
+        String name;
+        BossController.State state = BossController.State.OBSERVE;
+        BossController.Attack attack;
+        BossController.Attack previousAttack;
+        BossController.Attack queuedAttack;
+        Boss(float x,float y,String n,int w){this.x=x;this.y=y;name=n;world=w;}
+    }
 }

@@ -2,7 +2,6 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-GRADLE="/home/ubuntu/android-tools/gradle-8.10.2/bin/gradle"
 
 cd "$ROOT"
 python3 tools/test_level_data.py
@@ -16,6 +15,19 @@ python3 tools/test_action_fx_atlas.py
 python3 tools/test_boss_hud_layout.py
 python3 tools/test_layout_background_fix.py
 python3 tools/test_uploaded_asset_integration.py
+python3 tools/test_sprite_sheet_contract.py
+bash tools/test_pure_java_controllers.sh
+bash tools/test_scene_rules.sh
+
+if command -v gradle >/dev/null 2>&1; then
+    GRADLE="$(command -v gradle)"
+elif [[ -x "$ROOT/gradlew" ]] && [[ -f "$ROOT/gradle/wrapper/gradle-wrapper.jar" ]]; then
+    GRADLE="$ROOT/gradlew"
+else
+    echo "Gradle is required. Install Gradle or restore gradle/wrapper/gradle-wrapper.jar." >&2
+    exit 1
+fi
+
 "$GRADLE" :app:testDebugUnitTest :app:assembleDebug :app:lintDebug
 
 echo "Project verification suite: OK"
