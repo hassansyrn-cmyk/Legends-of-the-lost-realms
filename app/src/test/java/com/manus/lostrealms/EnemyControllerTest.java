@@ -44,4 +44,11 @@ public class EnemyControllerTest {
         assertTrue(EnemyController.speedScale(10) > EnemyController.speedScale(1));
         assertTrue(EnemyController.timingScale(10) >= .80f);
     }
+
+    @Test
+    public void predictiveAimingLeadsMovementButCapsUnfairShots() {
+        assertEquals(148f, EnemyController.predictedTarget(100f, 240f, .20f, 80f), .001f);
+        assertEquals(180f, EnemyController.predictedTarget(100f, 900f, .30f, 80f), .001f);
+        assertEquals(20f, EnemyController.predictedTarget(100f, -900f, .30f, 80f), .001f);
+    }
 }
