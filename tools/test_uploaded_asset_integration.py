@@ -72,7 +72,7 @@ for marker in (
     "R.drawable.ui_motion_sheet",
     "collectibleFrame(k.gem ? 1 : 0, frame)",
     "enemyFrame(e)",
-    "bossFrame(boss)",
+    "Bitmap bossArt = bossPremiumSprites",
 ):
     if marker not in GAME_VIEW:
         raise SystemExit(f"Missing premium integration marker: {marker}")

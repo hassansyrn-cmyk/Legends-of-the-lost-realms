@@ -20,12 +20,13 @@ for name in (
         raise SystemExit(f"{name}: boss silhouette is unexpectedly sparse")
 
 for marker in (
-    "R.drawable.bosses_motion_sheet",
-    "bossFrame(boss)",
-    "drawImageTransform(c,bossSpriteSheet,bossFrame(",
+    "bossPremiumSprites",
+    "Bitmap bossArt = bossPremiumSprites",
+    "drawImageTransformAlpha(c, bossArt,",
+    "boss.state==BossController.State.ATTACK_EXECUTE",
 ):
     if marker not in GAME_VIEW:
         raise SystemExit(f"Missing premium boss renderer marker: {marker}")
 
 print("Premium boss art: OK")
-print("Validated three realm bosses and state-driven sprite-sheet routing.")
+print("Validated three standalone realm bosses and state-driven rendering.")
