@@ -27,9 +27,10 @@ for name in ENEMIES:
         raise SystemExit(f"{name}: visible character area is unexpectedly small")
 
 required = [
-    "R.drawable.enemies_motion_sheet",
+    "enemyPremiumSprites",
     "enemyFrame(e)",
-    "drawImageTransform(c,enemySpriteSheet,enemyFrame(",
+    "Bitmap enemyArt = enemyPremiumSprites",
+    "drawImageTransformAlpha(c, enemyArt,",
     "e.state==EnemyController.HIT_REACTION",
 ]
 for marker in required:
@@ -37,4 +38,4 @@ for marker in required:
         raise SystemExit(f"Missing premium enemy renderer marker: {marker}")
 
 print("Premium enemy art: OK")
-print("Validated eight source enemies and state-driven sprite-sheet routing.")
+print("Validated eight standalone enemies and state-driven renderer routing.")
