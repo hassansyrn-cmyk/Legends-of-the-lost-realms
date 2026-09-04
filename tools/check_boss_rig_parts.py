@@ -16,7 +16,7 @@ for name in (
     alpha = image.getchannel("A")
     if alpha.getbbox() is None or alpha.getextrema()[0] != 0:
         raise SystemExit(f"{name}: expected a visible boss on a transparent canvas")
-    if sum(value > 0 for value in alpha.get_flattened_data()) < 20000:
+    if sum(value > 0 for value in alpha.getdata()) < 20000:
         raise SystemExit(f"{name}: boss silhouette is unexpectedly sparse")
 
 for marker in (

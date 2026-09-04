@@ -23,7 +23,7 @@ for name in ENEMIES:
     alpha = image.getchannel("A")
     if alpha.getbbox() is None or alpha.getextrema()[0] != 0:
         raise SystemExit(f"{name}: expected visible art on a true transparent canvas")
-    if sum(value > 0 for value in alpha.get_flattened_data()) < 5000:
+    if sum(value > 0 for value in alpha.getdata()) < 5000:
         raise SystemExit(f"{name}: visible character area is unexpectedly small")
 
 required = [
