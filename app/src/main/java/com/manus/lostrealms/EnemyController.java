@@ -104,6 +104,12 @@ final class EnemyController {
         return Math.max(.82f, 1f - Math.max(0, Math.min(9, level - 1)) * .02f);
     }
 
+    /** Leads mobile targets without allowing impossible off-screen prediction. */
+    static float predictedTarget(float position, float velocity, float leadSeconds, float maxLead) {
+        float lead = Math.max(-maxLead, Math.min(maxLead, velocity * Math.max(0f, leadSeconds)));
+        return position + lead;
+    }
+
     static int scaledContactDamage(int kind, int state, int level) {
         // Difficulty rises through durability, speed, tighter (but floored) telegraphs,
         // mixed encounters, and denser hazards. Avoid damage spikes that can remove

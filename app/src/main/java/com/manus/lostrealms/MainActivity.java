@@ -50,4 +50,13 @@ public class MainActivity extends Activity {
         super.onResume();
         if (gameView != null) gameView.resumeGame();
     }
+
+    @Override
+    protected void onDestroy() {
+        if (gameView != null) {
+            gameView.releaseGame();
+            gameView = null;
+        }
+        super.onDestroy();
+    }
 }

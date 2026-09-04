@@ -24,6 +24,8 @@ public class GameView extends View {
     static final float VIRTUAL_HEIGHT = 720f;
     /** Set to false for a no-juice before/after comparison build. */
     private static boolean JUICE_ENABLED = true;
+    private static final float FIXED_STEP_SECONDS = 1f / 60f;
+    private static final int MAX_CATCH_UP_STEPS = 4;
     private static final float VW = VIRTUAL_WIDTH;
     private static final float VH = VIRTUAL_HEIGHT;
     static final int SPLASH = 0;
@@ -52,7 +54,8 @@ public class GameView extends View {
             platformSpriteSheet, worldSpriteSheet, collectibleSpriteSheet, effectsSpriteSheet, uiSpriteSheet;
     // Fallback character art uses one clean, opaque subject per archetype; motion is applied
     // procedurally in Canvas so malformed sprite-sheet padding cannot make characters ghostly.
-    private final Bitmap heroPremiumSprite;
+    private final Bitmap heroRigHead, heroRigTorso, heroRigArmBack, heroRigArmFront,
+            heroRigLegBack, heroRigLegFront, heroRigSword;
     private final Bitmap[] enemyPremiumSprites = new Bitmap[8];
     private final Bitmap[] bossPremiumSprites = new Bitmap[3];
     private static final int ASTER_CELL = 256;
@@ -91,6 +94,7 @@ public class GameView extends View {
     private int wallDir = 0, storyKind = 0;
     private int attackStage = 0;
     private long lastNanos = System.nanoTime();
+    private float updateAccumulator;
     private final String[] powers = {"EMBER", "FROST", "GALE"};
 
     public GameView(Context context) {
@@ -106,6 +110,8 @@ public class GameView extends View {
         enemySceneAdapter = new EnemySceneAdapter(new EnemySceneAdapter.Hooks() {
             @Override public float playerX() { return px; }
             @Override public float playerY() { return py; }
+            @Override public float playerVelocityX() { return vx; }
+            @Override public float playerVelocityY() { return vy; }
             @Override public void warning() { audio.enemyWarning(); }
             @Override public void dash() { audio.enemyDash(); }
             @Override public void swoop() { audio.enemySwoop(); }
@@ -178,7 +184,13 @@ public class GameView extends View {
         collectibleSpriteSheet = BitmapFactory.decodeResource(getResources(), R.drawable.collectibles_motion_sheet);
         effectsSpriteSheet = BitmapFactory.decodeResource(getResources(), R.drawable.effects_motion_sheet);
         uiSpriteSheet = BitmapFactory.decodeResource(getResources(), R.drawable.ui_motion_sheet);
-        heroPremiumSprite = BitmapFactory.decodeResource(getResources(), R.drawable.aster_premium);
+        heroRigHead = BitmapFactory.decodeResource(getResources(), R.drawable.aster_rig_head);
+        heroRigTorso = BitmapFactory.decodeResource(getResources(), R.drawable.aster_rig_torso);
+        heroRigArmBack = BitmapFactory.decodeResource(getResources(), R.drawable.aster_rig_arm_back);
+        heroRigArmFront = BitmapFactory.decodeResource(getResources(), R.drawable.aster_rig_arm_front);
+        heroRigLegBack = BitmapFactory.decodeResource(getResources(), R.drawable.aster_rig_leg_back);
+        heroRigLegFront = BitmapFactory.decodeResource(getResources(), R.drawable.aster_rig_leg_front);
+        heroRigSword = BitmapFactory.decodeResource(getResources(), R.drawable.aster_rig_sword);
         enemyPremiumSprites[0] = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_moss_premium);
         enemyPremiumSprites[1] = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_ember_moth_premium);
         enemyPremiumSprites[2] = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_dune_premium);
@@ -194,22 +206,35 @@ public class GameView extends View {
     }
 
     public void pauseGame() { pausedBySystem = true; audio.pauseMusic(); }
-    public void resumeGame() { pausedBySystem = false; if (screen != PAUSE) audio.resumeMusic(); lastNanos = System.nanoTime(); }
+    public void resumeGame() { pausedBySystem = false; if (screen != PAUSE) audio.resumeMusic(); lastNanos = System.nanoTime(); updateAccumulator = 0f; }
+    public void releaseGame() { audio.release(); }
 
     @Override protected void onDraw(Canvas raw) {
         super.onDraw(raw);
-        float nowDt = Math.min(0.05f, (System.nanoTime() - lastNanos) / 1_000_000_000f);
-        lastNanos = System.nanoTime();
-        if (perfectDodgeTime > 0) {
-            perfectDodgeTime = Math.max(0, perfectDodgeTime - nowDt);
-            nowDt *= .42f;
-        }
+        long nowNanos = System.nanoTime();
+        float frameDt = Math.min(0.10f, (nowNanos - lastNanos) / 1_000_000_000f);
+        lastNanos = nowNanos;
         float scale = Math.min(getWidth() / VW, getHeight() / VH);
         float offsetX = (getWidth() - VW * scale) * 0.5f;
         float offsetY = (getHeight() - VH * scale) * 0.5f;
         raw.drawColor(Color.rgb(3, 12, 17));
         raw.save(); raw.translate(offsetX, offsetY); raw.scale(scale, scale);
-        if (!pausedBySystem) update(nowDt);
+        if (!pausedBySystem) {
+            updateAccumulator = Math.min(
+                    updateAccumulator + frameDt,
+                    FIXED_STEP_SECONDS * MAX_CATCH_UP_STEPS);
+            int steps = 0;
+            while (updateAccumulator >= FIXED_STEP_SECONDS && steps < MAX_CATCH_UP_STEPS) {
+                float simulationDt = FIXED_STEP_SECONDS;
+                if (perfectDodgeTime > 0) {
+                    perfectDodgeTime = Math.max(0, perfectDodgeTime - FIXED_STEP_SECONDS);
+                    simulationDt *= .42f;
+                }
+                update(simulationDt);
+                updateAccumulator -= FIXED_STEP_SECONDS;
+                steps++;
+            }
+        }
         if (JUICE_ENABLED && screenShakeTime > 0) {
             float shakeX = (float) Math.sin(animationClock * 93f) * screenShakeStrength;
             float shakeY = (float) Math.cos(animationClock * 117f) * screenShakeStrength * .58f;
@@ -1285,10 +1310,12 @@ public class GameView extends View {
         button(c, 92, 335, 355, 405, "PLAY", Color.rgb(42,170,135));
         button(c, 92, 425, 355, 485, "UPGRADES", Color.rgb(55,107,144));
         button(c, 92, 505, 355, 565, "SETTINGS", Color.rgb(76,92,118));
-        text(c, "VISUAL REBIRTH  •  BUILD 5.0.0", 92, 315, 13, Color.rgb(255, 222, 139));
+        text(c, "PRODUCTION REBUILD  •  ASTER PREVIEW 5.1.0", 92, 315, 13, Color.rgb(255, 222, 139));
         text(c, "Progress saved locally", 92, 620, 16, Color.rgb(190,216,209));
         badge(c, 1055, 72, "10 LEVELS"); badge(c, 1055, 118, "3 WORLDS");
-        button(c, 1060, 600, 1235, 660, "DEV TOOLS", Color.rgb(82, 72, 126));
+        if (BuildConfig.DEBUG) {
+            button(c, 1060, 600, 1235, 660, "DEV TOOLS", Color.rgb(82, 72, 126));
+        }
     }
 
     void drawMap(Canvas c) {
@@ -1902,19 +1929,59 @@ public class GameView extends View {
             else { sx -= .055f * squash; sy += .075f * squash; }
         }
         if(grounded){p.setColor(Color.argb(72,3,12,16));c.drawOval(new RectF(x-width*.31f,py+48,x+width*.31f,py+61),p);}
-        // The clean 512px hero portrait has stable transparent bounds, so the silhouette
-        // no longer jumps sideways as different sheet cells are selected.
-        width *= 1.18f;
-        RectF dest=new RectF(x-width/2,py-110+bob,x+width/2,py+66+bob);
-        int heroRow;
-        float heroFps;
-        if(screen==GAMEOVER||hurtTime>0){heroRow=3;heroFps=9f;}
-        else if(attackTime>0){heroRow=2;heroFps=14f;}
-        else if(!grounded||dashing||sliding||running){heroRow=1;heroFps=running?13f:9f;}
-        else {heroRow=0;heroFps=6f;}
-        drawImageTransformAlpha(c, heroPremiumSprite, dest, lean,
-                facingLeft ? -sx : sx, sy, 255);
+        drawModularHero(c, x, py + bob, stride, idle, lean, sx, sy, running, dashing, sliding);
         if(powerTime>0){p.setColor(Color.argb(80,Color.red(data.accent),Color.green(data.accent),Color.blue(data.accent)));c.drawCircle(x,py+25+bob,65+4*(float)Math.sin(animationClock*9f),p);}
+    }
+
+    private void drawModularHero(Canvas c, float x, float top, float stride, float idle,
+                                 float lean, float scaleX, float scaleY,
+                                 boolean running, boolean dashing, boolean sliding) {
+        float rootY = top + 52f;
+        float legSwing = running ? stride * 27f : 0f;
+        float armSwing = running ? -stride * 18f : idle * 1.5f;
+        float torsoAngle = lean * .45f;
+        float headAngle = -torsoAngle * .28f + idle * .7f;
+        if (!grounded) { legSwing = -16f; armSwing = 18f; torsoAngle *= .6f; }
+        if (dashing || sliding) { legSwing = 22f; armSwing = -32f; torsoAngle += facingLeft ? -7f : 7f; }
+        if (hurtTime > 0) { torsoAngle += facingLeft ? 10f : -10f; armSwing = -28f; legSwing = 8f; }
+        if (screen == GAMEOVER) { torsoAngle = 82f; armSwing = 24f; legSwing = 18f; }
+
+        float attackSwing = 0f;
+        if (attackTime > 0) {
+            float normalized = 1f - Math.min(1f, attackTime / (chargedAttack ? .48f : .34f));
+            attackSwing = -118f + 176f * (float)Math.sin(normalized * Math.PI);
+            if (chargedAttack) attackSwing -= 24f;
+            torsoAngle += facingLeft ? 6f : -6f;
+        }
+
+        c.save();
+        c.scale(facingLeft ? -scaleX : scaleX, scaleY, x, rootY);
+        drawHeroPart(c, heroRigLegBack, x - 11f, rootY - 27f, 48f, 95f, .50f, .08f, legSwing);
+        drawHeroPart(c, heroRigArmBack, x - 25f, rootY - 91f, 48f, 91f, .50f, .08f, -armSwing - 5f);
+        drawHeroPart(c, heroRigTorso, x, rootY - 25f, 132f, 118f, .50f, .82f, torsoAngle);
+        drawHeroPart(c, heroRigLegFront, x + 12f, rootY - 27f, 48f, 95f, .50f, .08f, -legSwing);
+        float frontArmAngle = armSwing + attackSwing;
+        float shoulderX = x + 25f, shoulderY = rootY - 91f;
+        c.save();
+        c.rotate(frontArmAngle, shoulderX, shoulderY);
+        drawHeroPart(c, heroRigSword, shoulderX + 3f, shoulderY + 77f, 41f, 116f,
+                .50f, .14f, attackTime > 0 ? -12f : 17f);
+        drawHeroPart(c, heroRigArmFront, shoulderX, shoulderY, 49f, 91f, .50f, .08f, 0f);
+        c.restore();
+        drawHeroPart(c, heroRigHead, x + 3f, rootY - 105f, 82f, 72f, .50f, .86f, headAngle);
+        c.restore();
+    }
+
+    private void drawHeroPart(Canvas c, Bitmap bitmap, float jointX, float jointY,
+                              float width, float height, float anchorX, float anchorY,
+                              float rotation) {
+        c.save();
+        c.rotate(rotation, jointX, jointY);
+        float left = jointX - width * anchorX;
+        float top = jointY - height * anchorY;
+        p.setAlpha(255);
+        c.drawBitmap(bitmap, null, new RectF(left, top, left + width, top + height), p);
+        c.restore();
     }
 
     private void drawEffects(Canvas c) {
@@ -2139,11 +2206,11 @@ public class GameView extends View {
 
     int hitAction(float x,float y){
         if(screen==SPLASH)return 100;
-        if(screen==MENU){if(in(x,y,92,335,355,405))return 101;if(in(x,y,92,425,355,485))return 102;if(in(x,y,92,505,355,565))return 103;if(in(x,y,1060,600,1235,660))return 105;}
+        if(screen==MENU){if(in(x,y,92,335,355,405))return 101;if(in(x,y,92,425,355,485))return 102;if(in(x,y,92,505,355,565))return 103;if(BuildConfig.DEBUG&&in(x,y,1060,600,1235,660))return 105;}
         if(screen==MAP){if(in(x,y,1100,28,1235,82))return 104;float[][]n={{160,478},{265,395},{350,310},{455,255},{570,320},{685,390},{790,450},{920,385},{1030,300},{1135,210}};for(int i=0;i<n.length;i++)if(Math.hypot(x-n[i][0],y-n[i][1])<40&&i+1<=save.unlockedLevel())return 120+i;}
         if(screen==UPGRADES){if(in(x,y,85,360,315,420))return 110;if(in(x,y,380,360,610,420))return 111;if(in(x,y,675,360,905,420))return 112;if(in(x,y,970,360,1200,420))return 118;if(in(x,y,690,593,910,647))return 119;if(in(x,y,80,615,235,675))return 104;}
         if(screen==SETTINGS){if(in(x,y,330,240,620,310))return 130;if(in(x,y,660,240,950,310))return 131;if(in(x,y,470,500,810,560))return 113;if(in(x,y,470,585,810,645))return 104;}
-        if(screen==DEV_TOOLS){for(int index=0;index<10;index++){float left=180+(index%5)*185;float top=index<5?185:270;if(in(x,y,left,top,left+150,top+58))return 140+index;}if(in(x,y,210,385,520,445))return 150;if(in(x,y,560,385,870,445))return 151;if(in(x,y,210,525,520,585))return 152;if(in(x,y,650,525,960,585))return 104;}
+        if(BuildConfig.DEBUG&&screen==DEV_TOOLS){for(int index=0;index<10;index++){float left=180+(index%5)*185;float top=index<5?185:270;if(in(x,y,left,top,left+150,top+58))return 140+index;}if(in(x,y,210,385,520,445))return 150;if(in(x,y,560,385,870,445))return 151;if(in(x,y,210,525,520,585))return 152;if(in(x,y,650,525,960,585))return 104;}
         if(screen==PAUSE){if(in(x,y,490,285,790,345))return 114;if(in(x,y,490,375,790,435))return 132;if(in(x,y,490,465,790,525))return 133;}
         if(screen==COMPLETE){if(in(x,y,440,500,665,565))return 115;if(in(x,y,690,500,850,565))return 104;}
         if(screen==GAMEOVER){if(in(x,y,465,370,655,430))return 116;if(in(x,y,675,370,820,430))return 104;}
@@ -2152,8 +2219,8 @@ public class GameView extends View {
     }
     void handleAction(int a){
         if(a==1)directionTap(-1);if(a==2)directionTap(1);if(a==3)jumpQueued=true;if(a==4)strike();if(a==5)usePower();if(a==6){screen=PAUSE;audio.pauseMusic();}if(a==7)cyclePower();
-        if(a==100)screen=MENU;if(a==101)screen=MAP;if(a==102)screen=UPGRADES;if(a==103)screen=SETTINGS;if(a==104)screen=MENU;if(a==105)screen=DEV_TOOLS;if(a==133){screen=MAP;audio.resumeMusic();}if(a==130){save.toggleMusic();audio.configure(save.musicEnabled(),save.sfxEnabled());}if(a==131){save.toggleSfx();audio.configure(save.musicEnabled(),save.sfxEnabled());}if(a==150)devStatsOverlay=!devStatsOverlay;if(a==151)devCoordinatesOverlay=!devCoordinatesOverlay;if(a==152){save.reset();audio.configure(true,true);}
-        if(a>=100)audio.menu();if(a>=120&&a<130)startLevel(a-119);if(a>=140&&a<150)startLevel(a-139);if(a==110&&save.buy("attack",30))audio.upgrade();if(a==111&&save.buy("vitality",30))audio.upgrade();if(a==112&&save.buy("wind",30))audio.upgrade();if(a==118&&save.buyWithGems("energy",3))audio.upgrade();if(a==119&&save.unlockRelic())audio.upgrade();if(a==113){save.reset();audio.configure(true,true);}if(a==114){screen=LEVEL;audio.resumeMusic();}if(a==115){if(currentLevel<10)startLevel(currentLevel+1);else screen=MAP;}if(a==116)startLevel(currentLevel);if(a==132)startLevel(currentLevel);
+        if(a==100)screen=MENU;if(a==101)screen=MAP;if(a==102)screen=UPGRADES;if(a==103)screen=SETTINGS;if(a==104)screen=MENU;if(a==105&&BuildConfig.DEBUG)screen=DEV_TOOLS;if(a==133){screen=MAP;audio.resumeMusic();}if(a==130){save.toggleMusic();audio.configure(save.musicEnabled(),save.sfxEnabled());}if(a==131){save.toggleSfx();audio.configure(save.musicEnabled(),save.sfxEnabled());}if(a==150&&BuildConfig.DEBUG)devStatsOverlay=!devStatsOverlay;if(a==151&&BuildConfig.DEBUG)devCoordinatesOverlay=!devCoordinatesOverlay;if(a==152&&BuildConfig.DEBUG){save.reset();audio.configure(true,true);}
+        if(a>=100)audio.menu();if(a>=120&&a<130)startLevel(a-119);if(BuildConfig.DEBUG&&a>=140&&a<150)startLevel(a-139);if(a==110&&save.buy("attack",30))audio.upgrade();if(a==111&&save.buy("vitality",30))audio.upgrade();if(a==112&&save.buy("wind",30))audio.upgrade();if(a==118&&save.buyWithGems("energy",3))audio.upgrade();if(a==119&&save.unlockRelic())audio.upgrade();if(a==113){save.reset();audio.configure(true,true);}if(a==114){screen=LEVEL;audio.resumeMusic();}if(a==115){if(currentLevel<10)startLevel(currentLevel+1);else screen=MAP;}if(a==116)startLevel(currentLevel);if(a==132)startLevel(currentLevel);
     }
     void refreshHeld() {
         leftHeld = inputHandler.isHeld(1);

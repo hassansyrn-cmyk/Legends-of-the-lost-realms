@@ -8,6 +8,8 @@ final class EnemySceneAdapter {
     interface Hooks {
         float playerX();
         float playerY();
+        float playerVelocityX();
+        float playerVelocityY();
         void warning();
         void dash();
         void swoop();
@@ -53,8 +55,13 @@ final class EnemySceneAdapter {
         if (e.state == EnemyController.WINDUP) {
             if (e.kind != EnemyController.FAST_SKIRMISHER) e.dir = dx < 0 ? -1 : 1;
             if ((e.stateTime -= dt) <= 0) {
-                e.targetX = hooks.playerX();
-                e.targetY = hooks.playerY() + 18f;
+                float leadSeconds = e.kind == EnemyController.RUNE_CASTER ? .32f
+                        : e.kind == EnemyController.FLYING_SWOOOPER ? .22f
+                        : e.kind == EnemyController.WIND_WISP ? .18f : .08f;
+                e.targetX = EnemyController.predictedTarget(
+                        hooks.playerX(), hooks.playerVelocityX(), leadSeconds, 105f);
+                e.targetY = EnemyController.predictedTarget(
+                        hooks.playerY() + 18f, hooks.playerVelocityY(), leadSeconds, 72f);
                 e.didAttack = false;
                 state(e, EnemyController.ATTACK, e.behavior.attackSeconds);
                 if (e.kind == EnemyController.FLYING_SWOOOPER || e.kind == EnemyController.FROST_SENTINEL || e.kind == EnemyController.RUNE_CASTER) hooks.swoop();
@@ -71,7 +78,8 @@ final class EnemySceneAdapter {
             if ((e.stateTime -= dt) <= 0) state(e, EnemyController.REPOSITION, e.behavior.repositionSeconds);
             return;
         }
-        float retreat = e.kind == EnemyController.FAST_SKIRMISHER ? 190f
+        float retreat = e.kind == EnemyController.RUNE_CASTER ? 205f
+                : e.kind == EnemyController.FAST_SKIRMISHER ? 190f
                 : e.kind == EnemyController.SHIELD_GUARD ? 82f
                 : e.kind == EnemyController.HEAVY_BRUTE ? 55f : 120f;
         e.x -= e.dir * retreat * (e.kind == EnemyController.FLYING_SWOOOPER ? .45f : 1f) * dt;
