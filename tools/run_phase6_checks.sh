@@ -30,6 +30,12 @@ else
     exit 1
 fi
 
-"$GRADLE" :app:testDebugUnitTest :app:assembleDebug :app:lintDebug
+if ! GRADLE_OUTPUT="$("$GRADLE" :app:testDebugUnitTest :app:assembleDebug :app:lintDebug 2>&1)"; then
+    printf '%s\n' "$GRADLE_OUTPUT"
+    FAILURE="$(printf '%s\n' "$GRADLE_OUTPUT" | grep -m1 -E 'error:|FAILURE:|What went wrong' || true)"
+    echo "::error title=Android build failed::${FAILURE:-Gradle verification exited unsuccessfully}"
+    exit 1
+fi
+printf '%s\n' "$GRADLE_OUTPUT"
 
 echo "Project verification suite: OK"
