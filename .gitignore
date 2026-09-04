@@ -11,6 +11,8 @@ out-tsc
 /build/
 /app/build/
 local.properties
+*.apk
+*.aab
 
 # dependencies
 node_modules

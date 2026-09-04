@@ -1,7 +1,12 @@
 Legends of the Lost Realms
-Build 5.0.0
+Build 5.1.0 - Aster Modular Rig Preview
 
-This build contains the Visual Rebirth:
+This build begins the production rebuild:
+- Aster now uses seven independently transformed cutout-rig parts for fluid
+  idle, run, jump, dash, attack, hurt, landing, and defeat poses.
+- The game simulation uses a fixed 60 Hz update step with bounded catch-up.
+- Release builds hide developer tools and Activity destruction releases audio.
+- Mobile enemies lead moving targets with capped, test-covered prediction.
 - 34 optimized premium runtime assets for Aster, eight enemies, three bosses,
   three realms, platforms, traps, checkpoint, map, collectibles, and HUD.
 - Readable seven-state enemy combat with committed attacks and punish windows.
@@ -9,5 +14,5 @@ This build contains the Visual Rebirth:
 - Re-authored ten-level campaign with progressive hazards and verified routes.
 
 Verify the build by checking:
-- The main menu displays "VISUAL REBIRTH • BUILD 5.0.0".
-- app/build.gradle contains versionName '5.0.0' and versionCode 60.
+- The main menu displays "PRODUCTION REBUILD • ASTER PREVIEW 5.1.0".
+- app/build.gradle contains versionName '5.1.0' and versionCode 61.
