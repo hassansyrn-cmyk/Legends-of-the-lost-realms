@@ -51,7 +51,7 @@ jobs:
       - name: Run project verification and build
         shell: bash
         run: |
-          gradle :app:assembleDebug
+          bash tools/run_phase6_checks.sh
 
       - name: Read build metadata
         id: metadata
