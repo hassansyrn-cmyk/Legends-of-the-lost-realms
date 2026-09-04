@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+trap 'status=$?; echo "::error title=Scene rule setup failed::Command ${BASH_COMMAND} failed at line ${LINENO} with status ${status}"; exit "$status"' ERR
+
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
@@ -72,6 +74,8 @@ public final class SceneRulesHarness {
         EnemySceneAdapter adapter = new EnemySceneAdapter(new EnemySceneAdapter.Hooks() {
             public float playerX() { return 130; }
             public float playerY() { return 100; }
+            public float playerVelocityX() { return 0; }
+            public float playerVelocityY() { return 0; }
             public void warning() { warnings[0]++; }
             public void dash() {}
             public void swoop() {}
