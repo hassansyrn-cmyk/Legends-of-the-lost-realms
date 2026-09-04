@@ -10,6 +10,10 @@ android {
     namespace 'com.manus.lostrealms'
     compileSdk 35
 
+    buildFeatures {
+        buildConfig true
+    }
+
     defaultConfig {
         applicationId 'com.manus.lostrealms'
         minSdk 24
