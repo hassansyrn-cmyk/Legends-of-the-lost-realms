@@ -18,6 +18,19 @@ for path in premium_files:
 if raw_bytes > 45 * 1024 * 1024:
     raise SystemExit(f"Premium art raw bitmap budget is too high: {raw_bytes / 1024 / 1024:.1f} MB")
 
+rig_files = sorted(RES.glob("aster_rig_*.png"))
+if len(rig_files) != 7:
+    raise SystemExit(f"Expected seven modular Aster parts, found {len(rig_files)}")
+rig_bytes = 0
+for path in rig_files:
+    image = Image.open(path).convert("RGBA")
+    alpha = image.getchannel("A")
+    if alpha.getbbox() is None or alpha.getextrema()[0] != 0:
+        raise SystemExit(f"{path.name}: modular rig part requires genuine transparency")
+    rig_bytes += image.width * image.height * 4
+if rig_bytes > 7 * 1024 * 1024:
+    raise SystemExit(f"Aster rig decoded bitmap budget is too high: {rig_bytes / 1024 / 1024:.1f} MB")
+
 legacy_decodes = [
     "R.drawable.enemy_archetype_motion_atlas",
     "R.drawable.boss_motion_atlas",
@@ -44,7 +57,9 @@ for name in legacy_files:
         raise SystemExit(f"Obsolete packaged resource remains: {name}")
 
 for marker in (
-    "VISUAL REBIRTH  •  BUILD 5.0.0",
+    "PRODUCTION REBUILD  •  ASTER PREVIEW 5.1.0",
+    "drawModularHero(c, x, py + bob",
+    "R.drawable.aster_rig_torso",
     "R.drawable.realm_map_premium",
     "R.drawable.aster_motion_sheet",
     "R.drawable.enemies_motion_sheet",

@@ -14,7 +14,8 @@ required_view = [
     '"CLEAR SAVE"',
     'devStatsOverlay',
     'devCoordinatesOverlay',
-    'if(a>=140&&a<150)startLevel(a-139)',
+    'if(BuildConfig.DEBUG&&a>=140&&a<150)startLevel(a-139)',
+    'if(a==105&&BuildConfig.DEBUG)screen=DEV_TOOLS',
 ]
 for marker in required_view:
     if marker not in view:
@@ -23,4 +24,4 @@ if 'case GameView.DEV_TOOLS:' not in renderer or 'case GameView.DEV_TOOLS:' not 
     raise SystemExit('Developer tools are not routed through both renderers.')
 
 print('Developer tools contract: OK')
-print('Verified level jump actions, clear-save action, optional stats/coordinate overlays, and render routing.')
+print('Verified debug-only level jumps, clear-save action, optional overlays, and render routing.')

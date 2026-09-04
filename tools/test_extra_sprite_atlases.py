@@ -12,7 +12,13 @@ OPAQUE = {
     "realm_map_premium.png": (1280, 720),
 }
 TRANSPARENT = {
-    "aster_premium.png": (512, 512),
+    "aster_rig_head.png": (400, 344),
+    "aster_rig_torso.png": (658, 581),
+    "aster_rig_arm_back.png": (162, 427),
+    "aster_rig_arm_front.png": (273, 453),
+    "aster_rig_leg_back.png": (217, 490),
+    "aster_rig_leg_front.png": (206, 495),
+    "aster_rig_sword.png": (234, 600),
     "checkpoint_premium.png": (384, 512),
     "platform_verdant_premium.png": (768, 320),
     "platform_dunes_premium.png": (768, 320),
@@ -46,7 +52,8 @@ for marker in (
     "R.drawable.world_motion_sheet",
     "drawPremiumPlatform(c, pl, x, bob);",
     "worldFrame(3, checkpointFrame)",
-    "asterFrame(heroRow,heroFrame)",
+    "drawModularHero(c, x, py + bob",
+    "R.drawable.aster_rig_torso",
 ):
     if marker not in GAME_VIEW:
         raise SystemExit(f"Missing premium asset routing marker: {marker}")
