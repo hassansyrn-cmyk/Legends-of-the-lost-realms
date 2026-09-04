@@ -101,4 +101,10 @@ public final class SceneRulesHarness {
 EOF
 
 javac -d "$TMP/out" "$PACKAGE_DIR"/*.java
-java -cp "$TMP/out" com.manus.lostrealms.SceneRulesHarness
+if ! SCENE_OUTPUT="$(java -cp "$TMP/out" com.manus.lostrealms.SceneRulesHarness 2>&1)"; then
+    printf '%s\n' "$SCENE_OUTPUT"
+    FAILURE="$(printf '%s\n' "$SCENE_OUTPUT" | grep -m1 'AssertionError' || true)"
+    echo "::error title=Scene rules failed::${FAILURE:-SceneRulesHarness exited unsuccessfully}"
+    exit 1
+fi
+printf '%s\n' "$SCENE_OUTPUT"
