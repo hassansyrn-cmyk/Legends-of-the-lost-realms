@@ -52,11 +52,14 @@ for marker in (
     "R.drawable.world_motion_sheet",
     "drawPremiumPlatform(c, pl, x, bob);",
     "worldFrame(3, checkpointFrame)",
-    "drawModularHero(c, x, py + bob",
-    "R.drawable.aster_rig_torso",
+    "drawCompleteHero(c, x, py + bob",
+    "drawImageTransformAlpha(c, asterMotionSheet, asterFrame(row, frame)",
 ):
     if marker not in GAME_VIEW:
         raise SystemExit(f"Missing premium asset routing marker: {marker}")
+
+if "drawModularHero(c, x, py + bob" in GAME_VIEW:
+    raise SystemExit("Broken modular hero renderer is still active")
 
 print("Premium world and UI art: OK")
 print("Validated backgrounds, map, hero, platforms, traps, checkpoint, collectibles, and HUD icons.")

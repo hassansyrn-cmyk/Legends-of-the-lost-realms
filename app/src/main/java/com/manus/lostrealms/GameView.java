@@ -1310,7 +1310,7 @@ public class GameView extends View {
         button(c, 92, 335, 355, 405, "PLAY", Color.rgb(42,170,135));
         button(c, 92, 425, 355, 485, "UPGRADES", Color.rgb(55,107,144));
         button(c, 92, 505, 355, 565, "SETTINGS", Color.rgb(76,92,118));
-        text(c, "PRODUCTION REBUILD  •  ASTER PREVIEW 5.1.0", 92, 315, 13, Color.rgb(255, 222, 139));
+        text(c, "PRODUCTION REBUILD  •  FULL-FRAME HERO 5.1.1", 92, 315, 13, Color.rgb(255, 222, 139));
         text(c, "Progress saved locally", 92, 620, 16, Color.rgb(190,216,209));
         badge(c, 1055, 72, "10 LEVELS"); badge(c, 1055, 118, "3 WORLDS");
         if (BuildConfig.DEBUG) {
@@ -1929,8 +1929,48 @@ public class GameView extends View {
             else { sx -= .055f * squash; sy += .075f * squash; }
         }
         if(grounded){p.setColor(Color.argb(72,3,12,16));c.drawOval(new RectF(x-width*.31f,py+48,x+width*.31f,py+61),p);}
-        drawModularHero(c, x, py + bob, stride, idle, lean, sx, sy, running, dashing, sliding);
+        drawCompleteHero(c, x, py + bob, lean, sx, sy, running, dashing, sliding);
         if(powerTime>0){p.setColor(Color.argb(80,Color.red(data.accent),Color.green(data.accent),Color.blue(data.accent)));c.drawCircle(x,py+25+bob,65+4*(float)Math.sin(animationClock*9f),p);}
+    }
+
+    private void drawCompleteHero(Canvas c, float x, float top, float lean,
+                                  float scaleX, float scaleY,
+                                  boolean running, boolean dashing, boolean sliding) {
+        int row;
+        int frame;
+        float rotation = lean * .35f;
+        if (screen == GAMEOVER) {
+            row = 3;
+            frame = 7;
+            rotation = facingLeft ? -78f : 78f;
+        } else if (hurtTime > 0) {
+            row = 3;
+            frame = 5;
+            rotation += facingLeft ? 7f : -7f;
+        } else if (attackTime > 0) {
+            row = 3;
+            float progress = 1f - Math.min(1f, attackTime / Math.max(.01f, attackDuration));
+            frame = Math.min(7, (int)(progress * 8f));
+            rotation += facingLeft ? 5f : -5f;
+        } else if (!grounded) {
+            row = 2;
+            frame = Math.min(7, Math.max(0, (int)((vy + 720f) / 180f)));
+        } else if (dashing || sliding) {
+            row = 2;
+            frame = frameIndex(animationClock, 8, 12f, 0f);
+            rotation += facingLeft ? -6f : 6f;
+        } else if (running) {
+            row = 1;
+            frame = frameIndex(animationClock, 8, 11f, 0f);
+        } else {
+            row = 0;
+            frame = frameIndex(animationClock, 8, 4f, 0f);
+        }
+        float cellSize = 190f;
+        RectF destination = new RectF(x - cellSize * .5f, top - 131f,
+                x + cellSize * .5f, top + 59f);
+        drawImageTransformAlpha(c, asterMotionSheet, asterFrame(row, frame), destination,
+                rotation, facingLeft ? -scaleX : scaleX, scaleY, 255);
     }
 
     private void drawModularHero(Canvas c, float x, float top, float stride, float idle,
@@ -2153,18 +2193,18 @@ public class GameView extends View {
         return Math.max(0,Math.min(count-1,(int)(progress*count)));
     }
     private int enemyFrame(Foe enemy){
-        if(enemy.state==EnemyController.ATTACK)return 4 + frameIndex(enemy.stateTime,2,12f,0);
-        if(enemy.state==EnemyController.WINDUP||enemy.state==EnemyController.NOTICE)return 3 + frameIndex(enemy.stateTime,2,8f,0);
+        if(enemy.state==EnemyController.ATTACK)return 4 + frameIndex(animationClock,2,12f,enemy.x*.01f);
+        if(enemy.state==EnemyController.WINDUP||enemy.state==EnemyController.NOTICE)return 3 + frameIndex(animationClock,2,8f,enemy.x*.01f);
         if(enemy.state==EnemyController.HIT_REACTION)return 5;
-        if(enemy.state==EnemyController.RECOVERY)return 2 + frameIndex(enemy.stateTime,2,7f,0);
+        if(enemy.state==EnemyController.RECOVERY)return 2 + frameIndex(animationClock,2,7f,enemy.x*.01f);
         if(enemy.state==EnemyController.PATROL)return 1 + frameIndex(animationClock,2,8f,enemy.x*.01f);
         return frameIndex(animationClock,2,5f,enemy.x*.01f);
     }
     private int bossFrame(Boss target){
         if(target.hitLock>0)return 5;
-        if(target.state==BossController.State.ATTACK_EXECUTE)return 4 + frameIndex(target.stateTime,2,10f,0);
-        if(target.state==BossController.State.ATTACK_WINDUP)return 3 + frameIndex(target.stateTime,2,7f,0);
-        if(target.state==BossController.State.ATTACK_RECOVERY)return 2 + frameIndex(target.stateTime,2,6f,0);
+        if(target.state==BossController.State.ATTACK_EXECUTE)return 4 + frameIndex(animationClock,2,10f,target.world*.21f);
+        if(target.state==BossController.State.ATTACK_WINDUP)return 3 + frameIndex(animationClock,2,7f,target.world*.21f);
+        if(target.state==BossController.State.ATTACK_RECOVERY)return 2 + frameIndex(animationClock,2,6f,target.world*.21f);
         return frameIndex(animationClock,3,target.phase==1?4f:6f,target.world*.21f);
     }
     private float supportingSurfaceY(float worldX, float fallbackY){

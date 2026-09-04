@@ -57,9 +57,9 @@ for name in legacy_files:
         raise SystemExit(f"Obsolete packaged resource remains: {name}")
 
 for marker in (
-    "PRODUCTION REBUILD  •  ASTER PREVIEW 5.1.0",
-    "drawModularHero(c, x, py + bob",
-    "R.drawable.aster_rig_torso",
+    "PRODUCTION REBUILD  •  FULL-FRAME HERO 5.1.1",
+    "drawCompleteHero(c, x, py + bob",
+    "drawImageTransformAlpha(c, asterMotionSheet, asterFrame(row, frame)",
     "R.drawable.realm_map_premium",
     "R.drawable.aster_motion_sheet",
     "R.drawable.enemies_motion_sheet",
@@ -76,6 +76,9 @@ for marker in (
 ):
     if marker not in GAME_VIEW:
         raise SystemExit(f"Missing premium integration marker: {marker}")
+
+if "drawModularHero(c, x, py + bob" in GAME_VIEW:
+    raise SystemExit("Broken modular hero renderer is still active")
 
 print("Premium asset integration: OK")
 print(f"Validated {len(premium_files)} assets with a {raw_bytes / 1024 / 1024:.1f} MB decoded bitmap budget.")

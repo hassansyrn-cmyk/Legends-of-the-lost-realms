@@ -23,22 +23,22 @@ player = method_body("private void drawPlayer", "private void drawEffects")
 foes = method_body("private void drawFoes", "private void drawBoss")
 boss = method_body("private void drawBoss", "private void drawSkeletalBoss")
 
-# A pose may move its limbs, but the runtime must not resize, tilt, or squash
-# the complete character. Mirroring is the only whole-sprite transform allowed.
-required_fixed_calls = (
-    "drawImageTransform(c,asterMotionSheet,asterFrame(heroRow,heroFrame),dest,0,facingLeft?-1f:1f,1f);",
-    "drawImageTransform(c,enemySpriteSheet,enemyFrame(Math.max(0,Math.min(7,e.kind)), enemyFrame),",
-    "drawImageTransform(c,bossSpriteSheet,bossFrame(Math.max(0,Math.min(2,boss.world-1)), bossFrame),",
+# Actors must be routed through complete-frame bitmaps. Small whole-body
+# transforms are permitted, but the modular hero renderer must never be active.
+required_complete_calls = (
+    "drawImageTransformAlpha(c, asterMotionSheet, asterFrame(row, frame), destination,",
+    "drawImageTransformAlpha(c, enemyArt,",
+    "drawImageTransformAlpha(c, bossArt, bossDestination, lean,",
 )
-for marker in required_fixed_calls:
+for marker in required_complete_calls:
     if marker not in GAME_VIEW:
-        raise SystemExit(f"Missing fixed-size actor renderer marker: {marker}")
+        raise SystemExit(f"Missing complete-frame actor renderer marker: {marker}")
 
-for label, body in (("player", player), ("foes", foes), ("boss", boss)):
-    if re.search(r"\b(?:lean|squash|breath|hitScale|attackLean)\b", body):
-        raise SystemExit(f"{label}: whole-sprite deformation leaked into actor rendering")
-    if ".scale(" in body:
-        raise SystemExit(f"{label}: direct canvas scaling leaked into actor rendering")
+if "drawModularHero(c, x, py + bob" in player:
+    raise SystemExit("player: broken modular hero renderer is active")
+for marker in ("float cellSize = 190f;", "top + 59f", "asterFrame(row, frame)"):
+    if marker not in player:
+        raise SystemExit(f"player: missing stable complete-frame footprint marker: {marker}")
 
 frame_start = GAME_VIEW.index("private int enemyFrame")
 frame_end = GAME_VIEW.index("private float supportingSurfaceY", frame_start)
@@ -47,19 +47,19 @@ if "enemy.stateTime" in frame_helpers or "target.stateTime" in frame_helpers:
     raise SystemExit("state frame selection must not reverse when countdown timers decrease")
 for marker in (
     "EnemyController.ATTACK)return 4 + frameIndex(animationClock,2",
-    "EnemyController.PATROL)return 2 + frameIndex(animationClock,2",
-    "State.ATTACK_EXECUTE)return 3 + frameIndex(animationClock,2",
-    "State.PHASE_TRANSITION)return 2;",
+    "EnemyController.PATROL)return 1 + frameIndex(animationClock,2",
+    "State.ATTACK_EXECUTE)return 4 + frameIndex(animationClock,2",
+    "State.ATTACK_WINDUP)return 3 + frameIndex(animationClock,2",
 ):
     if marker not in frame_helpers:
         raise SystemExit(f"Missing ordered state frame marker: {marker}")
 
-if "drawImageBottomScaled" in GAME_VIEW:
-    raise SystemExit("whole-image vertical scaling is not allowed for world interactives")
+if any("drawImageBottomScaled" in body for body in (player, foes, boss)):
+    raise SystemExit("whole-image vertical scaling is not allowed for actors")
 for marker in (
-    "WORLD_CELL_BOTTOM_PAD",
-    "float trapBottom = surfaceY + trapHeight * WORLD_CELL_BOTTOM_PAD / WORLD_CELL_H;",
-    "float checkpointBottom = checkpointBaseY + checkpointHeight * WORLD_CELL_BOTTOM_PAD / WORLD_CELL_H;",
+    "float surfaceY = supportingSurfaceY(",
+    "RectF trapDestination = new RectF(mid-half-30, surfaceY-167, mid+half+30, surfaceY);",
+    "new RectF(flag-48,checkpointBaseY-182,flag+84,checkpointBaseY)",
 ):
     if marker not in GAME_VIEW:
         raise SystemExit(f"Missing pixel-contact anchor marker: {marker}")
