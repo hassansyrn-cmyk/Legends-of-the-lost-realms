@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+trap 'status=$?; echo "::error title=Project verification failed::Command ${BASH_COMMAND} failed at line ${LINENO} with status ${status}"; exit "$status"' ERR
+
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
 cd "$ROOT"
