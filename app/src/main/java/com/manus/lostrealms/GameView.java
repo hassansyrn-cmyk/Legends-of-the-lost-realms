@@ -1908,9 +1908,13 @@ public class GameView extends View {
         RectF dest=new RectF(x-width/2,py-110+bob,x+width/2,py+66+bob);
         int heroRow;
         float heroFps;
-        if(screen==GAMEOVER||hurtTime>0){heroRow=3;heroFps=9f;}
-        else if(attackTime>0){heroRow=2;heroFps=14f;}
-        else if(!grounded||dashing||sliding||running){heroRow=1;heroFps=running?13f:9f;}
+        if(screen==GAMEOVER){heroRow=7;heroFps=7f;}
+        else if(hurtTime>0){heroRow=7;heroFps=12f;}
+        else if(attackTime>0){heroRow=3;heroFps=14f;}
+        else if(dashing||sliding){heroRow=6;heroFps=dashing?16f:10f;}
+        else if(!grounded){heroRow=vy>420f?5:4;heroFps=10f;}
+        else if(running){heroRow=2;heroFps=13f;}
+        else if(Math.abs(vx)>8f){heroRow=1;heroFps=9f;}
         else {heroRow=0;heroFps=6f;}
         int heroFrame = frameIndex(animationClock, 8, heroFps, screen == GAMEOVER ? 0f : (facingLeft ? .18f : 0f));
         drawImageTransformAlpha(c, heroPremiumSprite, asterFrame(heroRow, heroFrame), dest, lean,

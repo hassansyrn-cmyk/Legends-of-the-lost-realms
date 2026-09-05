@@ -54,29 +54,43 @@ def setr(name, axis, value):
     if name in pose: pose[name].rotation_euler[axis]=value
 
 def setpose(row, f):
-    reset(); t=f/7.0; s=math.sin(t*math.tau)
-    if row==0: # idle breathing / subtle cape and sword movement
-        setr('spine',2,0.018*s); setr('chest',2,0.022*s); setr('neck',2,-0.012*s)
-        setr('upperarm_L',1,0.025*s); setr('upperarm_R',1,-0.025*s)
-        setr('thigh_L',1,-0.015*s); setr('thigh_R',1,0.015*s)
-    elif row==1: # run cycle
-        setr('upperarm_L',1,0.38*s); setr('forearm_L',1,-0.12*s)
-        setr('upperarm_R',1,-0.38*s); setr('forearm_R',1,0.12*s)
-        setr('thigh_L',1,-0.42*s); setr('shin_L',1,0.18*max(0,s))
-        setr('thigh_R',1,0.42*s); setr('shin_R',1,-0.18*max(0,s))
-        setr('spine',2,0.045*s)
-    elif row==2: # attack arc
-        a=math.sin(t*math.pi)
-        setr('spine',2,-0.12+0.15*t); setr('upperarm_R',1,-0.45+0.95*t); setr('forearm_R',1,-0.35+0.55*t)
-        setr('upperarm_L',1,0.18*a); setr('forearm_L',1,0.08*a); setr('thigh_L',1,-0.08*a); setr('thigh_R',1,0.08*a)
-    else: # hurt / defeat recoil
-        setr('spine',2,0.14*math.sin(t*math.pi)); setr('neck',2,-0.1*math.sin(t*math.pi))
-        setr('upperarm_L',1,-0.2*math.sin(t*math.pi)); setr('upperarm_R',1,0.2*math.sin(t*math.pi))
-        setr('thigh_L',1,0.12*math.sin(t*math.pi)); setr('thigh_R',1,-0.12*math.sin(t*math.pi))
+    reset(); t=f/7.0; s=math.sin(t*math.tau); a=math.sin(t*math.pi)
+    if row==0: # idle breathing
+        setr('spine',2,0.025*s); setr('chest',2,0.032*s); setr('neck',2,-0.016*s)
+        setr('upperarm_L',0,0.035*s); setr('upperarm_R',0,-0.035*s)
+    elif row==1: # walk cycle
+        setr('upperarm_L',0,0.24*s); setr('upperarm_R',0,-0.24*s)
+        setr('forearm_L',0,-0.08*s); setr('forearm_R',0,0.08*s)
+        setr('thigh_L',0,-0.28*s); setr('thigh_R',0,0.28*s)
+        setr('spine',2,0.028*s)
+    elif row==2: # run cycle
+        setr('upperarm_L',0,0.48*s); setr('forearm_L',0,-0.18*s)
+        setr('upperarm_R',0,-0.48*s); setr('forearm_R',0,0.18*s)
+        setr('thigh_L',0,-0.62*s); setr('shin_L',0,0.28*max(0,s))
+        setr('thigh_R',0,0.62*s); setr('shin_R',0,-0.28*max(0,s))
+        setr('spine',2,0.06*s)
+    elif row==3: # attack arc
+        setr('spine',2,-0.18+0.24*t); setr('upperarm_R',0,-0.75+1.45*t); setr('forearm_R',0,-0.5+0.9*t)
+        setr('upperarm_L',0,0.22*a); setr('forearm_L',0,0.1*a); setr('thigh_L',0,-0.1*a); setr('thigh_R',0,0.1*a)
+    elif row==4: # jump / airborne
+        setr('spine',2,-0.08*s); setr('upperarm_L',0,-0.35+0.18*s); setr('upperarm_R',0,0.35-0.18*s)
+        setr('forearm_L',0,-0.18); setr('forearm_R',0,0.18); setr('thigh_L',0,-0.28); setr('thigh_R',0,0.28)
+    elif row==5: # falling / dive
+        setr('spine',2,0.22); setr('neck',2,-0.18); setr('upperarm_L',0,-0.58); setr('upperarm_R',0,0.58)
+        setr('forearm_L',0,-0.22); setr('forearm_R',0,0.22); setr('thigh_L',0,0.18); setr('thigh_R',0,-0.18)
+    elif row==6: # dash / slide
+        setr('spine',2,-0.24); setr('neck',2,0.1); setr('upperarm_L',0,-0.28); setr('upperarm_R',0,-0.28)
+        setr('forearm_L',0,-0.22); setr('forearm_R',0,-0.22); setr('thigh_L',0,0.42); setr('thigh_R',0,0.42)
+    else: # damaged / defeat recoil
+        setr('spine',2,0.22*a); setr('neck',2,-0.16*a)
+        setr('upperarm_L',0,-0.34*a); setr('upperarm_R',0,0.34*a)
+        setr('forearm_L',0,-0.18*a); setr('forearm_R',0,0.18*a)
+        setr('thigh_L',0,0.22*a); setr('thigh_R',0,-0.22*a)
+        if row==7: setr('spine',0,0.2*t); setr('head',0,0.35*t)
 
 os.makedirs(out_dir, exist_ok=True)
 frames=[]
-for row in range(4):
+for row in range(8):
     for f in range(8):
         setpose(row,f)
         scene.frame_set(1)
