@@ -1918,7 +1918,7 @@ public class GameView extends View {
         else {heroRow=0;heroFps=6f;}
         int heroFrame = frameIndex(animationClock, 8, heroFps, screen == GAMEOVER ? 0f : (facingLeft ? .18f : 0f));
         drawImageTransformAlpha(c, heroPremiumSprite, asterFrame(heroRow, heroFrame), dest, lean,
-                facingLeft ? -sx : sx, sy, 255);
+                facingLeft ? sx : -sx, sy, 255);
         if(powerTime>0){p.setColor(Color.argb(80,Color.red(data.accent),Color.green(data.accent),Color.blue(data.accent)));c.drawCircle(x,py+25+bob,65+4*(float)Math.sin(animationClock*9f),p);}
     }
 

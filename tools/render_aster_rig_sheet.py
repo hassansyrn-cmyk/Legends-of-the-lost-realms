@@ -57,10 +57,11 @@ def setpose(row, f):
     reset(); t=f/7.0; s=math.sin(t*math.tau); a=math.sin(t*math.pi)
     if row==0: # idle breathing
         setr('spine',2,0.025*s); setr('chest',2,0.032*s); setr('neck',2,-0.016*s)
-        setr('upperarm_L',0,0.035*s); setr('upperarm_R',0,-0.035*s)
+        setr('upperarm_L',2,0.95+0.045*s); setr('upperarm_R',2,-0.95-0.045*s)
+        setr('forearm_L',2,-0.22+0.035*s); setr('forearm_R',2,0.22-0.035*s)
     elif row==1: # walk cycle
-        setr('upperarm_L',0,0.24*s); setr('upperarm_R',0,-0.24*s)
-        setr('forearm_L',0,-0.08*s); setr('forearm_R',0,0.08*s)
+        setr('upperarm_L',2,0.95+0.24*s); setr('upperarm_R',2,-0.95-0.24*s)
+        setr('forearm_L',2,-0.22-0.08*s); setr('forearm_R',2,0.22+0.08*s)
         setr('thigh_L',0,-0.28*s); setr('thigh_R',0,0.28*s)
         setr('spine',2,0.028*s)
     elif row==2: # run cycle
