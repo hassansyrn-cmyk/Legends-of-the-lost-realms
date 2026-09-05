@@ -17,7 +17,7 @@ def clear_scene():
     bpy.ops.object.delete(use_global=False)
 
 
-def mat(name, color, metallic=0.0, roughness=0.5, emission=None):
+def mat(name, color, metallic=0.0, roughness=0.5, emission=None, emission_strength=3.0):
     material = bpy.data.materials.new(name)
     material.diffuse_color = (*color, 1.0)
     material.use_nodes = True
@@ -27,7 +27,7 @@ def mat(name, color, metallic=0.0, roughness=0.5, emission=None):
     shader.inputs["Roughness"].default_value = roughness
     if emission:
         shader.inputs["Emission Color"].default_value = (*emission, 1.0)
-        shader.inputs["Emission Strength"].default_value = 3.0
+        shader.inputs["Emission Strength"].default_value = emission_strength
     return material
 
 
@@ -98,6 +98,7 @@ def tapered_box(name, xyz, bottom_width, top_width, depth, height, material,
     obj.location = xyz
     obj.rotation_euler = rotation
     obj.data.materials.append(material)
+    bpy.context.view_layer.update()
     soften(obj, bevel)
     return attach(obj, rig, bone)
 
@@ -124,6 +125,7 @@ def sword_blade(name, xyz, width, depth, length, material, rig, bone,
     obj.location = xyz
     obj.rotation_euler = rotation
     obj.data.materials.append(material)
+    bpy.context.view_layer.update()
     soften(obj, .012)
     return attach(obj, rig, bone)
 
@@ -149,6 +151,7 @@ def pointed_panel(name, xyz, top_width, lower_width, depth, length, material,
     obj.location = xyz
     obj.rotation_euler = rotation
     obj.data.materials.append(material)
+    bpy.context.view_layer.update()
     soften(obj, .025)
     return attach(obj, rig, bone)
 
@@ -179,14 +182,14 @@ def build_rig():
     rig.data.name = "ASTER_V2_SKELETON"
     bones = rig.data.edit_bones
     bones.remove(bones[0])
-    add_bone(bones, "Root", (0, 0, 0.05), (0, 0, 0.55))
-    add_bone(bones, "Hips", (0, 0, 0.55), (0, 0, 1.15), "Root")
-    add_bone(bones, "Spine", (0, 0, 1.05), (0, 0, 1.85), "Hips")
-    add_bone(bones, "Chest", (0, 0, 1.75), (0, 0, 2.45), "Spine")
-    add_bone(bones, "Neck", (0, 0, 2.40), (0, 0, 2.66), "Chest")
-    add_bone(bones, "Head", (0, 0, 2.61), (0, 0, 3.25), "Neck")
-    add_bone(bones, "CoatTail.L", (-0.20, 0.12, 1.10), (-0.32, 0.14, 0.25), "Hips")
-    add_bone(bones, "CoatTail.R", (0.20, 0.12, 1.10), (0.32, 0.14, 0.25), "Hips")
+    add_bone(bones, "Root", (0, 0, -1.08), (0, 0, 0.48))
+    add_bone(bones, "Hips", (0, 0, 0.48), (0, 0, 1.18), "Root")
+    add_bone(bones, "Spine", (0, 0, 1.08), (0, 0, 1.88), "Hips")
+    add_bone(bones, "Chest", (0, 0, 1.78), (0, 0, 2.48), "Spine")
+    add_bone(bones, "Neck", (0, 0, 2.43), (0, 0, 2.70), "Chest")
+    add_bone(bones, "Head", (0, 0, 2.66), (0, 0, 3.35), "Neck")
+    add_bone(bones, "CoatTail.L", (-0.18, 0.12, 1.12), (-0.30, 0.14, 0.12), "Hips")
+    add_bone(bones, "CoatTail.R", (0.18, 0.12, 1.12), (0.30, 0.14, 0.12), "Hips")
     for side, sign in (("L", -1), ("R", 1)):
         add_bone(bones, f"UpperArm.{side}", (0.42 * sign, 0, 2.28),
                  (0.90 * sign, 0, 1.98), "Chest")
@@ -194,12 +197,12 @@ def build_rig():
                  (1.20 * sign, 0, 1.54), f"UpperArm.{side}")
         add_bone(bones, f"Hand.{side}", (1.20 * sign, 0, 1.54),
                  (1.31 * sign, 0, 1.30), f"Forearm.{side}")
-        add_bone(bones, f"Thigh.{side}", (0.23 * sign, 0, 1.02),
-                 (0.28 * sign, 0, 0.30), "Hips")
-        add_bone(bones, f"Shin.{side}", (0.28 * sign, 0, 0.30),
-                 (0.28 * sign, 0, -0.40), f"Thigh.{side}")
-        add_bone(bones, f"Foot.{side}", (0.28 * sign, 0, -0.40),
-                 (0.28 * sign, -0.34, -0.50), f"Shin.{side}")
+        add_bone(bones, f"Thigh.{side}", (0.21 * sign, 0, 1.04),
+                 (0.25 * sign, 0, 0.08), "Hips")
+        add_bone(bones, f"Shin.{side}", (0.25 * sign, 0, 0.08),
+                 (0.25 * sign, 0, -0.82), f"Thigh.{side}")
+        add_bone(bones, f"Foot.{side}", (0.25 * sign, 0, -0.82),
+                 (0.25 * sign, -0.38, -1.02), f"Shin.{side}")
     bpy.ops.object.mode_set(mode="POSE")
     for pose_bone in rig.pose.bones:
         pose_bone.rotation_mode = "XYZ"
@@ -209,8 +212,8 @@ def build_rig():
 
 
 def build_model(rig):
-    skin = mat("Warm skin shadow", (0.39, 0.16, 0.08), roughness=0.72)
-    skin_light = mat("Warm skin", (0.72, 0.40, 0.24), roughness=0.66)
+    skin = mat("Warm skin shadow", (0.17, 0.052, 0.018), roughness=0.72)
+    skin_light = mat("Warm skin", (0.36, 0.15, 0.065), roughness=0.66)
     hair = mat("Dark teal hair", (0.012, 0.065, 0.075), roughness=0.76)
     teal = mat("Forest teal cloth", (0.012, 0.16, 0.15), roughness=0.58)
     teal_dark = mat("Deep teal cloth", (0.008, 0.07, 0.075), roughness=0.68)
@@ -218,16 +221,17 @@ def build_model(rig):
     leather_hi = mat("Warm leather", (0.25, 0.105, 0.035), roughness=0.58)
     gold = mat("Antique gold", (0.46, 0.24, 0.045), metallic=0.70, roughness=0.27)
     steel = mat("Sword steel", (0.43, 0.62, 0.67), metallic=0.88, roughness=0.16)
-    blade_glow = mat("Sword aether edge", (0.00, 0.34, 0.42), metallic=0.32,
-                     roughness=0.16, emission=(0.00, .62, .78))
+    blade_glow = mat("Sword aether edge", (0.00, 0.25, 0.31), metallic=0.32,
+                     roughness=0.16, emission=(0.00, .48, .60), emission_strength=1.15)
     cyan = mat("Aster core", (0.00, 0.42, 0.52), metallic=0.15,
                roughness=0.18, emission=(0.02, 0.70, 0.86))
-    eye = mat("Eyes", (0.02, 0.20, 0.23), roughness=0.20)
+    eye_white = mat("Eye white", (0.72, 0.82, 0.80), roughness=0.30)
+    eye = mat("Teal irises", (0.005, 0.17, 0.19), roughness=0.16)
 
     # Overlapping volumes form a continuous silhouette at every playable pose.
     # The underbody prevents gaps; the tailored shells provide the visible design.
-    sphere("Torso underbody", (0, 0, 1.84), (0.31, 0.19, 0.58), teal_dark, rig, "Chest")
-    tapered_box("Tailored coat", (0, -0.17, 1.84), .50, .68, .18, 1.10,
+    sphere("Torso underbody", (0, 0, 1.84), (0.27, 0.17, 0.52), teal_dark, rig, "Chest")
+    tapered_box("Tailored coat", (0, -0.17, 1.84), .43, .66, .18, 1.08,
                 teal, rig, "Chest", bevel=.055)
     tapered_box("Dark waistcoat", (0, -.275, 1.84), .37, .48, .045, .83,
                 teal_dark, rig, "Chest", bevel=.025)
@@ -237,9 +241,15 @@ def build_model(rig):
         rig, "Chest", rotation=(0, 0, math.radians(22)), bevel=.025)
     box("Chest strap", (0, -.326, 1.83), (.34, .022, .045), leather,
         rig, "Chest", rotation=(0, 0, math.radians(-12)), bevel=.018)
+    box("Coat seam.L", (-.29, -.275, 1.73), (.012, .014, .36), gold,
+        rig, "Chest", bevel=.007)
+    box("Coat seam.R", (.29, -.275, 1.73), (.012, .014, .36), gold,
+        rig, "Chest", bevel=.007)
     sphere("Waist bridge", (0, 0, 1.14), (0.27, 0.18, 0.23), teal_dark, rig, "Hips")
     box("Belt", (0, -0.225, 1.20), (0.34, 0.05, 0.065), leather_hi, rig, "Hips", bevel=0.025)
     box("Buckle", (0, -0.292, 1.20), (0.085, 0.028, 0.085), gold, rig, "Hips", rotation=(0, math.radians(45), 0), bevel=0.018)
+    box("Belt pouch.L", (-.37, -.10, 1.14), (.105, .09, .14), leather, rig, "Hips", bevel=.035)
+    box("Belt pouch.R", (.37, -.10, 1.14), (.105, .09, .14), leather, rig, "Hips", bevel=.035)
     box("Magic core bezel", (0, -0.352, 2.05), (.115, .022, .115), gold,
         rig, "Chest", rotation=(0, math.radians(45), 0), bevel=.018)
     box("Magic core", (0, -0.382, 2.05), (.075, .018, .075), cyan,
@@ -247,31 +257,37 @@ def build_model(rig):
     cone("High collar", (0, -.015, 2.43), .30, .24, .23, teal_dark,
          rig, "Chest")
     for side, sign in (("L", -1), ("R", 1)):
-        pointed_panel(f"Coat tail.{side}", (0.12 * sign, .10 + .025 * sign, .84),
-                      .20, .13, .08, .70, teal, rig, f"CoatTail.{side}",
+        panel_xyz = (0.30 * sign, .15 + .025 * sign, .63)
+        pointed_panel(f"Coat tail border.{side}", panel_xyz,
+                      .29, .19, .080, 1.17, gold, rig, f"CoatTail.{side}",
+                      rotation=(math.radians(-4), 0, math.radians(-4 * sign)))
+        pointed_panel(f"Coat tail.{side}", (panel_xyz[0], panel_xyz[1] - .012, panel_xyz[2] + .015),
+                      .245, .145, .084, 1.10, teal, rig, f"CoatTail.{side}",
                       rotation=(math.radians(-4), 0, math.radians(-4 * sign)))
 
-    sphere("Neck", (0, 0, 2.49), (.13, .13, .22), skin, rig, "Neck")
-    sphere("Head", (0, -0.03, 2.89), (0.29, 0.25, 0.38), skin_light, rig, "Head")
-    sphere("Jaw", (0, -0.08, 2.72), (0.23, 0.22, 0.22), skin_light, rig, "Head")
-    sphere("Hair crown", (-.015, 0.02, 3.11), (0.32, 0.27, 0.23), hair, rig, "Head")
-    cone("Nose", (0, -0.315, 2.88), 0.045, 0.008, 0.16, skin, rig, "Head",
+    sphere("Neck", (0, 0, 2.53), (.12, .12, .20), skin, rig, "Neck")
+    sphere("Head", (0, -0.03, 3.00), (0.25, 0.225, 0.325), skin_light, rig, "Head")
+    sphere("Jaw", (0, -0.08, 2.84), (0.198, 0.195, 0.165), skin_light, rig, "Head")
+    sphere("Hair crown", (-.015, 0.02, 3.19), (0.285, 0.245, 0.18), hair, rig, "Head")
+    cone("Nose", (0, -0.285, 2.99), 0.038, 0.006, 0.13, skin, rig, "Head",
          rotation=(math.radians(90), 0, 0))
-    for index, (x, z, angle) in enumerate(((-.28, 3.12, -38), (-.15, 3.25, -25),
-                                           (.00, 3.29, -5), (.16, 3.25, 22), (.29, 3.14, 38))):
-        cone(f"Hair lock {index}", (x, 0.01, z), .085, .012, .35, hair, rig, "Head",
+    for index, (x, z, angle) in enumerate(((-.27, 3.18, -62), (-.17, 3.29, -47),
+                                           (-.04, 3.35, -24), (.10, 3.35, 8),
+                                           (.23, 3.30, 32), (.31, 3.20, 56))):
+        cone(f"Hair lock {index}", (x, 0.01, z), .066, .008, .27, hair, rig, "Head",
              rotation=(0, math.radians(angle), 0))
-    for index, (x, z, angle) in enumerate(((-.19, 3.11, -45), (-.06, 3.14, -22),
-                                           (.09, 3.14, 18), (.22, 3.09, 42))):
-        cone(f"Swept fringe {index}", (x, -.245, z), .06, .008, .22, hair,
+    for index, (x, z, angle) in enumerate(((-.18, 3.20, -47), (-.055, 3.23, -23),
+                                           (.085, 3.23, 18), (.205, 3.18, 44))):
+        cone(f"Swept fringe {index}", (x, -.225, z), .052, .007, .20, hair,
              rig, "Head", rotation=(0, math.radians(angle), 0))
-    box("Mouth", (0, -.316, 2.73), (.055, .009, .009), skin, rig, "Head", bevel=.006)
+    box("Mouth", (0, -.294, 2.84), (.05, .008, .007), skin, rig, "Head", bevel=.005)
     for side, sign in (("L", -1), ("R", 1)):
-        sphere(f"Eye.{side}", (0.115 * sign, -0.286, 2.93), (.042, .018, .052), eye, rig, "Head")
-        box(f"Brow.{side}", (0.115 * sign, -0.305, 3.01), (.075, .012, .014), hair, rig, "Head",
+        sphere(f"Eye white.{side}", (0.098 * sign, -0.252, 3.035), (.044, .012, .025), eye_white, rig, "Head")
+        sphere(f"Iris.{side}", (0.098 * sign, -0.266, 3.035), (.015, .008, .016), eye, rig, "Head")
+        box(f"Brow.{side}", (0.098 * sign, -0.271, 3.095), (.061, .009, .010), hair, rig, "Head",
             rotation=(0, 0, math.radians(-5 * sign)), bevel=.008)
 
-        sphere(f"Ear.{side}", (.27 * sign, -.03, 2.91), (.045, .035, .075), skin, rig, "Head")
+        sphere(f"Ear.{side}", (.252 * sign, -.03, 3.01), (.038, .032, .065), skin, rig, "Head")
         sphere(f"Shoulder cloth.{side}", (.44 * sign, 0, 2.24), (.19, .21, .18), teal, rig, "Chest")
         sphere(f"Pauldron.{side}", (.46 * sign, -.05, 2.28), (.20, .20, .10), leather_hi, rig, "Chest")
         box(f"Pauldron trim.{side}", (.48 * sign, -.23, 2.27), (.15, .025, .025), gold,
@@ -283,25 +299,35 @@ def build_model(rig):
                f"Forearm.{side}", rotation=(0, math.radians(146 * sign), 0))
         box(f"Bracer.{side}", (1.02 * sign, -.13, 1.80), (.105, .025, .16), gold,
             rig, f"Forearm.{side}", rotation=(0, 0, math.radians(-34 * sign)), bevel=.018)
-        sphere(f"Hand.{side}", (1.255 * sign, -.02, 1.42), (.115, .105, .15), skin_light, rig,
+        sphere(f"Hand.{side}", (1.245 * sign, -.01, 1.44), (.12, .11, .16), leather, rig,
+               f"Hand.{side}", rotation=(0, math.radians(155 * sign), 0))
+        sphere(f"Fingertips.{side}", (1.30 * sign, -.035, 1.34), (.073, .075, .095), skin_light, rig,
                f"Hand.{side}", rotation=(0, math.radians(155 * sign), 0))
 
-        sphere(f"Hip bridge.{side}", (.20 * sign, 0, 1.02), (.18, .18, .17), teal_dark, rig, "Hips")
-        sphere(f"Thigh.{side}", (.265 * sign, 0, .65), (.15, .17, .46), teal_dark, rig, f"Thigh.{side}")
-        sphere(f"Knee guard.{side}", (.28 * sign, -.04, .28), (.15, .16, .125), leather_hi, rig, f"Shin.{side}")
-        sphere(f"Shin.{side}", (.28 * sign, 0, -.03), (.15, .17, .42), leather, rig, f"Shin.{side}")
-        box(f"Boot.{side}", (.28 * sign, -.17, -.43), (.17, .30, .14), leather, rig, f"Foot.{side}", bevel=.075)
-        box(f"Boot cuff.{side}", (.28 * sign, -.03, -.21), (.175, .17, .07), leather_hi, rig, f"Shin.{side}", bevel=.04)
-        box(f"Boot trim.{side}", (.28 * sign, -.245, -.34), (.18, .21, .025), gold, rig, f"Foot.{side}", bevel=.015)
+        sphere(f"Hip bridge.{side}", (.20 * sign, 0, 1.02), (.17, .17, .16), teal_dark, rig, "Hips")
+        sphere(f"Thigh.{side}", (.245 * sign, 0, .56), (.145, .16, .56), teal_dark, rig, f"Thigh.{side}")
+        box(f"Thigh strap.{side}", (.245 * sign, -.165, .45), (.15, .025, .045), leather_hi,
+            rig, f"Thigh.{side}", rotation=(0, 0, math.radians(4 * sign)), bevel=.018)
+        sphere(f"Knee guard.{side}", (.25 * sign, -.04, .06), (.145, .15, .12), leather_hi, rig, f"Shin.{side}")
+        box(f"Knee plate.{side}", (.25 * sign, -.18, .06), (.12, .025, .16), gold,
+            rig, f"Shin.{side}", rotation=(0, math.radians(45), 0), bevel=.018)
+        sphere(f"Shin.{side}", (.25 * sign, 0, -.42), (.14, .16, .52), leather, rig, f"Shin.{side}")
+        box(f"Boot.{side}", (.25 * sign, -.19, -.91), (.165, .34, .16), leather, rig, f"Foot.{side}", bevel=.075)
+        box(f"Boot cuff.{side}", (.25 * sign, -.03, -.16), (.17, .16, .08), leather_hi, rig, f"Shin.{side}", bevel=.035)
+        box(f"Boot strap upper.{side}", (.25 * sign, -.17, -.38), (.15, .025, .04), leather_hi,
+            rig, f"Shin.{side}", bevel=.015)
+        box(f"Boot strap lower.{side}", (.25 * sign, -.17, -.62), (.15, .025, .04), leather_hi,
+            rig, f"Shin.{side}", bevel=.015)
+        box(f"Boot trim.{side}", (.25 * sign, -.27, -.83), (.18, .22, .025), gold, rig, f"Foot.{side}", bevel=.015)
 
     # The sword is a rigid child of the hand, so every keyed arm pose carries it correctly.
     box("Sword grip", (1.31, -.02, 1.18), (.045, .045, .22), leather, rig, "Hand.R",
         rotation=(0, 0, math.radians(-8)), bevel=.025)
     box("Sword guard", (1.34, -.02, .99), (.24, .055, .045), gold, rig, "Hand.R",
         rotation=(0, 0, math.radians(-8)), bevel=.025)
-    sword_blade("Sword blade", (1.43, -.02, .43), .21, .06, 1.22,
+    sword_blade("Sword blade", (1.45, -.02, .24), .23, .06, 1.55,
                 steel, rig, "Hand.R", rotation=(0, 0, math.radians(-8)))
-    box("Sword aether channel", (1.435, -.057, .45), (.018, .008, .49),
+    box("Sword aether channel", (1.45, -.057, .30), (.020, .008, .64),
         blade_glow, rig, "Hand.R", rotation=(0, 0, math.radians(-8)), bevel=.006)
 
 
@@ -334,6 +360,16 @@ def keyed(rig, frame, pose):
 
 
 BASE = {}
+IDLE_INHALE = {
+    "Chest": {"s": (1.018, 1.0, 1.025)}, "Head": {"r": (0, 0, -1.6)},
+    "UpperArm.L": {"r": (0, 0, -1.5)}, "UpperArm.R": {"r": (0, 0, 1.5)},
+    "CoatTail.L": {"r": (0, 0, -2.5)}, "CoatTail.R": {"r": (0, 0, 2.0)},
+}
+IDLE_EXHALE = {
+    "Chest": {"s": (.992, 1.0, .987)}, "Head": {"r": (0, 0, 1.8)},
+    "UpperArm.L": {"r": (0, 0, 1.2)}, "UpperArm.R": {"r": (0, 0, -1.2)},
+    "CoatTail.L": {"r": (0, 0, 2.0)}, "CoatTail.R": {"r": (0, 0, -2.5)},
+}
 RUN_A = {"Root": {"l": (0, 0, -.025)}, "Hips": {"r": (0, 0, 4)},
          "Chest": {"r": (0, 0, -3)}, "Head": {"r": (0, 0, 2)},
          "UpperArm.L": {"r": (0, 0, -42)}, "UpperArm.R": {"r": (0, 0, 44)},
@@ -369,7 +405,8 @@ ATTACK_STRIKE = {"Hips": {"r": (0, 0, -6)}, "Chest": {"r": (0, 0, 12)},
 def create_actions(rig):
     actions = {}
     sequences = {
-        "idle": [(1, BASE), (12, {**BASE, "Head": {"r": (0, 0, 2)}}), (24, BASE)],
+        "idle": [(1, BASE), (6, IDLE_INHALE), (12, BASE),
+                 (18, IDLE_EXHALE), (24, BASE)],
         "run": [(1, RUN_A), (5, BASE), (9, RUN_B), (13, BASE), (17, RUN_A)],
         "jump": [(1, {**BASE, "Root": {"l": (0, 0, -.08)}, "Thigh.L": {"r": (0, 0, 18)}, "Thigh.R": {"r": (0, 0, 18)}}),
                  (4, JUMP), (8, {**JUMP, "Root": {"l": (0, 0, .38)}}),
@@ -409,12 +446,12 @@ def setup_scene():
     scene.view_settings.look = "AgX - Medium High Contrast"
     scene.world.color = (.008, .012, .016)
 
-    bpy.ops.object.camera_add(location=(4.4, -12.8, 3.9))
+    bpy.ops.object.camera_add(location=(4.7, -13.8, 3.9))
     camera = bpy.context.object
     camera.name = "Platformer Sprite Camera"
     camera.data.type = "ORTHO"
-    camera.data.ortho_scale = 5.15
-    look_at(camera, (0, 0, 1.30))
+    camera.data.ortho_scale = 5.75
+    look_at(camera, (0, 0, 1.10))
     scene.camera = camera
 
     for name, kind, location, energy, color, size in (
@@ -442,6 +479,9 @@ def render_animation_proofs(rig, actions):
     }
     if os.environ.get("ASTER_V2_QUICK") == "1":
         samples = {"run": (1, 9), "attack": (3, 5)}
+    only_action = os.environ.get("ASTER_V2_ONLY")
+    if only_action:
+        samples = {only_action: samples[only_action]}
     for name, frames in samples.items():
         rig.animation_data.action = actions[name]
         bpy.context.view_layer.update()

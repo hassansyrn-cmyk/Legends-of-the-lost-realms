@@ -40,7 +40,7 @@ preview = checker(preview_size)
 small_atlas = atlas.resize((int(atlas.width * scale), int(atlas.height * scale)), Image.Resampling.LANCZOS)
 preview.alpha_composite(small_atlas, (margin_left, margin_top))
 draw = ImageDraw.Draw(preview)
-draw.text((margin_left, 8), "ASTER V2 • BLENDER SKELETAL MOTION PROOF", fill=(219, 242, 244, 255))
+draw.text((margin_left, 8), "ASTER V2 - PHASE 2 - BLENDER MOTION PROOF", fill=(219, 242, 244, 255))
 for row_index, action in enumerate(ROWS):
     y = margin_top + int((row_index + .5) * CELL * scale) - 7
     draw.text((12, y), action.upper(), fill=(105, 225, 224, 255))
@@ -56,7 +56,7 @@ for action in ROWS:
         character = Image.open(source).convert("RGBA")
         stage.alpha_composite(character, (0, 32))
         stage_draw = ImageDraw.Draw(stage)
-        stage_draw.text((18, 10), f"ASTER V2 • {action.upper()}", fill=(155, 242, 237, 255))
+        stage_draw.text((18, 10), f"ASTER V2 - PHASE 2 - {action.upper()}", fill=(155, 242, 237, 255))
         action_frames.append(stage.convert("P", palette=Image.Palette.ADAPTIVE, colors=192))
     motion_frames.extend(action_frames)
     motion_frames.extend([action_frames[-1]] * 2)
