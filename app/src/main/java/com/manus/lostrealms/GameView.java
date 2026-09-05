@@ -178,7 +178,7 @@ public class GameView extends View {
         collectibleSpriteSheet = BitmapFactory.decodeResource(getResources(), R.drawable.collectibles_motion_sheet);
         effectsSpriteSheet = BitmapFactory.decodeResource(getResources(), R.drawable.effects_motion_sheet);
         uiSpriteSheet = BitmapFactory.decodeResource(getResources(), R.drawable.ui_motion_sheet);
-        heroPremiumSprite = BitmapFactory.decodeResource(getResources(), R.drawable.aster_premium);
+        heroPremiumSprite = BitmapFactory.decodeResource(getResources(), R.drawable.aster_premium_rigged);
         enemyPremiumSprites[0] = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_moss_premium);
         enemyPremiumSprites[1] = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_ember_moth_premium);
         enemyPremiumSprites[2] = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_dune_premium);
@@ -1912,7 +1912,8 @@ public class GameView extends View {
         else if(attackTime>0){heroRow=2;heroFps=14f;}
         else if(!grounded||dashing||sliding||running){heroRow=1;heroFps=running?13f:9f;}
         else {heroRow=0;heroFps=6f;}
-        drawImageTransformAlpha(c, heroPremiumSprite, dest, lean,
+        int heroFrame = frameIndex(animationClock, 8, heroFps, screen == GAMEOVER ? 0f : (facingLeft ? .18f : 0f));
+        drawImageTransformAlpha(c, heroPremiumSprite, asterFrame(heroRow, heroFrame), dest, lean,
                 facingLeft ? -sx : sx, sy, 255);
         if(powerTime>0){p.setColor(Color.argb(80,Color.red(data.accent),Color.green(data.accent),Color.blue(data.accent)));c.drawCircle(x,py+25+bob,65+4*(float)Math.sin(animationClock*9f),p);}
     }
