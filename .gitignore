@@ -46,6 +46,7 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+*.blend1
 
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
