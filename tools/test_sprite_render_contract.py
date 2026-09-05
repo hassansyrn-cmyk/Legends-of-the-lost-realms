@@ -36,7 +36,7 @@ for marker in required_complete_calls:
 
 if "drawModularHero(c, x, py + bob" in player:
     raise SystemExit("player: broken modular hero renderer is active")
-for marker in ("float cellSize = 190f;", "top + 59f", "asterFrame(row, frame)"):
+for marker in ("float cellSize = 212f;", "top + 67f", "asterFrame(row, frame)"):
     if marker not in player:
         raise SystemExit(f"player: missing stable complete-frame footprint marker: {marker}")
 
@@ -92,7 +92,10 @@ for name in ("aster_motion_sheet", "enemies_motion_sheet", "bosses_motion_sheet"
     ):
         widths = [box[2] - box[0] for box in row_boxes]
         heights = [box[3] - box[1] for box in row_boxes]
-        if (max(widths) - min(widths)) / max(widths) > .24:
+        # Aster's attack row includes the full sword wind-up and extension,
+        # while its destination rectangle and foot anchor remain fixed.
+        allowed_width_drift = .45 if name == "aster_motion_sheet" and row == 3 else .24
+        if (max(widths) - min(widths)) / max(widths) > allowed_width_drift:
             raise SystemExit(f"{name}: frame width drifts in row {row}: {widths}")
         if (max(heights) - min(heights)) / max(heights) > .24:
             raise SystemExit(f"{name}: frame height drifts in row {row}: {heights}")

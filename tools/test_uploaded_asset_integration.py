@@ -57,7 +57,7 @@ for name in legacy_files:
         raise SystemExit(f"Obsolete packaged resource remains: {name}")
 
 for marker in (
-    "PRODUCTION REBUILD  •  FULL-FRAME HERO 5.1.1",
+    "PRODUCTION REBUILD  •  ASTER RIG TEST 5.2.0",
     "drawCompleteHero(c, x, py + bob",
     "drawImageTransformAlpha(c, asterMotionSheet, asterFrame(row, frame)",
     "R.drawable.realm_map_premium",

@@ -1310,7 +1310,7 @@ public class GameView extends View {
         button(c, 92, 335, 355, 405, "PLAY", Color.rgb(42,170,135));
         button(c, 92, 425, 355, 485, "UPGRADES", Color.rgb(55,107,144));
         button(c, 92, 505, 355, 565, "SETTINGS", Color.rgb(76,92,118));
-        text(c, "PRODUCTION REBUILD  •  FULL-FRAME HERO 5.1.1", 92, 315, 13, Color.rgb(255, 222, 139));
+        text(c, "PRODUCTION REBUILD  •  ASTER RIG TEST 5.2.0", 92, 315, 13, Color.rgb(255, 222, 139));
         text(c, "Progress saved locally", 92, 620, 16, Color.rgb(190,216,209));
         badge(c, 1055, 72, "10 LEVELS"); badge(c, 1055, 118, "3 WORLDS");
         if (BuildConfig.DEBUG) {
@@ -1966,11 +1966,11 @@ public class GameView extends View {
             row = 0;
             frame = frameIndex(animationClock, 8, 4f, 0f);
         }
-        float cellSize = 190f;
-        RectF destination = new RectF(x - cellSize * .5f, top - 131f,
-                x + cellSize * .5f, top + 59f);
+        float cellSize = 212f;
+        RectF destination = new RectF(x - cellSize * .5f, top - 145f,
+                x + cellSize * .5f, top + 67f);
         drawImageTransformAlpha(c, asterMotionSheet, asterFrame(row, frame), destination,
-                rotation, facingLeft ? -scaleX : scaleX, scaleY, 255);
+                rotation, facingLeft ? scaleX : -scaleX, scaleY, 255);
     }
 
     private void drawModularHero(Canvas c, float x, float top, float stride, float idle,

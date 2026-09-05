@@ -1,18 +1,18 @@
 Legends of the Lost Realms
-Build 5.1.0 - Aster Modular Rig Preview
+Build 5.2.0 - Supplied Aster Rig Phone Test
 
-This build begins the production rebuild:
-- Aster now uses seven independently transformed cutout-rig parts for fluid
-  idle, run, jump, dash, attack, hurt, landing, and defeat poses.
-- The game simulation uses a fixed 60 Hz update step with bounded catch-up.
-- Release builds hide developer tools and Activity destruction releases audio.
-- Mobile enemies lead moving targets with capped, test-covered prediction.
-- 34 optimized premium runtime assets for Aster, eight enemies, three bosses,
-  three realms, platforms, traps, checkpoint, map, collectibles, and HUD.
-- Readable seven-state enemy combat with committed attacks and punish windows.
-- Realm-specific multi-phase boss combos and power-created vulnerabilities.
-- Re-authored ten-level campaign with progressive hazards and verified routes.
+This test build replaces the previous hero artwork with animation rendered from
+the supplied Aster_Rig_Package character:
+
+- A real 34-bone skinned Blender character replaces the old one-frame hero.
+- Four authored actions provide 8 idle, 8 run, 8 jump, and 8 attack frames.
+- A new socketed sword follows the animated hand through every pose.
+- The source model is mirrored at runtime so movement and attacks face correctly.
+- The hero is enlarged slightly for clearer presentation on phone displays.
+- Collision and platforming physics are unchanged for a controlled visual test.
 
 Verify the build by checking:
-- The main menu displays "PRODUCTION REBUILD • ASTER PREVIEW 5.1.0".
-- app/build.gradle contains versionName '5.1.0' and versionCode 61.
+- The main menu displays "PRODUCTION REBUILD • ASTER RIG TEST 5.2.0".
+- Aster has detailed white/teal clothing, brown boots, gray hair, and a broad sword.
+- Running, jumping, and attacking visibly use different body poses.
+- app/build.gradle contains versionName '5.2.0' and versionCode 63.

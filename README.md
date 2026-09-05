@@ -2,9 +2,9 @@
 
 **Legends of the Lost Realms** is an original landscape Android 2D fantasy platformer. This illustrated build contains ten short handcrafted-style levels across the Verdant Kingdom, Burning Dunes, and Frozen Peaks; local save data; touch controls; collectible coins and realm gems; fire, ice, and wind powers; checkpoints; upgrades; and three multi-phase boss encounters.
 
-## Production Rebuild — Aster Preview v5.1.0
+## Production Rebuild — Aster Rig Test v5.2.0
 
-The main menu identifies this test build as `PRODUCTION REBUILD • ASTER PREVIEW 5.1.0`. Aster now uses seven independently transformed, hand-painted cutout parts instead of a rigid full-body sprite. The rig blends idle breathing, running stride, airborne posture, dash/slide lean, sword follow-through, hurt reaction, landing compression, and defeat poses while keeping gameplay collision unchanged.
+The main menu identifies this test build as `PRODUCTION REBUILD • ASTER RIG TEST 5.2.0`. Aster is rendered from the supplied 34-bone skinned Blender character rather than the previous one-frame or cutout artwork. Four authored actions provide distinct idle, run, jump, and sword-attack motion, with eight transparent frames per action and unchanged gameplay collision.
 
 Thirty-four new optimized runtime assets replace the visible hero, enemy roster, realm bosses, realm backgrounds, map, platforms, traps, checkpoint shrine, collectibles, attack control, primary HUD icons, combat effects, and launcher icon. They use true alpha transparency where appropriate and stay within the validated mobile bitmap budget. Large legacy enemy, boss, trap, checkpoint, background, and action-effect atlases are no longer decoded at runtime.
 
