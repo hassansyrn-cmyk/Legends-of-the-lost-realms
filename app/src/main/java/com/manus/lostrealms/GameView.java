@@ -294,8 +294,8 @@ public class GameView extends View {
         if (dashTime > 0) dashTime -= dt;
         if (hitPause > 0) { hitPause -= dt; return; }
         if (knockbackTime > 0) knockbackTime -= dt;
-        if (grounded) coyoteTime = .10f; else coyoteTime = Math.max(0, coyoteTime - dt);
-        if (jumpQueued) { jumpBufferTime = .12f; jumpQueued = false; }
+        if (grounded) coyoteTime = .14f; else coyoteTime = Math.max(0, coyoteTime - dt);
+        if (jumpQueued) { jumpBufferTime = .15f; jumpQueued = false; }
         else if (jumpBufferTime > 0) jumpBufferTime -= dt;
         float speed = 310 + save.windRank() * 24;
         if (leftHeld && !rightHeld) facingLeft = true;
@@ -317,6 +317,7 @@ public class GameView extends View {
         if (airAttack && attackTime > 0) vy = Math.max(vy, 540f);
         float gravity = wallSliding && vy > 0 ? 0 : (windTime > 0 && vy > 0 ? 520 : 1450);
         if (!jumpHeld && vy < -170) gravity *= 1.72f;
+        else if (Math.abs(vy) < 80f && !grounded && !wallSliding) gravity *= 0.80f;
         vy += gravity * dt;
         vy = Math.min(vy, 950);
         float oldBottom = py + 54, fallSpeed = vy;
@@ -1054,20 +1055,22 @@ public class GameView extends View {
     private boolean jump() {
         if (screen != LEVEL) return false;
         if (wallSliding) {
-            boolean atLedge = py + 54 >= wallTop - 10 && py + 54 <= wallTop + 34;
+            boolean atLedge = py + 54 >= wallTop - 14 && py + 54 <= wallTop + 36;
             if (atLedge) {
-                px += wallDir * 50;
+                px -= wallDir * 44;
                 py = wallTop - 54;
-                vx = wallDir * 175;
+                vx = -wallDir * 160;
                 vy = 0;
                 grounded = true;
                 wallSliding = false;
+                facingLeft = wallDir > 0;
                 landingPulse = .10f;
                 audio.jump(true);
                 return true;
             }
-            vx = wallDir * 360;
+            vx = wallDir * 380;
             vy = -620;
+            facingLeft = wallDir < 0;
             wallSliding = false;
             canDouble = true;
             audio.jump(true);
