@@ -2152,7 +2152,7 @@ public class GameView extends View {
         if(screen==PAUSE){if(in(x,y,490,285,790,345))return 114;if(in(x,y,490,375,790,435))return 132;if(in(x,y,490,465,790,525))return 133;}
         if(screen==COMPLETE){if(in(x,y,440,500,665,565))return 115;if(in(x,y,690,500,850,565))return 104;}
         if(screen==GAMEOVER){if(in(x,y,465,370,655,430))return 116;if(in(x,y,675,370,820,430))return 104;}
-        if(screen==LEVEL){if(in(x,y,40,575,145,680))return 1;if(in(x,y,150,575,255,680))return 2;if(Math.hypot(x-1070,y-626)<58)return 3;if(Math.hypot(x-960,y-545)<52)return 4;if(Math.hypot(x-1188,y-626)<58)return 5;if(in(x,y,1140,18,1260,72))return 6;if(in(x,y,950,18,1115,72))return 7;}
+        if(screen==LEVEL){if(in(x,y,20,530,148,720))return 1;if(in(x,y,148,530,285,720))return 2;if(Math.hypot(x-1070,y-626)<66)return 3;if(Math.hypot(x-960,y-545)<60)return 4;if(Math.hypot(x-1188,y-626)<66)return 5;if(in(x,y,1120,10,1270,80))return 6;if(in(x,y,940,10,1115,80))return 7;}
         return 0;
     }
     void handleAction(int a){
