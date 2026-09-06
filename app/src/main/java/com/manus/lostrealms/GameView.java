@@ -695,7 +695,13 @@ public class GameView extends View {
                 : boss.phase == 2 ? profile.phaseTwoSpeed : profile.phaseOneSpeed;
         boss.cooldown -= dt * frostScale; if (boss.hitLock > 0) boss.hitLock -= dt;
         updateBossState(dt, frostScale, phaseSpeed);
-        if (Math.abs(px - boss.x) < 72 && Math.abs(py - boss.y) < 75) damage(boss.phase);
+        boolean bossCanDealContact = boss.state != BossController.State.STAGGER
+                && boss.state != BossController.State.PHASE_TRANSITION
+                && boss.state != BossController.State.ATTACK_RECOVERY
+                && boss.state != BossController.State.DEFEAT;
+        if (bossCanDealContact && Math.abs(px - boss.x) < 72 && Math.abs(py - boss.y) < 75) {
+            damage(boss.phase);
+        }
         boolean bossAirStrike = CombatSystem.canHitFromAir(
                 airAttack, px, py, boss.x, boss.y, 110, 90, 92, 70);
         boolean bossGroundStrike = CombatSystem.canHitFromGround(
@@ -709,7 +715,7 @@ public class GameView extends View {
             boss.hitLock=.20f;
             if (chargedAttack || attackStage >= 4 || counterTime > 0) {
                 boss.state = BossController.State.STAGGER;
-                boss.stateTime = counterTime > 0 ? .34f : .22f;
+                boss.stateTime = counterTime > 0 ? .48f : .38f;
             }
             hitFxTime = .18f; hitPause = chargedAttack || attackStage >= 4 ? .11f : .070f; fxX = boss.x; fxY = boss.y - 25; triggerSquash(false, chargedAttack || attackStage >= 4 ? .12f : .085f); triggerShake(chargedAttack || attackStage >= 4 ? 8.5f : 6.4f, chargedAttack || attackStage >= 4 ? .13f : .10f); spawnJuiceParticles(boss.x, boss.y - 25, Color.rgb(255, 178, 96), chargedAttack || attackStage >= 4 ? 18 : 11, chargedAttack || attackStage >= 4 ? 205f : 170f); triggerCombatCallout(boss.x, boss.y - 25, true); if(counterTime>0) counterTime=0; if(airAttack){vy=-390;canDouble=true;airAttack=false;} audio.impact();
         }
@@ -1836,6 +1842,12 @@ public class GameView extends View {
             p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(5);p.setColor(weakColor);
             c.drawCircle(x,bossGroundY-148,138+4*(float)Math.sin(animationClock*10f),p);
             p.setStyle(Paint.Style.FILL);
+        }
+        if (boss.state == BossController.State.STAGGER) {
+            p.setStyle(Paint.Style.STROKE); p.setStrokeWidth(5); p.setColor(Color.rgb(255, 230, 110));
+            c.drawCircle(x, bossGroundY - 148, 142 + 6 * (float) Math.sin(animationClock * 16f), p);
+            p.setStyle(Paint.Style.FILL);
+            centeredAt(c, "STAGGERED!", x, bossGroundY - 250, 16, Color.rgb(255, 235, 130));
         }
         if (boss.state == BossController.State.ATTACK_WINDUP && boss.attack != null) {
             float telegraphProgress = 1f - Math.max(0f, boss.stateTime) / boss.attack.windupSeconds;
