@@ -21,12 +21,13 @@ for name in (
 
 for marker in (
     "bossPremiumSprites",
-    "Bitmap bossArt = bossPremiumSprites",
-    "drawImageTransformAlpha(c, bossArt,",
+    "R.drawable.forest_elemental_boss_sheet",
+    "forestBossAnimationFrame(boss,action)",
+    "drawImageTransformAlpha(c,forestElementalBossSheet,bossFrame(action,frame),",
     "boss.state==BossController.State.ATTACK_EXECUTE",
 ):
     if marker not in GAME_VIEW:
         raise SystemExit(f"Missing premium boss renderer marker: {marker}")
 
-print("Premium boss art: OK")
-print("Validated three standalone realm bosses and state-driven rendering.")
+print("Blender-rig boss art: OK")
+print("Validated the forest rig renderer and later-world boss fallbacks.")

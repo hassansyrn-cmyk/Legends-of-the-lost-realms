@@ -6,8 +6,8 @@ from PIL import Image, ImageDraw
 ROOT = Path(__file__).resolve().parents[1]
 RENDERS = ROOT / "art" / "blender" / "renders" / "aster_package_v1"
 CELL = 256
-ROWS = ("idle", "run", "jump", "attack")
-FRAMES = 8
+ROWS = ("idle", "run", "jump", "attack", "hurt", "defeat")
+FRAMES = 12
 
 
 def checker(size, tile=20):
@@ -39,14 +39,16 @@ atlas.save(atlas_path, optimize=True)
 
 margin_left = 86
 margin_top = 30
-preview = checker((margin_left + 1024, margin_top + 512))
-preview.alpha_composite(atlas.resize((1024, 512), Image.Resampling.LANCZOS),
+preview_width = 1152
+preview_height = 576
+preview = checker((margin_left + preview_width, margin_top + preview_height))
+preview.alpha_composite(atlas.resize((preview_width, preview_height), Image.Resampling.LANCZOS),
                         (margin_left, margin_top))
 draw = ImageDraw.Draw(preview)
 draw.text((margin_left, 8), "ASTER FINAL RIG - ANDROID MOTION PROOF",
           fill=(219, 242, 244, 255))
 for row_index, action in enumerate(ROWS):
-    y = margin_top + int((row_index + .5) * CELL * .5) - 7
+    y = margin_top + int((row_index + .5) * preview_height / len(ROWS)) - 7
     draw.text((12, y), action.upper(), fill=(105, 225, 224, 255))
 contact_path = RENDERS / "aster_rig_contact_sheet.png"
 preview.save(contact_path, optimize=True)

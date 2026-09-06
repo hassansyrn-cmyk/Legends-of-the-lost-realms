@@ -27,15 +27,16 @@ for name in ENEMIES:
         raise SystemExit(f"{name}: visible character area is unexpectedly small")
 
 required = [
-    "enemyPremiumSprites",
-    "enemyFrame(e)",
-    "Bitmap enemyArt = enemyPremiumSprites",
-    "drawImageTransformAlpha(c, enemyArt,",
+    "R.drawable.enemy_rig_motion_sheet",
+    "enemyRigIndex(e.kind)",
+    "enemyRigAction(e)",
+    "enemyRigAnimationFrame(e,action,rigIndex)",
+    "enemyRigFrame(rigIndex,action,frame)",
     "e.state==EnemyController.HIT_REACTION",
 ]
 for marker in required:
     if marker not in GAME_VIEW:
         raise SystemExit(f"Missing premium enemy renderer marker: {marker}")
 
-print("Premium enemy art: OK")
-print("Validated eight standalone enemies and state-driven renderer routing.")
+print("Blender-rig enemy art: OK")
+print("Validated supplied rig routing plus the retained frost fallback.")

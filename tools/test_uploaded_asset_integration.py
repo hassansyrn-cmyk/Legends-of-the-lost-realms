@@ -57,13 +57,13 @@ for name in legacy_files:
         raise SystemExit(f"Obsolete packaged resource remains: {name}")
 
 for marker in (
-    "PRODUCTION REBUILD  •  ASTER RIG TEST 5.2.0",
+    "PRODUCTION REBUILD  •  RIGGED CREATURE TEST 5.3.0",
     "drawCompleteHero(c, x, py + bob",
     "drawImageTransformAlpha(c, asterMotionSheet, asterFrame(row, frame)",
     "R.drawable.realm_map_premium",
     "R.drawable.aster_motion_sheet",
-    "R.drawable.enemies_motion_sheet",
-    "R.drawable.bosses_motion_sheet",
+    "R.drawable.enemy_rig_motion_sheet",
+    "R.drawable.forest_elemental_boss_sheet",
     "R.drawable.realms_background_sheet",
     "R.drawable.platforms_motion_sheet",
     "R.drawable.world_motion_sheet",
@@ -71,8 +71,8 @@ for marker in (
     "R.drawable.effects_motion_sheet",
     "R.drawable.ui_motion_sheet",
     "collectibleFrame(k.gem ? 1 : 0, frame)",
-    "enemyFrame(e)",
-    "Bitmap bossArt = bossPremiumSprites",
+    "enemyRigFrame(rigIndex,action,frame)",
+    "forestElementalBossSheet,bossFrame(action,frame)",
 ):
     if marker not in GAME_VIEW:
         raise SystemExit(f"Missing premium integration marker: {marker}")

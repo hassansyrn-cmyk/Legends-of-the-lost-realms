@@ -50,7 +50,8 @@ public class GameView extends View {
     private final Bitmap splashArt, mapArt, verdantArt, dunesArt, frozenArt, verdantFar, verdantMid, verdantPlatform, verdantThorns, verdantCoin, verdantGem, verdantLevelBackdrop, jungleStageBackground, jungleGroundPlatform, jungleFloatingPlatform, verdantWaterfallBackdrop, icePlatformMotionSheet, goldenPlatformMotionSheet, hangingIceSpikesMotionSheet, trapPlatformMotionSheet;
     private final Bitmap asterIdleSheet, asterRunSheet, asterJump, asterAttackSheet, asterHurtSheet, asterDefeatSheet, enemySheet, enemyMotionAtlas, mossCrawlerSheet, emberMothSheet, worldProps, worldPropsClean, attackButton, uiHeartFull, uiHeartEmpty, uiShield, uiEnergyBolt, fxSwordHit, fxTrail, fxCoinSparkle, coinNew, gemNew, superHeartFull, superHeartEmpty, superHudBox, superHitLine, bossSheet, bossMotionAtlas, bossForestRigParts, bossStoneRigParts, bossIceRigParts, worldInteractiveAtlas, collectiblesFxAtlas, actionFxAtlas;
     // Runtime art is packed into fixed-cell sheets to keep texture switches predictable.
-    private final Bitmap asterMotionSheet, enemySpriteSheet, bossSpriteSheet, realmBackgroundSheet,
+    private final Bitmap asterMotionSheet, enemySpriteSheet, enemyRigMotionSheet,
+            bossSpriteSheet, forestElementalBossSheet, realmBackgroundSheet,
             platformSpriteSheet, worldSpriteSheet, collectibleSpriteSheet, effectsSpriteSheet, uiSpriteSheet;
     // Fallback character art uses one clean, opaque subject per archetype; motion is applied
     // procedurally in Canvas so malformed sprite-sheet padding cannot make characters ghostly.
@@ -176,8 +177,10 @@ public class GameView extends View {
         collectiblesFxAtlas = null;
         // One decode per animated family keeps texture switches predictable on Android.
         asterMotionSheet = BitmapFactory.decodeResource(getResources(), R.drawable.aster_motion_sheet);
-        enemySpriteSheet = BitmapFactory.decodeResource(getResources(), R.drawable.enemies_motion_sheet);
-        bossSpriteSheet = BitmapFactory.decodeResource(getResources(), R.drawable.bosses_motion_sheet);
+        enemySpriteSheet = null;
+        enemyRigMotionSheet = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_rig_motion_sheet);
+        bossSpriteSheet = null;
+        forestElementalBossSheet = BitmapFactory.decodeResource(getResources(), R.drawable.forest_elemental_boss_sheet);
         realmBackgroundSheet = BitmapFactory.decodeResource(getResources(), R.drawable.realms_background_sheet);
         platformSpriteSheet = BitmapFactory.decodeResource(getResources(), R.drawable.platforms_motion_sheet);
         worldSpriteSheet = BitmapFactory.decodeResource(getResources(), R.drawable.world_motion_sheet);
@@ -191,15 +194,15 @@ public class GameView extends View {
         heroRigLegBack = BitmapFactory.decodeResource(getResources(), R.drawable.aster_rig_leg_back);
         heroRigLegFront = BitmapFactory.decodeResource(getResources(), R.drawable.aster_rig_leg_front);
         heroRigSword = BitmapFactory.decodeResource(getResources(), R.drawable.aster_rig_sword);
-        enemyPremiumSprites[0] = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_moss_premium);
-        enemyPremiumSprites[1] = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_ember_moth_premium);
-        enemyPremiumSprites[2] = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_dune_premium);
+        enemyPremiumSprites[0] = null;
+        enemyPremiumSprites[1] = null;
+        enemyPremiumSprites[2] = null;
         enemyPremiumSprites[3] = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_frost_premium);
-        enemyPremiumSprites[4] = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_wisp_premium);
-        enemyPremiumSprites[5] = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_aegis_premium);
-        enemyPremiumSprites[6] = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_brute_premium);
-        enemyPremiumSprites[7] = BitmapFactory.decodeResource(getResources(), R.drawable.enemy_caster_premium);
-        bossPremiumSprites[0] = BitmapFactory.decodeResource(getResources(), R.drawable.boss_heartwood_premium);
+        enemyPremiumSprites[4] = null;
+        enemyPremiumSprites[5] = null;
+        enemyPremiumSprites[6] = null;
+        enemyPremiumSprites[7] = null;
+        bossPremiumSprites[0] = null;
         bossPremiumSprites[1] = BitmapFactory.decodeResource(getResources(), R.drawable.boss_sunscar_premium);
         bossPremiumSprites[2] = BitmapFactory.decodeResource(getResources(), R.drawable.boss_whiteout_premium);
         audio.startMusic(context);
@@ -1310,7 +1313,7 @@ public class GameView extends View {
         button(c, 92, 335, 355, 405, "PLAY", Color.rgb(42,170,135));
         button(c, 92, 425, 355, 485, "UPGRADES", Color.rgb(55,107,144));
         button(c, 92, 505, 355, 565, "SETTINGS", Color.rgb(76,92,118));
-        text(c, "PRODUCTION REBUILD  •  ASTER RIG TEST 5.2.0", 92, 315, 13, Color.rgb(255, 222, 139));
+        text(c, "PRODUCTION REBUILD  •  RIGGED CREATURE TEST 5.3.0", 92, 315, 13, Color.rgb(255, 222, 139));
         text(c, "Progress saved locally", 92, 620, 16, Color.rgb(190,216,209));
         badge(c, 1055, 72, "10 LEVELS"); badge(c, 1055, 118, "3 WORLDS");
         if (BuildConfig.DEBUG) {
@@ -1704,8 +1707,12 @@ public class GameView extends View {
             float phase=animationClock*(e.kind==1?5.2f:3.4f)+e.x*.025f, x=e.x-cameraX; if(x<-120||x>VW+120)continue;
             boolean attacking=e.state==EnemyController.ATTACK;
             boolean warning=e.state==EnemyController.NOTICE||e.state==EnemyController.WINDUP;
-            // Four clearly visible procedural pose beats, while the destination stays centered.
-            float bob=((e.kind==1||e.kind==3||e.kind==7)?(float)Math.sin(phase)*10:(float)Math.sin(phase)*6f);
+            int rigIndex=enemyRigIndex(e.kind);
+            boolean renderedRig=rigIndex>=0;
+            // The Blender cycles already contain root rise/fall and weight transfer. Keep
+            // only a small world-space hover for flying characters to avoid double-bobbing.
+            float bob=renderedRig?(rigIndex==1?(float)Math.sin(phase)*3.5f:0f):
+                    ((e.kind==1||e.kind==3||e.kind==7)?(float)Math.sin(phase)*10:(float)Math.sin(phase)*6f);
             if(warning) { int warnColor=EnemyController.archetype(e.kind).accentColor; p.setColor(Color.argb(96,Color.red(warnColor),Color.green(warnColor),Color.blue(warnColor))); c.drawCircle(x,e.y-22+bob,42+4*(float)Math.sin(animationClock*14f),p); }
             if(e.state==EnemyController.NOTICE) {
                 text(c,"!",x-5,e.y-82+bob,22,Color.WHITE);
@@ -1718,18 +1725,27 @@ public class GameView extends View {
             if(e.kind==3&&e.state==EnemyController.ATTACK){p.setColor(Color.argb(105,126,226,255));c.drawCircle(x,e.y-6+bob,58,p);}
             float scale = e.kind==EnemyController.HEAVY_BRUTE?1.34f:e.kind==EnemyController.SHIELD_GUARD?1.12f:
                     e.kind==EnemyController.WIND_WISP?.9f:e.kind==EnemyController.FLYING_SWOOOPER?1.08f:1f;
-            float width=104f*scale, height=118f*scale;
+            float width=(rigIndex==1?146f:rigIndex==2?138f:108f)*scale;
+            float height=(rigIndex==1?154f:rigIndex==2?150f:122f)*scale;
             float bottom=(e.kind==EnemyController.FLYING_SWOOOPER||e.kind==EnemyController.FROST_SENTINEL||e.kind==EnemyController.WIND_WISP)?e.y+34+bob:e.y+45+bob;
-            float squash=1f+.075f*(float)Math.sin(phase);
+            float squash=renderedRig?1f:1f+.075f*(float)Math.sin(phase);
             float attackLean=attacking?(e.dir>0?8f:-8f):e.state==EnemyController.RECOVERY?(e.dir>0?-4f:4f):0f;
             float hitScale=e.state==EnemyController.HIT_REACTION?.90f:1f;
-            // Premium enemy art faces right by default; enemies always look toward Aster.
-            float facing = px < e.x ? -squash : squash;
-            int enemyFrame = enemyFrame(e);
-            Bitmap enemyArt = enemyPremiumSprites[Math.max(0, Math.min(enemyPremiumSprites.length - 1, e.kind))];
-            drawImageTransformAlpha(c, enemyArt,
-                    new RectF(x-width/2,bottom-height,x+width/2,bottom), attackLean,
-                    facing*hitScale, (2f-squash)*hitScale, 255);
+            RectF enemyDestination=new RectF(x-width/2,bottom-height,x+width/2,bottom);
+            if(renderedRig) {
+                // The authored rigs face screen-left. Mirror only when Aster is to their right.
+                float facing=px<e.x?squash:-squash;
+                int action=enemyRigAction(e);
+                int frame=enemyRigAnimationFrame(e,action,rigIndex);
+                drawImageTransformAlpha(c,enemyRigMotionSheet,enemyRigFrame(rigIndex,action,frame),
+                        enemyDestination,attackLean*.32f,facing*hitScale,(2f-squash)*hitScale,255);
+            } else {
+                // Preserve the frost sentinel until its matching Blender rig is supplied.
+                float facing=px<e.x?-squash:squash;
+                Bitmap enemyArt=enemyPremiumSprites[Math.max(0,Math.min(enemyPremiumSprites.length-1,e.kind))];
+                drawImageTransformAlpha(c,enemyArt,enemyDestination,attackLean,
+                        facing*hitScale,(2f-squash)*hitScale,255);
+            }
             if (e.burnTime > 0) { p.setColor(Color.argb(105, 255, 120, 52)); c.drawCircle(x, e.y - 11 + bob, 46 + 3*(float)Math.sin(animationClock*8f), p); }
             if (e.hurtTime > 0) { p.setColor(Color.argb(92, 255, 240, 177)); c.drawCircle(x, e.y - 12 + bob, 38, p); }
             if(e.frozen>0) { p.setColor(Color.argb(95,142,232,255)); c.drawCircle(x,e.y-5+bob,44,p); }
@@ -1824,7 +1840,8 @@ public class GameView extends View {
 
     private void drawBoss(Canvas c) {
         if (boss==null)return;
-                    float x=boss.x-cameraX, phase=animationClock*(boss.phase==2?3.8f:2.6f), bob=(float)Math.sin(phase)*7f;
+        float x=boss.x-cameraX,phase=animationClock*(boss.phase==2?3.8f:2.6f);
+        float bob=boss.world==1?0f:(float)Math.sin(phase)*7f;
 
         // boss_*_premium art faces left by default; flip only when the player is to the right.
         float bossFacingScale = px < boss.x ? 1f : -1f;
@@ -1846,7 +1863,7 @@ public class GameView extends View {
             c.drawCircle(x, bossGroundY - 148, 108 + telegraphProgress * 28, p);
             p.setStyle(Paint.Style.FILL);
         }
-        float breath=1f+.045f*(float)Math.sin(phase*1.35f);
+        float breath=1f+(boss.world==1?.012f:.045f)*(float)Math.sin(phase*1.35f);
         float charge=boss.state==BossController.State.ATTACK_WINDUP?.65f:
                 boss.state==BossController.State.ATTACK_EXECUTE?1f:0f;
         float hurt=boss.hitLock>0?.92f:1f;
@@ -1855,9 +1872,16 @@ public class GameView extends View {
         float lean=(px<boss.x?-1f:1f)*(charge*7f-(boss.hitLock>0?5f:0f))
                 + (float)Math.sin(phase*1.1f)*3.5f;
         RectF bossDestination=new RectF(x-bossWidth/2,bossGroundY-bossHeight,x+bossWidth/2,bossGroundY);
-        Bitmap bossArt = bossPremiumSprites[Math.max(0, Math.min(bossPremiumSprites.length - 1, boss.world - 1))];
-        drawImageTransformAlpha(c, bossArt, bossDestination, lean,
-                bossFacingScale*hurt/breath, breath*hurt, 255);
+        if(boss.world==1) {
+            int action=forestBossAction(boss);
+            int frame=forestBossAnimationFrame(boss,action);
+            drawImageTransformAlpha(c,forestElementalBossSheet,bossFrame(action,frame),
+                    bossDestination,lean*.28f,bossFacingScale*hurt/breath,breath*hurt,255);
+        } else {
+            Bitmap bossArt=bossPremiumSprites[Math.max(0,Math.min(bossPremiumSprites.length-1,boss.world-1))];
+            drawImageTransformAlpha(c,bossArt,bossDestination,lean,
+                    bossFacingScale*hurt/breath,breath*hurt,255);
+        }
         // Keep the boss label and health bar safely above the tallest sprite frame.
         float bossHudY = boss.y - 380 + bob;
         p.setColor(Color.argb(230,255,255,255)); c.drawRect(x-96, bossHudY, x+96, bossHudY+13, p);
@@ -1940,31 +1964,33 @@ public class GameView extends View {
         int frame;
         float rotation = lean * .35f;
         if (screen == GAMEOVER) {
-            row = 3;
-            frame = 7;
-            rotation = facingLeft ? -78f : 78f;
+            row = 5;
+            float fallProgress=Math.min(1f,defeatTime/.55f);
+            frame = Math.min(11,(int)(fallProgress*12f));
+            // The rendered defeat row already contains the complete fall arc.
+            rotation = 0f;
         } else if (hurtTime > 0) {
-            row = 3;
-            frame = 5;
+            row = 4;
+            frame = timedFrame(hurtTime,.28f,12);
             rotation += facingLeft ? 7f : -7f;
         } else if (attackTime > 0) {
             row = 3;
             float progress = 1f - Math.min(1f, attackTime / Math.max(.01f, attackDuration));
-            frame = Math.min(7, (int)(progress * 8f));
+            frame = Math.min(11, (int)(progress * 12f));
             rotation += facingLeft ? 5f : -5f;
         } else if (!grounded) {
             row = 2;
-            frame = Math.min(7, Math.max(0, (int)((vy + 720f) / 180f)));
+            frame = Math.min(11, Math.max(0, (int)((vy + 720f) / 120f)));
         } else if (dashing || sliding) {
             row = 2;
-            frame = frameIndex(animationClock, 8, 12f, 0f);
+            frame = frameIndex(animationClock, 12, 12f, 0f);
             rotation += facingLeft ? -6f : 6f;
         } else if (running) {
             row = 1;
-            frame = frameIndex(animationClock, 8, 11f, 0f);
+            frame = frameIndex(animationClock, 12, 12f, 0f);
         } else {
             row = 0;
-            frame = frameIndex(animationClock, 8, 4f, 0f);
+            frame = frameIndex(animationClock, 12, 5f, 0f);
         }
         float cellSize = 212f;
         RectF destination = new RectF(x - cellSize * .5f, top - 145f,
@@ -2177,6 +2203,7 @@ public class GameView extends View {
     private static Rect cell(int column,int row,int width,int height){return new Rect(column*width,row*height,(column+1)*width,(row+1)*height);}
     private static Rect asterFrame(int row,int frame){return cell(frame,row,ASTER_CELL,ASTER_CELL);}
     private static Rect enemyFrame(int row,int frame){return cell(frame,row,ENEMY_CELL,ENEMY_CELL);}
+    private static Rect enemyRigFrame(int rig,int action,int frame){return cell(frame,rig*4+action,ENEMY_CELL,ENEMY_CELL);}
     private static Rect bossFrame(int row,int frame){return cell(frame,row,BOSS_CELL,BOSS_CELL);}
     private static Rect platformFrame(int row,int frame){return cell(frame,row,PLATFORM_CELL_W,PLATFORM_CELL_H);}
     private static Rect worldFrame(int row,int frame){return cell(frame,row,WORLD_CELL_W,WORLD_CELL_H);}
@@ -2200,12 +2227,55 @@ public class GameView extends View {
         if(enemy.state==EnemyController.PATROL)return 1 + frameIndex(animationClock,2,8f,enemy.x*.01f);
         return frameIndex(animationClock,2,5f,enemy.x*.01f);
     }
+    private static int enemyRigIndex(int kind){
+        if(kind==EnemyController.FLYING_SWOOOPER||kind==EnemyController.WIND_WISP
+                ||kind==EnemyController.RUNE_CASTER)return 1;
+        if(kind==EnemyController.HEAVY_BRUTE)return 2;
+        if(kind==EnemyController.FROST_SENTINEL)return -1;
+        return 0;
+    }
+    private static int enemyRigAction(Foe enemy){
+        if(enemy.state==EnemyController.HIT_REACTION)return 3;
+        if(enemy.state==EnemyController.WINDUP||enemy.state==EnemyController.ATTACK
+                ||enemy.state==EnemyController.RECOVERY)return 2;
+        if(enemy.state==EnemyController.PATROL||enemy.state==EnemyController.REPOSITION)return 1;
+        return 0;
+    }
+    private int enemyRigAnimationFrame(Foe enemy,int action,int rigIndex){
+        EnemyController.Archetype archetype=EnemyController.archetype(enemy.kind);
+        float phase=enemy.x*.011f;
+        if(action==0)return frameIndex(animationClock,12,rigIndex==2?3.4f:rigIndex==1?7.5f:4.2f,phase);
+        if(action==1)return frameIndex(animationClock,12,rigIndex==2?5.2f:rigIndex==1?10f:9.2f,phase);
+        if(action==3)return Math.min(11,timedFrame(Math.max(enemy.hurtTime,enemy.stateTime),.30f,12));
+        if(enemy.state==EnemyController.WINDUP)return timedFrame(enemy.stateTime,archetype.windupSeconds,6);
+        if(enemy.state==EnemyController.ATTACK)return 6+timedFrame(enemy.stateTime,archetype.attackSeconds,5);
+        return 11;
+    }
     private int bossFrame(Boss target){
         if(target.hitLock>0)return 5;
         if(target.state==BossController.State.ATTACK_EXECUTE)return 4 + frameIndex(animationClock,2,10f,target.world*.21f);
         if(target.state==BossController.State.ATTACK_WINDUP)return 3 + frameIndex(animationClock,2,7f,target.world*.21f);
         if(target.state==BossController.State.ATTACK_RECOVERY)return 2 + frameIndex(animationClock,2,6f,target.world*.21f);
         return frameIndex(animationClock,3,target.phase==1?4f:6f,target.world*.21f);
+    }
+    private static int forestBossAction(Boss target){
+        if(target.hitLock>0||target.state==BossController.State.STAGGER)return 3;
+        if(target.state==BossController.State.ATTACK_WINDUP
+                ||target.state==BossController.State.ATTACK_EXECUTE
+                ||target.state==BossController.State.ATTACK_RECOVERY)return 2;
+        if(target.state==BossController.State.APPROACH||target.state==BossController.State.RETREAT)return 1;
+        return 0;
+    }
+    private int forestBossAnimationFrame(Boss target,int action){
+        if(action==0)return frameIndex(animationClock,8,target.phase==1?3.2f:4.4f,.17f);
+        if(action==1)return frameIndex(animationClock,8,target.phase==1?4.6f:6.2f,.11f);
+        if(action==3)return frameIndex(animationClock,8,11f,0f);
+        if(target.attack==null)return 0;
+        if(target.state==BossController.State.ATTACK_WINDUP)
+            return timedFrame(target.stateTime,target.attack.windupSeconds,4);
+        if(target.state==BossController.State.ATTACK_EXECUTE)
+            return 4+timedFrame(target.stateTime,target.attack.activeSeconds,3);
+        return 7;
     }
     private float supportingSurfaceY(float worldX, float fallbackY){
         float best=fallbackY;

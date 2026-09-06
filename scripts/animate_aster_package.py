@@ -173,7 +173,66 @@ RUN_B = {
     "cloth_front": {"r": (14, 0, 0)}, "cloth_back": {"r": (-16, 0, 0)},
     "cloth_back_tip": {"r": (-10, 0, 0)},
 }
-JUMP = {
+RUN_DOWN_A = {
+    "root": {"l": (0, 0, -.045)}, "pelvis": {"r": (3, 0, 2)},
+    "spine": {"r": (0, 7, -1)}, "chest": {"r": (0, 8, -2)},
+    "head": {"r": (0, -5, 1)},
+    "upper_arm.L": {"r": (14, 0, -4)}, "forearm.L": {"r": (-20, 0, 0)},
+    "upper_arm.R": {"r": (-18, 0, 4)}, "forearm.R": {"r": (-28, 0, 0)},
+    "thigh.L": {"r": (-22, 0, 0)}, "shin.L": {"r": (39, 0, 0)},
+    "thigh.R": {"r": (17, 0, 0)}, "shin.R": {"r": (22, 0, 0)},
+    "cloth_front": {"r": (-11, 0, 0)}, "cloth_back": {"r": (8, 0, 0)},
+}
+RUN_DOWN_B = {
+    "root": {"l": (0, 0, -.045)}, "pelvis": {"r": (3, 0, -2)},
+    "spine": {"r": (0, 7, 1)}, "chest": {"r": (0, 8, 2)},
+    "head": {"r": (0, -5, -1)},
+    "upper_arm.L": {"r": (-18, 0, -4)}, "forearm.L": {"r": (-28, 0, 0)},
+    "upper_arm.R": {"r": (14, 0, 4)}, "forearm.R": {"r": (-20, 0, 0)},
+    "thigh.L": {"r": (17, 0, 0)}, "shin.L": {"r": (22, 0, 0)},
+    "thigh.R": {"r": (-22, 0, 0)}, "shin.R": {"r": (39, 0, 0)},
+    "cloth_front": {"r": (8, 0, 0)}, "cloth_back": {"r": (-11, 0, 0)},
+}
+RUN_PASS_A = {
+    "root": {"l": (0, 0, .008)}, "spine": {"r": (0, 6, 0)},
+    "chest": {"r": (0, 7, 0)}, "head": {"r": (0, -4, 0)},
+    "upper_arm.L": {"r": (-4, 0, -4)}, "forearm.L": {"r": (-24, 0, 0)},
+    "upper_arm.R": {"r": (7, 0, 4)}, "forearm.R": {"r": (-22, 0, 0)},
+    "thigh.L": {"r": (5, 0, 0)}, "shin.L": {"r": (12, 0, 0)},
+    "thigh.R": {"r": (-10, 0, 0)}, "shin.R": {"r": (56, 0, 0)},
+    "foot.R": {"r": (-17, 0, 0)}, "cloth_front": {"r": (-9, 0, 0)},
+}
+RUN_PASS_B = {
+    "root": {"l": (0, 0, .008)}, "spine": {"r": (0, 6, 0)},
+    "chest": {"r": (0, 7, 0)}, "head": {"r": (0, -4, 0)},
+    "upper_arm.L": {"r": (7, 0, -4)}, "forearm.L": {"r": (-22, 0, 0)},
+    "upper_arm.R": {"r": (-4, 0, 4)}, "forearm.R": {"r": (-24, 0, 0)},
+    "thigh.R": {"r": (5, 0, 0)}, "shin.R": {"r": (12, 0, 0)},
+    "thigh.L": {"r": (-10, 0, 0)}, "shin.L": {"r": (56, 0, 0)},
+    "foot.L": {"r": (-17, 0, 0)}, "cloth_back": {"r": (-9, 0, 0)},
+}
+RUN_UP_A = {
+    "root": {"l": (0, 0, .025)}, "pelvis": {"r": (-2, 0, -1)},
+    "spine": {"r": (0, 5, 1)}, "chest": {"r": (0, 6, 1)},
+    "upper_arm.L": {"r": (-19, 0, -4)}, "upper_arm.R": {"r": (18, 0, 4)},
+    "thigh.L": {"r": (20, 0, 0)}, "shin.L": {"r": (8, 0, 0)},
+    "thigh.R": {"r": (-23, 0, 0)}, "shin.R": {"r": (43, 0, 0)},
+}
+RUN_UP_B = {
+    "root": {"l": (0, 0, .025)}, "pelvis": {"r": (-2, 0, 1)},
+    "spine": {"r": (0, 5, -1)}, "chest": {"r": (0, 6, -1)},
+    "upper_arm.L": {"r": (18, 0, -4)}, "upper_arm.R": {"r": (-19, 0, 4)},
+    "thigh.R": {"r": (20, 0, 0)}, "shin.R": {"r": (8, 0, 0)},
+    "thigh.L": {"r": (-23, 0, 0)}, "shin.L": {"r": (43, 0, 0)},
+}
+JUMP_TAKEOFF = {
+    "root": {"l": (0, 0, -.045)}, "pelvis": {"r": (6, 0, 0)},
+    "spine": {"r": (0, 8, 0)}, "chest": {"r": (0, 10, 0)},
+    "upper_arm.L": {"r": (20, 0, -6)}, "upper_arm.R": {"r": (-18, 0, 6)},
+    "thigh.L": {"r": (-17, 0, 0)}, "shin.L": {"r": (48, 0, 0)},
+    "thigh.R": {"r": (-17, 0, 0)}, "shin.R": {"r": (48, 0, 0)},
+}
+JUMP_TUCK = {
     "root": {"l": (0, 0, .035)}, "pelvis": {"r": (-3, 0, 0)},
     "spine": {"r": (0, 5, 0)}, "chest": {"r": (0, 7, 0)},
     "head": {"r": (0, -5, 0)},
@@ -183,6 +242,22 @@ JUMP = {
     "thigh.R": {"r": (-12, 0, 0)}, "shin.R": {"r": (38, 0, 0)},
     "cloth_front": {"r": (-25, 0, 0)}, "cloth_front_tip": {"r": (-15, 0, 0)},
     "cloth_back": {"r": (-18, 0, 0)},
+}
+JUMP_APEX = {
+    **JUMP_TUCK, "root": {"l": (0, 0, .075)}, "pelvis": {"r": (-5, 0, 0)},
+    "thigh.L": {"r": (-30, 0, 0)}, "shin.L": {"r": (60, 0, 0)},
+    "thigh.R": {"r": (-18, 0, 0)}, "shin.R": {"r": (48, 0, 0)},
+}
+JUMP_FALL = {
+    "root": {"l": (0, 0, .02)}, "pelvis": {"r": (2, 0, 0)},
+    "spine": {"r": (0, -2, 0)}, "chest": {"r": (0, -3, 0)},
+    "head": {"r": (0, 3, 0)},
+    "upper_arm.L": {"r": (-12, 0, -7)}, "forearm.L": {"r": (-25, 0, 0)},
+    "upper_arm.R": {"r": (11, 0, 7)}, "forearm.R": {"r": (-25, 0, 0)},
+    "thigh.L": {"r": (9, 0, 0)}, "shin.L": {"r": (18, 0, 0)},
+    "thigh.R": {"r": (-9, 0, 0)}, "shin.R": {"r": (22, 0, 0)},
+    "foot.L": {"r": (-10, 0, 0)}, "foot.R": {"r": (-10, 0, 0)},
+    "cloth_front": {"r": (18, 0, 0)}, "cloth_back": {"r": (14, 0, 0)},
 }
 ATTACK_READY = {
     "pelvis": {"r": (0, -5, -4)}, "spine": {"r": (0, -9, -5)},
@@ -201,23 +276,48 @@ ATTACK_STRIKE = {
     "shin.L": {"r": (24, 0, 0)}, "thigh.R": {"r": (15, 0, 0)},
     "cloth_front": {"r": (-22, 0, 0)}, "cloth_back": {"r": (-14, 0, 0)},
 }
+HURT_RECOIL = {
+    "root": {"l": (0, 0, -.03)}, "pelvis": {"r": (-7, -7, 8)},
+    "spine": {"r": (-4, -14, 11)}, "chest": {"r": (-7, -21, 16)},
+    "head": {"r": (8, 18, -14)},
+    "upper_arm.L": {"r": (32, 0, -18)}, "forearm.L": {"r": (-43, 0, 0)},
+    "upper_arm.R": {"r": (-36, 0, 18)}, "forearm.R": {"r": (-47, 0, 0)},
+    "thigh.L": {"r": (-14, 0, 0)}, "shin.L": {"r": (31, 0, 0)},
+    "thigh.R": {"r": (12, 0, 0)}, "cloth_front": {"r": (18, 0, 0)},
+    "cloth_back": {"r": (-16, 0, 0)},
+}
+DEFEAT_COLLAPSE = {
+    "root": {"l": (0, 0, -.12)}, "pelvis": {"r": (12, -12, 18)},
+    "spine": {"r": (9, -22, 24)}, "chest": {"r": (14, -31, 30)},
+    "head": {"r": (-12, 24, -28)},
+    "upper_arm.L": {"r": (44, 0, -31)}, "forearm.L": {"r": (-52, 0, 0)},
+    "upper_arm.R": {"r": (-49, 0, 34)}, "forearm.R": {"r": (-58, 0, 0)},
+    "thigh.L": {"r": (-31, 0, 0)}, "shin.L": {"r": (62, 0, 0)},
+    "thigh.R": {"r": (17, 0, 0)}, "shin.R": {"r": (30, 0, 0)},
+    "cloth_front": {"r": (31, 0, 0)}, "cloth_back": {"r": (-27, 0, 0)},
+}
 
 
 def create_actions():
     sequences = {
         "idle": [(1, BASE), (7, IDLE_IN), (13, BASE), (19, IDLE_OUT), (25, BASE)],
-        "run": [(1, RUN_A), (5, BASE), (9, RUN_B), (13, BASE), (17, RUN_A)],
-        "jump": [(1, {"root": {"l": (0, 0, -.02)}, "thigh.L": {"r": (12, 0, 0)},
-                       "thigh.R": {"r": (12, 0, 0)}}), (4, JUMP),
-                 (8, {**JUMP, "root": {"l": (0, 0, .07)}}),
-                 (12, {**JUMP, "root": {"l": (0, 0, .02)}})],
+        "run": [(1, RUN_A), (4, RUN_DOWN_A), (7, RUN_PASS_A), (10, RUN_UP_A),
+                (13, RUN_B), (16, RUN_DOWN_B), (19, RUN_PASS_B), (22, RUN_UP_B),
+                (25, RUN_A)],
+        "jump": [(1, JUMP_TAKEOFF), (3, JUMP_TAKEOFF), (5, JUMP_TUCK),
+                 (8, JUMP_APEX), (11, JUMP_APEX), (14, JUMP_FALL),
+                 (17, JUMP_FALL), (20, JUMP_TAKEOFF)],
         # The source model faces screen-left. Runtime mirrors it for normal
         # rightward movement, so this order becomes wind-up -> outward strike.
         "attack": [(1, BASE), (3, ATTACK_STRIKE), (5, ATTACK_READY),
                    (7, {**ATTACK_READY, "upper_arm.L": {"r": (-44, -8, -31)},
                         "forearm.L": {"r": (-58, 0, 0)},
                         "hand.L": {"r": (0, 0, -18)}}),
-                   (9, ATTACK_STRIKE), (11, BASE)],
+                   (9, ATTACK_STRIKE), (12, ATTACK_STRIKE), (15, IDLE_OUT), (18, BASE)],
+        "hurt": [(1, BASE), (2, HURT_RECOIL), (5, HURT_RECOIL),
+                 (8, IDLE_OUT), (12, BASE)],
+        "defeat": [(1, BASE), (3, HURT_RECOIL), (6, DEFEAT_COLLAPSE),
+                   (10, DEFEAT_COLLAPSE), (14, DEFEAT_COLLAPSE)],
     }
     rig.animation_data_create()
     actions = {}
@@ -260,10 +360,12 @@ def configure_scene():
 
 def render(actions):
     samples = {
-        "idle": (1, 4, 7, 10, 13, 16, 19, 22),
-        "run": (1, 3, 5, 7, 9, 11, 13, 15),
-        "jump": (1, 2, 3, 4, 6, 8, 10, 12),
-        "attack": (1, 2, 3, 4, 5, 7, 9, 11),
+        "idle": tuple(range(1, 24, 2)),
+        "run": tuple(range(1, 24, 2)),
+        "jump": (1, 2, 3, 4, 5, 6, 8, 10, 12, 14, 17, 20),
+        "attack": (1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 14, 18),
+        "hurt": tuple(range(1, 13)),
+        "defeat": (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14),
     }
     if os.environ.get("ASTER_PACKAGE_QUICK") == "1":
         samples = {"idle": (1,), "run": (1, 9), "attack": (3, 5)}

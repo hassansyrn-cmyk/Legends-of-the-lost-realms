@@ -1,18 +1,22 @@
 Legends of the Lost Realms
-Build 5.2.0 - Supplied Aster Rig Phone Test
+Build 5.3.0 - Rigged Creature Phone Test
 
-This test build replaces the previous hero artwork with animation rendered from
-the supplied Aster_Rig_Package character:
+This test build expands the approved Blender-rendered character pipeline:
 
-- A real 34-bone skinned Blender character replaces the old one-frame hero.
-- Four authored actions provide 8 idle, 8 run, 8 jump, and 8 attack frames.
-- A new socketed sword follows the animated hand through every pose.
-- The source model is mirrored at runtime so movement and attacks face correctly.
-- The hero is enlarged slightly for clearer presentation on phone displays.
-- Collision and platforming physics are unchanged for a controlled visual test.
+- Aster uses 12-frame idle, run, jump, attack, hurt, and defeat animation rows.
+- Running uses contact, down, passing, and lift poses for clearer weight transfer.
+- Forest Goblin, Ember Demon, and Forest Elemental use their supplied skinned rigs.
+- Each creature has 12-frame idle, movement, attack, and hit-reaction animation.
+- The Ember Demon uses four synchronized wing chains for true flight motion.
+- The Forest Elemental replaces the forest heavy enemy and the Heartwood boss art.
+- Frost-specific enemies and the two later-world bosses remain unchanged until
+  their matching Blender rig packages are supplied.
+- Collision and combat rules are unchanged for a controlled visual test.
 
 Verify the build by checking:
-- The main menu displays "PRODUCTION REBUILD • ASTER RIG TEST 5.2.0".
-- Aster has detailed white/teal clothing, brown boots, gray hair, and a broad sword.
-- Running, jumping, and attacking visibly use different body poses.
-- app/build.gradle contains versionName '5.2.0' and versionCode 63.
+- The main menu displays "PRODUCTION REBUILD • RIGGED CREATURE TEST 5.3.0".
+- Aster's run has distinct foot-contact phases and smoother airborne motion.
+- Goblins visibly run and swing their integrated sickle.
+- Ember Demons flap, hover, lunge, and recoil with moving wings.
+- The forest boss uses the large animated Forest Elemental model.
+- app/build.gradle contains versionName '5.3.0' and versionCode 64.

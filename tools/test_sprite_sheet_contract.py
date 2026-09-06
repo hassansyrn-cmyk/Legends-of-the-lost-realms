@@ -47,6 +47,9 @@ for name, spec in CONTRACT.items():
     # This catches the foot/base jitter that makes otherwise smooth animation vibrate.
     if name not in ("realms_background_sheet", "ui_motion_sheet"):
         for row, bounds in enumerate(row_bounds):
+            if name == "aster_motion_sheet" and row == 5:
+                # Defeat intentionally lowers the complete body through a fall arc.
+                continue
             bottoms = [box[3] for box in bounds]
             if max(bottoms) - min(bottoms) > max(8, int(cell_h * .09)):
                 raise SystemExit(f"{name}: unstable bottom anchor in row {row}: {bottoms}")
@@ -69,7 +72,14 @@ for name, spec in CONTRACT.items():
                     f"{name}: row {row} lacks a readable pose change ({strongest_change:.4f})"
                 )
 
-for name in ("aster_motion_sheet", "enemies_motion_sheet", "bosses_motion_sheet", "world_motion_sheet"):
+for name in (
+    "aster_motion_sheet",
+    "enemy_rig_motion_sheet",
+    "forest_elemental_boss_sheet",
+    "enemies_motion_sheet",
+    "bosses_motion_sheet",
+    "world_motion_sheet",
+):
     if f'rebuild_character_sheet("{name}"' in GAME_VIEW:
         raise SystemExit(f"{name}: runtime must not procedurally fake complete-frame movement")
 

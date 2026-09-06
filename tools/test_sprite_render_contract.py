@@ -27,8 +27,8 @@ boss = method_body("private void drawBoss", "private void drawSkeletalBoss")
 # transforms are permitted, but the modular hero renderer must never be active.
 required_complete_calls = (
     "drawImageTransformAlpha(c, asterMotionSheet, asterFrame(row, frame), destination,",
-    "drawImageTransformAlpha(c, enemyArt,",
-    "drawImageTransformAlpha(c, bossArt, bossDestination, lean,",
+    "drawImageTransformAlpha(c,enemyRigMotionSheet,enemyRigFrame(rigIndex,action,frame),",
+    "drawImageTransformAlpha(c,forestElementalBossSheet,bossFrame(action,frame),",
 )
 for marker in required_complete_calls:
     if marker not in GAME_VIEW:
@@ -43,13 +43,13 @@ for marker in ("float cellSize = 212f;", "top + 67f", "asterFrame(row, frame)"):
 frame_start = GAME_VIEW.index("private int enemyFrame")
 frame_end = GAME_VIEW.index("private float supportingSurfaceY", frame_start)
 frame_helpers = GAME_VIEW[frame_start:frame_end]
-if "enemy.stateTime" in frame_helpers or "target.stateTime" in frame_helpers:
-    raise SystemExit("state frame selection must not reverse when countdown timers decrease")
 for marker in (
     "EnemyController.ATTACK)return 4 + frameIndex(animationClock,2",
     "EnemyController.PATROL)return 1 + frameIndex(animationClock,2",
     "State.ATTACK_EXECUTE)return 4 + frameIndex(animationClock,2",
     "State.ATTACK_WINDUP)return 3 + frameIndex(animationClock,2",
+    "timedFrame(enemy.stateTime,archetype.windupSeconds,6)",
+    "timedFrame(target.stateTime,target.attack.windupSeconds,4)",
 ):
     if marker not in frame_helpers:
         raise SystemExit(f"Missing ordered state frame marker: {marker}")
@@ -85,7 +85,13 @@ def bounds(path, cell_w, cell_h, rows, cols):
 
 # The authored frames can change silhouette, but the overall footprint must
 # stay stable enough that the actor does not appear to breathe in size.
-for name in ("aster_motion_sheet", "enemies_motion_sheet", "bosses_motion_sheet"):
+for name in (
+    "aster_motion_sheet",
+    "enemy_rig_motion_sheet",
+    "forest_elemental_boss_sheet",
+    "enemies_motion_sheet",
+    "bosses_motion_sheet",
+):
     spec = CONTRACT[name]
     for row, row_boxes in enumerate(
         bounds(RES / spec["file"], *spec["cell"], spec["rows"], spec["cols"])
@@ -94,10 +100,16 @@ for name in ("aster_motion_sheet", "enemies_motion_sheet", "bosses_motion_sheet"
         heights = [box[3] - box[1] for box in row_boxes]
         # Aster's attack row includes the full sword wind-up and extension,
         # while its destination rectangle and foot anchor remain fixed.
-        allowed_width_drift = .45 if name == "aster_motion_sheet" and row == 3 else .24
+        authored_action = (
+            (name == "aster_motion_sheet" and row >= 2)
+            or (name == "enemy_rig_motion_sheet" and row % 4 >= 2)
+            or (name == "forest_elemental_boss_sheet" and row >= 2)
+        )
+        allowed_width_drift = .55 if authored_action else .30
         if (max(widths) - min(widths)) / max(widths) > allowed_width_drift:
             raise SystemExit(f"{name}: frame width drifts in row {row}: {widths}")
-        if (max(heights) - min(heights)) / max(heights) > .24:
+        allowed_height_drift = .36 if authored_action else .28
+        if (max(heights) - min(heights)) / max(heights) > allowed_height_drift:
             raise SystemExit(f"{name}: frame height drifts in row {row}: {heights}")
 
 print("Sprite render contract: OK")

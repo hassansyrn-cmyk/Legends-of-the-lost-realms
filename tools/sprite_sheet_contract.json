@@ -5,13 +5,53 @@
       256,
       256
     ],
+    "rows": 6,
+    "cols": 12,
+    "states": [
+      "idle",
+      "run",
+      "jump",
+      "attack",
+      "hurt",
+      "defeat"
+    ]
+  },
+  "enemy_rig_motion_sheet": {
+    "file": "enemy_rig_motion_sheet.png",
+    "cell": [
+      192,
+      192
+    ],
+    "rows": 12,
+    "cols": 12,
+    "states": [
+      "goblin_idle",
+      "goblin_move",
+      "goblin_attack",
+      "goblin_hurt",
+      "demon_idle",
+      "demon_move",
+      "demon_attack",
+      "demon_hurt",
+      "elemental_idle",
+      "elemental_move",
+      "elemental_attack",
+      "elemental_hurt"
+    ]
+  },
+  "forest_elemental_boss_sheet": {
+    "file": "forest_elemental_boss_sheet.png",
+    "cell": [
+      384,
+      384
+    ],
     "rows": 4,
     "cols": 8,
     "states": [
       "idle",
       "move",
       "attack",
-      "hurt_defeat"
+      "hurt"
     ]
   },
   "enemies_motion_sheet": {
