@@ -236,19 +236,31 @@ public class GameView extends View {
                 if (comboQueued && attackStage < 4) {
                     chargedAttack = false;
                     beginAttack(attackStage + 1);
-                } else {
+                } else if (comboWindow <= 0) {
                     attackStage = 0;
                     chargedAttack = false;
                 }
             }
         }
-        if (comboWindow > 0) comboWindow -= dt;
+        if (comboWindow > 0) {
+            comboWindow -= dt;
+            if (comboWindow <= 0 && attackTime <= 0) {
+                attackStage = 0;
+                chargedAttack = false;
+            }
+        }
         if (counterTime > 0) counterTime -= dt;
-        if (attackHolding && attackTime <= 0) {
+        if (attackHolding) {
             chargeTime += dt;
-            if (chargeTime >= .38f && !chargeReady) {
+            if (chargeTime >= .35f && !chargeReady) {
                 chargeReady = true;
                 audio.powerSelect();
+            }
+            if (chargeReady && attackTime <= 0) {
+                chargedAttack = true;
+                chargeReady = false;
+                chargeTime = 0;
+                beginAttack(1);
             }
         }
         if (powerTime > 0) powerTime -= dt;
@@ -317,7 +329,14 @@ public class GameView extends View {
             if (px + 26 > pl.x && px - 26 < pl.x + pl.w && oldBottom <= pl.y + 8 && py + 54 >= pl.y && vy >= 0) {
                 if (!wasGrounded) {
                     audio.land(fallSpeed > 420);
-                    if (fallSpeed > 420) {
+                    if (airAttack) {
+                        airAttack = false;
+                        attackTime = Math.min(attackTime, .10f);
+                        triggerSquash(true, .14f);
+                        triggerShake(5.2f, .12f);
+                        spawnJuiceParticles(px, py + 52, Color.rgb(255, 230, 145), 10, 150f);
+                        audio.impact();
+                    } else if (fallSpeed > 420) {
                         landingPulse = .14f;
                         triggerSquash(true, .12f);
                         triggerShake(3.6f, .09f);
@@ -1080,11 +1099,11 @@ public class GameView extends View {
     }
 
     void pressAttack() {
-        if (screen == LEVEL) {
-            attackHolding = true;
-            chargeTime = 0;
-            chargeReady = false;
-        }
+        if (screen != LEVEL) return;
+        attackHolding = true;
+        chargeTime = 0;
+        chargeReady = false;
+        strike();
     }
 
     void releaseAttack() {
@@ -1098,7 +1117,6 @@ public class GameView extends View {
         } else {
             chargeReady = false;
             chargeTime = 0;
-            strike();
         }
     }
 
@@ -1115,6 +1133,11 @@ public class GameView extends View {
             return;
         }
         if (attackTime <= 0) {
+            if (comboWindow > 0 && attackStage > 0 && attackStage < 4 && !chargedAttack) {
+                chargedAttack = false;
+                beginAttack(attackStage + 1);
+                return;
+            }
             chargedAttack = false;
             beginAttack(1);
         }
@@ -1125,7 +1148,7 @@ public class GameView extends View {
         attackStage = stage;
         attackDuration = airAttack ? .34f : (stage == 4 ? .40f : stage == 3 ? .34f : stage == 2 ? .29f : chargedAttack ? .36f : .22f);
         attackTime = attackDuration;
-        comboWindow = !airAttack && !chargedAttack && stage < 4 ? attackDuration : 0;
+        comboWindow = !airAttack && !chargedAttack && stage < 4 ? attackDuration + .12f : 0;
         comboQueued = false;
         swordFxTime = airAttack ? .28f : (chargedAttack ? .34f : .20f);
         if (airAttack) {
