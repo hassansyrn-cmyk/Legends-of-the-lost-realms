@@ -236,19 +236,31 @@ public class GameView extends View {
                 if (comboQueued && attackStage < 4) {
                     chargedAttack = false;
                     beginAttack(attackStage + 1);
-                } else {
+                } else if (comboWindow <= 0) {
                     attackStage = 0;
                     chargedAttack = false;
                 }
             }
         }
-        if (comboWindow > 0) comboWindow -= dt;
+        if (comboWindow > 0) {
+            comboWindow -= dt;
+            if (comboWindow <= 0 && attackTime <= 0) {
+                attackStage = 0;
+                chargedAttack = false;
+            }
+        }
         if (counterTime > 0) counterTime -= dt;
-        if (attackHolding && attackTime <= 0) {
+        if (attackHolding) {
             chargeTime += dt;
-            if (chargeTime >= .38f && !chargeReady) {
+            if (chargeTime >= .35f && !chargeReady) {
                 chargeReady = true;
                 audio.powerSelect();
+            }
+            if (chargeReady && attackTime <= 0) {
+                chargedAttack = true;
+                chargeReady = false;
+                chargeTime = 0;
+                beginAttack(1);
             }
         }
         if (powerTime > 0) powerTime -= dt;
@@ -282,8 +294,8 @@ public class GameView extends View {
         if (dashTime > 0) dashTime -= dt;
         if (hitPause > 0) { hitPause -= dt; return; }
         if (knockbackTime > 0) knockbackTime -= dt;
-        if (grounded) coyoteTime = .10f; else coyoteTime = Math.max(0, coyoteTime - dt);
-        if (jumpQueued) { jumpBufferTime = .12f; jumpQueued = false; }
+        if (grounded) coyoteTime = .14f; else coyoteTime = Math.max(0, coyoteTime - dt);
+        if (jumpQueued) { jumpBufferTime = .15f; jumpQueued = false; }
         else if (jumpBufferTime > 0) jumpBufferTime -= dt;
         float speed = 310 + save.windRank() * 24;
         if (leftHeld && !rightHeld) facingLeft = true;
@@ -305,6 +317,7 @@ public class GameView extends View {
         if (airAttack && attackTime > 0) vy = Math.max(vy, 540f);
         float gravity = wallSliding && vy > 0 ? 0 : (windTime > 0 && vy > 0 ? 520 : 1450);
         if (!jumpHeld && vy < -170) gravity *= 1.72f;
+        else if (Math.abs(vy) < 80f && !grounded && !wallSliding) gravity *= 0.80f;
         vy += gravity * dt;
         vy = Math.min(vy, 950);
         float oldBottom = py + 54, fallSpeed = vy;
@@ -317,7 +330,14 @@ public class GameView extends View {
             if (px + 26 > pl.x && px - 26 < pl.x + pl.w && oldBottom <= pl.y + 8 && py + 54 >= pl.y && vy >= 0) {
                 if (!wasGrounded) {
                     audio.land(fallSpeed > 420);
-                    if (fallSpeed > 420) {
+                    if (airAttack) {
+                        airAttack = false;
+                        attackTime = Math.min(attackTime, .10f);
+                        triggerSquash(true, .14f);
+                        triggerShake(5.2f, .12f);
+                        spawnJuiceParticles(px, py + 52, Color.rgb(255, 230, 145), 10, 150f);
+                        audio.impact();
+                    } else if (fallSpeed > 420) {
                         landingPulse = .14f;
                         triggerSquash(true, .12f);
                         triggerShake(3.6f, .09f);
@@ -1035,20 +1055,22 @@ public class GameView extends View {
     private boolean jump() {
         if (screen != LEVEL) return false;
         if (wallSliding) {
-            boolean atLedge = py + 54 >= wallTop - 10 && py + 54 <= wallTop + 34;
+            boolean atLedge = py + 54 >= wallTop - 14 && py + 54 <= wallTop + 36;
             if (atLedge) {
-                px += wallDir * 50;
+                px -= wallDir * 44;
                 py = wallTop - 54;
-                vx = wallDir * 175;
+                vx = -wallDir * 160;
                 vy = 0;
                 grounded = true;
                 wallSliding = false;
+                facingLeft = wallDir > 0;
                 landingPulse = .10f;
                 audio.jump(true);
                 return true;
             }
-            vx = wallDir * 360;
+            vx = wallDir * 380;
             vy = -620;
+            facingLeft = wallDir < 0;
             wallSliding = false;
             canDouble = true;
             audio.jump(true);
@@ -1080,11 +1102,11 @@ public class GameView extends View {
     }
 
     void pressAttack() {
-        if (screen == LEVEL) {
-            attackHolding = true;
-            chargeTime = 0;
-            chargeReady = false;
-        }
+        if (screen != LEVEL) return;
+        attackHolding = true;
+        chargeTime = 0;
+        chargeReady = false;
+        strike();
     }
 
     void releaseAttack() {
@@ -1098,7 +1120,6 @@ public class GameView extends View {
         } else {
             chargeReady = false;
             chargeTime = 0;
-            strike();
         }
     }
 
@@ -1115,6 +1136,11 @@ public class GameView extends View {
             return;
         }
         if (attackTime <= 0) {
+            if (comboWindow > 0 && attackStage > 0 && attackStage < 4 && !chargedAttack) {
+                chargedAttack = false;
+                beginAttack(attackStage + 1);
+                return;
+            }
             chargedAttack = false;
             beginAttack(1);
         }
@@ -1125,7 +1151,7 @@ public class GameView extends View {
         attackStage = stage;
         attackDuration = airAttack ? .34f : (stage == 4 ? .40f : stage == 3 ? .34f : stage == 2 ? .29f : chargedAttack ? .36f : .22f);
         attackTime = attackDuration;
-        comboWindow = !airAttack && !chargedAttack && stage < 4 ? attackDuration : 0;
+        comboWindow = !airAttack && !chargedAttack && stage < 4 ? attackDuration + .12f : 0;
         comboQueued = false;
         swordFxTime = airAttack ? .28f : (chargedAttack ? .34f : .20f);
         if (airAttack) {
@@ -2152,7 +2178,7 @@ public class GameView extends View {
         if(screen==PAUSE){if(in(x,y,490,285,790,345))return 114;if(in(x,y,490,375,790,435))return 132;if(in(x,y,490,465,790,525))return 133;}
         if(screen==COMPLETE){if(in(x,y,440,500,665,565))return 115;if(in(x,y,690,500,850,565))return 104;}
         if(screen==GAMEOVER){if(in(x,y,465,370,655,430))return 116;if(in(x,y,675,370,820,430))return 104;}
-        if(screen==LEVEL){if(in(x,y,40,575,145,680))return 1;if(in(x,y,150,575,255,680))return 2;if(Math.hypot(x-1070,y-626)<58)return 3;if(Math.hypot(x-960,y-545)<52)return 4;if(Math.hypot(x-1188,y-626)<58)return 5;if(in(x,y,1140,18,1260,72))return 6;if(in(x,y,950,18,1115,72))return 7;}
+        if(screen==LEVEL){if(in(x,y,20,530,148,720))return 1;if(in(x,y,148,530,285,720))return 2;if(Math.hypot(x-1070,y-626)<66)return 3;if(Math.hypot(x-960,y-545)<60)return 4;if(Math.hypot(x-1188,y-626)<66)return 5;if(in(x,y,1120,10,1270,80))return 6;if(in(x,y,940,10,1115,80))return 7;}
         return 0;
     }
     void handleAction(int a){
