@@ -1828,9 +1828,17 @@ public class GameView extends View {
         float lean=(px<boss.x?-1f:1f)*(charge*7f-(boss.hitLock>0?5f:0f))
                 + (float)Math.sin(phase*1.1f)*3.5f;
         RectF bossDestination=new RectF(x-bossWidth/2,bossGroundY-bossHeight,x+bossWidth/2,bossGroundY);
-        Bitmap bossArt = bossPremiumSprites[Math.max(0, Math.min(bossPremiumSprites.length - 1, boss.world - 1))];
-        drawImageTransformAlpha(c, bossArt, bossDestination, lean,
-                bossFacingScale*hurt/breath, breath*hurt, 255);
+        boolean iceBoss = boss.world == 3;
+        if (iceBoss) {
+            int iceRow = (boss.state == BossController.State.ATTACK_WINDUP || boss.state == BossController.State.ATTACK_EXECUTE || boss.state == BossController.State.ATTACK_RECOVERY) ? 1 : 0;
+            int iceFrame = frameIndex(animationClock, 6, iceRow == 1 ? 10f : 4f, boss.x * .01f);
+            drawImageTransformAlpha(c, bossSpriteSheet, bossFrame(iceRow, iceFrame), bossDestination, lean,
+                    bossFacingScale*hurt/breath, breath*hurt, 255);
+        } else {
+            Bitmap bossArt = bossPremiumSprites[Math.max(0, Math.min(bossPremiumSprites.length - 1, boss.world - 1))];
+            drawImageTransformAlpha(c, bossArt, bossDestination, lean,
+                    bossFacingScale*hurt/breath, breath*hurt, 255);
+        }
         // Keep the boss label and health bar safely above the tallest sprite frame.
         float bossHudY = boss.y - 380 + bob;
         p.setColor(Color.argb(230,255,255,255)); c.drawRect(x-96, bossHudY, x+96, bossHudY+13, p);
