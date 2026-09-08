@@ -14,9 +14,6 @@ namespace LostRealms.EditorTools
 
         public static void Setup()
         {
-            // Legacy Input + touch UI modules both work with the combined handler.
-            PlayerSettings.activeInputHandler = ActiveInputHandler.Both;
-
             Directory.CreateDirectory("Assets/Scenes");
 
             var scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);

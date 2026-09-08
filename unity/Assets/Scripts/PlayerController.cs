@@ -22,7 +22,8 @@ namespace LostRealms
         private bool _grounded, _canDouble, _facingLeft, _jumpHeld;
         private float _coyote, _jumpBuffer;
         private int _attackStage;
-        private float _attackTime, _comboWindow, _attackHitDoneId;
+        private float _attackTime, _comboWindow;
+        private int _attackHitDoneId;
         private bool _airAttackUsed;
         private float _invuln, _dead;
         private float _bobSeed;

@@ -13,7 +13,7 @@ namespace LostRealms
 
         public static Pickup Create(Vector2 pos, bool gem)
         {
-            var go = GameObject.CreatePrimitive(gem ? PrimitiveType.Octahedron : PrimitiveType.Cylinder);
+            var go = GameObject.CreatePrimitive(gem ? PrimitiveType.Sphere : PrimitiveType.Cylinder);
             Object.Destroy(go.GetComponent<Collider>());
             go.name = gem ? "Gem" : "Coin";
             go.transform.position = new Vector3(pos.x, pos.y, 0f);
