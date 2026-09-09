@@ -11,6 +11,7 @@ namespace LostRealms
 
         [Tooltip("Model child; mirrored on facing change. Animator (if any) is driven automatically.")]
         public Transform visualRoot;
+        public Animator animator;
 
         public Vector2 Velocity => new Vector2(_vx, _vy);
         public bool Grounded => _grounded;
@@ -30,7 +31,7 @@ namespace LostRealms
         private GameObject _slashFx;
         private float _slashTime;
 
-        private Animator _animator;
+        
         private static readonly int ASpeed = Animator.StringToHash("Speed");
         private static readonly int AGrounded = Animator.StringToHash("Grounded");
         private static readonly int AVertical = Animator.StringToHash("VerticalVelocity");
@@ -41,7 +42,7 @@ namespace LostRealms
         private void Awake()
         {
             Instance = this;
-            _animator = GetComponentInChildren<Animator>();
+            if (animator == null) animator = GetComponentInChildren<Animator>();
             _bobSeed = Random.value * 6f;
         }
 
@@ -151,7 +152,7 @@ namespace LostRealms
             _comboWindow = GameConfig.ComboWindow;
             _attackHitDoneId++;
             SpawnSlashFx();
-            if (_animator != null) _animator.SetTrigger(AAttack);
+            if (animator != null) animator.SetTrigger(AAttack);
         }
 
         private void BeginAirAttack()
@@ -161,7 +162,7 @@ namespace LostRealms
             _attackTime = 0.2f;
             _attackHitDoneId++;
             SpawnSlashFx();
-            if (_animator != null) _animator.SetTrigger(AAttack);
+            if (animator != null) animator.SetTrigger(AAttack);
         }
 
         private void ResolveAttackHits()
@@ -214,7 +215,7 @@ namespace LostRealms
             _vx = (transform.position.x < fromX ? -1f : 1f) * GameConfig.HitKnockback;
             _vy = 4.2f;
             _invuln = GameConfig.HurtInvuln;
-            if (_animator != null) _animator.SetTrigger(AHurt);
+            if (animator != null) animator.SetTrigger(AHurt);
             if (GameManager.Instance != null && GameManager.Instance.Health <= 0) Die();
         }
 
@@ -223,7 +224,7 @@ namespace LostRealms
             if (_dead > 0f) return;
             _dead = 1.3f;
             _vx = _vy = 0f;
-            if (_animator != null) _animator.SetTrigger(ADeath);
+            if (animator != null) animator.SetTrigger(ADeath);
             if (GameManager.Instance != null) GameManager.Instance.OnPlayerDied();
         }
 
@@ -308,10 +309,10 @@ namespace LostRealms
 
         private void DriveAnimator()
         {
-            if (_animator == null) return;
-            _animator.SetFloat(ASpeed, Mathf.Abs(_vx));
-            _animator.SetBool(AGrounded, _grounded);
-            _animator.SetFloat(AVertical, _vy);
+            if (animator == null) return;
+            animator.SetFloat(ASpeed, Mathf.Abs(_vx));
+            animator.SetBool(AGrounded, _grounded);
+            animator.SetFloat(AVertical, _vy);
         }
     }
 }

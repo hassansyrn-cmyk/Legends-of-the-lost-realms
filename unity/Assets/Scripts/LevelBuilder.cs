@@ -9,6 +9,8 @@ namespace LostRealms
     {
         [Tooltip("Aster mesh prefab (FBX). Replaced by the Mixamo rigged prefab once animations land.")]
         public GameObject heroModelPrefab;
+        [Tooltip("Stone Brute (kind 6) Mixamo-rigged prefab.")]
+        public GameObject golemModelPrefab;
         public int levelId = 1;
 
         private void Awake()
@@ -60,7 +62,10 @@ namespace LostRealms
                 Pickup.Create(new Vector2(GameConfig.WorldX(pk.x), GameConfig.WorldY(pk.y)), pk.gem);
 
             foreach (var f in level.foes)
-                Enemy.Create(new Vector2(GameConfig.WorldX(f.x), GameConfig.WorldY(f.y)), f.kind);
+            {
+                GameObject brutePrefab = f.kind == 6 ? golemModelPrefab : null;
+                Enemy.Create(new Vector2(GameConfig.WorldX(f.x), GameConfig.WorldY(f.y)), f.kind, brutePrefab);
+            }
 
             BuildHero();
             BuildMosslight();
@@ -199,6 +204,14 @@ namespace LostRealms
                         // put the model's feet on the parent origin (world offset ≈ local, parent unscaled)
                         model.transform.localPosition += new Vector3(0f, transform.position.y - b2.min.y, 0f);
                     }
+                }
+
+                // drive the Mixamo humanoid with the hero controller (built by RigIntegration)
+                var animator = model.GetComponentInChildren<Animator>();
+                if (animator != null)
+                {
+                    animator.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("Hero");
+                    player.animator = animator;
                 }
             }
             else

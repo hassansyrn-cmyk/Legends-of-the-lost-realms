@@ -1,0 +1,3 @@
+C:\Users\X1 YOGA\.zcode\workspace\default\Legends-of-the-lost-realms\unity\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\CMakeLists.txt
+C:\Users\X1 YOGA\.zcode\workspace\default\Legends-of-the-lost-realms\unity\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\FramePacing\CMakeLists.txt
+C:\Users\X1 YOGA\.zcode\workspace\default\Legends-of-the-lost-realms\unity\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\GameActivity\CMakeLists.txt

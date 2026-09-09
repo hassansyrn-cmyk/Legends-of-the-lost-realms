@@ -10,7 +10,8 @@ namespace LostRealms.EditorTools
     public static class SceneBootstrap
     {
         private const string ScenePath = "Assets/Scenes/Game.unity";
-        private const string HeroFbx = "Assets/Models/Aster_TPose.fbx";
+        private const string HeroFbx = "Assets/Models/Hero/Aster_Mixamo.fbx";
+        private const string BruteFbx = "Assets/Models/StoneBrute/Clips/Golem_Punch.fbx";
 
         public static void Setup()
         {
@@ -31,6 +32,8 @@ namespace LostRealms.EditorTools
             var heroPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(HeroFbx);
             if (heroPrefab != null) builder.heroModelPrefab = heroPrefab;
             else Debug.LogWarning($"SceneBootstrap: hero FBX not found at {HeroFbx} — capsule placeholder will be used");
+            var brutePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(BruteFbx);
+            if (brutePrefab != null) builder.golemModelPrefab = brutePrefab;
             boot.AddComponent<LostRealms.TouchControls>();
 
             EditorSceneManager.SaveScene(scene, ScenePath);
@@ -41,6 +44,7 @@ namespace LostRealms.EditorTools
 
         public static void SetupAndBuild()
         {
+            RigIntegration.Run(heroPrefab: true);
             Setup();
             AndroidBuild.Build();
         }
