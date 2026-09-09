@@ -73,49 +73,184 @@ namespace LostRealms {
    Save.coins+=Coins+EarnedStars*10;Save.gems+=Gems;Save.unlocked=Mathf.Max(Save.unlocked,Mathf.Min(10,Level+1));Persist();Screen=GameScreen.Complete;Sound("complete");
   }
   public static string Clock(float seconds)=>$"{(int)seconds/60:00}:{(int)seconds%60:00}";
-  void Styles(){if(title!=null)return;pixel=Texture2D.whiteTexture;
-   title=new GUIStyle(GUI.skin.label){fontSize=48,fontStyle=FontStyle.Bold,wordWrap=true}; title.normal.textColor=Color.white;
-   label=new GUIStyle(GUI.skin.label){fontSize=22,wordWrap=true};label.normal.textColor=new Color(.88f,.94f,.95f);
-   small=new GUIStyle(label){fontSize=16}; button=new GUIStyle(GUI.skin.button){fontSize=21,fontStyle=FontStyle.Bold}; button.normal.textColor=Color.white;button.padding=new RectOffset(12,12,10,10);
+  float healthLag = 1f;
+  void BoxOutline(Rect r,Color bg,Color border,float bw=2f){
+   Box(r,bg);
+   Box(new Rect(r.x,r.y,r.width,bw),border);
+   Box(new Rect(r.x,r.yMax-bw,r.width,bw),border);
+   Box(new Rect(r.x,r.y,bw,r.height),border);
+   Box(new Rect(r.xMax-bw,r.y,bw,r.height),border);
+   // Corner accents
+   float cw=5f;
+   Box(new Rect(r.x-1,r.y-1,cw,cw),border*1.3f);
+   Box(new Rect(r.xMax-cw+1,r.y-1,cw,cw),border*1.3f);
+   Box(new Rect(r.x-1,r.yMax-cw+1,cw,cw),border*1.3f);
+   Box(new Rect(r.xMax-cw+1,r.yMax-cw+1,cw,cw),border*1.3f);
+  }
+  void Styles(){
+   if(title!=null)return;pixel=Texture2D.whiteTexture;
+   title=new GUIStyle(GUI.skin.label){fontSize=44,fontStyle=FontStyle.Bold,wordWrap=true,alignment=TextAnchor.UpperLeft};
+   title.normal.textColor=new Color(1f,.94f,.82f);
+   label=new GUIStyle(GUI.skin.label){fontSize=22,wordWrap=true};label.normal.textColor=new Color(.88f,.95f,.96f);
+   small=new GUIStyle(label){fontSize=16};
+   button=new GUIStyle(GUI.skin.button){fontSize=20,fontStyle=FontStyle.Bold,alignment=TextAnchor.MiddleCenter};
+   button.normal.textColor=new Color(1f,.96f,.88f);button.padding=new RectOffset(12,12,10,10);
   }
   void Box(Rect r,Color color){GUI.color=color;GUI.DrawTexture(r,pixel);GUI.color=Color.white;}
   void Text(float x,float y,float w,float h,string s,GUIStyle st=null){GUI.Label(new Rect(x,y,w,h),s,st??label);}
-  bool Button(float x,float y,float w,float h,string s){return GUI.Button(new Rect(x,y,w,h),s,button);}
-  void Panel(float x,float y,float w,float h){Box(new Rect(x,y,w,h),new Color(.025f,.055f,.08f,.94f));Box(new Rect(x,y,4,h),Accent);}
-  void OnGUI(){Styles();GUI.matrix=Matrix4x4.TRS(Vector3.zero,Quaternion.identity,new Vector3(UnityEngine.Screen.width/1280f,UnityEngine.Screen.height/720f,1));
-   if(Screen==GameScreen.Playing){
-    Panel(24,22,352,108);Text(42,32,310,26,Realms[Realm],small);Text(42,60,320,30,Titles[Level-1]);
-    Box(new Rect(42,103,220,8),new Color(.15f,.22f,.25f));Box(new Rect(42,103,220*Mathf.Clamp01((float)Player.Health/Player.MaxHealth),8),new Color(.95f,.34f,.34f));Text(277,91,90,28,$"{Player.Health}/{Player.MaxHealth}",small);
-    Panel(400,22,245,70);Text(420,35,220,40,$"GOLD {Coins:00}    GEMS {Gems}");
-    if(Button(665,24,195,52,new[]{"EMBER","FROST","GALE"}[Player.Power]))Player.Power=(Player.Power+1)%3;Box(new Rect(665,81,195*Mathf.Clamp01(Player.Energy/100),5),Accent);
-    Text(887,38,145,30,Clock(Elapsed));if(Button(1100,24,150,52,"PAUSE"))Pause();
-    var boss=Enemies.Find(x=>x&&x.Boss&&x.Health>0);if(boss&&Vector3.Distance(Player.transform.position,boss.transform.position)<30){Panel(420,112,440,63);Text(438,118,425,26,boss.DisplayName,small);Box(new Rect(440,153,400,8),new Color(.3f,.15f,.18f));Box(new Rect(440,153,400*Mathf.Clamp01(boss.Health/boss.MaxHealth),8),Accent);}
-    if(Time.unscaledTime<noticeUntil){Panel(260,192,760,62);Text(282,204,716,48,Notice,small);}
-    Box(new Rect(28,582,135,95),new Color(.06f,.13f,.18f,.65f));Text(45,599,120,60,"MOVE\nW A S D",small);
-    Control(692,"DODGE","SHIFT");Control(838,"POWER","K");Control(982,"BLADE","J / HOLD");Control(1126,"JUMP","SPACE");
-    Text(24,690,1200,25,"Double jump to cross gaps   /   Q switches power   /   Right mouse or drag to orbit the camera",small);return;
-   }
-   Box(new Rect(0,0,1280,720),new Color(.015f,.035f,.055f,.66f));
-   if(Screen==GameScreen.Menu){Panel(64,75,635,568);Text(94,96,570,35,"LEGENDS OF THE LOST REALMS",small);Text(94,150,575,150,"Three realms.\nOne lost heart.",title);Text(94,316,545,72,"Aster's journey, rebuilt in 3D. Restore the ancient gates and confront the guardians.");
-    if(Button(96,432,264,60,"CONTINUE JOURNEY"))LoadLevel(Save.unlocked);if(Button(378,432,260,60,"REALM MAP"))Screen=GameScreen.Map;if(Button(96,514,264,55,"SETTINGS & UPGRADES"))Screen=GameScreen.Settings;Text(94,597,560,26,"UNITY 3D  /  ANDROID + DESKTOP CONTROLS",small);return;}
-   if(Screen==GameScreen.Map){Panel(60,55,1160,610);Text(90,76,1080,64,"The realm paths",title);Text(90,145,1050,36,$"Gold {Save.coins}  /  Gems {Save.gems}  /  Stars {TotalStars()}");
-    for(int i=0;i<10;i++){float x=90+(i%5)*218,y=221+(i/5)*157;bool unlocked=i+1<=Save.unlocked;GUI.enabled=unlocked;if(Button(x,y,200,125,$"{i+1:00}\n{Titles[i]}\n{(unlocked?new string('*',Save.stars[i]):"LOCKED")}"))LoadLevel(i+1);GUI.enabled=true;}
-    if(Button(90,565,210,56,"BACK"))Screen=GameScreen.Menu;return;}
-   if(Screen==GameScreen.Settings){Panel(220,65,840,595);Text(256,86,760,68,"Make the journey yours",title);
-    if(Button(258,180,345,58,"MUSIC: "+(Save.music?"ON":"OFF"))){Save.music=!Save.music;if(Save.music)Music.Play();else Music.Pause();Persist();}if(Button(623,180,345,58,"SOUND: "+(Save.sound?"ON":"OFF"))){Save.sound=!Save.sound;Persist();}
-    Text(258,275,720,35,$"Gold {Save.coins}   /   Gems {Save.gems}");
-    if(Button(258,329,710,60,$"VITALITY {Save.healthRank}/3  -  {50+Save.healthRank*40} GOLD")){int cost=50+Save.healthRank*40;if(Save.healthRank<3&&Save.coins>=cost){Save.coins-=cost;Save.healthRank++;Persist();Sound("upgrade");}}
-    if(Button(258,410,710,60,$"ELEMENTAL STRENGTH {Save.powerRank}/3  -  {3+Save.powerRank*2} GEMS")){int cost=3+Save.powerRank*2;if(Save.powerRank<3&&Save.gems>=cost){Save.gems-=cost;Save.powerRank++;Persist();Sound("upgrade");}}
-    Text(258,498,720,57,"Upgrades apply on the next level. Progress is stored locally for this 3D edition.",small);if(Button(258,575,210,55,"BACK"))Screen=GameScreen.Menu;return;}
-   Panel(340,135,600,462);string heading=Screen==GameScreen.Paused?"A moment of calm":Screen==GameScreen.Complete?(Level==10?"The realms are restored":"A path restored"):"The light remains";Text(375,165,530,125,heading,title);
-   if(Screen==GameScreen.Complete){Text(375,294,525,80,$"{new string('*',EarnedStars)}   {Clock(Elapsed)}\n+{Coins+EarnedStars*10} gold    +{Gems} gems");if(Button(375,408,530,57,Level==10?"RETURN TO REALM MAP":"NEXT CHAPTER")){if(Level==10)Screen=GameScreen.Map;else LoadLevel(Level+1);}}
-   else if(Screen==GameScreen.Paused){Text(375,293,530,56,"Your place on the trail is safe.");if(Button(375,380,530,56,"RESUME"))Resume();}
-   else{Text(375,290,530,70,"Rise again at your last checkpoint.");if(Button(375,380,530,56,"TRY AGAIN")){Respawn();Resume();}}
-   if(Button(375,491,252,56,"REALM MAP"))Screen=GameScreen.Map;if(Button(647,491,258,56,"RESTART LEVEL"))LoadLevel(Level);
+  bool Button(float x,float y,float w,float h,string s){
+   Rect r=new Rect(x,y,w,h);
+   Vector2 mpos=Event.current.mousePosition;
+   bool hover=r.Contains(mpos);
+   Color bg=hover?new Color(.12f,.22f,.28f,.98f):new Color(.05f,.11f,.16f,.94f);
+   Color border=hover?Color.Lerp(Accent,Color.white,.4f):Accent*.85f;
+   BoxOutline(r,bg,border,hover?2.5f:1.8f);
+   return GUI.Button(r,s,button);
   }
-  void Control(float x,string name,string key){Box(new Rect(x,573,126,104),new Color(.06f,.14f,.19f,.78f));Text(x+12,590,116,35,name,small);Text(x+12,632,116,30,key,small);}
+  void Panel(float x,float y,float w,float h){
+   Rect r=new Rect(x,y,w,h);
+   BoxOutline(r,new Color(.028f,.06f,.09f,.95f),Accent,2f);
+   Box(new Rect(x+6,y+6,w-12,2),new Color(Accent.r,Accent.g,Accent.b,.25f));
+  }
+  void OnGUI(){
+   Styles();
+   GUI.matrix=Matrix4x4.TRS(Vector3.zero,Quaternion.identity,new Vector3(UnityEngine.Screen.width/1280f,UnityEngine.Screen.height/720f,1));
+   if(Screen==GameScreen.Playing){
+    // Health & Realm Banner
+    Panel(24,20,360,112);
+    Text(42,28,320,24,$"REALM {Realm+1}  /  {Realms[Realm]}",small);
+    Text(42,54,320,32,Titles[Level-1]);
+
+    float targetH=Player?Mathf.Clamp01((float)Player.Health/Player.MaxHealth):1f;
+    healthLag=Mathf.Lerp(healthLag,targetH,Time.unscaledDeltaTime*3.5f);
+    BoxOutline(new Rect(42,98,230,14),new Color(.12f,.18f,.22f),new Color(.28f,.38f,.45f),1f);
+    if(healthLag>targetH)Box(new Rect(43,99,228*healthLag,12),new Color(1f,.65f,.35f,.75f));
+    Box(new Rect(43,99,228*targetH,12),new Color(.95f,.28f,.28f));
+    Text(282,91,95,26,$"HP {Player.Health}/{Player.MaxHealth}",small);
+
+    // Collectibles Panel
+    Panel(404,20,240,68);
+    Text(422,34,215,40,$"COINS {Coins:00}   GEMS {Gems}");
+
+    // Power Selector & Energy Bar
+    string[] powerNames={"EMBER [FIRE]","FROST [ICE]","GALE [WIND]"};
+    Color[] powerCols={new Color(1f,.45f,.1f),new Color(.2f,.85f,1f),new Color(.2f,1f,.55f)};
+    if(Button(660,20,205,50,powerNames[Player.Power]))Player.Power=(Player.Power+1)%3;
+    BoxOutline(new Rect(660,74,205,8),new Color(.1f,.15f,.2f),powerCols[Player.Power]*.5f,1f);
+    Box(new Rect(661,75,203*Mathf.Clamp01(Player.Energy/100f),6),powerCols[Player.Power]);
+
+    // Timer and Pause Button
+    Panel(882,20,135,50);Text(898,32,105,28,$"TIME {Clock(Elapsed)}",small);
+    if(Button(1035,20,120,50,"PAUSE"))Pause();
+
+    // Boss Bar
+    var boss=Enemies.Find(x=>x&&x.Boss&&x.Health>0);
+    if(boss&&Vector3.Distance(Player.transform.position,boss.transform.position)<32){
+     Panel(390,105,500,68);
+     Text(410,112,470,26,boss.DisplayName,small);
+     BoxOutline(new Rect(410,144,460,14),new Color(.25f,.12f,.15f),new Color(.6f,.25f,.3f),1f);
+     Box(new Rect(411,145,458*Mathf.Clamp01(boss.Health/boss.MaxHealth),12),Accent);
+    }
+
+    if(Time.unscaledTime<noticeUntil){
+     Panel(260,192,760,62);
+     Text(282,204,716,48,Notice,small);
+    }
+
+    // Touch and Keyboard Controls Guide
+    Box(new Rect(28,580,140,98),new Color(.04f,.09f,.13f,.72f));
+    Text(44,596,120,60,"MOVE\nW A S D\nSTICK",small);
+    Control(685,"DODGE","SHIFT / BUTTON");
+    Control(830,"POWER","K / BURST");
+    Control(975,"BLADE","J / SWING");
+    Control(1120,"JUMP","SPACE / AIR");
+    Text(24,692,1200,24,"Double jump to cross gaps  *  Hold attack for charged slash  *  Orbit camera by dragging screen",small);
+    return;
+   }
+
+   // Backdrop Dimmer
+   Box(new Rect(0,0,1280,720),new Color(.015f,.03f,.045f,.75f));
+
+   if(Screen==GameScreen.Menu){
+    Panel(64,65,660,585);
+    Text(96,90,600,32,"✦ LEGENDS OF THE LOST REALMS ✦",small);
+    Text(96,135,600,145,"Three realms.\nOne lost heart.",title);
+    Box(new Rect(96,290,590,2),new Color(Accent.r,Accent.g,Accent.b,.4f));
+    Text(96,308,580,72,"Aster's epic journey in full 3D.\nWield elemental blades, cross treacherous floating isles, and restore the ancient portals.");
+    if(Button(96,415,280,62,"► CONTINUE JOURNEY"))LoadLevel(Save.unlocked);
+    if(Button(396,415,280,62,"🗺 REALM ATLAS"))Screen=GameScreen.Map;
+    if(Button(96,495,280,58,"⚙ SANCTUARY"))Screen=GameScreen.Settings;
+    Text(96,585,580,26,"UNITY 3D EDITION  *  TOUCH + GAMEPAD + KEYBOARD",small);
+    return;
+   }
+
+   if(Screen==GameScreen.Map){
+    Panel(50,45,1180,630);
+    Text(80,65,1080,56,"Realm Atlas",title);
+    Text(80,130,1050,34,$"Treasury: {Save.coins} Gold   *   {Save.gems} Gems   *   {TotalStars()}/30 Stars");
+    Box(new Rect(80,170,1120,2),new Color(Accent.r,Accent.g,Accent.b,.35f));
+    for(int i=0;i<10;i++){
+     float x=80+(i%5)*228,y=195+(i/5)*175;
+     bool unlocked=i+1<=Save.unlocked;
+     GUI.enabled=unlocked;
+     string starStr=unlocked?(Save.stars[i]>0?new string('★',Save.stars[i]):"---"):"LOCKED";
+     if(Button(x,y,212,145,$"CHAPTER {i+1:00}\n\n{Titles[i]}\n\n{starStr}"))LoadLevel(i+1);
+     GUI.enabled=true;
+    }
+    if(Button(80,588,200,56,"◄ BACK"))Screen=GameScreen.Menu;
+    return;
+   }
+
+   if(Screen==GameScreen.Settings){
+    Panel(200,55,880,610);
+    Text(240,78,800,58,"Sanctuary & Blessings",title);
+    Box(new Rect(240,145,800,2),new Color(Accent.r,Accent.g,Accent.b,.35f));
+    if(Button(240,165,385,58,"MUSIC: "+(Save.music?"ENABLED":"MUTED"))){
+     Save.music=!Save.music;if(Save.music)Music.Play();else Music.Pause();Persist();
+    }
+    if(Button(655,165,385,58,"SOUND EFFECTS: "+(Save.sound?"ENABLED":"MUTED"))){
+     Save.sound=!Save.sound;Persist();
+    }
+    Text(240,250,800,34,$"Available Resources:  {Save.coins} Gold   *   {Save.gems} Gems");
+    if(Button(240,300,800,65,$"VITALITY RANK {Save.healthRank}/3  (Max HP +{Save.healthRank})   -   Cost: {50+Save.healthRank*40} Gold")){
+     int cost=50+Save.healthRank*40;
+     if(Save.healthRank<3&&Save.coins>=cost){Save.coins-=cost;Save.healthRank++;Persist();Sound("upgrade");}
+    }
+    if(Button(240,385,800,65,$"ELEMENTAL POWER RANK {Save.powerRank}/3  (Damage +{Save.powerRank*20}%)   -   Cost: {3+Save.powerRank*2} Gems")){
+     int cost=3+Save.powerRank*2;
+     if(Save.powerRank<3&&Save.gems>=cost){Save.gems-=cost;Save.powerRank++;Persist();Sound("upgrade");}
+    }
+    Text(240,480,800,54,"Sanctuary blessings apply instantly and persist across all chapters.",small);
+    if(Button(240,565,220,56,"◄ BACK"))Screen=GameScreen.Menu;
+    return;
+   }
+
+   // Pause / Complete / Defeat Screens
+   Panel(320,120,640,485);
+   string heading=Screen==GameScreen.Paused?"A Moment of Rest":Screen==GameScreen.Complete?(Level==10?"The Lost Realms Restored!":"Chapter Cleared!"):"The Light Remains";
+   Text(355,150,570,95,heading,title);
+   Box(new Rect(355,255,570,2),new Color(Accent.r,Accent.g,Accent.b,.4f));
+   if(Screen==GameScreen.Complete){
+    string starDisplay=new string('★',EarnedStars);
+    Text(355,275,570,80,$"TRIUMPH!  {starDisplay}   Elapsed: {Clock(Elapsed)}\nRewards: +{Coins+EarnedStars*10} Gold   +{Gems} Gems");
+    if(Button(355,385,570,60,Level==10?"RETURN TO REALM ATLAS":"NEXT CHAPTER")){
+     if(Level==10)Screen=GameScreen.Map;else LoadLevel(Level+1);
+    }
+   }else if(Screen==GameScreen.Paused){
+    Text(355,280,570,60,"Your journey is paused. All progress is safe.");
+    if(Button(355,375,570,60,"RESUME JOURNEY"))Resume();
+   }else{
+    Text(355,280,570,65,"Rise again at your last shrine checkpoint.");
+    if(Button(355,375,570,60,"TRY AGAIN")){Respawn();Resume();}
+   }
+   if(Button(355,475,270,58,"🗺 ATLAS"))Screen=GameScreen.Map;
+   if(Button(645,475,280,58,"↺ RESTART"))LoadLevel(Level);
+  }
+  void Control(float x,string name,string key){
+   BoxOutline(new Rect(x,570,132,108),new Color(.05f,.11f,.16f,.85f),Accent*.7f,1.5f);
+   Text(x+10,585,115,35,name,small);
+   Text(x+10,630,115,30,key,small);
+  }
   int TotalStars(){int n=0;foreach(int s in Save.stars)n+=s;return n;}
  }
 }
-
-
