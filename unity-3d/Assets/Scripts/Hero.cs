@@ -48,11 +48,19 @@ namespace LostRealms {
   void OnDestroy(){if(hasGraph&&graph.IsValid())graph.Destroy();}
  }
  public class FollowCamera:MonoBehaviour {
-  public Transform Target;public float Yaw,Shake;Vector3 velocity;bool snapped;public void Snap(){snapped=false;velocity=Vector3.zero;}
-  void LateUpdate(){if(!Target)return;Vector3 focus=Target.position+Vector3.up*1.15f;Vector3 offset=Quaternion.Euler(0,Yaw,0)*new Vector3(0,4.1f,-7.2f);Vector3 desired=focus+offset;
-   if(Physics.SphereCast(focus,.22f,offset.normalized,out var hit,offset.magnitude,~0,QueryTriggerInteraction.Ignore)&&hit.collider.gameObject!=Target.gameObject)desired=focus+offset.normalized*Mathf.Max(1.5f,hit.distance-.2f);
-   if(!snapped){transform.position=desired;snapped=true;}else transform.position=Vector3.SmoothDamp(transform.position,desired,ref velocity,.12f);
-   transform.LookAt(focus+Vector3.up*.25f);if(Shake>0){Shake-=Time.deltaTime;transform.position+=Random.insideUnitSphere*.07f;}
+  public Transform Target;public float Yaw,Shake;Vector3 currentFocus;Vector3 velocity;float currentDist=8.3f;float distVelocity;bool initialized;
+  public void Snap(){initialized=false;velocity=Vector3.zero;currentDist=8.3f;}
+  void LateUpdate(){if(!Target)return;Vector3 targetFocus=Target.position+Vector3.up*1.35f;
+   if(!initialized){currentFocus=targetFocus;initialized=true;}
+   else{currentFocus.x=targetFocus.x;currentFocus.z=targetFocus.z;currentFocus.y=Mathf.Lerp(currentFocus.y,targetFocus.y,Time.deltaTime*8f);}
+   Vector3 dir=Quaternion.Euler(14f,Yaw,0)*new Vector3(0,0.45f,-1f).normalized;float targetDist=8.0f;
+   int mask=1<<0;
+   if(Physics.SphereCast(currentFocus,0.28f,dir,out var hit,targetDist,mask,QueryTriggerInteraction.Ignore)){
+    if(hit.collider!=null&&!hit.collider.isTrigger&&!hit.collider.transform.IsChildOf(Target))targetDist=Mathf.Max(2.0f,hit.distance-0.25f);
+   }
+   currentDist=Mathf.SmoothDamp(currentDist,targetDist,ref distVelocity,0.12f);Vector3 desired=currentFocus+dir*currentDist;
+   transform.position=Vector3.SmoothDamp(transform.position,desired,ref velocity,0.08f);transform.LookAt(currentFocus+Vector3.up*0.2f);
+   if(Shake>0){Shake-=Time.deltaTime;transform.position+=Random.insideUnitSphere*0.06f;}
   }
  }
  public class Pulse:MonoBehaviour {float age,duration,radius;Color color;public static void Create(Vector3 at,float radius,Color color,float duration){var root=Art.Ring(at,.5f,color,RealmGame.I.World.transform);var p=root.AddComponent<Pulse>();p.duration=duration;p.radius=radius;p.color=color;}void Update(){if(RealmGame.I.Screen!=GameScreen.Playing)return;age+=Time.deltaTime;transform.localScale=Vector3.one*Mathf.Lerp(.15f,radius*2,age/duration);if(age>=duration)Destroy(gameObject);}}

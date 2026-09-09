@@ -14,13 +14,13 @@ namespace LostRealms {
   public int Level=1, Realm, Coins, Gems, DamageTaken, EarnedStars; public float Elapsed; public Vector3 Checkpoint; public bool CheckpointActive; public string Notice=""; float noticeUntil; public Color Accent=>Accents[Realm];
   public Vector2 MoveInput; public bool JumpPressed,DashPressed,AttackPressed,AttackReleased,CastPressed; public bool AttackHeld;
   public readonly List<Enemy> Enemies=new List<Enemy>(); public AudioSource Music,Sfx;
-  Transform worldRoot; GUIStyle title,label,small,button; Texture2D pixel; Vector2 joyOrigin; int joyFinger=-1; float yawInput;
+  Transform worldRoot; GUIStyle title,label,small,button; Texture2D pixel; Vector2 joyOrigin; int joyFinger=-1, camFinger=-1; float yawInput;
   [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Boot(){if(FindAnyObjectByType<RealmGame>()==null)new GameObject("Lost Realms 3D").AddComponent<RealmGame>();}
   void Awake(){ I=this; Application.targetFrameRate=60; QualitySettings.vSyncCount=1; UnityEngine.Screen.orientation=ScreenOrientation.LandscapeLeft;
    try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v1"))Save=JsonUtility.FromJson<Progress>(PlayerPrefs.GetString("LostRealms3D.v1"))??new Progress();}catch{Save=new Progress();}
    if(Save.stars==null||Save.stars.Length!=10)Save.stars=new int[10]; if(Save.best==null||Save.best.Length!=10)Save.best=new float[10]; Save.unlocked=Mathf.Clamp(Save.unlocked,1,10);
    Music=gameObject.AddComponent<AudioSource>(); Music.loop=true; Music.volume=.24f; Sfx=gameObject.AddComponent<AudioSource>(); Sfx.volume=.7f;
-   var cam=new GameObject("Adventure Camera").AddComponent<Camera>(); cam.tag="MainCamera"; cam.gameObject.AddComponent<AudioListener>(); cam.nearClipPlane=.12f; cam.farClipPlane=320; cam.fieldOfView=58; CameraRig=cam.gameObject.AddComponent<FollowCamera>();
+   var cam=new GameObject("Adventure Camera").AddComponent<Camera>(); cam.tag="MainCamera"; cam.gameObject.AddComponent<AudioListener>(); cam.nearClipPlane=.25f; cam.farClipPlane=320; cam.fieldOfView=58; CameraRig=cam.gameObject.AddComponent<FollowCamera>();
    LoadLevel(1); Screen=GameScreen.Menu; Tell("The Heart of Realms is waiting.",4);
   }
   public void Persist(){if(Testing)return;PlayerPrefs.SetString("LostRealms3D.v1",JsonUtility.ToJson(Save));PlayerPrefs.Save();}
@@ -40,11 +40,21 @@ namespace LostRealms {
    if(Input.GetKeyDown(KeyCode.Q))Player.Power=(Player.Power+1)%3;
    if(Input.GetMouseButton(1))yawInput=Input.GetAxis("Mouse X")*3;
    float sx=1280f/UnityEngine.Screen.width,sy=720f/UnityEngine.Screen.height;
-   foreach(var t in Input.touches){Vector2 p=new Vector2(t.position.x*sx,(UnityEngine.Screen.height-t.position.y)*sy);bool began=t.phase==TouchPhase.Began;bool ended=t.phase==TouchPhase.Ended||t.phase==TouchPhase.Canceled;
-    if(began&&p.x<380&&p.y>400&&joyFinger<0){joyFinger=t.fingerId;joyOrigin=p;}
-    if(t.fingerId==joyFinger){if(ended)joyFinger=-1;else MoveInput=Vector2.ClampMagnitude(new Vector2(p.x-joyOrigin.x,joyOrigin.y-p.y)/65,1);continue;}
-    if(p.y>490){if(p.x>1120){if(began)JumpPressed=true;}else if(p.x>960){AttackHeld|=!ended;if(began)AttackPressed=true;if(ended)AttackReleased=true;}else if(p.x>820){if(began)CastPressed=true;}else if(p.x>680&&began)DashPressed=true;}
-    else if(p.x>700&&p.y>150&&t.phase==TouchPhase.Moved)yawInput+=t.deltaPosition.x*sx*.18f;
+   foreach(var t in Input.touches){
+    Vector2 p=new Vector2(t.position.x*sx,(UnityEngine.Screen.height-t.position.y)*sy);
+    bool began=t.phase==TouchPhase.Began,ended=t.phase==TouchPhase.Ended||t.phase==TouchPhase.Canceled;
+    if(began&&p.x<420&&p.y>380&&joyFinger<0){joyFinger=t.fingerId;joyOrigin=p;}
+    if(t.fingerId==joyFinger){if(ended)joyFinger=-1;else MoveInput=Vector2.ClampMagnitude(new Vector2(p.x-joyOrigin.x,joyOrigin.y-p.y)/60f,1f);continue;}
+    if(p.x>640&&p.y>400){
+     if(t.fingerId==camFinger)camFinger=-1;
+     if(p.x>1100){if(began)JumpPressed=true;}
+     else if(p.x>950){AttackHeld|=!ended;if(began)AttackPressed=true;if(ended)AttackReleased=true;}
+     else if(p.x>800){if(began)CastPressed=true;}
+     else if(p.x>640){if(began)DashPressed=true;}
+     continue;
+    }
+    if(began&&(p.y<=400||(p.x>=420&&p.x<=640))&&p.y>80&&camFinger<0){camFinger=t.fingerId;}
+    if(t.fingerId==camFinger){if(ended)camFinger=-1;else if(t.phase==TouchPhase.Moved)yawInput+=t.deltaPosition.x*sx*0.16f;}
    }
    MoveInput=Vector2.ClampMagnitude(MoveInput,1); CameraRig.Yaw+=yawInput;
   }

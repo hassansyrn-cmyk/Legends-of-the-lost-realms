@@ -52,11 +52,11 @@ namespace LostRealms {
   }
   GameObject FindIsland(Vector3 p){foreach(Transform t in transform)if(t.name=="Island"&&Vector3.Distance(t.position,p)<.1f)return t.gameObject;return null;}
   void Island(Vector3 pos,float width,float length,int index){var root=new GameObject("Island");root.transform.SetParent(transform);root.transform.position=pos;
-   Art.Shape("Walkable stone",PrimitiveType.Cube,new Vector3(0,-.85f,0),new Vector3(width,1.7f,length),stone,root.transform,true);
-   Art.Shape("Realm surface",PrimitiveType.Cube,new Vector3(0,-.06f,0),new Vector3(width+.06f,.12f,length+.06f),top,root.transform);
+   Art.Shape("Walkable stone",PrimitiveType.Cube,new Vector3(0,-.92f,0),new Vector3(width,1.7f,length),stone,root.transform,true);
+   Art.Shape("Realm surface",PrimitiveType.Cube,new Vector3(0,.02f,0),new Vector3(width+.08f,.16f,length+.08f),top,root.transform);
    var rock=Art.Shape("Hanging rock",PrimitiveType.Cube,new Vector3(0,-2.5f,0),new Vector3(width*.66f,3.4f,length*.68f),stone*.8f,root.transform);rock.transform.localRotation=Quaternion.Euler(0,10,8);
    for(int side=-1;side<=1;side+=2){if(width<7)break;for(int n=0;n<2;n++){Vector3 p=new Vector3(side*(width*.5f-.6f),0,(n==0?-1:1)*(length*.5f-.7f));Decor(p,root.transform,index+n);}}
-   Art.Ring(new Vector3(0,.025f,0),.55f,accent*.7f,root.transform);
+   Art.Ring(new Vector3(0,.11f,0),.55f,accent*.7f,root.transform);
   }
   void Decor(Vector3 p,Transform parent,int seed){if(realm==0){Art.Shape("Ancient trunk",PrimitiveType.Cylinder,p+Vector3.up*1.5f,new Vector3(.38f,1.5f,.38f),new Color(.23f,.19f,.15f),parent);for(int i=0;i<3;i++)Art.Shape("Foliage",PrimitiveType.Sphere,p+new Vector3(Mathf.Sin(i*2)*.45f,2.5f+i*.55f,Mathf.Cos(i*2)*.35f),new Vector3(2.1f,1.8f,2.1f),top*(1.2f+i*.12f),parent);}
    else if(realm==1){Art.Shape("Ruined pillar",PrimitiveType.Cube,p+Vector3.up*1.3f,new Vector3(.7f,2.6f,.7f),top*1.2f,parent);Art.Shape("Pillar crown",PrimitiveType.Cube,p+Vector3.up*2.7f,new Vector3(1.15f,.25f,1.15f),accent*.8f,parent);}
