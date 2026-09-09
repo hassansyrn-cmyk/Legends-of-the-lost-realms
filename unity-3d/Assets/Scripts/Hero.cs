@@ -5,7 +5,7 @@ using UnityEngine.Playables;
 namespace LostRealms {
  [DefaultExecutionOrder(20)] public class Hero:MonoBehaviour {
   public CharacterController Controller;public int MaxHealth,Health,Power;public float Energy=100;public bool Grounded=>Controller&&Controller.isGrounded; public CharacterVisual Visual;
-  Vector3 velocity;float vertical,jumpGrace,dashUntil,dashReady,immuneUntil,attackReady,comboUntil,chargeStart;int jumps,combo;bool charging;
+  Vector3 velocity;float vertical,jumpGrace,dashUntil,dashReady,immuneUntil,attackReady,comboUntil,chargeStart;int jumps,combo;bool charging;float jumpBuffer;
   void Awake(){
    Controller=gameObject.AddComponent<CharacterController>();Controller.height=1.75f;Controller.radius=.32f;Controller.center=Vector3.up*.9f;Controller.stepOffset=.35f;Controller.slopeLimit=48;
    MaxHealth=5+RealmGame.I.Save.healthRank;Health=MaxHealth;
@@ -24,7 +24,9 @@ namespace LostRealms {
 
    // Grounding and Jump Grace (Coyote time)
    if(Grounded){jumps=0;jumpGrace=.14f;if(vertical<0)vertical=-2f;}else jumpGrace-=dt;
-   if(g.JumpPressed&&(jumps<2||jumpGrace>0)){
+   jumpBuffer=g.JumpPressed?.13f:Mathf.Max(0,jumpBuffer-dt);
+   if(jumpBuffer>0&&(jumps<2||jumpGrace>0)){
+    jumpBuffer=0;
     vertical=8.4f;jumps=jumpGrace>0?1:jumps+1;jumpGrace=0;
     g.Sound(jumps==1?"jump":"double_jump");
     if(jumps==2){
@@ -82,7 +84,7 @@ namespace LostRealms {
    }
   }
 
-  public void Warp(Vector3 p){Controller.enabled=false;transform.position=p;Controller.enabled=true;vertical=0;velocity=Vector3.zero;immuneUntil=RealmGame.I.Elapsed+1.2f;RealmGame.I.CameraRig.Snap();}
+  public void Warp(Vector3 p){Controller.enabled=false;transform.position=p;Controller.enabled=true;vertical=0;velocity=Vector3.zero;jumpBuffer=0;charging=false;immuneUntil=RealmGame.I.Elapsed+1.2f;RealmGame.I.CameraRig.Snap();}
   public void Damage(int damage,Vector3 source){
    if(RealmGame.I.Elapsed<immuneUntil||Health<=0)return;
    Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=RealmGame.I.Elapsed+1;
@@ -99,6 +101,9 @@ namespace LostRealms {
    float attackDuration=charged?.62f:.42f;
    attackReady=RealmGame.I.Elapsed+attackDuration;
 
+   // Small facing assist keeps nearby targets usable with a phone stick.
+   Enemy closest=null;float nearest=3.5f;foreach(var foe in g.Enemies){if(!foe||foe.Health<=0)continue;Vector3 d=foe.transform.position-transform.position;d.y=0;if(d.magnitude<nearest&&Vector3.Dot(transform.forward,d.normalized)>.35f){closest=foe;nearest=d.magnitude;}}
+   if(closest){Vector3 aim=closest.transform.position-transform.position;aim.y=0;if(aim.sqrMagnitude>.01f)transform.rotation=Quaternion.LookRotation(aim);}
    // Forward attack step for momentum
    Vector3 lungeDir=transform.forward;
    velocity=lungeDir*(charged?5.5f:3.6f);
@@ -160,8 +165,8 @@ namespace LostRealms {
      v.animator.applyRootMotion=false;
      v.animator.cullingMode=AnimatorCullingMode.CullUpdateTransforms;
     }
-    // Attach hero blade if Aster
-    if(role=="Aster"){
+    // The supplied Aster mesh already includes a sword; avoid attaching a second weapon.
+    if(role=="Aster"&&model.GetComponentsInChildren<SkinnedMeshRenderer>().Length==0){
      Transform rightHand=null;
      foreach(var t in model.GetComponentsInChildren<Transform>()){
       if(t.name.Equals("hand_R",System.StringComparison.OrdinalIgnoreCase)||t.name.EndsWith("hand_r",System.StringComparison.OrdinalIgnoreCase)||t.name.EndsWith("RightHand",System.StringComparison.OrdinalIgnoreCase)){
@@ -236,6 +241,8 @@ namespace LostRealms {
   public static void Attach(Transform hand){
    var go=new GameObject("HeroBlade");
    go.transform.SetParent(hand,false);
+   Vector3 inherited=hand.lossyScale;
+   go.transform.localScale=new Vector3(1f/Mathf.Max(.0001f,Mathf.Abs(inherited.x)),1f/Mathf.Max(.0001f,Mathf.Abs(inherited.y)),1f/Mathf.Max(.0001f,Mathf.Abs(inherited.z)));
    go.transform.localPosition=new Vector3(0.04f,0.06f,-0.02f);
    go.transform.localRotation=Quaternion.Euler(15f,95f,-85f);
    Instance=go.AddComponent<HeroWeapon>();
@@ -256,7 +263,7 @@ namespace LostRealms {
    // Glowing runic core channel
    var rune=Art.Shape("RuneCore",PrimitiveType.Cube,new Vector3(0,.56f,0),new Vector3(.024f,.94f,.024f),Color.white,transform);
    runeRenderer=rune.GetComponent<Renderer>();
-   UpdatePower(RealmGame.I?RealmGame.I.Player.Power:0);
+   UpdatePower(RealmGame.I&&RealmGame.I.Player?RealmGame.I.Player.Power:0);
   }
   void Update(){
    if(RealmGame.I&&RealmGame.I.Player&&RealmGame.I.Player.Power!=lastPower)
@@ -386,12 +393,12 @@ namespace LostRealms {
  }
 
  public class FollowCamera:MonoBehaviour {
-  public Transform Target;public float Yaw,Shake;Vector3 currentFocus;Vector3 velocity;float currentDist=8.3f;float distVelocity;bool initialized;
+  public Transform Target;public float Yaw,Shake;Vector3 currentFocus;Vector3 velocity;float groundY;float currentDist=8.3f;float distVelocity;bool initialized;
   public void Snap(){initialized=false;velocity=Vector3.zero;currentDist=8.3f;}
   void LateUpdate(){
    if(!Target)return;Vector3 targetFocus=Target.position+Vector3.up*1.35f;
-   if(!initialized){currentFocus=targetFocus;initialized=true;}
-   else{currentFocus.x=targetFocus.x;currentFocus.z=targetFocus.z;currentFocus.y=Mathf.Lerp(currentFocus.y,targetFocus.y,Time.deltaTime*8f);}
+   if(!initialized){currentFocus=targetFocus;groundY=Target.position.y;initialized=true;}
+   else{var hero=Target.GetComponent<Hero>();if(hero&&hero.Grounded)groundY=Target.position.y;targetFocus.y=groundY+1.35f+Mathf.Clamp(Target.position.y-groundY,0,1.5f)*.18f;currentFocus=Vector3.Lerp(currentFocus,targetFocus,1-Mathf.Exp(-Time.deltaTime*10));}
    Vector3 dir=Quaternion.Euler(14f,Yaw,0)*new Vector3(0,0.45f,-1f).normalized;float targetDist=8.0f;
    int mask=1<<0;
    if(Physics.SphereCast(currentFocus,0.28f,dir,out var hit,targetDist,mask,QueryTriggerInteraction.Ignore)){
@@ -416,3 +423,6 @@ namespace LostRealms {
   }
  }
 }
+
+
+

@@ -14,7 +14,7 @@ namespace LostRealms {
   public int Level=1, Realm, Coins, Gems, DamageTaken, EarnedStars; public float Elapsed; public Vector3 Checkpoint; public bool CheckpointActive; public string Notice=""; float noticeUntil; public Color Accent=>Accents[Realm];
   public Vector2 MoveInput; public bool JumpPressed,DashPressed,AttackPressed,AttackReleased,CastPressed; public bool AttackHeld;
   public readonly List<Enemy> Enemies=new List<Enemy>(); public AudioSource Music,Sfx;
-  Transform worldRoot; GUIStyle title,label,small,button; Texture2D pixel; Vector2 joyOrigin; int joyFinger=-1, camFinger=-1; float yawInput;
+  Transform worldRoot; GUIStyle title,label,small,button; Texture2D pixel; readonly TouchRouter touch=new TouchRouter(); float yawInput;
   [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Boot(){if(FindAnyObjectByType<RealmGame>()==null)new GameObject("Lost Realms 3D").AddComponent<RealmGame>();}
   void Awake(){ I=this; Application.targetFrameRate=60; QualitySettings.vSyncCount=1; UnityEngine.Screen.orientation=ScreenOrientation.LandscapeLeft;
    try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v1"))Save=JsonUtility.FromJson<Progress>(PlayerPrefs.GetString("LostRealms3D.v1"))??new Progress();}catch{Save=new Progress();}
@@ -25,7 +25,7 @@ namespace LostRealms {
   }
   public void Persist(){if(Testing)return;PlayerPrefs.SetString("LostRealms3D.v1",JsonUtility.ToJson(Save));PlayerPrefs.Save();}
   public void LoadLevel(int id){
-   Time.timeScale=1; if(worldRoot){worldRoot.gameObject.SetActive(false);Destroy(worldRoot.gameObject);} Enemies.Clear(); Level=Mathf.Clamp(id,1,10); Realm=Level<=4?0:Level<=7?1:2; Coins=Gems=DamageTaken=EarnedStars=0; Elapsed=0; CheckpointActive=false;
+   Time.timeScale=1; touch.Reset(); if(worldRoot){worldRoot.gameObject.SetActive(false);Destroy(worldRoot.gameObject);} Enemies.Clear(); Level=Mathf.Clamp(id,1,10); Realm=Level<=4?0:Level<=7?1:2; Coins=Gems=DamageTaken=EarnedStars=0; Elapsed=0; CheckpointActive=false;
    worldRoot=new GameObject("Realm "+Level+" - "+Titles[Level-1]).transform; World=worldRoot.gameObject.AddComponent<RealmWorld>(); World.Build(Level,Realm);
    var hero=new GameObject("Aster"); hero.transform.SetParent(worldRoot); hero.transform.position=World.Spawn; Player=hero.AddComponent<Hero>(); Checkpoint=World.Spawn; CameraRig.Target=Player.transform; CameraRig.Snap();
    var clip=Resources.Load<AudioClip>("Audio/"+(World.IsBoss?"boss_battle_theme":Realm==0?"verdant_theme":Realm==1?"desert_exploration_theme":"frozen_exploration_theme"));Music.clip=clip;if(clip&&Save.music)Music.Play();
@@ -34,31 +34,20 @@ namespace LostRealms {
   void Update(){
    JumpPressed=DashPressed=AttackPressed=AttackReleased=CastPressed=false; MoveInput=Vector2.zero; yawInput=0;
    if(Input.GetKeyDown(KeyCode.Escape)){if(Screen==GameScreen.Playing)Pause();else if(Screen==GameScreen.Paused)Resume();else Screen=GameScreen.Menu;}
-   if(Screen!=GameScreen.Playing){AttackHeld=false;return;} Elapsed+=Time.deltaTime;
+   if(Screen!=GameScreen.Playing){AttackHeld=false;touch.Reset();return;} Elapsed+=Time.deltaTime;
    MoveInput=new Vector2((Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow)?1:0)-(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow)?1:0),(Input.GetKey(KeyCode.W)||Input.GetKey(KeyCode.UpArrow)?1:0)-(Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.DownArrow)?1:0));
    JumpPressed=Input.GetKeyDown(KeyCode.Space);DashPressed=Input.GetKeyDown(KeyCode.LeftShift);AttackPressed=Input.GetKeyDown(KeyCode.J);AttackReleased=Input.GetKeyUp(KeyCode.J);AttackHeld=Input.GetKey(KeyCode.J);CastPressed=Input.GetKeyDown(KeyCode.K);
    if(Input.GetKeyDown(KeyCode.Q))Player.Power=(Player.Power+1)%3;
-   if(Input.GetMouseButton(1))yawInput=Input.GetAxis("Mouse X")*3;
+   if(Input.touchCount==0&&Input.GetMouseButton(1))yawInput=Input.GetAxis("Mouse X")*3;
    float sx=1280f/UnityEngine.Screen.width,sy=720f/UnityEngine.Screen.height;
-   foreach(var t in Input.touches){
-    Vector2 p=new Vector2(t.position.x*sx,(UnityEngine.Screen.height-t.position.y)*sy);
-    bool began=t.phase==TouchPhase.Began,ended=t.phase==TouchPhase.Ended||t.phase==TouchPhase.Canceled;
-    if(began&&p.x<420&&p.y>380&&joyFinger<0){joyFinger=t.fingerId;joyOrigin=p;}
-    if(t.fingerId==joyFinger){if(ended)joyFinger=-1;else MoveInput=Vector2.ClampMagnitude(new Vector2(p.x-joyOrigin.x,joyOrigin.y-p.y)/60f,1f);continue;}
-    if(p.x>640&&p.y>400){
-     if(t.fingerId==camFinger)camFinger=-1;
-     if(p.x>1100){if(began)JumpPressed=true;}
-     else if(p.x>950){AttackHeld|=!ended;if(began)AttackPressed=true;if(ended)AttackReleased=true;}
-     else if(p.x>800){if(began)CastPressed=true;}
-     else if(p.x>640){if(began)DashPressed=true;}
-     continue;
-    }
-    if(began&&(p.y<=400||(p.x>=420&&p.x<=640))&&p.y>80&&camFinger<0){camFinger=t.fingerId;}
-    if(t.fingerId==camFinger){if(ended)camFinger=-1;else if(t.phase==TouchPhase.Moved)yawInput+=t.deltaPosition.x*sx*0.16f;}
-   }
+   touch.BeginFrame();
+   foreach(var t in Input.touches)touch.Sample(t.fingerId,new Vector2(t.position.x*sx,(UnityEngine.Screen.height-t.position.y)*sy),t.deltaPosition*sx,t.phase);
+   if(Input.touchCount==0)touch.Reset();
+   MoveInput+=touch.Move;JumpPressed|=touch.Jump;DashPressed|=touch.Dodge;CastPressed|=touch.Power;
+   AttackPressed|=touch.BladePressed;AttackReleased|=touch.BladeReleased;AttackHeld|=touch.BladeHeld;yawInput+=touch.Yaw;
    MoveInput=Vector2.ClampMagnitude(MoveInput,1); CameraRig.Yaw+=yawInput;
   }
-  public void Pause(){Screen=GameScreen.Paused;Music.Pause();joyFinger=-1;}
+  public void Pause(){Screen=GameScreen.Paused;Music.Pause();touch.Reset();}
   public void Resume(){Screen=GameScreen.Playing;if(Save.music)Music.UnPause();}
   void OnApplicationPause(bool paused){if(paused&&Screen==GameScreen.Playing)Pause();Persist();}
   void OnApplicationFocus(bool focused){if(!focused&&Screen==GameScreen.Playing)Pause();}
@@ -109,10 +98,11 @@ namespace LostRealms {
   }
   void Panel(float x,float y,float w,float h){
    Rect r=new Rect(x,y,w,h);
-   BoxOutline(r,new Color(.028f,.06f,.09f,.95f),Accent,2f);
+   BoxOutline(r,new Color(.028f,.06f,.09f,.80f),Accent,2f);
    Box(new Rect(x+6,y+6,w-12,2),new Color(Accent.r,Accent.g,Accent.b,.25f));
   }
   void OnGUI(){
+   if(!Player)return;
    Styles();
    GUI.matrix=Matrix4x4.TRS(Vector3.zero,Quaternion.identity,new Vector3(UnityEngine.Screen.width/1280f,UnityEngine.Screen.height/720f,1));
    if(Screen==GameScreen.Playing){
@@ -143,6 +133,7 @@ namespace LostRealms {
     Panel(882,20,135,50);Text(898,32,105,28,$"TIME {Clock(Elapsed)}",small);
     if(Button(1035,20,120,50,"PAUSE"))Pause();
 
+    foreach(var foe in Enemies){if(!foe||foe.Boss||foe.Health<=0||Vector3.Distance(Player.transform.position,foe.transform.position)>12)continue;Vector3 v=Camera.main.WorldToViewportPoint(foe.transform.position+Vector3.up*(foe.Kind==6?2.9f:2.1f));float x=v.x*1280,y=(1-v.y)*720;if(v.z<=0||y<175||y>540||x<45||x>1235)continue;Box(new Rect(x-34,y,68,7),new Color(.03f,.07f,.08f,.85f));Box(new Rect(x-33,y+1,66*Mathf.Clamp01(foe.Health/foe.MaxHealth),5),new Color(.94f,.62f,.32f));}
     // Boss Bar
     var boss=Enemies.Find(x=>x&&x.Boss&&x.Health>0);
     if(boss&&Vector3.Distance(Player.transform.position,boss.transform.position)<32){
@@ -157,14 +148,11 @@ namespace LostRealms {
      Text(282,204,716,48,Notice,small);
     }
 
-    // Touch and Keyboard Controls Guide
-    Box(new Rect(28,580,140,98),new Color(.04f,.09f,.13f,.72f));
-    Text(44,596,120,60,"MOVE\nW A S D\nSTICK",small);
-    Control(685,"DODGE","SHIFT / BUTTON");
-    Control(830,"POWER","K / BURST");
-    Control(975,"BLADE","J / SWING");
-    Control(1120,"JUMP","SPACE / AIR");
-    Text(24,692,1200,24,"Double jump to cross gaps  *  Hold attack for charged slash  *  Orbit camera by dragging screen",small);
+    if(Application.isMobilePlatform){
+     Panel(28,585,145,93);Text(46,600,110,26,"MOVE",small);
+     Box(new Rect(93+touch.Move.x*32,638-touch.Move.y*23,18,18),Accent);
+     Control(685,"DODGE","EVADE");Control(830,"POWER","CAST");Control(975,"BLADE","HOLD TO CHARGE");Control(1120,"JUMP","DOUBLE TAP");
+    }else Text(28,675,1200,28,"WASD Move   SPACE Double jump   SHIFT Dodge   J Blade / Hold to charge   K Power   Q Element   Right-drag Camera",small);
     return;
    }
 
@@ -180,7 +168,7 @@ namespace LostRealms {
     if(Button(96,415,280,62,"► CONTINUE JOURNEY"))LoadLevel(Save.unlocked);
     if(Button(396,415,280,62,"🗺 REALM ATLAS"))Screen=GameScreen.Map;
     if(Button(96,495,280,58,"⚙ SANCTUARY"))Screen=GameScreen.Settings;
-    Text(96,585,580,26,"UNITY 3D EDITION  *  TOUCH + GAMEPAD + KEYBOARD",small);
+    Text(96,585,580,26,"UNITY 3D EDITION  *  TOUCH + KEYBOARD",small);
     return;
    }
 
@@ -249,8 +237,11 @@ namespace LostRealms {
   void Control(float x,string name,string key){
    BoxOutline(new Rect(x,570,132,108),new Color(.05f,.11f,.16f,.85f),Accent*.7f,1.5f);
    Text(x+10,585,115,35,name,small);
-   Text(x+10,630,115,30,key,small);
+   Text(x+10,625,115,46,key,small);
   }
   int TotalStars(){int n=0;foreach(int s in Save.stars)n+=s;return n;}
  }
 }
+
+
+

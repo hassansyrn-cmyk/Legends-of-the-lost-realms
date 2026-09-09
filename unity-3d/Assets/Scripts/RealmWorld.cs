@@ -91,6 +91,7 @@ namespace LostRealms {
     if(last){EndZ=z+4;Gate(p+new Vector3(0,0,5));if(IsBoss)SpawnEnemy(p+new Vector3(0,.05f,-1),world+8,true,p,width,length);}
    }
    for(int i=0;i<40;i++){float z=-16+i*4.8f;float side=i%2==0?-1:1;Vector3 p=new Vector3(side*(16+(float)random.NextDouble()*24),-4,z);float h=8+(float)random.NextDouble()*22;Art.Shape("Distant realm spire",PrimitiveType.Cylinder,p,new Vector3(6,h,6),stone*.75f,transform);if(realm==0)Art.Shape("Distant canopy",PrimitiveType.Sphere,p+Vector3.up*h*.5f,new Vector3(12,6,12),top*.68f,transform);}
+   RealmScenery.Upgrade(this,realm);
   }
   GameObject FindIsland(Vector3 p){foreach(Transform t in transform)if(t.name=="Island"&&Vector3.Distance(t.position,p)<.1f)return t.gameObject;return null;}
   void Island(Vector3 pos,float width,float length,int index){
@@ -181,6 +182,8 @@ namespace LostRealms {
   void Update(){
    var g=RealmGame.I;if(g.Screen!=GameScreen.Playing)return;
    transform.Rotate(0,(Gem?75f:110f)*Time.deltaTime,0,Space.World);
+   Vector3 target=g.Player.transform.position+Vector3.up*.8f;
+   if(Vector3.Distance(Origin,target)<(Gem?1.6f:2.1f))Origin=Vector3.MoveTowards(Origin,target,Time.deltaTime*4.5f);
    transform.position=Origin+Vector3.up*Mathf.Sin(RealmGame.I.Elapsed*2.8f)*.15f;
    if(Vector3.Distance(g.Player.transform.position+Vector3.up*.8f,transform.position)<1.15f){
     HitSpark.Burst(transform.position,Vector3.up,Gem?g.Accent:new Color(1f,.85f,.2f),12);
@@ -227,3 +230,5 @@ namespace LostRealms {
   }
  }
 }
+
+
