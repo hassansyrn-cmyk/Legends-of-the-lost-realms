@@ -28,6 +28,7 @@ public static class AsterPhase1 {
   new ClipSpec("attack_3",AnimationSourceRoot+"/Aster_attack_3.fbx",false),
   new ClipSpec("charged",AnimationSourceRoot+"/Aster_charged.fbx",false),
   new ClipSpec("jump",AnimationSourceRoot+"/Aster_jump.fbx",false),
+  new ClipSpec("double_jump",AnimationSourceRoot+"/Aster_double_jump.fbx",false),
   new ClipSpec("dodge",AnimationSourceRoot+"/Aster_dodge.fbx",false),
   new ClipSpec("hit",AnimationSourceRoot+"/Aster_hit.fbx",false),
   new ClipSpec("death",AnimationSourceRoot+"/Aster_death.fbx",false)
@@ -61,7 +62,7 @@ public static class AsterPhase1 {
   BuildPrefab(sourceModel,avatar);
   AssetDatabase.SaveAssets();
   File.WriteAllLines("ASTER_PHASE1_REPORT.txt",report);
-  Debug.Log("MODEL_INTEGRATION_PASSED: supplied Mixamo Aster model, material, and 11 animation states prepared.");
+  Debug.Log("MODEL_INTEGRATION_PASSED: supplied Mixamo Aster model, material, and 12 animation states prepared.");
  }
 
  static void EnsureDirectories(){

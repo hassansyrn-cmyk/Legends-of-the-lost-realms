@@ -10,6 +10,7 @@ albedo_meta="unity-3d/Assets/Art/Textures/Aster_1.jpg.meta"
 hero_script="unity-3d/Assets/Scripts/Hero.cs"
 phase1_script="unity-3d/Assets/Editor/AsterPhase1.cs"
 build_script="unity-3d/Assets/Editor/RealmBuild.cs"
+motion_check=".github/scripts/verify-aster-motion-tuning.sh"
 
 fail() {
   printf 'CI configuration check failed: %s\n' "$1" >&2
@@ -22,6 +23,7 @@ fail() {
 [[ -f "$hero_script" ]] || fail "missing Aster runtime visual code"
 [[ -f "$phase1_script" ]] || fail "missing source-driven Aster Phase 1 importer"
 [[ -f "$build_script" ]] || fail "missing Unity build script"
+[[ -x "$motion_check" ]] || fail "missing executable Aster movement regression check"
 
 # Unity Library contents are derived artifacts. A cache from a different source
 # revision must not be restored because it can leave the AssetDatabase inconsistent.
@@ -35,7 +37,7 @@ grep -Eq '^[[:space:]]*dockerCpuLimit:[[:space:]]*2[[:space:]]*$' "$workflow" \
 
 # Phase 1 is reproducibly generated from the user's curated FBX sources.
 [[ -s "$model" ]] || fail "missing supplied Mixamo Aster base FBX"
-for clip in walk run attack_1 attack_2 attack_3 charged jump dodge hit death; do
+for clip in walk run attack_1 attack_2 attack_3 charged jump double_jump dodge hit death; do
   [[ -s "$animation_root/Aster_${clip}.fbx" ]] \
     || fail "missing supplied Aster_${clip}.fbx"
 done
@@ -56,8 +58,10 @@ grep -Fq 'Resources.Load<Material>("Materials/Aster")' "$hero_script" \
   || fail "Aster runtime material is not loaded from Resources"
 grep -Fq 'renderer.sharedMaterial=asterMaterial' "$hero_script" \
   || fail "Aster runtime material is not assigned to every renderer"
-for state in idle walk run attack_1 attack_2 attack_3 charged jump dodge hit death; do
+for state in idle walk run attack_1 attack_2 attack_3 charged jump double_jump dodge hit death; do
   grep -Fq "\"$state\"" "$hero_script" || fail "runtime state $state is not integrated"
 done
+
+bash "$motion_check"
 
 printf 'Unity CI configuration check passed.\n'

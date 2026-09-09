@@ -5,7 +5,9 @@ using UnityEngine.Playables;
 namespace LostRealms {
  [DefaultExecutionOrder(20)] public class Hero:MonoBehaviour {
   public CharacterController Controller;public int MaxHealth,Health,Power;public float Energy=100;public bool Grounded=>Controller&&Controller.isGrounded; public CharacterVisual Visual;
-  Vector3 velocity;float vertical,jumpGrace,dashUntil,dashReady,dodgeVisualUntil,hitUntil,immuneUntil,attackReady,comboUntil,chargeStart;int jumps,combo;bool charging;float jumpBuffer;string attackState="attack_1";
+  const float MaxMoveSpeed=4.8f,GroundResponse=18f,AirResponse=8f,StopResponse=22f;
+  Vector3 velocity;float vertical,jumpGrace,dashUntil,dashReady,dodgeVisualUntil,flipVisualUntil,hitUntil,immuneUntil,attackReady,comboUntil,chargeStart;int jumps,combo;bool charging;float jumpBuffer;string attackState="attack_1";
+  public float HorizontalSpeed{get{var horizontal=velocity;horizontal.y=0;return horizontal.magnitude;}}
   void Awake(){
    Controller=gameObject.AddComponent<CharacterController>();Controller.height=1.75f;Controller.radius=.32f;Controller.center=Vector3.up*.9f;Controller.stepOffset=.35f;Controller.slopeLimit=48;
    MaxHealth=5+RealmGame.I.Save.healthRank;Health=MaxHealth;
@@ -23,16 +25,19 @@ namespace LostRealms {
    Vector3 wish=forward*g.MoveInput.y+right*g.MoveInput.x;
 
    // Grounding and Jump Grace (Coyote time)
-   if(Grounded){jumps=0;jumpGrace=.14f;if(vertical<0)vertical=-2f;}else jumpGrace-=dt;
+   if(Grounded){jumps=0;jumpGrace=.14f;flipVisualUntil=0;if(vertical<0)vertical=-2f;}else jumpGrace-=dt;
    jumpBuffer=g.JumpPressed?.13f:Mathf.Max(0,jumpBuffer-dt);
    if(jumpBuffer>0&&(jumps<2||jumpGrace>0)){
     jumpBuffer=0;
     vertical=8.4f;jumps=jumpGrace>0?1:jumps+1;jumpGrace=0;
     g.Sound(jumps==1?"jump":"double_jump");
     if(jumps==2){
+     // This supplied Mixamo clip contains a complete airborne inversion. It is
+     // visual-only; physics remains controlled by CharacterController.
+     flipVisualUntil=RealmGame.I.Elapsed+.9f;Visual.Restart("double_jump");
      Color elemColor=Power==0?new Color(1f,.45f,.1f):Power==1?new Color(.2f,.85f,1f):new Color(.2f,1f,.55f);
      HitSpark.Burst(transform.position+Vector3.up*.2f,Vector3.down,elemColor,8);
-    }
+    }else Visual.Restart("jump");
    }
 
    // Dash
@@ -56,8 +61,9 @@ namespace LostRealms {
 
    // Horizontal acceleration
    if(RealmGame.I.Elapsed>=dashUntil){
-    float accel=g.Realm==2&&Grounded?7:16;
-    velocity=Vector3.Lerp(velocity,wish*6.1f,dt*accel);
+    Vector3 desiredVelocity=wish.sqrMagnitude>.0001f?wish.normalized*(MaxMoveSpeed*Mathf.Clamp01(wish.magnitude)):Vector3.zero;
+    float response=desiredVelocity.sqrMagnitude>.001f?(Grounded?GroundResponse:AirResponse):StopResponse;
+    velocity=Vector3.MoveTowards(velocity,desiredVelocity,response*dt);
    }
 
    // Vertical physics with Jump Apex Float
@@ -81,9 +87,9 @@ namespace LostRealms {
    }else if(RealmGame.I.Elapsed<attackReady-.06f){
     Visual.Play(attackState);
    }else if(!Grounded){
-    Visual.Play("jump");
+    Visual.Play(RealmGame.I.Elapsed<flipVisualUntil?"double_jump":"jump");
    }else if(wish.sqrMagnitude>.01f){
-    float speedRatio=Mathf.Clamp(velocity.magnitude/3.4f,0.7f,1.8f);
+    float speedRatio=Mathf.Clamp01(HorizontalSpeed/MaxMoveSpeed);
     Visual.PlayWalk(speedRatio);
    }else{
     Visual.Play("idle");
@@ -105,7 +111,7 @@ namespace LostRealms {
    var g=RealmGame.I;
    combo=RealmGame.I.Elapsed<comboUntil?(combo%3)+1:1;
    comboUntil=RealmGame.I.Elapsed+.95f;
-   float attackDuration=charged?.78f:.52f;
+   float attackDuration=charged?.84f:(combo==2?.78f:(combo==3?.64f:.66f));
    attackReady=RealmGame.I.Elapsed+attackDuration;
    attackState=charged?"charged":"attack_"+Mathf.Clamp(combo,1,3);
 
@@ -159,7 +165,8 @@ namespace LostRealms {
 
  public class CharacterVisual:MonoBehaviour {
   public Animator animator;PlayableGraph graph;AnimationMixerPlayable mixer;AnimationClipPlayable[] playable=new AnimationClipPlayable[2];AnimationClip[] clips;string current="";float blend;int slot;bool hasGraph;Transform fallbackBody;
-  static readonly string[] Names={"idle","walk","run","attack_1","attack_2","attack_3","charged","jump","dodge","hit","death"};
+  public string CurrentState=>current;
+  static readonly string[] Names={"idle","walk","run","attack_1","attack_2","attack_3","charged","jump","double_jump","dodge","hit","death"};
 
   public static CharacterVisual Create(string role,Transform parent,float height,Color color){
    var holder=new GameObject(role+" visual");holder.transform.SetParent(parent,false);var v=holder.AddComponent<CharacterVisual>();
@@ -219,11 +226,13 @@ namespace LostRealms {
   public void Restart(string state){current="";Play(state);}
   public void PlayAttack(int combo,bool charged){
    current="";Play(charged?"charged":"attack_"+Mathf.Clamp(combo,1,3));
-   if(hasGraph&&playable[slot].IsValid())playable[slot].SetSpeed(charged?2.8f:combo==2?4.8f:3.9f);
+   if(hasGraph&&playable[slot].IsValid())playable[slot].SetSpeed(charged?2.55f:combo==2?3.15f:combo==3?2.9f:3.05f);
   }
   public void PlayWalk(float speedRatio=1f){
-   string locomotion=speedRatio>1.2f?"run":"walk";Play(locomotion);
-   if(hasGraph&&playable[slot].IsValid())playable[slot].SetSpeed(locomotion=="run"?Mathf.Clamp(speedRatio*.82f,.85f,1.45f):Mathf.Clamp(speedRatio,.75f,1.25f));
+   // Hysteresis keeps a thumbstick near the walk/run threshold from restarting
+   // clips every frame and making the character appear to twitch.
+   string locomotion=speedRatio>.72f||(current=="run"&&speedRatio>.58f)?"run":"walk";Play(locomotion);
+   if(hasGraph&&playable[slot].IsValid())playable[slot].SetSpeed(locomotion=="run"?Mathf.Lerp(.76f,1.02f,Mathf.InverseLerp(.68f,1f,speedRatio)):Mathf.Lerp(.62f,.9f,Mathf.InverseLerp(.08f,.68f,speedRatio)));
   }
   public void Play(string state){
    if(state=="attack")state="attack_1";
@@ -234,9 +243,10 @@ namespace LostRealms {
    if(playable[slot].IsValid()){mixer.DisconnectInput(slot);graph.DestroyPlayable(playable[slot]);}
    playable[slot]=AnimationClipPlayable.Create(graph,clip);
    playable[slot].SetApplyFootIK(false);
-   if(state=="jump")playable[slot].SetSpeed(2.3f);
-   if(state=="dodge")playable[slot].SetSpeed(3.1f);
-   if(state=="hit")playable[slot].SetSpeed(2.4f);
+   if(state=="jump")playable[slot].SetSpeed(1.9f);
+   if(state=="double_jump")playable[slot].SetSpeed(3.55f);
+   if(state=="dodge")playable[slot].SetSpeed(2.9f);
+   if(state=="hit")playable[slot].SetSpeed(1.85f);
    playable[slot].SetTime(0);
    graph.Connect(playable[slot],0,mixer,slot);blend=0;
   }
@@ -245,7 +255,7 @@ namespace LostRealms {
    if(hasGraph){
     float speed=RealmGame.I.Screen==GameScreen.Playing?1:0;
     graph.GetRootPlayable(0).SetSpeed(speed);
-    float blendRate=current=="dodge"||current=="hit"?18f:current.StartsWith("attack_")||current=="charged"?14f:10f;
+    float blendRate=current=="dodge"||current=="hit"?16f:current=="double_jump"?15f:current.StartsWith("attack_")||current=="charged"?12f:9f;
     blend=Mathf.MoveTowards(blend,1,Time.deltaTime*blendRate);
     mixer.SetInputWeight(slot,blend);mixer.SetInputWeight(1-slot,1-blend);
    }else if(fallbackBody){

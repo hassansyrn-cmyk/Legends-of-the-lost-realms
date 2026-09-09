@@ -11,7 +11,7 @@ The upgrade will turn the current prototype into a more coherent mobile third-pe
 
 | Phase | Scope | Review gate |
 |---|---|---|
-| **1. Aster character and movement** | Replace the legacy Aster mesh with the supplied 52-bone Mixamo character. Integrate idle, walk, run, three melee variations, charged attack, jump, roll-dodge, hit reaction, and death. Add reproducible import automation and Android artifact verification. | Aster is textured, correctly scaled, animated in all gameplay states, and packaged in the APK. |
+| **1. Aster character and movement** | Replace the legacy Aster mesh with the supplied 52-bone Mixamo character. Integrate idle, walk, run, three melee variations, charged attack, jump, double-jump flip, roll-dodge, hit reaction, and death. Add reproducible import automation and Android artifact verification. | Aster is textured, correctly scaled, animated in all gameplay states, and packaged in the APK. |
 | **2. Checkpoints and gems** | Replace cube placeholders with readable fantasy checkpoint and collectible designs. Add activation, idle, collection, and feedback effects. Use permissively licensed external assets only if they outperform original in-project models. | Checkpoints and gems have distinctive silhouettes, materials, animation, sound, and clear gameplay feedback. |
 | **3. Graphics and presentation** | Improve lighting, atmosphere, environment materials, landmarks, particles, camera composition, color grading, HUD hierarchy, and visual readability. | Each realm has a distinct visual identity and remains readable and performant on a phone. |
 | **4. Gameplay polish and optimization** | Tune combat windows, enemy telegraphs, target assist, traversal, difficulty, rewards, haptics, audio feedback, accessibility, and mobile performance. | The full ten-level loop is responsive, understandable, balanced, and stable on representative Android hardware. |
@@ -30,6 +30,7 @@ The supplied ZIP contains 25 FBX files. Every file contains the same textured fa
 | Combo strike 3 | `Standing Melee Attack Kick Ver. 1.fbx` | Finisher variation with stronger damage. |
 | Charged attack | `Great Sword Jump Attack.fbx` | Heavier attack with a longer commitment window. |
 | Jump | `Standing Jump.fbx` | Takeoff and airborne pose for the existing double-jump system. |
+| Double-jump flip | `Inverted Double Kick To Kip Up.fbx` | Full airborne inversion triggered only by the second jump. |
 | Dodge | `Falling To Roll.fbx` | Fast roll visual synchronized with the existing invulnerable dash. |
 | Hit reaction | `Standing React Large From Left.fbx` | Short impact response without removing player control for too long. |
 | Death | `Standing Death Backward 01.fbx` | Defeat animation with no locomotion loop. |
@@ -42,7 +43,7 @@ The implementation uses high-level movement principles observed in three compara
 
 ## Phase 1 Acceptance Criteria
 
-The Android build must compile from a clean Unity Library. The generated Aster prefab must use the supplied Mixamo mesh, a valid Humanoid avatar, and the supplied albedo and normal textures. The compiled APK must contain the `Aster` material, `Aster_0`, `Aster_1`, and all eleven named clips. Runtime validation must confirm that Aster has a skinned renderer, uses the `Aster` material, remains within the intended character scale, and exposes every required animation state.
+The Android build must compile from a clean Unity Library. The generated Aster prefab must use the supplied Mixamo mesh, a valid Humanoid avatar, and the supplied albedo and normal textures. The compiled APK must contain the `Aster` material, `Aster_0`, `Aster_1`, and all twelve named clips. Runtime validation must confirm that Aster has a skinned renderer, uses the `Aster` material, remains within the intended character scale, remains at or below the normal movement-speed cap, and exposes every required animation state including the second-jump flip.
 
 ## References
 

@@ -67,7 +67,7 @@ jobs:
           cat > APK_BUILD_METADATA.txt <<EOF
           Legends of the Lost Realms 3D Debug APK
           Engine: Unity 6000.6.0f1
-          Character phase: Supplied Mixamo Aster model with 11 animation states
+          Character phase: Supplied Mixamo Aster model with 12 animation states, including double-jump flip
           Source revision: ${GITHUB_SHA}
           Branch: chatgpt-astra/unity-3d
           Workflow run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
