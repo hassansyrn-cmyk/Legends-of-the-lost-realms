@@ -4,10 +4,11 @@ set -Eeuo pipefail
 
 workflow=".github/workflows/android-debug.yml"
 model_meta="unity-3d/Assets/Art/Models/Aster.fbx.meta"
-material="unity-3d/Assets/Art/Materials/Aster.mat"
+material="unity-3d/Assets/Resources/Materials/Aster.mat"
 prefab="unity-3d/Assets/Resources/Characters/Aster.prefab"
 albedo_meta="unity-3d/Assets/Art/Textures/Aster_1.jpg.meta"
-material_meta="unity-3d/Assets/Art/Materials/Aster.mat.meta"
+material_meta="unity-3d/Assets/Resources/Materials/Aster.mat.meta"
+hero_script="unity-3d/Assets/Scripts/Hero.cs"
 
 fail() {
   printf 'CI configuration check failed: %s\n' "$1" >&2
@@ -20,6 +21,7 @@ fail() {
 [[ -f "$prefab" ]] || fail "missing Aster character prefab"
 [[ -f "$albedo_meta" ]] || fail "missing Aster albedo metadata"
 [[ -f "$material_meta" ]] || fail "missing Aster material metadata"
+[[ -f "$hero_script" ]] || fail "missing Aster runtime visual code"
 
 # Unity Library contents are derived artifacts. A cache from a different asset hash
 # must not be restored because it can leave the AssetDatabase inconsistent.
@@ -55,5 +57,13 @@ printf '%s\n' "$main_texture_binding" | grep -Fq "guid: $albedo_guid" \
   || fail "Aster material is not bound to Aster_1.jpg"
 grep -Fq "objectReference: {fileID: 2100000, guid: $material_guid, type: 2}" "$prefab" \
   || fail "Aster prefab is not bound to the textured Aster material"
+
+# FBX renderer sub-asset IDs are regenerated during a cold player import. The
+# runtime must bind the Resources material after instantiation, rather than
+# relying solely on an editor-time prefab override tied to those IDs.
+grep -Fq 'Resources.Load<Material>("Materials/Aster")' "$hero_script" \
+  || fail "Aster runtime material is not loaded from Resources"
+grep -Fq 'renderer.sharedMaterial=asterMaterial' "$hero_script" \
+  || fail "Aster runtime material is not assigned to every renderer"
 
 printf 'Unity CI configuration check passed.\n'

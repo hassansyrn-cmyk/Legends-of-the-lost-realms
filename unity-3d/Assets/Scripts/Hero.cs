@@ -160,6 +160,11 @@ namespace LostRealms {
    if(prefab){
     var model=Instantiate(prefab,holder.transform);
     model.transform.localPosition=Vector3.zero;
+    if(role=="Aster"){
+     var asterMaterial=Resources.Load<Material>("Materials/Aster");
+     if(!asterMaterial)throw new System.Exception("Missing runtime Aster material");
+     foreach(var renderer in model.GetComponentsInChildren<Renderer>(true))renderer.sharedMaterial=asterMaterial;
+    }
     v.animator=model.GetComponentInChildren<Animator>();
     if(v.animator){
      v.animator.applyRootMotion=false;
@@ -423,6 +428,5 @@ namespace LostRealms {
   }
  }
 }
-
 
 
