@@ -25,13 +25,15 @@ jobs:
         with:
           lfs: true
 
+      - name: Verify Unity CI configuration
+        shell: bash
+        run: bash .github/scripts/verify-unity-ci-config.sh
+
       - name: Cache Unity Library
         uses: actions/cache@v4
         with:
           path: unity-3d/Library
-          key: Library-${{ hashFiles('unity-3d/Assets/**', 'unity-3d/Packages/**', 'unity-3d/ProjectSettings/**') }}
-          restore-keys: |
-            Library-
+          key: Unity6-Android-Library-${{ hashFiles('unity-3d/Assets/**', 'unity-3d/Packages/**', 'unity-3d/ProjectSettings/**') }}
 
       - name: Build Unity 3D Android Player
         uses: game-ci/unity-builder@v4
@@ -45,6 +47,7 @@ jobs:
           targetPlatform: Android
           buildMethod: RealmBuild.Android
           buildName: LostRealms3D
+          dockerCpuLimit: 2
 
       - name: Read build metadata
         id: metadata
