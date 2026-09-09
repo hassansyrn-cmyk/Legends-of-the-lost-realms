@@ -5,7 +5,7 @@ using UnityEngine.Playables;
 namespace LostRealms {
  [DefaultExecutionOrder(20)] public class Hero:MonoBehaviour {
   public CharacterController Controller;public int MaxHealth,Health,Power;public float Energy=100;public bool Grounded=>Controller&&Controller.isGrounded; public CharacterVisual Visual;
-  Vector3 velocity;float vertical,jumpGrace,dashUntil,dashReady,immuneUntil,attackReady,comboUntil,chargeStart;int jumps,combo;bool charging;float jumpBuffer;
+  Vector3 velocity;float vertical,jumpGrace,dashUntil,dashReady,dodgeVisualUntil,hitUntil,immuneUntil,attackReady,comboUntil,chargeStart;int jumps,combo;bool charging;float jumpBuffer;string attackState="attack_1";
   void Awake(){
    Controller=gameObject.AddComponent<CharacterController>();Controller.height=1.75f;Controller.radius=.32f;Controller.center=Vector3.up*.9f;Controller.stepOffset=.35f;Controller.slopeLimit=48;
    MaxHealth=5+RealmGame.I.Save.healthRank;Health=MaxHealth;
@@ -37,10 +37,12 @@ namespace LostRealms {
 
    // Dash
    if(g.DashPressed&&RealmGame.I.Elapsed>=dashReady){
-    dashUntil=RealmGame.I.Elapsed+.21f;dashReady=RealmGame.I.Elapsed+.85f;
+    dashUntil=RealmGame.I.Elapsed+.28f;dodgeVisualUntil=RealmGame.I.Elapsed+.63f;dashReady=RealmGame.I.Elapsed+.85f;
     immuneUntil=Mathf.Max(immuneUntil,dashUntil+.1f);
+    attackReady=RealmGame.I.Elapsed;charging=false;
     if(wish.sqrMagnitude<.1f)wish=transform.forward;
     velocity=wish.normalized*16f;g.Sound("player_dash");
+    Visual.Restart("dodge");
     HitSpark.Burst(transform.position+Vector3.up*.8f,-wish.normalized,new Color(1f,.9f,.7f),8);
    }
 
@@ -72,8 +74,12 @@ namespace LostRealms {
    if(transform.position.y<-12){Health=0;g.DamageTaken++;g.Defeat();}
 
    // Character Animation state selection with natural speeds
-   if(RealmGame.I.Elapsed<attackReady-.06f){
-    Visual.Play("attack");
+   if(RealmGame.I.Elapsed<dodgeVisualUntil){
+    Visual.Play("dodge");
+   }else if(RealmGame.I.Elapsed<hitUntil){
+    Visual.Play("hit");
+   }else if(RealmGame.I.Elapsed<attackReady-.06f){
+    Visual.Play(attackState);
    }else if(!Grounded){
     Visual.Play("jump");
    }else if(wish.sqrMagnitude>.01f){
@@ -87,8 +93,9 @@ namespace LostRealms {
   public void Warp(Vector3 p){Controller.enabled=false;transform.position=p;Controller.enabled=true;vertical=0;velocity=Vector3.zero;jumpBuffer=0;charging=false;immuneUntil=RealmGame.I.Elapsed+1.2f;RealmGame.I.CameraRig.Snap();}
   public void Damage(int damage,Vector3 source){
    if(RealmGame.I.Elapsed<immuneUntil||Health<=0)return;
-   Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=RealmGame.I.Elapsed+1;
+   Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=RealmGame.I.Elapsed+1;hitUntil=RealmGame.I.Elapsed+.38f;
    velocity=(transform.position-source).normalized*4;RealmGame.I.Sound("hurt");RealmGame.I.CameraRig.Shake=.18f;
+   Visual.Restart(Health<=0?"death":"hit");
    HitSpark.Burst(transform.position+Vector3.up*.8f,(transform.position-source).normalized,new Color(1f,.2f,.2f),8);
    if(Health<=0)RealmGame.I.Defeat();
   }
@@ -98,8 +105,9 @@ namespace LostRealms {
    var g=RealmGame.I;
    combo=RealmGame.I.Elapsed<comboUntil?(combo%3)+1:1;
    comboUntil=RealmGame.I.Elapsed+.95f;
-   float attackDuration=charged?.62f:.42f;
+   float attackDuration=charged?.78f:.52f;
    attackReady=RealmGame.I.Elapsed+attackDuration;
+   attackState=charged?"charged":"attack_"+Mathf.Clamp(combo,1,3);
 
    // Small facing assist keeps nearby targets usable with a phone stick.
    Enemy closest=null;float nearest=3.5f;foreach(var foe in g.Enemies){if(!foe||foe.Health<=0)continue;Vector3 d=foe.transform.position-transform.position;d.y=0;if(d.magnitude<nearest&&Vector3.Dot(transform.forward,d.normalized)>.35f){closest=foe;nearest=d.magnitude;}}
@@ -108,8 +116,7 @@ namespace LostRealms {
    Vector3 lungeDir=transform.forward;
    velocity=lungeDir*(charged?5.5f:3.6f);
 
-   // Play attack at 2.6x speed so full 1.1s slash executes cleanly in ~0.42s
-   Visual.PlayAttack(charged?1.6f:2.6f);
+   Visual.PlayAttack(combo,charged);
    g.Sound("blade");
 
    float reach=charged?3.4f:2.7f;
@@ -151,8 +158,8 @@ namespace LostRealms {
  }
 
  public class CharacterVisual:MonoBehaviour {
-  public Animator animator;PlayableGraph graph;AnimationMixerPlayable mixer;AnimationClipPlayable[] playable=new AnimationClipPlayable[2];AnimationClip[] clips=new AnimationClip[5];string current="";float blend;int slot;bool hasGraph;Transform fallbackBody;
-  static readonly string[] Names={"idle","walk","attack","death","jump"};
+  public Animator animator;PlayableGraph graph;AnimationMixerPlayable mixer;AnimationClipPlayable[] playable=new AnimationClipPlayable[2];AnimationClip[] clips;string current="";float blend;int slot;bool hasGraph;Transform fallbackBody;
+  static readonly string[] Names={"idle","walk","run","attack_1","attack_2","attack_3","charged","jump","dodge","hit","death"};
 
   public static CharacterVisual Create(string role,Transform parent,float height,Color color){
    var holder=new GameObject(role+" visual");holder.transform.SetParent(parent,false);var v=holder.AddComponent<CharacterVisual>();
@@ -187,13 +194,17 @@ namespace LostRealms {
     holder.transform.localScale=Vector3.one*height/1.8f;
    }
 
-   // Load animation clips: prefer unflattened Shared clips for natural movement
+   v.clips=new AnimationClip[Names.Length];
+   // The supplied Mixamo Aster clips are generated into Resources/Animations/Aster.
+   // Other characters retain the existing shared fallback set.
    for(int i=0;i<Names.Length;i++){
-    if(Names[i]=="idle")
-     v.clips[i]=Resources.Load<AnimationClip>("Animations/Shared/idle")??Resources.Load<AnimationClip>("Animations/"+role+"_idle");
-    else
-     v.clips[i]=Resources.Load<AnimationClip>("Animations/"+role+"_"+Names[i])??Resources.Load<AnimationClip>("Animations/Shared/"+Names[i]);
+    if(role=="Aster")v.clips[i]=Resources.Load<AnimationClip>("Animations/Aster/"+Names[i]);
+    else{
+     string legacy=Names[i].StartsWith("attack_")?"attack":Names[i]=="charged"?"attack":Names[i]=="run"?"walk":Names[i];
+     v.clips[i]=Resources.Load<AnimationClip>("Animations/"+role+"_"+legacy)??Resources.Load<AnimationClip>("Animations/Shared/"+legacy);
+    }
    }
+   if(role=="Aster"&&System.Array.Exists(v.clips,c=>c==null))throw new System.Exception("Aster Phase 1 animation set is incomplete");
 
    if(v.animator&&System.Array.Exists(v.clips,c=>c!=null)){
     v.graph=PlayableGraph.Create(role+" motion");v.graph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
@@ -206,15 +217,16 @@ namespace LostRealms {
   }
 
   public void Restart(string state){current="";Play(state);}
-  public void PlayAttack(float speed=2.5f){
-   current="";Play("attack");
-   if(hasGraph&&playable[slot].IsValid())playable[slot].SetSpeed(speed);
+  public void PlayAttack(int combo,bool charged){
+   current="";Play(charged?"charged":"attack_"+Mathf.Clamp(combo,1,3));
+   if(hasGraph&&playable[slot].IsValid())playable[slot].SetSpeed(charged?2.8f:combo==2?4.8f:3.9f);
   }
   public void PlayWalk(float speedRatio=1f){
-   Play("walk");
-   if(hasGraph&&playable[slot].IsValid())playable[slot].SetSpeed(speedRatio);
+   string locomotion=speedRatio>1.2f?"run":"walk";Play(locomotion);
+   if(hasGraph&&playable[slot].IsValid())playable[slot].SetSpeed(locomotion=="run"?Mathf.Clamp(speedRatio*.82f,.85f,1.45f):Mathf.Clamp(speedRatio,.75f,1.25f));
   }
   public void Play(string state){
+   if(state=="attack")state="attack_1";
    if(current==state)return;current=state;if(!hasGraph)return;
    int i=System.Array.IndexOf(Names,state);AnimationClip clip=i>=0?clips[i]:null;
    if(!clip)clip=clips[0]?clips[0]:clips[1];if(!clip)return;
@@ -222,7 +234,10 @@ namespace LostRealms {
    if(playable[slot].IsValid()){mixer.DisconnectInput(slot);graph.DestroyPlayable(playable[slot]);}
    playable[slot]=AnimationClipPlayable.Create(graph,clip);
    playable[slot].SetApplyFootIK(false);
-   if(state=="jump")playable[slot].SetSpeed(1.8f);
+   if(state=="jump")playable[slot].SetSpeed(2.3f);
+   if(state=="dodge")playable[slot].SetSpeed(3.1f);
+   if(state=="hit")playable[slot].SetSpeed(2.4f);
+   playable[slot].SetTime(0);
    graph.Connect(playable[slot],0,mixer,slot);blend=0;
   }
 
@@ -230,7 +245,8 @@ namespace LostRealms {
    if(hasGraph){
     float speed=RealmGame.I.Screen==GameScreen.Playing?1:0;
     graph.GetRootPlayable(0).SetSpeed(speed);
-    blend=Mathf.MoveTowards(blend,1,Time.deltaTime*9f);
+    float blendRate=current=="dodge"||current=="hit"?18f:current.StartsWith("attack_")||current=="charged"?14f:10f;
+    blend=Mathf.MoveTowards(blend,1,Time.deltaTime*blendRate);
     mixer.SetInputWeight(slot,blend);mixer.SetInputWeight(1-slot,1-blend);
    }else if(fallbackBody){
     float bob=current=="walk"?Mathf.Sin(RealmGame.I.Elapsed*11)*.07f:Mathf.Sin(RealmGame.I.Elapsed*2)*.015f;
@@ -428,5 +444,3 @@ namespace LostRealms {
   }
  }
 }
-
-

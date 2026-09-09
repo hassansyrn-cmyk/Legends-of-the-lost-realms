@@ -6,8 +6,8 @@ using System.Linq;
 using System.Collections.Generic;
 public static class AssetIntegration {
  public static void Run(){
-  Directory.CreateDirectory("Assets/Resources/Characters");Directory.CreateDirectory("Assets/Art/Materials");Directory.CreateDirectory("Assets/Resources/Materials");var report=new List<string>();
-  foreach(string role in new[]{"Aster","Goblin","Elemental","Demon","Heartwood","Sunscar","Whiteout","Caster","Frost"}){
+  AsterPhase1.Prepare();Directory.CreateDirectory("Assets/Resources/Characters");Directory.CreateDirectory("Assets/Art/Materials");Directory.CreateDirectory("Assets/Resources/Materials");var report=new List<string>{"Aster: supplied Mixamo character prepared by AsterPhase1"};
+  foreach(string role in new[]{"Goblin","Elemental","Demon","Heartwood","Sunscar","Whiteout","Caster","Frost"}){
    string modelRole=role=="Heartwood"?"Elemental":role=="Whiteout"||role=="Frost"?"IceGuardian":role;string path="Assets/Art/Models/"+modelRole+".fbx";var importer=(ModelImporter)AssetImporter.GetAtPath(path);if(importer==null)throw new Exception("Missing source "+path);
    var before=AssetDatabase.LoadAssetAtPath<GameObject>(path);bool skinned=before.GetComponentsInChildren<SkinnedMeshRenderer>().Length>0;bool mixamo=before.GetComponentsInChildren<Transform>().Any(t=>t.name.Contains("mixamorig"));var desc=skinned&&!mixamo?HumanoidRig.Description(before):new HumanDescription();
    importer.materialImportMode=ModelImporterMaterialImportMode.None;importer.importCameras=false;importer.importLights=false;importer.importAnimation=false;importer.isReadable=false;importer.meshCompression=ModelImporterMeshCompression.Low;importer.animationType=skinned?ModelImporterAnimationType.Human:ModelImporterAnimationType.None;if(skinned)importer.avatarSetup=ModelImporterAvatarSetup.CreateFromThisModel;if(skinned&&!mixamo)importer.humanDescription=desc;importer.SaveAndReimport();
@@ -20,10 +20,8 @@ public static class AssetIntegration {
    var animator=model.GetComponent<Animator>();if(animator){animator.applyRootMotion=false;animator.cullingMode=AnimatorCullingMode.CullUpdateTransforms;}
    var lod=root.AddComponent<LODGroup>();lod.SetLODs(new[]{new LOD(.025f,renderers)});lod.RecalculateBounds();PrefabUtility.SaveAsPrefabAsset(root,"Assets/Resources/Characters/"+role+".prefab");report.Add(role+": humanoid="+skinned+", height="+height+", textured=true");UnityEngine.Object.DestroyImmediate(root);
   }
-  var restPose=AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/Resources/Animations/Shared/idle.anim");var idle=UnityEngine.Object.Instantiate(restPose);idle.name="Aster idle";foreach(var binding in AnimationUtility.GetCurveBindings(idle)){var curve=AnimationUtility.GetEditorCurve(idle,binding);float value=curve.Evaluate(0);var still=new AnimationCurve(new Keyframe(0,value),new Keyframe(2,value));if(binding.propertyName.Contains("Spine Front-Back"))still=new AnimationCurve(new Keyframe(0,value),new Keyframe(1,value+.015f),new Keyframe(2,value));AnimationUtility.SetEditorCurve(idle,binding,still);}var idleSettings=AnimationUtility.GetAnimationClipSettings(idle);idleSettings.loopTime=true;idleSettings.startTime=0;idleSettings.stopTime=2;AnimationUtility.SetAnimationClipSettings(idle,idleSettings);string idlePath="Assets/Resources/Animations/Aster_idle.anim";var existingIdle=AssetDatabase.LoadAssetAtPath<AnimationClip>(idlePath);if(existingIdle){EditorUtility.CopySerialized(idle,existingIdle);UnityEngine.Object.DestroyImmediate(idle);}else AssetDatabase.CreateAsset(idle,idlePath);
   File.WriteAllLines("MODEL_INTEGRATION.txt",report);AssetDatabase.SaveAssets();RealmBuild.Prepare();Debug.Log("MODEL_INTEGRATION_PASSED");
  }
 }
-
 
 

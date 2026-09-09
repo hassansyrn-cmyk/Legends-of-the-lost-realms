@@ -4,6 +4,10 @@
 [Ll]ogs/
 [Uu]ser[Ss]ettings/
 [Bb]uilds/
+Assets/Resources/Animations/Aster/
+Assets/Resources/Characters/Aster.prefab
+Assets/Resources/Characters/Aster.prefab.meta
+ASTER_PHASE1_REPORT.txt
 .vs/
 *.csproj
 *.sln
