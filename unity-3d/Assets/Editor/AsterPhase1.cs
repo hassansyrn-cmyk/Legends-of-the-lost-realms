@@ -95,6 +95,10 @@ public static class AsterPhase1 {
   importer.importAnimation=true;
   importer.animationType=ModelImporterAnimationType.Human;
   importer.avatarSetup=ModelImporterAvatarSetup.CreateFromThisModel;
+  // A new FBX's defaultClipAnimations list is populated only after its first
+  // animation-enabled import. Import once, reload the importer, then configure it.
+  importer.SaveAndReimport();
+  importer=AssetImporter.GetAtPath(ModelPath) as ModelImporter;
   var clips=importer.defaultClipAnimations;
   ConfigureClips(clips,"idle",true);
   importer.clipAnimations=clips;
@@ -109,6 +113,8 @@ public static class AsterPhase1 {
   importer.animationType=ModelImporterAnimationType.Human;
   importer.avatarSetup=ModelImporterAvatarSetup.CopyFromOther;
   importer.sourceAvatar=avatar;
+  importer.SaveAndReimport();
+  importer=AssetImporter.GetAtPath(spec.AssetPath) as ModelImporter;
   var clips=importer.defaultClipAnimations;
   ConfigureClips(clips,spec.State,spec.Loop);
   importer.clipAnimations=clips;
