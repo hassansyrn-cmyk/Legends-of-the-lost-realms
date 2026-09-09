@@ -1,0 +1,26 @@
+[
+  {
+    "role": "Aster",
+    "source": "04_character_rig_final.fbx",
+    "originalTriangles": 499690,
+    "triangles": 60000
+  },
+  {
+    "role": "IceGuardian (Whiteout/Frost)",
+    "source": "16_Mutant Walking.fbx",
+    "originalTriangles": 482012,
+    "triangles": 60000
+  },
+  {
+    "role": "Sunscar",
+    "source": "13_Mutant Idle.fbx",
+    "originalTriangles": 495882,
+    "triangles": 60000
+  },
+  {
+    "role": "Caster",
+    "source": "22_model_03.fbx",
+    "originalTriangles": 480230,
+    "triangles": 60000
+  }
+]

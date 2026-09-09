@@ -1,0 +1,218 @@
+[
+  {
+    "id": 1,
+    "source": "Downloads/3f87f1b4_36d4_443f_9a6c_c21c0c0fa11f_edb4af0f3193501f29053064e0f6a61d1.fbx",
+    "asset": "01_3f87f1b4_36d4_443f_9a6c_c21c0c0fa11f_edb4af0f3193501f29053064e0f6a61d1.fbx",
+    "sha256": "08A246D670977BC9363F021BD424F1D4078619A6BBD0E465F243617323B9C2E6"
+  },
+  {
+    "id": 2,
+    "source": "Downloads/754a6ee7_cb33_4ea1_95d1_1bb14d96b158_eaa12669c85d8ed4fd746822767cd728.fbx",
+    "asset": "02_754a6ee7_cb33_4ea1_95d1_1bb14d96b158_eaa12669c85d8ed4fd746822767cd728.fbx",
+    "sha256": "DBE2DF53D8507583221456EAA03E17C54D4F15ECEE4CE5A113017298A519ADDD"
+  },
+  {
+    "id": 3,
+    "source": "Downloads/8379a12b_10c2_4295_8b0d_cbe309c9aa95_66362157b94f9656265ddbdc773db705.fbx",
+    "asset": "03_8379a12b_10c2_4295_8b0d_cbe309c9aa95_66362157b94f9656265ddbdc773db705.fbx",
+    "sha256": "22DE362B9BC115FC993DE9626CAFF98ECC28D1DCDE1C8AD7D852DA79E9A93563"
+  },
+  {
+    "id": 4,
+    "source": "Downloads/character_rig_final.fbx",
+    "asset": "04_character_rig_final.fbx",
+    "sha256": "CE2F133A88B1F04B13ABCA47975F48D0174F83571443CC8306B1B33F602A2595"
+  },
+  {
+    "id": 5,
+    "source": "Downloads/Death From The Front (1).fbx",
+    "asset": "05_Death From The Front (1).fbx",
+    "sha256": "2B749E527BDD977F0ECDA4E187114CD5D8291BBAC87D9304D0ADF39CEBCCB6E0"
+  },
+  {
+    "id": 6,
+    "source": "Downloads/Death From The Front.fbx",
+    "asset": "06_Death From The Front.fbx",
+    "sha256": "F88C32335CAFA20C9FCDE45817B7537D366A8DFB771CA4DC1A8030E2D2FAE2FF"
+  },
+  {
+    "id": 7,
+    "source": "Downloads/Dying.fbx",
+    "asset": "07_Dying.fbx",
+    "sha256": "66E9EE47D98E305712661389EA4C66C4F4D89096BB10B6B0D31C8D6462EFE76F"
+  },
+  {
+    "id": 8,
+    "source": "Downloads/f45aad0e_2110_4303_851b_3730d3b84678_1a33f5b653d82db5d80d1bf6f26c516a.fbx",
+    "asset": "08_f45aad0e_2110_4303_851b_3730d3b84678_1a33f5b653d82db5d80d1bf6f26c516a.fbx",
+    "sha256": "189ACA5D1A057E788A5C116A5F25880B8AD52D74869ABB8061D740F19217E9F0"
+  },
+  {
+    "id": 9,
+    "source": "Downloads/Jump Attack (1).fbx",
+    "asset": "09_Jump Attack (1).fbx",
+    "sha256": "DF92EA08A1F3E9B17A4AB40E2AAB706741252C37E79E0F9FA3CC8D9F65B09474"
+  },
+  {
+    "id": 10,
+    "source": "Downloads/Jump Attack.fbx",
+    "asset": "10_Jump Attack.fbx",
+    "sha256": "1190B9F14C9AD49C155FB1C92C1292EA856603A6367498EA7A40CA3D12D05541"
+  },
+  {
+    "id": 11,
+    "source": "Downloads/Mutant Flexing Muscles (1).fbx",
+    "asset": "11_Mutant Flexing Muscles (1).fbx",
+    "sha256": "5B26C6D140A5284B72C168E58A37B44E554F8BF68204B1C39EBB100E887C9D1F"
+  },
+  {
+    "id": 12,
+    "source": "Downloads/Mutant Flexing Muscles.fbx",
+    "asset": "12_Mutant Flexing Muscles.fbx",
+    "sha256": "32B81D1839210B8BE29C6A6358E33DFE332EDDF81A30E7C685402D304207D715"
+  },
+  {
+    "id": 13,
+    "source": "Downloads/Mutant Idle.fbx",
+    "asset": "13_Mutant Idle.fbx",
+    "sha256": "860A687B54CA7517C12170B7D446777669ECCE400567757D58406AE54B73DC4A"
+  },
+  {
+    "id": 14,
+    "source": "Downloads/Mutant Punch (1).fbx",
+    "asset": "14_Mutant Punch (1).fbx",
+    "sha256": "7FFC852A79687B86235A426E19CF3856B10B582B2E41D843FBACF9CA3059E811"
+  },
+  {
+    "id": 15,
+    "source": "Downloads/Mutant Punch.fbx",
+    "asset": "15_Mutant Punch.fbx",
+    "sha256": "F1D259F283AD588C2F00F2E2EDCEF10689D693D85BC89EDCBEC85E27D068D1C7"
+  },
+  {
+    "id": 16,
+    "source": "Downloads/Mutant Walking.fbx",
+    "asset": "16_Mutant Walking.fbx",
+    "sha256": "8744B10CFFF048B26B0BF89C7C85E4CCAE33FD3CC44A5382D8712764D299D9B0"
+  },
+  {
+    "id": 17,
+    "source": "Downloads/Standing Taunt Battlecry.fbx",
+    "asset": "17_Standing Taunt Battlecry.fbx",
+    "sha256": "3A465FE27825E709295C9E36346C090D757A538295B7CCF468CBA9966AC2AF78"
+  },
+  {
+    "id": 18,
+    "source": "Downloads/Start Walking.fbx",
+    "asset": "18_Start Walking.fbx",
+    "sha256": "647AFC99284204501BC93D2B5D84074AD6E3A59CC4FB90EC0E01511FAF1ADB7F"
+  },
+  {
+    "id": 19,
+    "source": "Downloads/character_rig_package/character_rig_final.fbx",
+    "asset": "19_character_rig_final.fbx",
+    "sha256": "CE2F133A88B1F04B13ABCA47975F48D0174F83571443CC8306B1B33F602A2595"
+  },
+  {
+    "id": 20,
+    "source": "Downloads/converted_models/model_01.fbx",
+    "asset": "20_model_01.fbx",
+    "sha256": "026FB6A8D88F298F046D1C20B9AF6F18DC5940A06E6B9D633D2DB9E847831ED2"
+  },
+  {
+    "id": 21,
+    "source": "Downloads/converted_models/model_02.fbx",
+    "asset": "21_model_02.fbx",
+    "sha256": "A151D51462F6629895D63D65463F3B193D9D01D923929CFDA4B0E5987CC8AA9D"
+  },
+  {
+    "id": 22,
+    "source": "Downloads/converted_models/model_03.fbx",
+    "asset": "22_model_03.fbx",
+    "sha256": "24AAC1FA3E44A15CB42CA63BC931C4907ADB906E31D9D4DCBB93E773B7E9DD6A"
+  },
+  {
+    "id": 23,
+    "source": "Downloads/converted_models/model_04.fbx",
+    "asset": "23_model_04.fbx",
+    "sha256": "ADAE9213F326B9F87956F9A75EFD9F8F272A6C3DE1AEBEDC47BD656D8E19E043"
+  },
+  {
+    "id": 24,
+    "source": "Downloads/converted_models/model_05.fbx",
+    "asset": "24_model_05.fbx",
+    "sha256": "F6C5C27C3AA3C5FCF5AC9935CED10940700E5C09B6B0C153B745D34392E09576"
+  },
+  {
+    "id": 25,
+    "source": "Downloads/converted_models/model_06.fbx",
+    "asset": "25_model_06.fbx",
+    "sha256": "CD284A70EB8E09DEB7582A0366D0B2E31C6B6AAE7E3DA20B524171089AB15D63"
+  },
+  {
+    "id": 26,
+    "source": "Downloads/converted_models/model_07.fbx",
+    "asset": "26_model_07.fbx",
+    "sha256": "0DC9253E1252A3E6C410534A8A2D14D23FF25EE59C0F913CCC10F9103068946B"
+  },
+  {
+    "id": 27,
+    "source": "Downloads/converted_models/model_08.fbx",
+    "asset": "27_model_08.fbx",
+    "sha256": "DEF5CDB222A46AD496001B26A592559D82F8619BE0580B4F9672D4483A84ED52"
+  },
+  {
+    "id": 28,
+    "source": "Downloads/converted_models/model_09.fbx",
+    "asset": "28_model_09.fbx",
+    "sha256": "995ABBE9EFBD6215D0EAE069C19E24A7E2BFD74F76B9FC03AD325408D81406B8"
+  },
+  {
+    "id": 29,
+    "source": "Downloads/converted_models/model_10.fbx",
+    "asset": "29_model_10.fbx",
+    "sha256": "FAD7AD45048BACED06B79F7A522791D096603ADC3CD118942324F6ACAE33FFCB"
+  },
+  {
+    "id": 30,
+    "source": "Downloads/converted_models/model_11.fbx",
+    "asset": "30_model_11.fbx",
+    "sha256": "6BD1DBCB52368630BE9EA76DDEE0F8CBC5473014D306129EEB1EAB903D9B94E2"
+  },
+  {
+    "id": 31,
+    "source": "Downloads/converted_models/model_12.fbx",
+    "asset": "31_model_12.fbx",
+    "sha256": "1A82D7A252863139DA87A5C7E71681E31D20D4A8F35C3C21A166097983B9CF8C"
+  },
+  {
+    "id": 32,
+    "source": "Downloads/converted_models/model_13.fbx",
+    "asset": "32_model_13.fbx",
+    "sha256": "FC191FF0965256E213DAFE5A3D90A7FD9CFDA73E0AEBF67D1AEDB05D8520903E"
+  },
+  {
+    "id": 33,
+    "source": "Downloads/converted_models/model_14.fbx",
+    "asset": "33_model_14.fbx",
+    "sha256": "D640294BA56F80D849F074E80AC97B6D04AF2120B1ECEBC0347098D1E3486EC1"
+  },
+  {
+    "id": 34,
+    "source": "Downloads/Enemy_Rigs_Package/Ember_Demon/Ember_Demon_Rig.fbx",
+    "asset": "34_Ember_Demon_Rig.fbx",
+    "sha256": "080333CA2A36D0FFD28A0BC8B22710DD9E15B9FB5406C4BA413E4C56FCDD90B3"
+  },
+  {
+    "id": 35,
+    "source": "Downloads/Enemy_Rigs_Package/Forest_Elemental/Forest_Elemental_Rig.fbx",
+    "asset": "35_Forest_Elemental_Rig.fbx",
+    "sha256": "BDBCCCE2B93E06967050F0AD1BCF85228A33328C61AF9ADEC005826D8419EB8F"
+  },
+  {
+    "id": 36,
+    "source": "Downloads/Enemy_Rigs_Package/Forest_Goblin/Forest_Goblin_Rig.fbx",
+    "asset": "36_Forest_Goblin_Rig.fbx",
+    "sha256": "E26F20D06F7FBB32F9CFD241169296CEA10B457649AE8C1D2C1E81B0CCD7AF2C"
+  }
+]

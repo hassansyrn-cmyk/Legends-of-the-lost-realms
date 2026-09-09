@@ -1,0 +1,9 @@
+Validation — 9 September 2026
+
+Unity editor: 6000.6.0f1.
+Windows development build: succeeded.
+Packaged Windows executable: passed 111 runtime assertions.
+Checks cover spawning, movement, double jump across the opening gap, route/model presence across ten levels, three guardian spawns, absence of passive enemy-contact damage, enemy defeat, pause, and checkpoint respawn.
+Character preview: inspected textured idle/attack poses; corrected Aster's idle pose.
+
+This does not establish full level completion, balance, performance on all hardware, or Android device compatibility. Physical Android touch/performance testing remains outstanding.

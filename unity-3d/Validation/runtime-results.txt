@@ -1,0 +1,1 @@
+Passed 111 runtime assertions: movement, double jump, ten routes, models, three bosses, passive-contact damage, defeat, pause and checkpoint respawn.
