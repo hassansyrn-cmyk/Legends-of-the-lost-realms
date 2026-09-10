@@ -28,6 +28,8 @@ grep -Fq 'class RealmAtmosphere' "$atmosphere" || fail "missing atmosphere contr
 grep -Fq 'CreateRouteLandmarks()' "$atmosphere" || fail "missing route landmark construction"
 grep -Fq 'CreateAmbientMotes()' "$atmosphere" || fail "missing ambient motion construction"
 grep -Fq 'QualitySettings.shadowDistance=28' "$atmosphere" || fail "missing mobile shadow-distance budget"
+if grep -Fq 'root.localPosition=' "$atmosphere"; then fail "route landmark root must use GameObject.transform.localPosition"; fi
+if grep -Fq 'foreach(Transform piece in ring)' "$atmosphere"; then fail "rune ring enumeration must use ring.transform"; fi
 grep -Fq 'Realm uses generated terrain texture' "$probe" || fail "runtime probe does not verify terrain texture"
 grep -Fq 'Realm atmosphere adds landmarks and ambient motes' "$probe" || fail "runtime probe does not verify atmosphere content"
 

@@ -41,11 +41,11 @@ namespace LostRealms {
 
   void CreateRouteLandmarks(){
    for(int i=0;i<3;i++){
-    float z=20+i*32;float side=i%2==0?-1:1;var root=new GameObject("Realm route landmark");root.transform.SetParent(transform,false);root.localPosition=new Vector3(side*12.5f,-.2f,z);
+    float z=20+i*32;float side=i%2==0?-1:1;var root=new GameObject("Realm route landmark");root.transform.SetParent(transform,false);root.transform.localPosition=new Vector3(side*12.5f,-.2f,z);
     Color stone=realm==0?new Color(.15f,.28f,.2f):realm==1?new Color(.35f,.21f,.14f):new Color(.22f,.38f,.52f);
     var pillar=Art.Shape("Landmark monolith",PrimitiveType.Cylinder,Vector3.up*3.3f,new Vector3(1.15f,3.3f,1.15f),stone,root.transform);SetDecorative(pillar);
     var crown=Art.Shape("Landmark lens",PrimitiveType.Sphere,Vector3.up*6.55f,Vector3.one*.63f,Color.Lerp(accent,Color.white,.28f),root.transform);SetDecorative(crown);
-    var ring=Art.Ring(Vector3.up*6.25f,1.05f,accent,root.transform);foreach(Transform piece in ring)SetDecorative(piece.gameObject);
+    var ring=Art.Ring(Vector3.up*6.25f,1.05f,accent,root.transform);foreach(Transform piece in ring.transform)SetDecorative(piece.gameObject);
    }
   }
 
