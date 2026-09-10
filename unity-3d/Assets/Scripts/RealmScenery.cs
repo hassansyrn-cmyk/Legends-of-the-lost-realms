@@ -6,7 +6,9 @@ namespace LostRealms {
    var shader=Resources.Load<Shader>("Shaders/Weathered");var m=new Material(shader?shader:Shader.Find("Standard"));
    Color[] baseColors=cliff?new[]{new Color(.16f,.22f,.22f),new Color(.35f,.23f,.15f),new Color(.22f,.34f,.43f)}:new[]{new Color(.16f,.29f,.12f),new Color(.49f,.33f,.17f),new Color(.62f,.77f,.82f)};
    Color[] detailColors=cliff?new[]{new Color(.31f,.37f,.28f),new Color(.6f,.4f,.23f),new Color(.41f,.56f,.64f)}:new[]{new Color(.42f,.49f,.21f),new Color(.75f,.57f,.31f),new Color(.88f,.93f,.9f)};
-   m.color=baseColors[realm];if(m.HasProperty("_Detail"))m.SetColor("_Detail",detailColors[realm]);return m;
+   m.color=baseColors[realm];if(m.HasProperty("_Detail"))m.SetColor("_Detail",detailColors[realm]);
+   if(!cliff){string[] textures={"Art/verdant_moss_tile","Art/ember_sand_tile","Art/frost_ice_tile"};var terrainTexture=Resources.Load<Texture2D>(textures[realm]);if(terrainTexture&&m.HasProperty("_MainTex"))m.SetTexture("_MainTex",terrainTexture);if(m.HasProperty("_TileScale"))m.SetFloat("_TileScale",.13f);}
+   return m;
   }
   public static void Upgrade(RealmWorld world,int realm){
    var lifetime=world.gameObject.AddComponent<RealmArtLifetime>();var terrain=Ground(realm,false);var rock=Ground(realm,true);lifetime.Keep(terrain);lifetime.Keep(rock);var skyShader=Resources.Load<Shader>("Shaders/RealmSky");
@@ -37,6 +39,7 @@ namespace LostRealms {
    // Distant silhouettes frame the route without obstructing the playable camera corridor.
    foreach(Transform t in world.transform)if(t.name=="Distant canopy"||t.name=="Distant realm spire"){t.gameObject.SetActive(false);Object.Destroy(t.gameObject);}
    for(int i=0;i<18;i++){float side=i%2==0?-1:1;var root=new GameObject("Distant floating crag").transform;root.SetParent(world.transform,false);root.localPosition=new Vector3(side*(23+i%3*8),-14-i%4*3,-22+i*11);Cliff(root,12+i%4*3,15,i,rock);if(realm==0)Tree(Vector3.zero,root,i);}
+   RealmAtmosphere.Apply(world,realm);
   }
   static void MeshObject(string name,Transform parent,Mesh mesh,Material material){var g=new GameObject(name);g.transform.SetParent(parent,false);g.AddComponent<MeshFilter>().sharedMesh=mesh;parent.GetComponentInParent<RealmArtLifetime>().Keep(mesh);g.AddComponent<MeshRenderer>().sharedMaterial=material;}
   static void Cliff(Transform parent,float width,float length,int seed,Material material){
@@ -57,8 +60,10 @@ namespace LostRealms {
    var m=new Mesh();m.SetVertices(vs);m.SetTriangles(ts,0);m.RecalculateNormals();MeshObject("Faceted leaves",parent,m,Art.Material(c));
   }
   static void Tree(Vector3 p,Transform parent,int seed){
-   float height=2.7f+(seed%3)*.35f;var trunk=Art.Shape("Crooked oak",PrimitiveType.Cylinder,p+Vector3.up*height*.45f,new Vector3(.29f,height*.5f,.29f),new Color(.23f,.18f,.115f),parent);trunk.transform.localRotation=Quaternion.Euler(0,0,7*Mathf.Sin(seed));
-   for(int i=0;i<4;i++){float a=i*2.4f+seed;Vector3 at=p+new Vector3(Mathf.Sin(a)*.65f,height+i*.22f,Mathf.Cos(a)*.65f);Cone(at,1.3f-i*.12f,1.15f,new Color(.2f+i*.04f,.34f+i*.035f,.13f+i*.02f),parent,8);}
+   // Keep the camera corridor open: the prior oversized canopy hid the route
+   // whenever an island edge crossed the near field.
+   float height=2.2f+(seed%3)*.24f;var trunk=Art.Shape("Crooked oak",PrimitiveType.Cylinder,p+Vector3.up*height*.45f,new Vector3(.25f,height*.5f,.25f),new Color(.23f,.18f,.115f),parent);trunk.transform.localRotation=Quaternion.Euler(0,0,7*Mathf.Sin(seed));
+   for(int i=0;i<4;i++){float a=i*2.4f+seed;Vector3 at=p+new Vector3(Mathf.Sin(a)*.5f,height+i*.17f,Mathf.Cos(a)*.5f);Cone(at,1.02f-i*.1f,.92f,new Color(.2f+i*.04f,.34f+i*.035f,.13f+i*.02f),parent,8);}
    for(int i=0;i<3;i++){float a=i*2.1f;var root=Art.Shape("Exposed root",PrimitiveType.Cube,p+new Vector3(Mathf.Sin(a)*.35f,.12f,Mathf.Cos(a)*.35f),new Vector3(.16f,.16f,.85f),new Color(.23f,.18f,.115f),parent);root.transform.localRotation=Quaternion.Euler(0,a*Mathf.Rad2Deg,0);}
   }
   static void Pine(Vector3 p,Transform parent,int seed){Art.Shape("Pine trunk",PrimitiveType.Cylinder,p+Vector3.up*1.5f,new Vector3(.23f,1.5f,.23f),new Color(.22f,.23f,.23f),parent);for(int i=0;i<4;i++)Cone(p+Vector3.up*(1+i*.6f),1.25f-i*.22f,1.4f,i%2==0?new Color(.32f,.48f,.48f):new Color(.78f,.86f,.84f),parent);}
@@ -72,4 +77,3 @@ namespace LostRealms {
  }
  public sealed class RealmArtLifetime:MonoBehaviour { readonly List<Object> owned=new List<Object>();public void Keep(Object asset){owned.Add(asset);}void OnDestroy(){foreach(var asset in owned)if(asset)Destroy(asset);} }
 }
-

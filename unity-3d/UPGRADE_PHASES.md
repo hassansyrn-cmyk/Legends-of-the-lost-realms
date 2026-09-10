@@ -60,6 +60,24 @@ The relic meshes are shared procedural meshes with low side counts: six or seven
 
 The Android build must compile from a clean Unity Library. Every gem must instantiate the `GemVisual` controller with a faceted core, four shards, and a rune halo. Every checkpoint must instantiate the `CheckpointVisual` controller with its sanctuary heart, four shards, two halos, and aura light. Triggering a checkpoint must invoke the visual activation state. The runtime probe must exercise the actual checkpoint approach, confirm activation, and continue passing the existing movement, combat, and ten-level route checks.
 
+## Phase 3 Implementation
+
+Phase 3 establishes a stronger visual hierarchy without relying on a third-party environment pack. Three original, AI-generated terrain tiles are included as compressed 1024-pixel JPEG source assets and imported with 1024-pixel Android limits. The `Weathered` terrain shader tiles each texture in world space rather than stretching a single image across an island. Its procedural weathering layer remains in place so repeated terrain retains low-poly variation at close range.
+
+| Visual layer | Implementation | Intended effect |
+|---|---|---|
+| **Terrain identity** | Moss, ember-sand, and frost-ice source textures are applied to the Verdant, Burning Dunes, and Frozen Peaks surfaces. | Each realm is immediately distinguishable while its route remains easy to read. |
+| **Lighting and atmosphere** | Trilight ambient lighting, realm-tinted directional sunlight, carefully reduced fog density, stable medium shadows, and a 28-unit shadow-distance cap. | Depth and color separation without the cost of long-distance mobile shadows. |
+| **Horizon and landmarks** | Non-shadow-casting distant crags, beacons, and three side-route monoliths with accent lenses and rune rings. | The player sees scale and direction without foreground props blocking the camera corridor. |
+| **Ambient motion** | Eighteen to twenty-four tiny, non-shadow-casting motes drift in each realm. | The world feels alive while avoiding expensive particle-system overdraw. |
+| **HUD hierarchy** | Layered, translucent panels with restrained rune accents, a dedicated Aether label, and compact resource symbols. | Important state remains legible while revealing more of the action on a phone display. |
+
+The Phase 3 visual review specifically corrects the two largest issues visible in the earlier captured renders: oversized near-camera Verdant canopies that obscured the route and overly flat Frozen surfaces. Trees are scaled down to preserve the travel corridor; the frozen terrain now gains a tiled ice surface, atmospheric horizon, and landmarks rather than relying on bare pale geometry.
+
+## Phase 3 Acceptance Criteria
+
+The Android build must compile from a clean Unity Library. Every realm surface must load the correct generated terrain texture through the `Weathered` shader. Each realm must add `RealmAtmosphere`, exactly three route landmarks, and at least eighteen ambient motes while retaining a maximum shadow distance of 28 units. The runtime probe must verify the Verdant terrain texture and atmosphere components before executing the existing traversal, combat, boss, pause, and respawn checks.
+
 ## References
 
 [1]: https://www.youtube.com/watch?v=YRp5_TvU3oI "Oceanhorn 2: Knights of the Lost Realm First Footage"

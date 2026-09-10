@@ -98,8 +98,12 @@ namespace LostRealms {
   }
   void Panel(float x,float y,float w,float h){
    Rect r=new Rect(x,y,w,h);
-   BoxOutline(r,new Color(.028f,.06f,.09f,.80f),Accent,2f);
-   Box(new Rect(x+6,y+6,w-12,2),new Color(Accent.r,Accent.g,Accent.b,.25f));
+   // A restrained shadow and small rune-corner accents separate HUD groups
+   // from the scene without burying the mobile playfield in opaque panels.
+   Box(new Rect(x+4,y+5,w,h),new Color(.005f,.012f,.02f,.38f));
+   BoxOutline(r,new Color(.028f,.06f,.09f,.74f),Accent,2f);
+   Box(new Rect(x+8,y+7,w-16,2),new Color(Accent.r,Accent.g,Accent.b,.34f));
+   Box(new Rect(x+8,y+h-8,w-16,1),new Color(Accent.r,Accent.g,Accent.b,.15f));
   }
   void OnGUI(){
    if(!Player)return;
@@ -107,7 +111,7 @@ namespace LostRealms {
    GUI.matrix=Matrix4x4.TRS(Vector3.zero,Quaternion.identity,new Vector3(UnityEngine.Screen.width/1280f,UnityEngine.Screen.height/720f,1));
    if(Screen==GameScreen.Playing){
     // Health & Realm Banner
-    Panel(24,20,360,112);
+    Panel(24,20,370,120);
     Text(42,28,320,24,$"REALM {Realm+1}  /  {Realms[Realm]}",small);
     Text(42,54,320,32,Titles[Level-1]);
 
@@ -116,18 +120,20 @@ namespace LostRealms {
     BoxOutline(new Rect(42,98,230,14),new Color(.12f,.18f,.22f),new Color(.28f,.38f,.45f),1f);
     if(healthLag>targetH)Box(new Rect(43,99,228*healthLag,12),new Color(1f,.65f,.35f,.75f));
     Box(new Rect(43,99,228*targetH,12),new Color(.95f,.28f,.28f));
-    Text(282,91,95,26,$"HP {Player.Health}/{Player.MaxHealth}",small);
+    Text(282,91,100,26,$"HP {Player.Health}/{Player.MaxHealth}",small);
 
     // Collectibles Panel
     Panel(404,20,240,68);
-    Text(422,34,215,40,$"COINS {Coins:00}   GEMS {Gems}");
+    Text(422,31,215,18,"TRAIL FINDINGS",small);
+    Text(422,48,215,30,$"◉ {Coins:00}    ◆ {Gems}");
 
     // Power Selector & Energy Bar
     string[] powerNames={"EMBER [FIRE]","FROST [ICE]","GALE [WIND]"};
     Color[] powerCols={new Color(1f,.45f,.1f),new Color(.2f,.85f,1f),new Color(.2f,1f,.55f)};
     if(Button(660,20,205,50,powerNames[Player.Power]))Player.Power=(Player.Power+1)%3;
-    BoxOutline(new Rect(660,74,205,8),new Color(.1f,.15f,.2f),powerCols[Player.Power]*.5f,1f);
-    Box(new Rect(661,75,203*Mathf.Clamp01(Player.Energy/100f),6),powerCols[Player.Power]);
+    Text(660,72,205,15,"AETHER",small);
+    BoxOutline(new Rect(660,88,205,8),new Color(.1f,.15f,.2f),powerCols[Player.Power]*.5f,1f);
+    Box(new Rect(661,89,203*Mathf.Clamp01(Player.Energy/100f),6),powerCols[Player.Power]);
 
     // Timer and Pause Button
     Panel(882,20,135,50);Text(898,32,105,28,$"TIME {Clock(Elapsed)}",small);
@@ -242,6 +248,4 @@ namespace LostRealms {
   int TotalStars(){int n=0;foreach(int s in Save.stars)n+=s;return n;}
  }
 }
-
-
 
