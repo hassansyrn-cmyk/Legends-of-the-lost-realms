@@ -46,7 +46,9 @@ namespace LostRealms {
     if(game.CameraRig&&game.World)Require(game.CameraRig.transform.position.y>game.World.Spawn.y+1f,"Camera remained beneath the starting island");
    }
 
-   string output=Path.GetFullPath(Path.Combine(Application.dataPath,"../Validation"));Directory.CreateDirectory(output);
+   // Build folders are read-only when the player is launched by GameCI; use
+   // Unity's writable per-user data directory for the probe report.
+   string output=Application.persistentDataPath;Directory.CreateDirectory(output);
    string report=Path.Combine(output,"boot-smoke.txt");
    if(failures.Count==0){File.WriteAllText(report,"BOOT_SMOKE_PASSED\n");Debug.Log("BOOT_SMOKE_PASSED");Quit(0);yield break;}
    File.WriteAllText(report,"BOOT_SMOKE_FAILED\n\n"+string.Join("\n\n",failures));

@@ -7,6 +7,7 @@ repo_root="$(pwd)"
 player="$repo_root/unity-3d/Builds/LinuxSmoke/LostRealms3D.x86_64"
 log="$repo_root/unity-3d/Validation/boot-player.log"
 report="$repo_root/unity-3d/Validation/boot-smoke.txt"
+persistent_report="$HOME/.config/unity3d/Lost Realms Studio/Legends of the Lost Realms 3D/boot-smoke.txt"
 
 [[ -x "$player" ]] || { echo "Missing executable smoke player: $player" >&2; exit 1; }
 mkdir -p "$(dirname "$log")"
@@ -16,6 +17,7 @@ set +e
 timeout 45s xvfb-run -a -- "$player" -batchmode -nographics -realmBootSmoke -logFile "$log"
 status=$?
 set -e
+if [[ -f "$persistent_report" ]]; then cp "$persistent_report" "$report"; fi
 
 if [[ $status -eq 124 ]]; then
   echo "Unity boot smoke timed out." >&2
