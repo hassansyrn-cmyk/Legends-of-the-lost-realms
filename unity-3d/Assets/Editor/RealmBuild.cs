@@ -21,10 +21,11 @@ public static class RealmBuild {
  }
  [MenuItem("Lost Realms/Build Windows")]
  public static void Windows(){AsterPhase1.Prepare();Prepare();Directory.CreateDirectory("Builds/Windows");var result=BuildPipeline.BuildPlayer(new BuildPlayerOptions{scenes=new[]{"Assets/Scenes/Main.unity"},locationPathName="Builds/Windows/LostRealms3D.exe",target=BuildTarget.StandaloneWindows64,options=BuildOptions.Development});if(result.summary.result!=BuildResult.Succeeded)throw new System.Exception("Build failed: "+result.summary.result);Debug.Log("REALM_WINDOWS_BUILD_PASSED");}
+ [MenuItem("Lost Realms/Build Linux Smoke Player")]
+ public static void LinuxSmoke(){AsterPhase1.Prepare();Prepare();Directory.CreateDirectory("Builds/LinuxSmoke");var result=BuildPipeline.BuildPlayer(new BuildPlayerOptions{scenes=new[]{"Assets/Scenes/Main.unity"},locationPathName="Builds/LinuxSmoke/LostRealms3D.x86_64",target=BuildTarget.StandaloneLinux64,options=BuildOptions.Development});if(result.summary.result!=BuildResult.Succeeded)throw new System.Exception("Linux smoke build failed: "+result.summary.result);Debug.Log("REALM_LINUX_SMOKE_BUILD_PASSED");}
  [MenuItem("Lost Realms/Build Android APK")]
  public static void Android(){if(!BuildPipeline.IsBuildTargetSupported(BuildTargetGroup.Android,BuildTarget.Android))throw new System.Exception("Install Android Build Support, SDK, NDK and OpenJDK for this Unity version in Unity Hub.");AsterPhase1.Prepare();Prepare();PlayerSettings.SetScriptingBackend(UnityEditor.Build.NamedBuildTarget.Android,ScriptingImplementation.IL2CPP);PlayerSettings.Android.targetArchitectures=AndroidArchitecture.ARM64;PlayerSettings.SetManagedStrippingLevel(UnityEditor.Build.NamedBuildTarget.Android,ManagedStrippingLevel.Minimal);Directory.CreateDirectory("Builds/Android");EditorUserBuildSettings.buildAppBundle=false;var result=BuildPipeline.BuildPlayer(new BuildPlayerOptions{scenes=new[]{"Assets/Scenes/Main.unity"},locationPathName="Builds/Android/LostRealms3D.apk",target=BuildTarget.Android,options=BuildOptions.Development});if(result.summary.result!=BuildResult.Succeeded)throw new System.Exception("Android build failed.");Debug.Log("REALM_ANDROID_BUILD_PASSED");}
  public static void PackageWindows(){AssetIntegration.Run();VisualReview.Render();Windows();} public static void IntegrateAndTest(){AssetIntegration.Run();PlayTest();} public static void PlayTest(){Prepare();VisualReview.Render();EditorApplication.EnterPlaymode();}
 }
-
 
 

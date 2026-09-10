@@ -1,0 +1,61 @@
+name: Unity Runtime Boot Smoke
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ chatgpt-astra/unity-3d ]
+
+permissions:
+  contents: read
+
+jobs:
+  boot-smoke:
+    name: Build and launch Unity player
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Verify source configuration
+        shell: bash
+        run: bash .github/scripts/verify-unity-ci-config.sh
+
+      - name: Cache Linux smoke Library
+        uses: actions/cache@v4
+        with:
+          path: unity-3d/Library
+          key: Unity6-LinuxSmoke-Library-${{ hashFiles('unity-3d/Assets/**', 'unity-3d/Packages/**', 'unity-3d/ProjectSettings/**') }}
+
+      - name: Build Linux smoke player
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: unity-3d
+          unityVersion: 6000.6.0f1
+          targetPlatform: StandaloneLinux64
+          buildMethod: RealmBuild.LinuxSmoke
+          dockerCpuLimit: 2
+
+      - name: Install headless display
+        shell: bash
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq xvfb
+
+      - name: Run compiled startup smoke
+        shell: bash
+        run: bash .github/scripts/run-unity-boot-smoke.sh
+
+      - name: Upload boot diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unity-boot-smoke-${{ github.sha }}
+          path: |
+            unity-3d/Validation/boot-player.log
+            unity-3d/Validation/boot-smoke.txt
+          if-no-files-found: warn
+          retention-days: 14
