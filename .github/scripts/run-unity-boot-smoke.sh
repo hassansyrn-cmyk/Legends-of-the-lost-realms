@@ -3,16 +3,17 @@
 # realm, and a valid above-ground camera without runtime exceptions.
 set -Eeuo pipefail
 
-player="unity-3d/Builds/LinuxSmoke/LostRealms3D.x86_64"
-log="unity-3d/Validation/boot-player.log"
-report="unity-3d/Validation/boot-smoke.txt"
+repo_root="$(pwd)"
+player="$repo_root/unity-3d/Builds/LinuxSmoke/LostRealms3D.x86_64"
+log="$repo_root/unity-3d/Validation/boot-player.log"
+report="$repo_root/unity-3d/Validation/boot-smoke.txt"
 
 [[ -x "$player" ]] || { echo "Missing executable smoke player: $player" >&2; exit 1; }
 mkdir -p "$(dirname "$log")"
 rm -f "$log" "$report"
 
 set +e
-timeout 45s xvfb-run -a "$player" -batchmode -nographics -realmBootSmoke -logFile "$log"
+timeout 45s xvfb-run -a -- "$player" -batchmode -nographics -realmBootSmoke -logFile "$log"
 status=$?
 set -e
 
