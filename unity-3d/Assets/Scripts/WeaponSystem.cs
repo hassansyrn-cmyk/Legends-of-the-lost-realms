@@ -30,7 +30,7 @@ namespace LostRealms {
 
  public sealed class WeaponDrop:MonoBehaviour {
   public WeaponId Id;public Vector3 Origin;Transform model;float phase;
-  public void Configure(WeaponId id,Vector3 origin){Id=id;Origin=origin;phase=((int)id+1)*1.37f;var definition=WeaponCatalog.Get(id);model=WeaponCatalog.CreateModel(id,transform,.018f);if(!model)Debug.LogError("WEAPON_DROP_SETUP_FAILED: "+definition.Name);}
+  public void Configure(WeaponId id,Vector3 origin){Id=id;Origin=origin;phase=((int)id+1)*1.37f;var definition=WeaponCatalog.Get(id);var created=WeaponCatalog.CreateModel(id,transform,.018f);model=created?created.transform:null;if(!model)Debug.LogError("WEAPON_DROP_SETUP_FAILED: "+definition.Name);}
   void Update(){
    var game=RealmGame.I;if(!game||game.Screen!=GameScreen.Playing||!game.Player)return;
    float time=game.Elapsed+phase;transform.position=Origin+Vector3.up*(.75f+Mathf.Sin(time*2.4f)*.12f);transform.Rotate(0,Time.deltaTime*42f,0,Space.World);

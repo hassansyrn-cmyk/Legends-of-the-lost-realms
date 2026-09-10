@@ -31,6 +31,8 @@ grep -Fq 'Weapons/Aster_LongSword' "$weapons" || fail "longsword model is not lo
 grep -Fq 'Weapons/Aster_CurvedSword' "$weapons" || fail "curved sword model is not loadable from Resources"
 grep -Fq 'public sealed class WeaponDrop' "$weapons" || fail "missing floating weapon drop behavior"
 grep -Fq 'public sealed class EquippedWeapon' "$weapons" || fail "missing equipped weapon visual behavior"
+grep -Fq 'model=created?created.transform:null;' "$weapons" || fail "weapon drop must retain the created model transform"
+if grep -Fq 'model=WeaponCatalog.CreateModel(id,transform,.018f);' "$weapons"; then fail "weapon drop assigns a GameObject to a Transform"; fi
 grep -Fq 'WeaponDrop(p+' "$world" || fail "realm route does not create a random weapon drop"
 grep -Fq 'weaponIsland=random.Next(2,count-2)' "$world" || fail "weapon drop placement is not randomized"
 grep -Fq 'var weapon=g.CurrentWeapon;' "$hero" || fail "hero attacks ignore equipped weapon stats"
