@@ -47,19 +47,24 @@ public static class AsterPhase1 {
   var avatar=sourceAnimator?sourceAnimator.avatar:null;
   if(!avatar||!avatar.isHuman||!avatar.isValid)throw new Exception("Supplied Aster FBX did not produce a valid Humanoid avatar.");
 
-  var report=new List<string>{"Aster Phase 1 Mixamo integration","Model: "+ModelPath,"Avatar: valid humanoid"};
-  foreach(var spec in Clips){
-   if(spec.AssetPath!=ModelPath)ConfigureAnimation(spec,avatar);
-   var imported=FindImportedClip(spec.AssetPath);
-   if(!imported)throw new Exception("No animation clip imported from "+spec.AssetPath);
-   string outputPath=AnimationOutputRoot+"/"+spec.State+".anim";
-   SaveClip(imported,outputPath,spec.State,spec.Loop);
-   var saved=AssetDatabase.LoadAssetAtPath<AnimationClip>(outputPath);
-   if(!saved)throw new Exception("Failed to create "+outputPath);
-   report.Add(spec.State+": "+saved.length.ToString("0.000")+"s, loop="+spec.Loop);
-  }
+var report=new List<string>{"Aster Phase 1 Mixamo integration","Model: "+ModelPath,"Avatar: valid humanoid"};
+   // Idle's root pose is the reference all other clips must share: it is the
+   // pose that currently puts the feet on the ground, so pinning every clip's
+   // RootT to these constants keeps each clip at that same height (no sink)
+   // and removes the per-clip root jumps that snap the body at transitions.
+   var baselineRoot=ReadFirstKeyPos(FindImportedClip(ModelPath));
+   foreach(var spec in Clips){
+    if(spec.AssetPath!=ModelPath)ConfigureAnimation(spec,avatar);
+    var imported=FindImportedClip(spec.AssetPath);
+    if(!imported)throw new Exception("No animation clip imported from "+spec.AssetPath);
+    string outputPath=AnimationOutputRoot+"/"+spec.State+".anim";
+    SaveClip(imported,outputPath,spec.State,spec.Loop,baselineRoot);
+    var saved=AssetDatabase.LoadAssetAtPath<AnimationClip>(outputPath);
+    if(!saved)throw new Exception("Failed to create "+outputPath);
+    report.Add(spec.State+": "+saved.length.ToString("0.000")+"s, loop="+spec.Loop);
+   }
 
-  BuildPrefab(sourceModel,avatar);
+   BuildPrefab(sourceModel,avatar);
   AssetDatabase.SaveAssets();
   File.WriteAllLines("ASTER_PHASE1_REPORT.txt",report);
   Debug.Log("MODEL_INTEGRATION_PASSED: supplied Mixamo Aster model, material, and 12 animation states prepared.");
@@ -152,15 +157,49 @@ public static class AsterPhase1 {
   return AssetDatabase.LoadAllAssetsAtPath(path).OfType<AnimationClip>().FirstOrDefault(c=>!c.name.StartsWith("__preview__",StringComparison.Ordinal));
  }
 
- static void SaveClip(AnimationClip source,string outputPath,string state,bool loop){
-  var clip=UnityEngine.Object.Instantiate(source);
-  clip.name=state;
-  var settings=AnimationUtility.GetAnimationClipSettings(clip);
-  settings.loopTime=loop;
-  AnimationUtility.SetAnimationClipSettings(clip,settings);
-  if(AssetDatabase.LoadAssetAtPath<AnimationClip>(outputPath))AssetDatabase.DeleteAsset(outputPath);
-  AssetDatabase.CreateAsset(clip,outputPath);
- }
+static void SaveClip(AnimationClip source,string outputPath,string state,bool loop,Vector3 baselineRoot){
+   var clip=UnityEngine.Object.Instantiate(source);
+   clip.name=state;
+   NormalizeRoot(clip,baselineRoot);
+   var settings=AnimationUtility.GetAnimationClipSettings(clip);
+   settings.loopTime=loop;
+   AnimationUtility.SetAnimationClipSettings(clip,settings);
+   if(AssetDatabase.LoadAssetAtPath<AnimationClip>(outputPath))AssetDatabase.DeleteAsset(outputPath);
+   AssetDatabase.CreateAsset(clip,outputPath);
+  }
+
+  // Mixamo exports carry ramped root-translation curves (RootT.x/y/z ramp
+  // 1-3+ units across walk/run/dodge clips).  The game capsule supplies all
+  // locomotion, so every RootT curve is pinned to the reference root pose
+  // captured from the IDLE clip (the pose the feet currently stand on).
+  // This prevents the "model grows/teleports at walk start" popping and
+  // keeps every state at the same height and pivot as idle, so nothing
+  // sinks and transitions don't snap.
+  static void NormalizeRoot(AnimationClip clip,Vector3 baselineRoot){
+   foreach(var binding in AnimationUtility.GetCurveBindings(clip)){
+    if(binding.propertyName=="RootT.x")SetConstant(clip,binding,baselineRoot.x);
+    else if(binding.propertyName=="RootT.y")SetConstant(clip,binding,baselineRoot.y);
+    else if(binding.propertyName=="RootT.z")SetConstant(clip,binding,baselineRoot.z);
+   }
+  }
+
+  static void SetConstant(AnimationClip clip,EditorCurveBinding binding,float value){
+   AnimationUtility.SetEditorCurve(clip,binding,AnimationCurve.Constant(0f,clip.length,value));
+  }
+
+  static Vector3 ReadFirstKeyPos(AnimationClip clip){
+   var pos=Vector3.zero;
+   if(clip==null)return pos;
+   foreach(var binding in AnimationUtility.GetCurveBindings(clip)){
+    var curve=AnimationUtility.GetEditorCurve(clip,binding);
+    if(curve==null||curve.keys.Length==0)continue;
+    float v=curve.keys[0].value;
+    if(binding.propertyName=="RootT.x")pos.x=v;
+    else if(binding.propertyName=="RootT.y")pos.y=v;
+    else if(binding.propertyName=="RootT.z")pos.z=v;
+   }
+   return pos;
+  }
 
  static void BuildPrefab(GameObject sourceModel,Avatar avatar){
   var material=AssetDatabase.LoadAssetAtPath<Material>(MaterialPath);

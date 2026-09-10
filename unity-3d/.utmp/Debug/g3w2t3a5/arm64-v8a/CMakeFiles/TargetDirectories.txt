@@ -1,0 +1,8 @@
+C:/Users/X1 YOGA/Documents/3D Lost Realms OpenCode/Legends-of-the-lost-realms/unity-3d/.utmp/Debug/g3w2t3a5/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/X1 YOGA/Documents/3D Lost Realms OpenCode/Legends-of-the-lost-realms/unity-3d/.utmp/Debug/g3w2t3a5/arm64-v8a/CMakeFiles/rebuild_cache.dir
+C:/Users/X1 YOGA/Documents/3D Lost Realms OpenCode/Legends-of-the-lost-realms/unity-3d/.utmp/Debug/g3w2t3a5/arm64-v8a/GameActivity/CMakeFiles/game.dir
+C:/Users/X1 YOGA/Documents/3D Lost Realms OpenCode/Legends-of-the-lost-realms/unity-3d/.utmp/Debug/g3w2t3a5/arm64-v8a/GameActivity/CMakeFiles/edit_cache.dir
+C:/Users/X1 YOGA/Documents/3D Lost Realms OpenCode/Legends-of-the-lost-realms/unity-3d/.utmp/Debug/g3w2t3a5/arm64-v8a/GameActivity/CMakeFiles/rebuild_cache.dir
+C:/Users/X1 YOGA/Documents/3D Lost Realms OpenCode/Legends-of-the-lost-realms/unity-3d/.utmp/Debug/g3w2t3a5/arm64-v8a/FramePacing/CMakeFiles/swappywrapper.dir
+C:/Users/X1 YOGA/Documents/3D Lost Realms OpenCode/Legends-of-the-lost-realms/unity-3d/.utmp/Debug/g3w2t3a5/arm64-v8a/FramePacing/CMakeFiles/edit_cache.dir
+C:/Users/X1 YOGA/Documents/3D Lost Realms OpenCode/Legends-of-the-lost-realms/unity-3d/.utmp/Debug/g3w2t3a5/arm64-v8a/FramePacing/CMakeFiles/rebuild_cache.dir

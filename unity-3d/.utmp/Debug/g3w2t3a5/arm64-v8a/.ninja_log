@@ -1,0 +1,12 @@
+# ninja log v5
+291	3347	8107444758823951	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	9cbcd3cbeca6866
+3368	4603	8107444770219610	C:/Users/X1 YOGA/Documents/3D Lost Realms OpenCode/Legends-of-the-lost-realms/unity-3d/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/Debug/g3w2t3a5/obj/arm64-v8a/libswappywrapper.so	eafae74e565cba30
+198	10025	8107444823867360	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	c8220a5df7757423
+45	10090	8107444824723916	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	cdd5db9986b5ffed
+168	10143	8107444824216650	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	6f00dca8c6ac81cf
+261	10161	8107444825044951	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	e155755179b62ffc
+78	10193	8107444826814992	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	fd57c9b2e3cf7553
+231	10386	8107444828962403	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	46b13b978499e48c
+107	10616	8107444831391291	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	95aeebbaffbe273a
+2	10824	8107444833265303	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	c162cd69db195e6a
+10825	11386	8107444838976543	C:/Users/X1 YOGA/Documents/3D Lost Realms OpenCode/Legends-of-the-lost-realms/unity-3d/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/Debug/g3w2t3a5/obj/arm64-v8a/libgame.so	6ce00947badd123d

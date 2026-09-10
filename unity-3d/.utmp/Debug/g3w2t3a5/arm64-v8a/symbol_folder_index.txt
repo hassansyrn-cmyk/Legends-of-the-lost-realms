@@ -1,0 +1,1 @@
+C:\Users\X1 YOGA\Documents\3D Lost Realms OpenCode\Legends-of-the-lost-realms\unity-3d\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\build\intermediates\cxx\Debug\g3w2t3a5\obj\arm64-v8a

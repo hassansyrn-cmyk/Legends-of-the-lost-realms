@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Prevents the excessively fast Phase 1 Aster playback and missing double-jump flip from returning.
+# Prevents the excessively fast Phase 1 Aster playback from returning and
+# guards the double-jump flip removal (the flip clip still ships, unplayed).
 set -Eeuo pipefail
 
 hero="unity-3d/Assets/Scripts/Hero.cs"
@@ -34,15 +35,16 @@ grep -Fq 'const float MaxMoveSpeed=4.8f' "$hero" \
   || fail "missing controlled max locomotion speed"
 grep -Fq 'Vector3.MoveTowards(velocity,desiredVelocity,response*dt)' "$hero" \
   || fail "missing deterministic acceleration and deceleration"
-grep -Fq 'Visual.Restart("double_jump")' "$hero" \
-  || fail "second jump does not restart the flip animation"
+if grep -Fq 'Visual.Restart("double_jump")' "$hero"; then
+  fail "double-jump flip was removed by design"
+fi
 grep -Fq '"double_jump"' "$hero" \
   || fail "double-jump state is not in the runtime animation map"
 grep -Fq 'Aster_double_jump.fbx' "$importer" \
   || fail "double-jump FBX is not imported"
 grep -Fq '"double_jump"' "$probe" \
   || fail "runtime probe does not verify the double-jump state"
-grep -Fq 'Second jump enters flip animation' "$probe" \
-  || fail "runtime probe does not exercise the flip transition"
+grep -Fq 'Second jump reuses jump motion' "$probe" \
+  || fail "runtime probe does not exercise the double-jump transition"
 
 printf 'Aster motion regression check passed.\n'

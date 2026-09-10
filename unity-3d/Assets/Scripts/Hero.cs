@@ -6,10 +6,10 @@ namespace LostRealms {
  [DefaultExecutionOrder(20)] public class Hero:MonoBehaviour {
   public CharacterController Controller;public int MaxHealth,Health,Power;public float Energy=100;public bool Grounded=>Controller&&Controller.isGrounded; public CharacterVisual Visual;
   const float MaxMoveSpeed=4.8f,GroundResponse=18f,AirResponse=8f,StopResponse=22f;
-  Vector3 velocity;float vertical,jumpGrace,dashUntil,dashReady,dodgeVisualUntil,flipVisualUntil,hitUntil,immuneUntil,attackReady,comboUntil,chargeStart;int jumps,combo;bool charging;float jumpBuffer;string attackState="attack_1";
+  Vector3 velocity;Vector3 moveWish;float vertical,jumpGrace,dashUntil,dashReady,dodgeVisualUntil,hitUntil,immuneUntil,attackReady,comboUntil,chargeStart,attackBufferUntil;int jumps,combo;bool charging,attackBufferCharged;float jumpBuffer;string attackState="attack_1";
   public float HorizontalSpeed{get{var horizontal=velocity;horizontal.y=0;return horizontal.magnitude;}}
   void Awake(){
-   Controller=gameObject.AddComponent<CharacterController>();Controller.height=1.75f;Controller.radius=.32f;Controller.center=Vector3.up*.9f;Controller.stepOffset=.35f;Controller.slopeLimit=48;
+   Controller=gameObject.AddComponent<CharacterController>();Controller.height=1.75f;Controller.radius=.32f;Controller.center=Vector3.up*.9f;Controller.stepOffset=.35f;Controller.slopeLimit=48;Controller.skinWidth=.08f;Controller.minMoveDistance=.001f;
    MaxHealth=5+RealmGame.I.Save.healthRank;Health=MaxHealth;
    Visual=CharacterVisual.Create("Aster",transform,1.8f,new Color(.25f,.55f,.57f));
   }
@@ -21,63 +21,35 @@ namespace LostRealms {
     if(g.Screen==GameScreen.Defeated)Visual.Play("death");else Visual.Play("idle");
     return;
    }
-   float dt=Time.deltaTime;
+   // Input shaping only: camera-facing wish is computed here for rotation
+   // and animation, while ALL CharacterController physics runs in FixedUpdate
+   // so input timing can never make the capsule stutter or jitter.
    Vector3 forward=Quaternion.Euler(0,g.CameraRig.Yaw,0)*Vector3.forward;
    Vector3 right=Quaternion.Euler(0,g.CameraRig.Yaw,0)*Vector3.right;
-   Vector3 wish=forward*g.MoveInput.y+right*g.MoveInput.x;
+   moveWish=forward*g.MoveInput.y+right*g.MoveInput.x;
+   if(moveWish.sqrMagnitude>1f)moveWish.Normalize();
+   float sdt=Mathf.Min(Time.deltaTime,1f/30f);
 
-   // Grounding and Jump Grace (Coyote time)
-   if(Grounded){jumps=0;jumpGrace=.14f;flipVisualUntil=0;if(vertical<0)vertical=-2f;}else jumpGrace-=dt;
-   jumpBuffer=g.JumpPressed?.13f:Mathf.Max(0,jumpBuffer-dt);
-   if(jumpBuffer>0&&(jumps<2||jumpGrace>0)){
-    jumpBuffer=0;
-    vertical=8.4f;jumps=jumpGrace>0?1:jumps+1;jumpGrace=0;
-    g.Sound(jumps==1?"jump":"double_jump");
-    if(jumps==2){
-     // This supplied Mixamo clip contains a complete airborne inversion. It is
-     // visual-only; physics remains controlled by CharacterController.
-     flipVisualUntil=RealmGame.I.Elapsed+.9f;Visual.Restart("double_jump");
-     Color elemColor=Power==0?new Color(1f,.45f,.1f):Power==1?new Color(.2f,.85f,1f):new Color(.2f,1f,.55f);
-     HitSpark.Burst(transform.position+Vector3.up*.2f,Vector3.down,elemColor,8);
-    }else Visual.Restart("jump");
+   // Smooth turning with subtle banking (yaw on root, lean on visual only
+   // so the CharacterController capsule never tilts and jitters).
+   if(moveWish.sqrMagnitude>.02f){
+    Vector3 flatWish=moveWish;flatWish.y=0;
+    if(flatWish.sqrMagnitude>.001f){
+     Quaternion targetRot=Quaternion.LookRotation(flatWish.normalized);
+     float turnAngle=Vector3.SignedAngle(transform.forward,flatWish.normalized,Vector3.up);
+     Quaternion bank=Quaternion.Euler(0,0,Mathf.Clamp(-turnAngle*0.25f,-8f,8f));
+     transform.rotation=Quaternion.Slerp(transform.rotation,targetRot,sdt*12f);
+     if(Visual)Visual.transform.localRotation=Quaternion.Slerp(Visual.transform.localRotation,bank,sdt*10f);
+    }
+   }else if(Visual&&Visual.transform.localRotation!=Quaternion.identity){
+    Visual.transform.localRotation=Quaternion.Slerp(Visual.transform.localRotation,Quaternion.identity,sdt*10f);
    }
 
-   // Dash
-   if(g.DashPressed&&RealmGame.I.Elapsed>=dashReady){
-    dashUntil=RealmGame.I.Elapsed+.28f;dodgeVisualUntil=RealmGame.I.Elapsed+.63f;dashReady=RealmGame.I.Elapsed+.85f;
-    immuneUntil=Mathf.Max(immuneUntil,dashUntil+.1f);
-    attackReady=RealmGame.I.Elapsed;charging=false;
-    if(wish.sqrMagnitude<.1f)wish=transform.forward;
-    velocity=wish.normalized*16f;g.Sound("player_dash");
-    Visual.Restart("dodge");
-    HitSpark.Burst(transform.position+Vector3.up*.8f,-wish.normalized,new Color(1f,.9f,.7f),8);
-   }
-
-   // Smooth turning with subtle banking
-   if(wish.sqrMagnitude>.02f){
-    Quaternion targetRot=Quaternion.LookRotation(wish);
-    float turnAngle=Vector3.SignedAngle(transform.forward,wish,Vector3.up);
-    Quaternion bank=Quaternion.Euler(0,0,Mathf.Clamp(-turnAngle*0.25f,-8f,8f));
-    transform.rotation=Quaternion.Slerp(transform.rotation,targetRot*bank,dt*14f);
-   }
-
-   // Horizontal acceleration
-   if(RealmGame.I.Elapsed>=dashUntil){
-    Vector3 desiredVelocity=wish.sqrMagnitude>.0001f?wish.normalized*(MaxMoveSpeed*Mathf.Clamp01(wish.magnitude)):Vector3.zero;
-    float response=desiredVelocity.sqrMagnitude>.001f?(Grounded?GroundResponse:AirResponse):StopResponse;
-    velocity=Vector3.MoveTowards(velocity,desiredVelocity,response*dt);
-   }
-
-   // Vertical physics with Jump Apex Float
-   float grav=Mathf.Abs(vertical)<2.5f?11f:23f;
-   vertical-=grav*dt;
-   Controller.Move((velocity+Vector3.up*vertical)*dt);
-   Energy=Mathf.Min(100,Energy+dt*12);
-
-   // Attack inputs
+   // Attack inputs (taps chain via a short queue so swings link smoothly)
    if(g.AttackPressed){charging=true;chargeStart=RealmGame.I.Elapsed;}
    if(charging&&g.AttackReleased){Attack(RealmGame.I.Elapsed-chargeStart>=.38f);charging=false;}
    if(charging&&RealmGame.I.Elapsed-chargeStart>=.75f){Attack(true);charging=false;}
+   if(attackBufferUntil>0&&RealmGame.I.Elapsed>=attackReady&&RealmGame.I.Elapsed>=dodgeVisualUntil&&RealmGame.I.Elapsed>=hitUntil){attackBufferUntil=0;Attack(attackBufferCharged);}
    if(g.CastPressed)Cast();
    if(transform.position.y<-12){Health=0;g.DamageTaken++;g.Defeat();}
 
@@ -89,8 +61,8 @@ namespace LostRealms {
    }else if(RealmGame.I.Elapsed<attackReady-.06f){
     Visual.Play(attackState);
    }else if(!Grounded){
-    Visual.Play(RealmGame.I.Elapsed<flipVisualUntil?"double_jump":"jump");
-   }else if(wish.sqrMagnitude>.01f){
+    Visual.Play("jump");
+   }else if(moveWish.sqrMagnitude>.01f){
     float speedRatio=Mathf.Clamp01(HorizontalSpeed/MaxMoveSpeed);
     Visual.PlayWalk(speedRatio);
    }else{
@@ -98,33 +70,107 @@ namespace LostRealms {
    }
   }
 
-  public void Warp(Vector3 p){Controller.enabled=false;transform.position=p;Controller.enabled=true;vertical=0;velocity=Vector3.zero;jumpBuffer=0;charging=false;immuneUntil=RealmGame.I.Elapsed+1.2f;RealmGame.I.CameraRig.Snap();}
+  void FixedUpdate(){
+   var g=RealmGame.I;
+   if(!g||!Controller||g.Screen!=GameScreen.Playing)return;
+   // Button edges are consumed here so a single press can never fire twice
+   // when a frame happens to contain multiple physics steps.
+   bool jumpPressed=g.JumpPressed;if(jumpPressed)g.JumpPressed=false;
+   bool dashPressed=g.DashPressed;if(dashPressed)g.DashPressed=false;
+   // Physics always advances on the constant fixed timestep: frame-rate
+   // spikes no longer move Aster farther (the old dt clamp) or make the
+   // controller skip collision layers.
+   float dt=Time.fixedDeltaTime;
+   Vector3 wish=moveWish;
+
+   // Grounding and Jump Grace (Coyote time)
+   if(Grounded){jumps=0;jumpGrace=.14f;if(vertical<0)vertical=-3f;}else jumpGrace-=dt;
+   jumpBuffer=jumpPressed?.13f:Mathf.Max(0,jumpBuffer-dt);
+   if(jumpBuffer>0&&(jumps<2||jumpGrace>0)){
+    jumpBuffer=0;
+    vertical=8.4f;jumps=jumpGrace>0?1:jumps+1;jumpGrace=0;
+    g.Sound(jumps==1?"jump":"double_jump");
+    if(jumps==2){
+     Color elemColor=Power==0?new Color(1f,.45f,.1f):Power==1?new Color(.2f,.85f,1f):new Color(.2f,1f,.55f);
+     HitSpark.Burst(transform.position+Vector3.up*.2f,Vector3.down,elemColor,8);
+    }
+    Visual.Restart("jump");
+   }
+
+   // Dash
+   if(dashPressed&&RealmGame.I.Elapsed>=dashReady){
+    dashUntil=RealmGame.I.Elapsed+.22f;dodgeVisualUntil=RealmGame.I.Elapsed+.63f;dashReady=RealmGame.I.Elapsed+.9f;
+    immuneUntil=Mathf.Max(immuneUntil,dashUntil+.1f);
+    attackReady=RealmGame.I.Elapsed;charging=false;
+    if(wish.sqrMagnitude<.1f)wish=transform.forward;
+    wish.y=0;wish.Normalize();
+    velocity=wish*9.5f;velocity.y=0;g.Sound("player_dash");
+    Visual.Restart("dodge");
+    HitSpark.Burst(transform.position+Vector3.up*.8f,-wish,new Color(1f,.9f,.7f),8);
+   }
+
+   // Horizontal acceleration
+   if(RealmGame.I.Elapsed>=dashUntil){
+    Vector3 desiredVelocity=wish.sqrMagnitude>.0001f?wish.normalized*(MaxMoveSpeed*Mathf.Clamp01(wish.magnitude)):Vector3.zero;
+    float response=desiredVelocity.sqrMagnitude>.001f?(Grounded?GroundResponse:AirResponse):StopResponse;
+    velocity=Vector3.MoveTowards(velocity,desiredVelocity,response*dt);
+    velocity.y=0;
+    // Dash leftover (or knockback) must not linger above run speed and
+    // slingshot Aster across small islands.
+    if(velocity.sqrMagnitude>MaxMoveSpeed*MaxMoveSpeed)velocity=Vector3.MoveTowards(velocity,desiredVelocity,StopResponse*2f*dt);
+   }else{
+    velocity.y=0;
+   }
+
+   // Vertical physics with Jump Apex Float. Exactly one Move per fixed step:
+   // sub-stepping added extra capsule collision resolutions that jittered.
+   float grav=Mathf.Abs(vertical)<2.5f?11f:23f;
+   vertical-=grav*dt;
+   vertical=Mathf.Max(vertical,-20f);
+   Controller.Move((velocity+Vector3.up*vertical)*dt);
+   Energy=Mathf.Min(100,Energy+dt*12);
+  }
+
+  public void Warp(Vector3 p){Controller.enabled=false;transform.position=p;Controller.enabled=true;vertical=0;velocity=Vector3.zero;jumpBuffer=0;charging=false;dashUntil=0;attackBufferUntil=0;immuneUntil=RealmGame.I.Elapsed+1.2f;RealmGame.I.CameraRig.Snap();}
   public void Damage(int damage,Vector3 source){
    if(RealmGame.I.Elapsed<immuneUntil||Health<=0)return;
-   Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=RealmGame.I.Elapsed+1;hitUntil=RealmGame.I.Elapsed+.38f;
-   velocity=(transform.position-source).normalized*4;RealmGame.I.Sound("hurt");RealmGame.I.CameraRig.Shake=.18f;
+   Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=RealmGame.I.Elapsed+1;hitUntil=RealmGame.I.Elapsed+.5f;
+   Vector3 knock=transform.position-source;knock.y=0;if(knock.sqrMagnitude<.01f)knock=-transform.forward;knock.y=0;velocity=knock.normalized*4.5f;RealmGame.I.Sound("hurt");RealmGame.I.CameraRig.Shake=.18f;
    Visual.Restart(Health<=0?"death":"hit");
    HitSpark.Burst(transform.position+Vector3.up*.8f,(transform.position-source).normalized,new Color(1f,.2f,.2f),8);
    if(Health<=0)RealmGame.I.Defeat();
   }
 
   void Attack(bool charged){
-   if(RealmGame.I.Elapsed<attackReady)return;
+   // Never cut a dodge roll or hit flinch mid-clip: queue instead so the
+   // swing starts exactly as the current visual blends out.
+   if(RealmGame.I.Elapsed<attackReady||RealmGame.I.Elapsed<dodgeVisualUntil||RealmGame.I.Elapsed<hitUntil){
+    attackBufferUntil=RealmGame.I.Elapsed+.3f;attackBufferCharged=charged;return;
+   }
    var g=RealmGame.I;var weapon=g.CurrentWeapon;
    combo=RealmGame.I.Elapsed<comboUntil?(combo%3)+1:1;
-   comboUntil=RealmGame.I.Elapsed+.95f;
-   float attackDuration=(charged?.84f:(combo==2?.78f:(combo==3?.64f:.66f)))/weapon.Tempo;
-   attackReady=RealmGame.I.Elapsed+attackDuration;
+   float baseSpeed=charged?2.55f:combo==2?3.15f:combo==3?2.9f:3.05f;
+   float playSpeed=baseSpeed*Mathf.Max(.4f,weapon.Tempo);
    attackState=charged?"charged":"attack_"+Mathf.Clamp(combo,1,3);
+   float clipLen=Visual?Visual.ClipLength(attackState):0f;
+   float attackDuration=clipLen>0f?clipLen/playSpeed:(charged?.84f:(combo==2?.78f:(combo==3?.64f:.66f)))/weapon.Tempo;
+   attackReady=RealmGame.I.Elapsed+attackDuration;
+   comboUntil=attackReady+.35f;
+   dashUntil=0;
 
    // Small facing assist keeps nearby targets usable with a phone stick.
+   // Partial turn only: an instant snap reads as a teleport pop.
    Enemy closest=null;float nearest=3.5f;foreach(var foe in g.Enemies){if(!foe||foe.Health<=0)continue;Vector3 d=foe.transform.position-transform.position;d.y=0;if(d.magnitude<nearest&&Vector3.Dot(transform.forward,d.normalized)>.35f){closest=foe;nearest=d.magnitude;}}
-   if(closest){Vector3 aim=closest.transform.position-transform.position;aim.y=0;if(aim.sqrMagnitude>.01f)transform.rotation=Quaternion.LookRotation(aim);}
-   // Forward attack step for momentum
-   Vector3 lungeDir=transform.forward;
-   velocity=lungeDir*(charged?5.5f:3.6f);
+   if(closest){Vector3 aim=closest.transform.position-transform.position;aim.y=0;if(aim.sqrMagnitude>.01f)transform.rotation=Quaternion.Slerp(transform.rotation,Quaternion.LookRotation(aim.normalized),.65f);}
+   // Forward attack step blended with current momentum (never a teleport
+   // pop), softened in air so jump arcs survive the swing.
+   Vector3 lungeDir=transform.forward;lungeDir.y=0;
+   if(lungeDir.sqrMagnitude<.01f)lungeDir=Vector3.forward;
+   lungeDir.Normalize();
+   float lungeStep=(charged?3f:2f)*(Grounded?1f:.5f);
+   velocity=Vector3.ClampMagnitude(velocity*.55f+lungeDir*lungeStep*.45f,MaxMoveSpeed);velocity.y=0;
 
-   Visual.PlayAttack(combo,charged);
+   Visual.PlayAttack(combo,charged,weapon.Tempo);
    g.Sound("blade");
 
    float reach=(charged?3.4f:2.7f)*weapon.Reach;
@@ -226,10 +272,12 @@ namespace LostRealms {
   }
 
   public void Restart(string state){current="";Play(state);}
-  public void PlayAttack(int combo,bool charged){
-   current="";Play(charged?"charged":"attack_"+Mathf.Clamp(combo,1,3));
-   if(hasGraph&&playable[slot].IsValid())playable[slot].SetSpeed(charged?2.55f:combo==2?3.15f:combo==3?2.9f:3.05f);
+  public void PlayAttack(int combo,bool charged,float tempo=1f){
+   current="";string state=charged?"charged":"attack_"+Mathf.Clamp(combo,1,3);Play(state);
+   float baseSpeed=charged?2.55f:combo==2?3.15f:combo==3?2.9f:3.05f;
+   if(hasGraph&&playable[slot].IsValid())playable[slot].SetSpeed(baseSpeed*Mathf.Max(.4f,tempo));
   }
+  public float ClipLength(string state){int i=System.Array.IndexOf(Names,state);if(i>=0&&clips!=null&&i<clips.Length&&clips[i]!=null)return clips[i].length;return 0f;}
   public void PlayWalk(float speedRatio=1f){
    // Hysteresis keeps a thumbstick near the walk/run threshold from restarting
    // clips every frame and making the character appear to twitch.
@@ -247,8 +295,8 @@ namespace LostRealms {
    playable[slot].SetApplyFootIK(false);
    if(state=="jump")playable[slot].SetSpeed(1.9f);
    if(state=="double_jump")playable[slot].SetSpeed(3.55f);
-   if(state=="dodge")playable[slot].SetSpeed(2.9f);
-   if(state=="hit")playable[slot].SetSpeed(1.85f);
+   if(state=="dodge")playable[slot].SetSpeed(3.35f);
+   if(state=="hit")playable[slot].SetSpeed(2.07f);
    playable[slot].SetTime(0);
    graph.Connect(playable[slot],0,mixer,slot);blend=0;
   }
@@ -431,7 +479,7 @@ namespace LostRealms {
   void LateUpdate(){
    if(!Target)return;Vector3 targetFocus=Target.position+Vector3.up*1.35f;
    if(!initialized){currentFocus=targetFocus;groundY=Target.position.y;initialized=true;}
-   else{var hero=Target.GetComponent<Hero>();if(hero&&hero.Grounded)groundY=Target.position.y;targetFocus.y=groundY+1.35f+Mathf.Clamp(Target.position.y-groundY,0,1.5f)*.18f;currentFocus=Vector3.Lerp(currentFocus,targetFocus,1-Mathf.Exp(-Time.deltaTime*10));}
+   else{var hero=Target.GetComponent<Hero>();if(hero&&hero.Grounded)groundY=Mathf.Lerp(groundY,Target.position.y,Time.deltaTime*14f);targetFocus.y=groundY+1.35f+Mathf.Clamp(Target.position.y-groundY,0,1.5f)*.18f;currentFocus=Vector3.Lerp(currentFocus,targetFocus,1-Mathf.Exp(-Time.deltaTime*10));}
    Vector3 dir=Quaternion.Euler(14f,Yaw,0)*new Vector3(0,0.45f,-1f).normalized;float targetDist=8.0f;
    int mask=1<<0;
    if(Physics.SphereCast(currentFocus,0.28f,dir,out var hit,targetDist,mask,QueryTriggerInteraction.Ignore)){
