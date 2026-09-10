@@ -94,11 +94,15 @@ namespace LostRealms {
 
  public abstract class RealmRelicVisual:MonoBehaviour {
   protected static readonly int EmissionColor=Shader.PropertyToID("_EmissionColor");
-  protected readonly MaterialPropertyBlock Block=new MaterialPropertyBlock();
+  MaterialPropertyBlock block;
   public Color Accent;public readonly List<Renderer> GlowRenderers=new List<Renderer>();
   protected void SetGlow(float intensity){
    Color emission=Accent*Mathf.Max(.08f,intensity);
-   foreach(var renderer in GlowRenderers){if(!renderer)continue;renderer.GetPropertyBlock(Block);Block.SetColor(EmissionColor,emission);renderer.SetPropertyBlock(Block);}
+   if(block==null)block=new MaterialPropertyBlock();
+   foreach(var renderer in GlowRenderers){
+    if(!renderer||!renderer.gameObject)continue;
+    renderer.GetPropertyBlock(block);block.SetColor(EmissionColor,emission);renderer.SetPropertyBlock(block);
+   }
   }
   protected float Clock=>RealmGame.I?RealmGame.I.Elapsed:Time.time;
  }
