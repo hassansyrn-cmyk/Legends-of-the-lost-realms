@@ -141,16 +141,13 @@ namespace LostRealms {
   void Pickup(Vector3 position,bool gem){
    var go=new GameObject(gem?"GemPickup":"CoinPickup");
    go.transform.SetParent(transform,false);go.transform.position=position;
-   if(gem)Art.GemMesh(go.transform,accent);
+   if(gem)RelicArt.Gem(go.transform,accent);
    else Art.CoinMesh(go.transform);
    var pickup=go.AddComponent<RealmPickup>();pickup.Gem=gem;pickup.Origin=position;
   }
   void Checkpoint(Vector3 p){
    var go=new GameObject("Checkpoint shrine");go.transform.SetParent(transform);go.transform.position=p;
-   Art.Shape("Shrine dais",PrimitiveType.Cylinder,Vector3.up*.06f,new Vector3(1.8f,.12f,1.8f),stone*1.3f,go.transform);
-   Art.Shape("Shrine base",PrimitiveType.Cylinder,Vector3.up*.16f,new Vector3(1.4f,.12f,1.4f),stone,go.transform);
-   Art.Crystal(Vector3.up*1.2f,.7f,accent,go.transform);
-   Art.Ring(Vector3.up*.04f,1.35f,accent,go.transform);
+   RelicArt.Checkpoint(go.transform,accent,stone);
    go.AddComponent<RealmCheckpoint>();
   }
   void Gate(Vector3 p){
@@ -181,22 +178,25 @@ namespace LostRealms {
   public bool Gem;public Vector3 Origin;
   void Update(){
    var g=RealmGame.I;if(g.Screen!=GameScreen.Playing)return;
-   transform.Rotate(0,(Gem?75f:110f)*Time.deltaTime,0,Space.World);
+   // GemVisual supplies the main faceted motion. Keep the pickup root slow so
+   // its orbiting shards read clearly instead of turning into a spinning cube.
+   transform.Rotate(0,(Gem?20f:110f)*Time.deltaTime,0,Space.World);
    Vector3 target=g.Player.transform.position+Vector3.up*.8f;
-   if(Vector3.Distance(Origin,target)<(Gem?1.6f:2.1f))Origin=Vector3.MoveTowards(Origin,target,Time.deltaTime*4.5f);
+   if(Vector3.Distance(Origin,target)<(Gem?1.85f:2.1f))Origin=Vector3.MoveTowards(Origin,target,Time.deltaTime*(Gem?5.4f:4.5f));
    transform.position=Origin+Vector3.up*Mathf.Sin(RealmGame.I.Elapsed*2.8f)*.15f;
    if(Vector3.Distance(g.Player.transform.position+Vector3.up*.8f,transform.position)<1.15f){
-    HitSpark.Burst(transform.position,Vector3.up,Gem?g.Accent:new Color(1f,.85f,.2f),12);
+    HitSpark.Burst(transform.position,Vector3.up,Gem?g.Accent:new Color(1f,.85f,.2f),Gem?18:12);
     g.Collect(Gem);Destroy(gameObject);
    }
   }
  }
  public class RealmCheckpoint:MonoBehaviour {
-  bool active;
+  bool active;CheckpointVisual visual;
+  void Awake(){visual=GetComponent<CheckpointVisual>();}
   void Update(){
    var g=RealmGame.I;
-   if(!active&&g.Screen==GameScreen.Playing&&Vector3.Distance(g.Player.transform.position,transform.position)<1.8f){
-    active=true;HitSpark.Burst(transform.position+Vector3.up*1.2f,Vector3.up,g.Accent,18);
+   if(!active&&g.Screen==GameScreen.Playing&&Vector3.Distance(g.Player.transform.position,transform.position)<2.05f){
+    active=true;if(visual)visual.Activate();HitSpark.Burst(transform.position+Vector3.up*1.35f,Vector3.up,g.Accent,28);
     g.ActivateCheckpoint(transform.position+Vector3.forward*1.5f+Vector3.up*.05f);
    }
   }
@@ -230,5 +230,4 @@ namespace LostRealms {
   }
  }
 }
-
 

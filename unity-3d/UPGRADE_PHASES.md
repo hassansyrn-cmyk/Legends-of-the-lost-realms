@@ -45,6 +45,21 @@ The implementation uses high-level movement principles observed in three compara
 
 The Android build must compile from a clean Unity Library. The generated Aster prefab must use the supplied Mixamo mesh, a valid Humanoid avatar, and the supplied albedo and normal textures. The compiled APK must contain the `Aster` material, `Aster_0`, `Aster_1`, and all twelve named clips. Runtime validation must confirm that Aster has a skinned renderer, uses the `Aster` material, remains within the intended character scale, remains at or below the normal movement-speed cap, and exposes every required animation state including the second-jump flip.
 
+## Phase 2 Implementation
+
+Phase 2 replaces the previous cube-like gem and checkpoint props with original low-poly relics generated in the project. The game does not import a third-party asset pack for this phase. This avoids attribution, licensing, visual-cohesion, and APK-size concerns while producing silhouettes designed specifically for the existing floating-island camera.
+
+| Object | Visual design | Feedback and mobile-performance approach |
+|---|---|---|
+| **Gem** | A six-sided faceted core, inner light, four orbiting shards, and a tilted rune halo. | The root moves slowly while the individual facets communicate the collectible state. The familiar attraction range pulls the gem toward Aster and collection emits an enhanced accent-colored burst. |
+| **Checkpoint** | An octagonal two-tier sanctuary dais, tall seven-sided heart crystal, four sentinel shards, and two floating rune halos. | It glows softly while dormant. Activating it increases rune rotation, crystal motion, emission intensity, point-light intensity, scale pulse, collection burst count, and interaction range. |
+
+The relic meshes are shared procedural meshes with low side counts: six or seven sides for crystals, eight sides for the sanctuary, and a 16-by-4 segment rune halo. Gems use seven mesh-renderer objects, and checkpoints use ten mesh-renderer objects plus one non-shadow-casting point light. This small budget is appropriate for the current world population and keeps every important object readable at phone scale.
+
+## Phase 2 Acceptance Criteria
+
+The Android build must compile from a clean Unity Library. Every gem must instantiate the `GemVisual` controller with a faceted core, four shards, and a rune halo. Every checkpoint must instantiate the `CheckpointVisual` controller with its sanctuary heart, four shards, two halos, and aura light. Triggering a checkpoint must invoke the visual activation state. The runtime probe must exercise the actual checkpoint approach, confirm activation, and continue passing the existing movement, combat, and ten-level route checks.
+
 ## References
 
 [1]: https://www.youtube.com/watch?v=YRp5_TvU3oI "Oceanhorn 2: Knights of the Lost Realm First Footage"
