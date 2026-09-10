@@ -13,6 +13,8 @@ build_script="unity-3d/Assets/Editor/RealmBuild.cs"
 motion_check=".github/scripts/verify-aster-motion-tuning.sh"
 relic_check=".github/scripts/verify-phase2-relics.sh"
 graphics_check=".github/scripts/verify-phase3-graphics.sh"
+startup_check=".github/scripts/verify-startup-safety.sh"
+weapon_check=".github/scripts/verify-weapon-system.sh"
 
 fail() {
   printf 'CI configuration check failed: %s\n' "$1" >&2
@@ -28,6 +30,8 @@ fail() {
 [[ -x "$motion_check" ]] || fail "missing executable Aster movement regression check"
 [[ -x "$relic_check" ]] || fail "missing executable Phase 2 relic regression check"
 [[ -x "$graphics_check" ]] || fail "missing executable Phase 3 graphics regression check"
+[[ -x "$startup_check" ]] || fail "missing executable startup safety regression check"
+[[ -x "$weapon_check" ]] || fail "missing executable weapon system regression check"
 
 # Unity Library contents are derived artifacts. A cache from a different source
 # revision must not be restored because it can leave the AssetDatabase inconsistent.
@@ -69,5 +73,7 @@ done
 bash "$motion_check"
 bash "$relic_check"
 bash "$graphics_check"
+bash "$startup_check"
+bash "$weapon_check"
 
 printf 'Unity CI configuration check passed.\n'

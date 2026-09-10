@@ -64,7 +64,7 @@ namespace LostRealms {
   static void SetDecorative(GameObject go){var renderer=go.GetComponent<Renderer>();if(renderer){renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;}}
 
   void Update(){
-   if(!RealmGame.I||RealmGame.I.Screen!=GameScreen.Playing)return;
+   if(!RealmGame.I||RealmGame.I.Screen!=GameScreen.Playing||!RealmGame.I.Player)return;
    moteTime+=Time.deltaTime;
    for(int i=0;i<motes.Count;i++)if(motes[i]){
     var mote=motes[i];float phase=i*.73f+moteTime*(realm==1?.42f:.6f);Vector3 p=mote.localPosition;

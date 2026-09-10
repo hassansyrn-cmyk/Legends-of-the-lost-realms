@@ -79,7 +79,7 @@ namespace LostRealms {
    Camera.main.backgroundColor=RenderSettings.fogColor;Camera.main.clearFlags=CameraClearFlags.SolidColor;
    var sun=new GameObject("Realm sunlight").AddComponent<Light>();sun.transform.SetParent(transform);sun.type=LightType.Directional;sun.transform.rotation=Quaternion.Euler(48,-35,0);
    sun.color=world==1?new Color(1,.83f,.62f):new Color(.88f,.95f,1);sun.intensity=1.25f;sun.shadows=LightShadows.Soft;
-   int count=IsBoss?8:12;
+   int count=IsBoss?8:12;int weaponIsland=random.Next(2,count-2);WeaponId weaponId=(WeaponId)random.Next(1,4);
    for(int i=0;i<count;i++){
     float z=i*10f,x=RouteX[stage-1][i],y=RouteY[stage-1][i];
     Vector3 p=new Vector3(x,y,z);Route.Add(p);bool last=i==count-1;float width=last&&IsBoss?19:9;float length=last?15:8.3f;
@@ -87,6 +87,7 @@ namespace LostRealms {
     for(int j=-1;j<=1;j++)Pickup(p+new Vector3(0,.8f,j*2.2f),false);
     if(i>1&&!last&&i%2==0){var side=p+new Vector3((i%4==0?-1:1)*9.5f,1.2f,0);Island(side,4.8f,5.3f,100+i);Pickup(side+Vector3.up*.9f,true);if(i==6||i==10){var move=FindIsland(side);if(move){var motion=move.AddComponent<MovingIsland>();motion.Origin=move.transform.position;motion.Offset=new Vector3(0,0,1.3f);}}}
     if(i==count/2)Checkpoint(p+new Vector3(-2,0,-1));
+    if(i==weaponIsland)WeaponDrop(p+new Vector3((i%2==0?-2.3f:2.3f),.18f,-1.4f),weaponId);
     if(i>=2&&!last){int kind=(stage+i)%8;SpawnEnemy(p+new Vector3(1.8f,.03f,1),kind,false,p,width,length);if(stage>2&&i%3==0)Hazard(p+new Vector3(-2.4f,.08f,1),realm);}
     if(last){EndZ=z+4;Gate(p+new Vector3(0,0,5));if(IsBoss)SpawnEnemy(p+new Vector3(0,.05f,-1),world+8,true,p,width,length);}
    }
@@ -150,6 +151,10 @@ namespace LostRealms {
    RelicArt.Checkpoint(go.transform,accent,stone);
    go.AddComponent<RealmCheckpoint>();
   }
+  void WeaponDrop(Vector3 p,WeaponId id){
+   var go=new GameObject("Weapon drop - "+WeaponCatalog.Get(id).Name);go.transform.SetParent(transform,false);go.transform.position=p;
+   var drop=go.AddComponent<WeaponDrop>();drop.Configure(id,p);
+  }
   void Gate(Vector3 p){
    var root=new GameObject("Realm gate");root.transform.SetParent(transform);root.transform.position=p;
    for(int side=-1;side<=1;side+=2){
@@ -177,7 +182,7 @@ namespace LostRealms {
  public class RealmPickup:MonoBehaviour {
   public bool Gem;public Vector3 Origin;
   void Update(){
-   var g=RealmGame.I;if(g.Screen!=GameScreen.Playing)return;
+   var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
    // GemVisual supplies the main faceted motion. Keep the pickup root slow so
    // its orbiting shards read clearly instead of turning into a spinning cube.
    transform.Rotate(0,(Gem?20f:110f)*Time.deltaTime,0,Space.World);
@@ -195,7 +200,8 @@ namespace LostRealms {
   void Awake(){visual=GetComponent<CheckpointVisual>();}
   void Update(){
    var g=RealmGame.I;
-   if(!active&&g.Screen==GameScreen.Playing&&Vector3.Distance(g.Player.transform.position,transform.position)<2.05f){
+   if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
+   if(!active&&Vector3.Distance(g.Player.transform.position,transform.position)<2.05f){
     active=true;if(visual)visual.Activate();HitSpark.Burst(transform.position+Vector3.up*1.35f,Vector3.up,g.Accent,28);
     g.ActivateCheckpoint(transform.position+Vector3.forward*1.5f+Vector3.up*.05f);
    }
@@ -205,7 +211,8 @@ namespace LostRealms {
   float next;
   void Update(){
    var g=RealmGame.I;
-   if(g.Screen==GameScreen.Playing&&RealmGame.I.Elapsed>next&&Vector3.Distance(g.Player.transform.position,transform.position)<1.6f){
+   if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
+   if(g.Elapsed>next&&Vector3.Distance(g.Player.transform.position,transform.position)<1.6f){
     next=RealmGame.I.Elapsed+2;HitSpark.Burst(transform.position+Vector3.up*2f,Vector3.up,g.Accent,24);
     g.Finish();
    }
@@ -214,7 +221,8 @@ namespace LostRealms {
  public class RealmHazard:MonoBehaviour {
   void Update(){
    var g=RealmGame.I;
-   if(g.Screen==GameScreen.Playing&&Vector3.Distance(g.Player.transform.position,transform.position)<.85f)
+   if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
+   if(Vector3.Distance(g.Player.transform.position,transform.position)<.85f)
     g.Player.Damage(1,transform.position);
   }
  }
@@ -222,7 +230,7 @@ namespace LostRealms {
   public Vector3 Origin,Offset;Vector3 prior;
   void Start(){prior=transform.position;}
   void Update(){
-   var g=RealmGame.I;if(g.Screen!=GameScreen.Playing)return;
+   var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
    transform.position=Origin+Offset*Mathf.Sin(RealmGame.I.Elapsed*.8f);
    Vector3 delta=transform.position-prior;prior=transform.position;
    if(g.Player&&g.Player.Grounded&&Physics.Raycast(g.Player.transform.position+Vector3.up*.1f,Vector3.down,out var hit,.5f)&&hit.transform.IsChildOf(transform))
@@ -230,4 +238,3 @@ namespace LostRealms {
   }
  }
 }
-

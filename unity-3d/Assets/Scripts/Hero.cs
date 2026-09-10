@@ -13,8 +13,10 @@ namespace LostRealms {
    MaxHealth=5+RealmGame.I.Save.healthRank;Health=MaxHealth;
    Visual=CharacterVisual.Create("Aster",transform,1.8f,new Color(.25f,.55f,.57f));
   }
+  void Start(){if(RealmGame.I)EquippedWeapon.Equip(this,(WeaponId)RealmGame.I.Save.equippedWeapon);}
   void Update(){
    var g=RealmGame.I;
+   if(!g||!g.CameraRig||!Visual||!Controller)return;
    if(g.Screen!=GameScreen.Playing){
     if(g.Screen==GameScreen.Defeated)Visual.Play("death");else Visual.Play("idle");
     return;
@@ -108,10 +110,10 @@ namespace LostRealms {
 
   void Attack(bool charged){
    if(RealmGame.I.Elapsed<attackReady)return;
-   var g=RealmGame.I;
+   var g=RealmGame.I;var weapon=g.CurrentWeapon;
    combo=RealmGame.I.Elapsed<comboUntil?(combo%3)+1:1;
    comboUntil=RealmGame.I.Elapsed+.95f;
-   float attackDuration=charged?.84f:(combo==2?.78f:(combo==3?.64f:.66f));
+   float attackDuration=(charged?.84f:(combo==2?.78f:(combo==3?.64f:.66f)))/weapon.Tempo;
    attackReady=RealmGame.I.Elapsed+attackDuration;
    attackState=charged?"charged":"attack_"+Mathf.Clamp(combo,1,3);
 
@@ -125,8 +127,8 @@ namespace LostRealms {
    Visual.PlayAttack(combo,charged);
    g.Sound("blade");
 
-   float reach=charged?3.4f:2.7f;
-   float damage=charged?3.5f:combo==3?2.5f:1.5f;
+   float reach=(charged?3.4f:2.7f)*weapon.Reach;
+   float damage=(charged?3.5f:combo==3?2.5f:1.5f)*weapon.Damage;
 
    // Dynamic 3D curved slash arc ribbon
    SlashArc.Create(transform.position+Vector3.up*.85f,transform.forward,combo,charged,Power);

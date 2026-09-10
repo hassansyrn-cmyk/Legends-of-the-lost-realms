@@ -78,6 +78,20 @@ The Phase 3 visual review specifically corrects the two largest issues visible i
 
 The Android build must compile from a clean Unity Library. Every realm surface must load the correct generated terrain texture through the `Weathered` shader. Each realm must add `RealmAtmosphere`, exactly three route landmarks, and at least eighteen ambient motes while retaining a maximum shadow distance of 28 units. The runtime probe must verify the Verdant terrain texture and atmosphere components before executing the existing traversal, combat, boss, pause, and respawn checks.
 
+## Stability Repair and Weapon Drops
+
+The Android startup failure reported after the checkpoint-and-gem revision was traced to world-owned `Update` loops reading `RealmGame.Player` before the `LoadLevel` lifecycle had finished assigning the player and camera target. This produced repeated null-reference exceptions and left the camera showing the underside of the realm. All startup-sensitive world objects—collectibles, checkpoints, gates, hazards, moving islands, atmosphere, hero input, and game input—now return safely until both the game and player references are valid. `LoadLevel` restores the camera target and reset immediately after creating Aster. A fast CI guard and the runtime probe now exercise this precise startup contract.
+
+The supplied axe, longsword, and curved sword are integrated as a mobile-ready drop set. Their originals totalled 73.1 MB and roughly 2.4 million faces, which was unsuitable for the Android player. They were converted to textured FBX models with approximately 96.2% lower source size and fewer than 44,000 faces combined. Each level selects one non-start, non-gate island and a weapon identity using the level-seeded route generator; the selected weapon floats above the route, rotates slowly, and auto-equips when Aster reaches it. The equipment selection persists locally and appears in the HUD.
+
+| Weapon | Combat profile | Drop behavior |
+|---|---|---|
+| **Longsword** | **+25% damage**, **+28% reach**, 10% slower recovery. | A deliberate spacing option for safer melee reach. |
+| **War Axe** | **+60% damage**, 12% shorter reach, 24% slower recovery. | A high-commitment impact option. |
+| **Curved Sword** | 2% lower damage, 6% shorter reach, **22% faster recovery**. | A mobile-friendly combo option that rewards movement and timing. |
+
+Weapon damage, reach, and tempo directly modify Aster’s existing light-combo and charged-attack calculations. Each imported model is only loaded from `Resources` after it is equipped or displayed as a route drop; it does not add colliders, shadows, or extra lights. The CI checks reject any accidental restoration of the high-poly source models, and runtime validation confirms both a spawned drop and equipped axe stat change.
+
 ## References
 
 [1]: https://www.youtube.com/watch?v=YRp5_TvU3oI "Oceanhorn 2: Knights of the Lost Realm First Footage"

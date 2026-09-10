@@ -4,7 +4,7 @@ using UnityEngine;
 namespace LostRealms {
  public enum GameScreen { Menu, Map, Playing, Paused, Complete, Defeated, Settings }
  [Serializable] public class Progress {
-  public int unlocked=1, coins, gems, healthRank, powerRank; public int[] stars=new int[10]; public float[] best=new float[10]; public bool music=true,sound=true;
+  public int unlocked=1, coins, gems, healthRank, powerRank, equippedWeapon; public int[] stars=new int[10]; public float[] best=new float[10]; public bool music=true,sound=true;
  }
  public class RealmGame : MonoBehaviour {
   public static RealmGame I; public static bool Testing=>Array.IndexOf(Environment.GetCommandLineArgs(),"-realmTest")>=0; public static readonly string[] Titles={"Mosslight Trail","Whispering Falls","Rootbound Ruins","The Elder Grove","Sunscorched Pass","Temple of Keys","Sandstone Colossus","Frostwind Climb","Crystal Hollow","Crown of Winter"};
@@ -12,13 +12,14 @@ namespace LostRealms {
   public static readonly Color[] Accents={new Color(.38f,.95f,.7f),new Color(1,.67f,.28f),new Color(.4f,.83f,1)};
   public GameScreen Screen=GameScreen.Menu; public Progress Save=new Progress(); public Hero Player; public RealmWorld World; public FollowCamera CameraRig;
   public int Level=1, Realm, Coins, Gems, DamageTaken, EarnedStars; public float Elapsed; public Vector3 Checkpoint; public bool CheckpointActive; public string Notice=""; float noticeUntil; public Color Accent=>Accents[Realm];
+  public WeaponDefinition CurrentWeapon=>WeaponCatalog.Get(Save.equippedWeapon);
   public Vector2 MoveInput; public bool JumpPressed,DashPressed,AttackPressed,AttackReleased,CastPressed; public bool AttackHeld;
   public readonly List<Enemy> Enemies=new List<Enemy>(); public AudioSource Music,Sfx;
   Transform worldRoot; GUIStyle title,label,small,button; Texture2D pixel; readonly TouchRouter touch=new TouchRouter(); float yawInput;
   [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Boot(){if(FindAnyObjectByType<RealmGame>()==null)new GameObject("Lost Realms 3D").AddComponent<RealmGame>();}
   void Awake(){ I=this; Application.targetFrameRate=60; QualitySettings.vSyncCount=1; UnityEngine.Screen.orientation=ScreenOrientation.LandscapeLeft;
    try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v1"))Save=JsonUtility.FromJson<Progress>(PlayerPrefs.GetString("LostRealms3D.v1"))??new Progress();}catch{Save=new Progress();}
-   if(Save.stars==null||Save.stars.Length!=10)Save.stars=new int[10]; if(Save.best==null||Save.best.Length!=10)Save.best=new float[10]; Save.unlocked=Mathf.Clamp(Save.unlocked,1,10);
+   if(Save.stars==null||Save.stars.Length!=10)Save.stars=new int[10]; if(Save.best==null||Save.best.Length!=10)Save.best=new float[10]; Save.unlocked=Mathf.Clamp(Save.unlocked,1,10);Save.equippedWeapon=Mathf.Clamp(Save.equippedWeapon,0,3);
    Music=gameObject.AddComponent<AudioSource>(); Music.loop=true; Music.volume=.24f; Sfx=gameObject.AddComponent<AudioSource>(); Sfx.volume=.7f;
    var cam=new GameObject("Adventure Camera").AddComponent<Camera>(); cam.tag="MainCamera"; cam.gameObject.AddComponent<AudioListener>(); cam.nearClipPlane=.25f; cam.farClipPlane=320; cam.fieldOfView=58; CameraRig=cam.gameObject.AddComponent<FollowCamera>();
    LoadLevel(1); Screen=GameScreen.Menu; Tell("The Heart of Realms is waiting.",4);
@@ -27,12 +28,16 @@ namespace LostRealms {
   public void LoadLevel(int id){
    Time.timeScale=1; touch.Reset(); if(worldRoot){worldRoot.gameObject.SetActive(false);Destroy(worldRoot.gameObject);} Enemies.Clear(); Level=Mathf.Clamp(id,1,10); Realm=Level<=4?0:Level<=7?1:2; Coins=Gems=DamageTaken=EarnedStars=0; Elapsed=0; CheckpointActive=false;
    worldRoot=new GameObject("Realm "+Level+" - "+Titles[Level-1]).transform; World=worldRoot.gameObject.AddComponent<RealmWorld>(); World.Build(Level,Realm);
-   var hero=new GameObject("Aster"); hero.transform.SetParent(worldRoot); hero.transform.position=World.Spawn; Player=hero.AddComponent<Hero>(); Checkpoint=World.Spawn; CameraRig.Target=Player.transform; CameraRig.Snap();
+   var hero=new GameObject("Aster"); hero.transform.SetParent(worldRoot); hero.transform.position=World.Spawn; Player=hero.AddComponent<Hero>(); Checkpoint=World.Spawn;
+   // Restore the camera only after the newly-created Hero Awake path completes.
+   CameraRig.Target=Player.transform;
+   CameraRig.Snap();
    var clip=Resources.Load<AudioClip>("Audio/"+(World.IsBoss?"boss_battle_theme":Realm==0?"verdant_theme":Realm==1?"desert_exploration_theme":"frozen_exploration_theme"));Music.clip=clip;if(clip&&Save.music)Music.Play();
    Screen=GameScreen.Playing; Tell(Level==1?"WASD / left stick to move. Jump twice to reach the next island.":World.IsBoss?"Break the guardian's corruption. Dodge red warnings, strike during recovery.":Titles[Level-1]+"  /  Follow the golden trail to the realm gate.",6);
   }
   void Update(){
    JumpPressed=DashPressed=AttackPressed=AttackReleased=CastPressed=false; MoveInput=Vector2.zero; yawInput=0;
+   if(!I||!Player)return;
    if(Input.GetKeyDown(KeyCode.Escape)){if(Screen==GameScreen.Playing)Pause();else if(Screen==GameScreen.Paused)Resume();else Screen=GameScreen.Menu;}
    if(Screen!=GameScreen.Playing){AttackHeld=false;touch.Reset();return;} Elapsed+=Time.deltaTime;
    MoveInput=new Vector2((Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow)?1:0)-(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow)?1:0),(Input.GetKey(KeyCode.W)||Input.GetKey(KeyCode.UpArrow)?1:0)-(Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.DownArrow)?1:0));
@@ -54,6 +59,11 @@ namespace LostRealms {
   public void Tell(string message,float seconds=3){Notice=message;noticeUntil=Time.unscaledTime+seconds;}
   public void Sound(string name){if(!Save.sound)return;var clip=Resources.Load<AudioClip>("Audio/sfx_"+name);if(clip)Sfx.PlayOneShot(clip);}
   public void Collect(bool gem){if(gem)Gems++;else Coins++;Sound(gem?"gem":"coin");}
+  public void EquipWeapon(WeaponId id){
+   Save.equippedWeapon=(int)id;Persist();
+   if(Player)EquippedWeapon.Equip(Player,id);
+   var weapon=CurrentWeapon;Sound("upgrade");Tell("EQUIPPED  "+weapon.Name+"  /  "+weapon.Summary,4.5f);
+  }
   public void ActivateCheckpoint(Vector3 position){Checkpoint=position;CheckpointActive=true;Sound("checkpoint");Tell("Checkpoint restored. Your trail is safe.");}
   public void Respawn(){Player.Warp(Checkpoint);Player.Health=Player.MaxHealth;Player.Energy=100;Sound("respawn");Tell("Returned to the checkpoint.");}
   public void Defeat(){Screen=GameScreen.Defeated;Sound("defeat");}
@@ -111,7 +121,7 @@ namespace LostRealms {
    GUI.matrix=Matrix4x4.TRS(Vector3.zero,Quaternion.identity,new Vector3(UnityEngine.Screen.width/1280f,UnityEngine.Screen.height/720f,1));
    if(Screen==GameScreen.Playing){
     // Health & Realm Banner
-    Panel(24,20,370,120);
+    Panel(24,20,370,142);
     Text(42,28,320,24,$"REALM {Realm+1}  /  {Realms[Realm]}",small);
     Text(42,54,320,32,Titles[Level-1]);
 
@@ -121,6 +131,7 @@ namespace LostRealms {
     if(healthLag>targetH)Box(new Rect(43,99,228*healthLag,12),new Color(1f,.65f,.35f,.75f));
     Box(new Rect(43,99,228*targetH,12),new Color(.95f,.28f,.28f));
     Text(282,91,100,26,$"HP {Player.Health}/{Player.MaxHealth}",small);
+    Text(42,116,330,20,$"WEAPON  {CurrentWeapon.Name}",small);
 
     // Collectibles Panel
     Panel(404,20,240,68);
@@ -248,4 +259,3 @@ namespace LostRealms {
   int TotalStars(){int n=0;foreach(int s in Save.stars)n+=s;return n;}
  }
 }
-
