@@ -7,6 +7,8 @@ namespace LostRealms {
   public CharacterController Controller;public int MaxHealth,Health,Power;public float Energy=100;public bool Grounded=>Controller&&Controller.isGrounded; public CharacterVisual Visual;
   const float MaxMoveSpeed=4.8f,GroundResponse=18f,AirResponse=8f,StopResponse=22f;
   Vector3 velocity;Vector3 moveWish;float vertical,jumpGrace,dashUntil,dashReady,dodgeVisualUntil,hitUntil,immuneUntil,attackReady,comboUntil,chargeStart,attackBufferUntil;int jumps,combo;bool charging,attackBufferCharged;float jumpBuffer;string attackState="attack_1";
+  float parryUntil,parryReady,counterUntil;bool dodgeRewarded;
+  public bool CounterReady=>RealmGame.I!=null&&RealmGame.I.Elapsed<counterUntil;
   public float HorizontalSpeed{get{var horizontal=velocity;horizontal.y=0;return horizontal.magnitude;}}
   void Awake(){
    Controller=gameObject.AddComponent<CharacterController>();Controller.height=1.75f;Controller.radius=.32f;Controller.center=Vector3.up*.9f;Controller.stepOffset=.35f;Controller.slopeLimit=48;Controller.skinWidth=.08f;Controller.minMoveDistance=.001f;
@@ -51,6 +53,7 @@ namespace LostRealms {
    if(charging&&RealmGame.I.Elapsed-chargeStart>=.75f){Attack(true);charging=false;}
    if(attackBufferUntil>0&&RealmGame.I.Elapsed>=attackReady&&RealmGame.I.Elapsed>=dodgeVisualUntil&&RealmGame.I.Elapsed>=hitUntil){attackBufferUntil=0;Attack(attackBufferCharged);}
    if(g.CastPressed)Cast();
+   if(g.ParryPressed)Parry();
    if(transform.position.y<-12){Health=0;g.DamageTaken++;g.Defeat();}
 
    // Character Animation state selection with natural speeds
@@ -58,6 +61,8 @@ namespace LostRealms {
     Visual.Play("dodge");
    }else if(RealmGame.I.Elapsed<hitUntil){
     Visual.Play("hit");
+   }else if(RealmGame.I.Elapsed<parryUntil){
+    Visual.Play("charged");
    }else if(RealmGame.I.Elapsed<attackReady-.06f){
     Visual.Play(attackState);
    }else if(!Grounded){
@@ -100,6 +105,7 @@ namespace LostRealms {
    // Dash
    if(dashPressed&&RealmGame.I.Elapsed>=dashReady){
     dashUntil=RealmGame.I.Elapsed+.22f;dodgeVisualUntil=RealmGame.I.Elapsed+.63f;dashReady=RealmGame.I.Elapsed+.9f;
+    dodgeRewarded=false;
     immuneUntil=Mathf.Max(immuneUntil,dashUntil+.1f);
     attackReady=RealmGame.I.Elapsed;charging=false;
     if(wish.sqrMagnitude<.1f)wish=transform.forward;
@@ -131,14 +137,17 @@ namespace LostRealms {
    Energy=Mathf.Min(100,Energy+dt*12);
   }
 
-  public void Warp(Vector3 p){Controller.enabled=false;transform.position=p;Controller.enabled=true;vertical=0;velocity=Vector3.zero;jumpBuffer=0;charging=false;dashUntil=0;attackBufferUntil=0;immuneUntil=RealmGame.I.Elapsed+1.2f;RealmGame.I.CameraRig.Snap();}
-  public void Damage(int damage,Vector3 source){
-   if(RealmGame.I.Elapsed<immuneUntil||Health<=0)return;
+  public void Warp(Vector3 p){Controller.enabled=false;transform.position=p;Controller.enabled=true;vertical=0;velocity=Vector3.zero;jumpBuffer=0;charging=false;dashUntil=0;attackBufferUntil=0;immuneUntil=RealmGame.I.Elapsed+1.2f;parryUntil=0;parryReady=0;counterUntil=0;RealmGame.I.CameraRig.Snap();}
+  public bool Damage(int damage,Vector3 source){
+   if(Health<=0)return false;
+   if(RealmGame.I.Elapsed<parryUntil){ParrySuccess(source);return false;}
+   if(RealmGame.I.Elapsed<immuneUntil){if(RealmGame.I.Elapsed<dashUntil)PerfectDodge(source);return false;}
    Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=RealmGame.I.Elapsed+1;hitUntil=RealmGame.I.Elapsed+.5f;
    Vector3 knock=transform.position-source;knock.y=0;if(knock.sqrMagnitude<.01f)knock=-transform.forward;knock.y=0;velocity=knock.normalized*4.5f;RealmGame.I.Sound("hurt");RealmGame.I.CameraRig.Shake=.18f;
    Visual.Restart(Health<=0?"death":"hit");
    HitSpark.Burst(transform.position+Vector3.up*.8f,(transform.position-source).normalized,new Color(1f,.2f,.2f),8);
    if(Health<=0)RealmGame.I.Defeat();
+   return true;
   }
 
   void Attack(bool charged){
@@ -175,6 +184,7 @@ namespace LostRealms {
 
    float reach=(charged?3.4f:2.7f)*weapon.Reach;
    float damage=(charged?3.5f:combo==3?2.5f:1.5f)*weapon.Damage;
+   if(RealmGame.I.Elapsed<counterUntil){damage*=1.6f;counterUntil=0;HitSpark.Burst(transform.position+Vector3.up*1.2f,transform.forward,new Color(1f,.9f,.52f),14);}
 
    // Dynamic 3D curved slash arc ribbon
    SlashArc.Create(transform.position+Vector3.up*.85f,transform.forward,combo,charged,Power);
@@ -186,6 +196,40 @@ namespace LostRealms {
      e.Hit(damage+(g.Save.powerRank*.18f),Power,false,transform.forward);
     }
    }
+  }
+
+  // Timing-based guard: a short window that negates one incoming hit, stuns the
+  // attacker and opens a counter. Aster has no parry clip yet, so it braces in
+  // the charged pose until a dedicated animation is baked.
+  void Parry(){
+   float now=RealmGame.I.Elapsed;if(now<parryReady||!Grounded)return;
+   parryUntil=now+.2f;parryReady=now+.55f;
+   RealmGame.I.Sound("player_dash");
+   Visual.Restart("charged");
+   HitSpark.Burst(transform.position+Vector3.up*.9f+transform.forward*.4f,transform.forward,new Color(.8f,.92f,1f),6);
+  }
+  void ParrySuccess(Vector3 source){
+   var g=RealmGame.I;parryUntil=0;parryReady=g.Elapsed+.55f;
+   g.HitStop(.14f,.08f);g.CameraRig.Shake=.3f;g.Sound("impact");
+   Energy=Mathf.Min(100,Energy+20);counterUntil=g.Elapsed+1.6f;
+   HitSpark.Burst(transform.position+Vector3.up*.95f,-transform.forward,new Color(1f,.96f,.72f),28);
+   DamageTip.Show(transform.position+Vector3.up*1.95f,"PARRY!",new Color(1f,.94f,.6f));
+   var foe=NearestEnemy(source,3.2f);if(foe)foe.Stun(1.1f);
+   Visual.Restart("charged");
+  }
+  // A dodge that actually shrugs off a hit during its active i-frame window
+  // rewards the player with energy and a counter opening.
+  void PerfectDodge(Vector3 source){
+   if(dodgeRewarded)return;dodgeRewarded=true;
+   var g=RealmGame.I;g.HitStop(.1f,.1f);g.CameraRig.Shake=.2f;g.Sound("player_dash");
+   Energy=Mathf.Min(100,Energy+30);counterUntil=g.Elapsed+1.4f;
+   HitSpark.Burst(transform.position+Vector3.up*.85f,-transform.forward,new Color(.7f,.96f,1f),24);
+   DamageTip.Show(transform.position+Vector3.up*1.95f,"PERFECT DODGE",new Color(.65f,.95f,1f));
+  }
+  Enemy NearestEnemy(Vector3 source,float range){
+   Enemy best=null;float closest=range;
+   foreach(var foe in RealmGame.I.Enemies){if(!foe||foe.Health<=0)continue;float d=Vector3.Distance(foe.transform.position,source);if(d<closest){closest=d;best=foe;}}
+   return best;
   }
 
   void Cast(){
@@ -226,6 +270,9 @@ namespace LostRealms {
      var asterMaterial=Resources.Load<Material>("Materials/Aster");
      if(!asterMaterial)throw new System.Exception("Missing runtime Aster material");
      foreach(var renderer in model.GetComponentsInChildren<Renderer>(true))renderer.sharedMaterial=asterMaterial;
+    }else{
+     var skin=CharacterSkin(role);
+     if(skin)foreach(var renderer in model.GetComponentsInChildren<Renderer>(true))renderer.sharedMaterial=skin;
     }
     v.animator=model.GetComponentInChildren<Animator>();
     if(v.animator){
@@ -271,6 +318,19 @@ namespace LostRealms {
    return v;
   }
 
+  // New enemy families ship as decimated showcase meshes with a basecolor baked
+  // to Resources/Characters/Textures. Bind it at runtime; roles without a texture
+  // (the original prefab families) are left untouched.
+  static readonly System.Collections.Generic.Dictionary<string,Material> skins=new System.Collections.Generic.Dictionary<string,Material>();
+  static Material CharacterSkin(string role){
+   if(skins.TryGetValue(role,out var cached))return cached;
+   var texture=Resources.Load<Texture2D>("Characters/Textures/"+role+"_basecolor");
+   if(!texture){skins[role]=null;return null;}
+   var mat=new Material(Shader.Find("Standard")){name=role,color=Color.white};
+   mat.mainTexture=texture;mat.SetFloat("_Metallic",.05f);mat.SetFloat("_Glossiness",.26f);
+   skins[role]=mat;return mat;
+  }
+
   public void Restart(string state){current="";Play(state);}
   public void PlayAttack(int combo,bool charged,float tempo=1f){
    current="";string state=charged?"charged":"attack_"+Mathf.Clamp(combo,1,3);Play(state);
@@ -298,7 +358,7 @@ namespace LostRealms {
    if(state=="dodge")playable[slot].SetSpeed(3.35f);
    if(state=="hit")playable[slot].SetSpeed(2.07f);
    playable[slot].SetTime(0);
-   graph.Connect(playable[slot],0,mixer,slot);blend=0;
+   graph.Connect(playable[slot],0,mixer,slot);blend=0;mixer.SetInputWeight(slot,0f);mixer.SetInputWeight(1-slot,1f);
   }
 
   void Update(){

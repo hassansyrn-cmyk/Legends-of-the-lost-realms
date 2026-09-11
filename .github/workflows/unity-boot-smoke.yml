@@ -3,7 +3,7 @@ name: Unity Runtime Boot Smoke
 on:
   workflow_dispatch:
   push:
-    branches: [ chatgpt-astra/unity-3d ]
+    branches: [ chatgpt-astra/unity-3d, main, 'feature/**', 'fix/**' ]
 
 permissions:
   contents: read

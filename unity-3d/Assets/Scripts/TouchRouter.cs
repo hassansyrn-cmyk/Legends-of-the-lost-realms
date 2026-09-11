@@ -3,17 +3,17 @@ using UnityEngine;
 namespace LostRealms {
  // A finger owns its initial control until release, including when it crosses another control.
  public sealed class TouchRouter {
-  public enum Role { Ignored, Move, Camera, Dodge, Power, Blade, Jump }
+  public enum Role { Ignored, Move, Camera, Dodge, Power, Blade, Jump, Parry }
   readonly Dictionary<int,Role> owners=new Dictionary<int,Role>();
   Vector2 origin;
-  public Vector2 Move; public float Yaw; public bool Jump,Dodge,Power,BladePressed,BladeReleased,BladeHeld;
-  public static Rect ActionRect(int index)=>new Rect(685+index*145,570,132,108);
-  public void BeginFrame(){Move=Vector2.zero;Yaw=0;Jump=Dodge=Power=BladePressed=BladeReleased=BladeHeld=false;}
+  public Vector2 Move; public float Yaw; public bool Jump,Dodge,Power,BladePressed,BladeReleased,BladeHeld,Parry;
+  public static Rect ActionRect(int index)=>new Rect(660+index*120,570,112,108);
+  public void BeginFrame(){Move=Vector2.zero;Yaw=0;Jump=Dodge=Power=BladePressed=BladeReleased=BladeHeld=Parry=false;}
   public void Reset(){owners.Clear();BeginFrame();}
   public void Sample(int id,Vector2 p,Vector2 delta,TouchPhase phase){
    if(phase==TouchPhase.Began){
     Role role=Role.Ignored;
-    for(int i=0;i<4;i++)if(ActionRect(i).Contains(p))role=(Role)((int)Role.Dodge+i);
+    for(int i=0;i<5;i++)if(ActionRect(i).Contains(p))role=(Role)((int)Role.Dodge+i);
     if(role==Role.Ignored&&p.x<420&&p.y>380&&!owners.ContainsValue(Role.Move)){role=Role.Move;origin=p;}
     if(role==Role.Ignored&&p.x>440&&p.y>180&&p.y<530&&!owners.ContainsValue(Role.Camera))role=Role.Camera;
     owners[id]=role;
@@ -27,6 +27,7 @@ namespace LostRealms {
     case Role.Dodge: Dodge|=began;break;
     case Role.Power: Power|=began;break;
     case Role.Blade: BladePressed|=began;BladeHeld|=!ended;BladeReleased|=phase==TouchPhase.Ended;break;
+    case Role.Parry: Parry|=began;break;
    }
    if(ended)owners.Remove(id);
   }

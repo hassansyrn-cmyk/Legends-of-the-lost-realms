@@ -2,7 +2,7 @@ name: Unity 3D Android APK
 
 on:
   push:
-    branches: [ chatgpt-astra/unity-3d ]
+    branches: [ chatgpt-astra/unity-3d, main, 'feature/**', 'fix/**' ]
   workflow_dispatch:
     inputs:
       publish_release:
