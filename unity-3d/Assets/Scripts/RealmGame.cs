@@ -4,7 +4,7 @@ using UnityEngine;
 namespace LostRealms {
  public enum GameScreen { Menu, Map, Playing, Paused, Complete, Defeated, Settings }
  [Serializable] public class Progress {
-  public int unlocked=1, coins, gems, healthRank, powerRank, equippedWeapon; public int[] stars=new int[10]; public float[] best=new float[10]; public bool music=true,sound=true;
+  public int unlocked=1, equippedWeapon=-1, coins, gems, healthRank, powerRank; public int[] stars=new int[10]; public float[] best=new float[10]; public bool music=true,sound=true;
  }
  public class RealmGame : MonoBehaviour {
   public static RealmGame I; public static bool Testing=>Array.IndexOf(Environment.GetCommandLineArgs(),"-realmTest")>=0; public static readonly string[] Titles={"Mosslight Trail","Whispering Falls","Rootbound Ruins","The Elder Grove","Sunscorched Pass","Temple of Keys","Sandstone Colossus","Frostwind Climb","Crystal Hollow","Crown of Winter"};
@@ -20,7 +20,7 @@ namespace LostRealms {
   [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Boot(){if(FindAnyObjectByType<RealmGame>()==null)new GameObject("Lost Realms 3D").AddComponent<RealmGame>();}
   void Awake(){ I=this; Application.targetFrameRate=60; QualitySettings.vSyncCount=1; Time.fixedDeltaTime=1f/60f; UnityEngine.Screen.orientation=ScreenOrientation.LandscapeLeft;
    try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v1"))Save=JsonUtility.FromJson<Progress>(PlayerPrefs.GetString("LostRealms3D.v1"))??new Progress();}catch{Save=new Progress();}
-   if(Save.stars==null||Save.stars.Length!=10)Save.stars=new int[10]; if(Save.best==null||Save.best.Length!=10)Save.best=new float[10];    Save.unlocked=Mathf.Clamp(Save.unlocked,1,10);Save.equippedWeapon=Mathf.Clamp(Save.equippedWeapon,0,16);
+   if(Save.stars==null||Save.stars.Length!=10)Save.stars=new int[10]; if(Save.best==null||Save.best.Length!=10)Save.best=new float[10];    Save.unlocked=Mathf.Clamp(Save.unlocked,1,10);Save.equippedWeapon=Mathf.Clamp(Save.equippedWeapon,-1,28);
    Music=gameObject.AddComponent<AudioSource>(); Music.loop=true; Music.volume=.24f; Sfx=gameObject.AddComponent<AudioSource>(); Sfx.volume=.7f;
    var cam=new GameObject("Adventure Camera").AddComponent<Camera>(); cam.tag="MainCamera"; cam.gameObject.AddComponent<AudioListener>(); cam.nearClipPlane=.25f; cam.farClipPlane=320; cam.fieldOfView=58; CameraRig=cam.gameObject.AddComponent<FollowCamera>();
    LoadLevel(1); Screen=GameScreen.Menu; Tell("The Heart of Realms is waiting.",4);
@@ -191,6 +191,7 @@ namespace LostRealms {
     if(Button(96,415,280,62,"► CONTINUE JOURNEY"))LoadLevel(Save.unlocked);
     if(Button(396,415,280,62,"🗺 REALM ATLAS"))Screen=GameScreen.Map;
     if(Button(96,495,280,58,"⚙ SANCTUARY"))Screen=GameScreen.Settings;
+    if(Button(396,495,280,58,"✦ NEW JOURNEY")){Save=new Progress();Save.equippedWeapon=-1;Persist();Sound("upgrade");LoadLevel(1);}
     Text(96,585,580,26,"UNITY 3D EDITION  *  TOUCH + KEYBOARD",small);
     return;
    }

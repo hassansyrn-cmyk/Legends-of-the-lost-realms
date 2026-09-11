@@ -79,14 +79,15 @@ namespace LostRealms {
    Camera.main.backgroundColor=RenderSettings.fogColor;Camera.main.clearFlags=CameraClearFlags.SolidColor;
    var sun=new GameObject("Realm sunlight").AddComponent<Light>();sun.transform.SetParent(transform);sun.type=LightType.Directional;sun.transform.rotation=Quaternion.Euler(48,-35,0);
    sun.color=world==1?new Color(1,.83f,.62f):new Color(.88f,.95f,1);sun.intensity=1.25f;sun.shadows=LightShadows.Soft;
-   int count=IsBoss?8:12;int weaponIsland=random.Next(2,count-2);WeaponId weaponId=(WeaponId)(stage==1?4:random.Next(1,17));
+   int count=IsBoss?8:12;int weaponIsland=random.Next(2,count-2);WeaponId weaponId=(WeaponId)(stage==1?4:random.Next(1,29));
    for(int i=0;i<count;i++){
     float z=i*10f,x=RouteX[stage-1][i],y=RouteY[stage-1][i];
     Vector3 p=new Vector3(x,y,z);Route.Add(p);bool last=i==count-1;float width=last&&IsBoss?19:9;float length=last?15:8.3f;
     Island(p,width,length,i);if(i==0)Spawn=p+Vector3.up*.05f;
     for(int j=-1;j<=1;j++)Pickup(p+new Vector3(0,.8f,j*2.2f),false);
     if(i>1&&!last&&i%2==0){var side=p+new Vector3((i%4==0?-1:1)*9.5f,1.2f,0);Island(side,4.8f,5.3f,100+i);Pickup(side+Vector3.up*.9f,true);if(i==6||i==10){var move=FindIsland(side);if(move){var motion=move.AddComponent<MovingIsland>();motion.Origin=move.transform.position;motion.Offset=new Vector3(0,0,1.3f);}}}
-    if(i==count/2)Checkpoint(p+new Vector3(-2,0,-1));
+    if(i>=2&&i%3==0&&i<count-1)Checkpoint(p+new Vector3(-2,0,-1));
+    if(i>=2&&i%4==0){float hx=(i%2==0?-1:1)*(1.2f+(float)random.NextDouble()*.9f);HealPickup(p+new Vector3(hx,.6f,-1.2f+(float)random.NextDouble()*2.4f));}
     if(i==weaponIsland)WeaponDrop(p+new Vector3((i%2==0?-2.3f:2.3f),.18f,-1.4f),weaponId);
      if(i>=2&&!last){int kind=(stage+i)%8;
       if(stage>=3&&i%6==2)kind=11;else if(stage>=5&&i%5==4)kind=12;else if(stage>=6&&i%7==3)kind=13;else if(stage>=4&&i%6==5)kind=14;
@@ -154,10 +155,20 @@ namespace LostRealms {
    RelicArt.Checkpoint(go.transform,accent,stone);
    go.AddComponent<RealmCheckpoint>();
   }
-  void WeaponDrop(Vector3 p,WeaponId id){
-   var go=new GameObject("Weapon drop - "+WeaponCatalog.Get(id).Name);go.transform.SetParent(transform,false);go.transform.position=p;
-   var drop=go.AddComponent<WeaponDrop>();drop.Configure(id,p);
-  }
+void WeaponDrop(Vector3 p,WeaponId id){
+    var go=new GameObject("Weapon drop - "+WeaponCatalog.Get(id).Name);go.transform.SetParent(transform,false);go.transform.position=p;
+    var drop=go.AddComponent<WeaponDrop>();drop.Configure(id,p);
+   }
+   void HealPickup(Vector3 p){
+    var go=new GameObject("Heal pickup");go.transform.SetParent(transform,false);go.transform.position=p;
+    Color heart=new Color(.92f,.12f,.16f);
+    Art.Shape("HeartLobeL",PrimitiveType.Sphere,new Vector3(-.1f,.1f,0),new Vector3(.36f,.4f,.34f),heart,go.transform);
+    Art.Shape("HeartLobeR",PrimitiveType.Sphere,new Vector3(.1f,.1f,0),new Vector3(.36f,.4f,.34f),heart,go.transform);
+    var point=Art.Shape("HeartPoint",PrimitiveType.Cube,new Vector3(0,-.06f,0),new Vector3(.32f,.34f,.3f),new Color(.82f,.1f,.14f),go.transform);
+    point.transform.localRotation=Quaternion.Euler(0,0,45);
+    Art.Shape("HeartGlint",PrimitiveType.Cube,new Vector3(-.11f,.2f,0),Vector3.one*.06f,new Color(1f,.86f,.88f),go.transform);
+    go.AddComponent<RealmHeal>().Origin=p;
+   }
   void Gate(Vector3 p){
    var root=new GameObject("Realm gate");root.transform.SetParent(transform);root.transform.position=p;
    for(int side=-1;side<=1;side+=2){
@@ -182,22 +193,36 @@ namespace LostRealms {
    var e=go.AddComponent<Enemy>();e.Configure(kind,boss,center,new Vector2(width,length));
   }
  }
- public class RealmPickup:MonoBehaviour {
-  public bool Gem;public Vector3 Origin;
-  void Update(){
-   var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
-   // GemVisual supplies the main faceted motion. Keep the pickup root slow so
-   // its orbiting shards read clearly instead of turning into a spinning cube.
-   transform.Rotate(0,(Gem?20f:110f)*Time.deltaTime,0,Space.World);
-   Vector3 target=g.Player.transform.position+Vector3.up*.8f;
-   if(Vector3.Distance(Origin,target)<(Gem?1.85f:2.1f))Origin=Vector3.MoveTowards(Origin,target,Time.deltaTime*(Gem?5.4f:4.5f));
-   transform.position=Origin+Vector3.up*Mathf.Sin(RealmGame.I.Elapsed*2.8f)*.15f;
-   if(Vector3.Distance(g.Player.transform.position+Vector3.up*.8f,transform.position)<1.15f){
-    HitSpark.Burst(transform.position,Vector3.up,Gem?g.Accent:new Color(1f,.85f,.2f),Gem?18:12);
-    g.Collect(Gem);Destroy(gameObject);
+public class RealmPickup:MonoBehaviour {
+   public bool Gem;public Vector3 Origin;
+   void Update(){
+    var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
+    // GemVisual supplies the main faceted motion. Keep the pickup root slow so
+    // its orbiting shards read clearly instead of turning into a spinning cube.
+    transform.Rotate(0,(Gem?20f:110f)*Time.deltaTime,0,Space.World);
+    Vector3 target=g.Player.transform.position+Vector3.up*.8f;
+    if(Vector3.Distance(Origin,target)<(Gem?1.85f:2.1f))Origin=Vector3.MoveTowards(Origin,target,Time.deltaTime*(Gem?5.4f:4.5f));
+    transform.position=Origin+Vector3.up*Mathf.Sin(RealmGame.I.Elapsed*2.8f)*.15f;
+    if(Vector3.Distance(g.Player.transform.position+Vector3.up*.8f,transform.position)<1.15f){
+     HitSpark.Burst(transform.position,Vector3.up,Gem?g.Accent:new Color(1f,.85f,.2f),Gem?18:12);
+     g.Collect(Gem);Destroy(gameObject);
+    }
    }
   }
- }
+  public class RealmHeal:MonoBehaviour {
+   public Vector3 Origin;public int Amount=3;
+   void Update(){
+    var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
+    transform.Rotate(0,55f*Time.deltaTime,0,Space.World);
+    transform.position=Origin+Vector3.up*Mathf.Sin(RealmGame.I.Elapsed*2.6f)*.13f;
+    if(Vector3.Distance(g.Player.transform.position+Vector3.up*.8f,transform.position)<1.15f){
+     int before=g.Player.Health;g.Player.Health=Mathf.Min(g.Player.MaxHealth,before+Amount);
+     if(g.Player.Health>before){HitSpark.Burst(transform.position,Vector3.up,new Color(1f,.38f,.48f),22);g.Sound("heal");}
+     else{g.Sound("gem");}
+     Destroy(gameObject);
+    }
+   }
+  }
  public class RealmCheckpoint:MonoBehaviour {
   bool active;CheckpointVisual visual;
   void Awake(){visual=GetComponent<CheckpointVisual>();}

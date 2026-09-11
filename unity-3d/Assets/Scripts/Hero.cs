@@ -15,7 +15,7 @@ namespace LostRealms {
    MaxHealth=5+RealmGame.I.Save.healthRank;Health=MaxHealth;
    Visual=CharacterVisual.Create("Aster",transform,1.8f,new Color(.25f,.55f,.57f));
   }
-  void Start(){if(RealmGame.I)EquippedWeapon.Equip(this,(WeaponId)RealmGame.I.Save.equippedWeapon);}
+  void Start(){if(RealmGame.I&&RealmGame.I.Save.equippedWeapon>=0)EquippedWeapon.Equip(this,(WeaponId)RealmGame.I.Save.equippedWeapon);}
   void Update(){
    var g=RealmGame.I;
    if(!g||!g.CameraRig||!Visual||!Controller)return;

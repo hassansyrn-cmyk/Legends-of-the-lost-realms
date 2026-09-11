@@ -3,15 +3,16 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace LostRealms {
- public enum WeaponId { AstersBlade=0, LongSword=1, Axe=2, CurvedSword=3, BlinkAxe=4, BlinkMace=5, BlinkSpear=6, AxeIron=7, AxeBattle=8, AxeBearded=9, AxeCleaver=10, SwordShort=11, SwordFalchion=12, SwordSabre=13, SwordClaymore=14, SwordZweihander=15, SwordGreat=16 }
+ public enum WeaponId { AstersBlade=0, LongSword=1, Axe=2, CurvedSword=3, BlinkAxe=4, BlinkMace=5, BlinkSpear=6, AxeIron=7, AxeBattle=8, AxeBearded=9, AxeCleaver=10, SwordShort=11, SwordFalchion=12, SwordSabre=13, SwordClaymore=14, SwordZweihander=15, SwordGreat=16, HovlMagic=17, HovlMoon=18, HovlMoon2=19, PureAxe2H=20, PureHammer=21, PureScythe=22, PureSword2H=23, PureSpear=24, PureSword1H=25, HalberdA=26, HalberdB=27, HalberdC=28 }
 
   public readonly struct WeaponDefinition {
    public readonly WeaponId Id;public readonly string Name,Resource,Summary;public readonly float Damage,Reach,Tempo,ModelScale;public readonly Vector3 EquipEuler;
   public WeaponDefinition(WeaponId id,string name,string resource,float damage,float reach,float tempo,float modelScale,Vector3 equipEuler,string summary){Id=id;Name=name;Resource=resource;Damage=damage;Reach=reach;Tempo=tempo;ModelScale=modelScale;EquipEuler=equipEuler;Summary=summary;}
  }
 
- public static class WeaponCatalog {
-   static readonly WeaponDefinition[] Definitions={
+public static class WeaponCatalog {
+    static readonly WeaponDefinition Fists=new WeaponDefinition(WeaponId.AstersBlade,"FISTS","",.85f,.92f,1.12f,1f,Vector3.zero,"fists and kicks — find a weapon to draw arms");
+    static readonly WeaponDefinition[] Definitions={
     new WeaponDefinition(WeaponId.AstersBlade,"ASTER'S BLADE","Weapons/Aster_LongSword",1f,1f,1f,1f,Vector3.zero,"Balanced starter blade"),
     new WeaponDefinition(WeaponId.LongSword,"LONGSWORD","Weapons/Aster_LongSword",1.25f,1.28f,.9f,1.15f,new Vector3(10,90,-90),"+25% damage  •  +28% reach  •  measured tempo"),
     new WeaponDefinition(WeaponId.Axe,"WAR AXE","Weapons/Aster_Axe",1.6f,.88f,.76f,.95f,new Vector3(8,0,0),"+60% damage  •  heavy recovery  •  close range"),
@@ -28,9 +29,21 @@ namespace LostRealms {
     new WeaponDefinition(WeaponId.SwordSabre,"SABRE","Weapons/SwordSabre",1.1f,1.1f,1.15f,1.05f,new Vector3(12,90,-90),"swift arcs  •  agile reach"),
     new WeaponDefinition(WeaponId.SwordClaymore,"CLAYMORE","Weapons/SwordClaymore",1.5f,1.3f,.78f,1.35f,new Vector3(10,90,-90),"great blade  •  long reach  •  heavy"),
     new WeaponDefinition(WeaponId.SwordZweihander,"ZWELHANDER","Weapons/SwordZweihander",1.6f,1.35f,.72f,1.4f,new Vector3(10,90,-90),"massive damage  •  very slow"),
-    new WeaponDefinition(WeaponId.SwordGreat,"GREATSWORD","Weapons/SwordGreat",1.45f,1.28f,.8f,1.32f,new Vector3(10,90,-90),"wide sweeps  •  strong reach")
+    new WeaponDefinition(WeaponId.SwordGreat,"GREATSWORD","Weapons/SwordGreat",1.45f,1.28f,.8f,1.32f,new Vector3(10,90,-90),"wide sweeps  •  strong reach"),
+    new WeaponDefinition(WeaponId.HovlMagic,"ARCANE BLADE","Weapons/HovlMagic",1.4f,1.2f,.9f,1.3f,new Vector3(10,90,-90),"glowing edge  •  strong reach"),
+    new WeaponDefinition(WeaponId.HovlMoon,"MOON SWORD","Weapons/HovlMoon",1.25f,1.1f,1.05f,1.2f,new Vector3(12,90,-90),"crescent strikes  •  quick tempo"),
+    new WeaponDefinition(WeaponId.HovlMoon2,"LUNAR TALON","Weapons/HovlMoon2",1.3f,1.15f,1f,1.25f,new Vector3(12,90,-90),"curved blade  •  steady arcs"),
+    new WeaponDefinition(WeaponId.PureAxe2H,"TITAN AXE","Weapons/PureAxe2H",1.5f,.92f,.78f,1.32f,new Vector3(8,0,0),"two-handed cleave  •  heavy"),
+    new WeaponDefinition(WeaponId.PureHammer,"CRUSHER","Weapons/PureHammer",1.62f,.86f,.74f,1.22f,new Vector3(8,0,0),"blunt force  •  slow recovery"),
+    new WeaponDefinition(WeaponId.PureScythe,"REAPER'S SCYTHE","Weapons/PureScythe",1.1f,1.25f,.88f,1.42f,new Vector3(12,90,-90),"sweeping arc  •  deceptive reach"),
+    new WeaponDefinition(WeaponId.PureSword2H,"TEMPEST BLADE","Weapons/PureSword2H",1.35f,1.2f,.82f,1.36f,new Vector3(10,90,-90),"two-handed tempo  •  wide swing"),
+    new WeaponDefinition(WeaponId.PureSpear,"REAPER'S SPEAR","Weapons/PureSpear",1.05f,1.35f,.95f,1.5f,new Vector3(10,0,0),"long thrust  •  probing reach"),
+    new WeaponDefinition(WeaponId.PureSword1H,"DUELING BLADE","Weapons/PureSword1H",1.1f,1f,1.08f,1.05f,new Vector3(10,90,-90),"balanced one-hand  •  quick"),
+    new WeaponDefinition(WeaponId.HalberdA,"HALBERD","Weapons/HalberdA",1.2f,1.3f,.88f,1.42f,new Vector3(10,0,0),"pole cleave  •  long reach"),
+    new WeaponDefinition(WeaponId.HalberdB,"POLE AXE","Weapons/HalberdB",1.3f,1.32f,.84f,1.45f,new Vector3(10,0,0),"heavier head  •  long reach"),
+    new WeaponDefinition(WeaponId.HalberdC,"GLAIVE","Weapons/HalberdC",1.18f,1.35f,.92f,1.48f,new Vector3(10,0,0),"sweeping blade  •  extended reach")
    };
-  public static WeaponDefinition Get(int rawId){return Definitions[Mathf.Clamp(rawId,0,Definitions.Length-1)];}
+  public static WeaponDefinition Get(int rawId){return rawId<0?Fists:Definitions[Mathf.Clamp(rawId,0,Definitions.Length-1)];}
   public static WeaponDefinition Get(WeaponId id)=>Get((int)id);
   public static GameObject CreateModel(WeaponId id,Transform parent){
    var definition=Get(id);if(string.IsNullOrEmpty(definition.Resource))return null;
