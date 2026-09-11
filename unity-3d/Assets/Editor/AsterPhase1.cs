@@ -48,23 +48,33 @@ public static class AsterPhase1 {
   if(!avatar||!avatar.isHuman||!avatar.isValid)throw new Exception("Supplied Aster FBX did not produce a valid Humanoid avatar.");
 
 var report=new List<string>{"Aster Phase 1 Mixamo integration","Model: "+ModelPath,"Avatar: valid humanoid"};
-   // Idle's root pose is the reference all other clips must share: it is the
-   // pose that currently puts the feet on the ground, so pinning every clip's
-   // RootT to these constants keeps each clip at that same height (no sink)
-   // and removes the per-clip root jumps that snap the body at transitions.
-   var baselineRoot=ReadFirstKeyPos(FindImportedClip(ModelPath));
+   // Record the idle clip's root height. Zeroing ALL RootT curves (including Y)
+   // removes the transition glitches, but it sinks the skeleton by baselineRootY;
+   // BuildPrefab pushes the prefab up by exactly that amount so the character
+   // stands at the correct height while every clip keeps a flat zeroed root.
+   float baselineRootY=0f;
+   var idleSource=FindImportedClip(ModelPath);
+   if(idleSource){
+    foreach(var b in AnimationUtility.GetCurveBindings(idleSource)){
+     if(b.propertyName=="RootT.y"){
+      var c=AnimationUtility.GetEditorCurve(idleSource,b);
+      if(c!=null&&c.keys.Length>0)baselineRootY=c.keys[0].value;
+      break;
+     }
+    }
+   }
    foreach(var spec in Clips){
     if(spec.AssetPath!=ModelPath)ConfigureAnimation(spec,avatar);
     var imported=FindImportedClip(spec.AssetPath);
     if(!imported)throw new Exception("No animation clip imported from "+spec.AssetPath);
     string outputPath=AnimationOutputRoot+"/"+spec.State+".anim";
-    SaveClip(imported,outputPath,spec.State,spec.Loop,baselineRoot);
+    SaveClip(imported,outputPath,spec.State,spec.Loop,baselineRootY);
     var saved=AssetDatabase.LoadAssetAtPath<AnimationClip>(outputPath);
     if(!saved)throw new Exception("Failed to create "+outputPath);
     report.Add(spec.State+": "+saved.length.ToString("0.000")+"s, loop="+spec.Loop);
    }
 
-   BuildPrefab(sourceModel,avatar);
+   BuildPrefab(sourceModel,avatar,baselineRootY);
   AssetDatabase.SaveAssets();
   File.WriteAllLines("ASTER_PHASE1_REPORT.txt",report);
   Debug.Log("MODEL_INTEGRATION_PASSED: supplied Mixamo Aster model, material, and 12 animation states prepared.");
@@ -157,10 +167,10 @@ var report=new List<string>{"Aster Phase 1 Mixamo integration","Model: "+ModelPa
   return AssetDatabase.LoadAllAssetsAtPath(path).OfType<AnimationClip>().FirstOrDefault(c=>!c.name.StartsWith("__preview__",StringComparison.Ordinal));
  }
 
-static void SaveClip(AnimationClip source,string outputPath,string state,bool loop,Vector3 baselineRoot){
+static void SaveClip(AnimationClip source,string outputPath,string state,bool loop,float baselineRootY){
    var clip=UnityEngine.Object.Instantiate(source);
    clip.name=state;
-   NormalizeRoot(clip,baselineRoot);
+   NormalizeRoot(clip);
    var settings=AnimationUtility.GetAnimationClipSettings(clip);
    settings.loopTime=loop;
    AnimationUtility.SetAnimationClipSettings(clip,settings);
@@ -169,39 +179,18 @@ static void SaveClip(AnimationClip source,string outputPath,string state,bool lo
   }
 
   // Mixamo exports carry ramped root-translation curves (RootT.x/y/z ramp
-  // 1-3+ units across walk/run/dodge clips).  The game capsule supplies all
-  // locomotion, so every RootT curve is pinned to the reference root pose
-  // captured from the IDLE clip (the pose the feet currently stand on).
-  // This prevents the "model grows/teleports at walk start" popping and
-  // keeps every state at the same height and pivot as idle, so nothing
-  // sinks and transitions don't snap.
-  static void NormalizeRoot(AnimationClip clip,Vector3 baselineRoot){
+  // 1-3+ units across walk/run/dodge clips). The game capsule supplies all
+  // locomotion, so we flatten EVERY RootT curve to zero. This prevents the
+  // "model grows/teleports at walk start" popping and keeps transitions clean.
+  // The resulting root-height sink is compensated in BuildPrefab.
+  static void NormalizeRoot(AnimationClip clip){
    foreach(var binding in AnimationUtility.GetCurveBindings(clip)){
-    if(binding.propertyName=="RootT.x")SetConstant(clip,binding,baselineRoot.x);
-    else if(binding.propertyName=="RootT.y")SetConstant(clip,binding,baselineRoot.y);
-    else if(binding.propertyName=="RootT.z")SetConstant(clip,binding,baselineRoot.z);
+    if(binding.propertyName.StartsWith("RootT",StringComparison.Ordinal))
+     AnimationUtility.SetEditorCurve(clip,binding,AnimationCurve.Constant(0f,clip.length,0f));
    }
   }
 
-  static void SetConstant(AnimationClip clip,EditorCurveBinding binding,float value){
-   AnimationUtility.SetEditorCurve(clip,binding,AnimationCurve.Constant(0f,clip.length,value));
-  }
-
-  static Vector3 ReadFirstKeyPos(AnimationClip clip){
-   var pos=Vector3.zero;
-   if(clip==null)return pos;
-   foreach(var binding in AnimationUtility.GetCurveBindings(clip)){
-    var curve=AnimationUtility.GetEditorCurve(clip,binding);
-    if(curve==null||curve.keys.Length==0)continue;
-    float v=curve.keys[0].value;
-    if(binding.propertyName=="RootT.x")pos.x=v;
-    else if(binding.propertyName=="RootT.y")pos.y=v;
-    else if(binding.propertyName=="RootT.z")pos.z=v;
-   }
-   return pos;
-  }
-
- static void BuildPrefab(GameObject sourceModel,Avatar avatar){
+ static void BuildPrefab(GameObject sourceModel,Avatar avatar,float baselineRootY){
   var material=AssetDatabase.LoadAssetAtPath<Material>(MaterialPath);
   if(!material||!material.mainTexture)throw new Exception("Aster runtime material is missing its supplied albedo texture.");
 
@@ -222,6 +211,11 @@ static void SaveClip(AnimationClip source,string outputPath,string state,bool lo
    float scale=1.8f/Mathf.Max(.01f,bounds.size.y);
    model.transform.localScale=Vector3.one*scale;
    model.transform.localPosition-=new Vector3(bounds.center.x,bounds.min.y,bounds.center.z)*scale;
+   // NormalizeRoot zeros RootT (incl. Y) to eliminate transition glitches,
+   // which sinks the skeleton by baselineRootY. Push the model up by exactly
+   // that amount so the offset is baked into the prefab geometry instead of
+   // relying on animation curves.
+   model.transform.localPosition+=Vector3.up*(baselineRootY*scale);
 
    var animator=model.GetComponentInChildren<Animator>(true);
    if(!animator)animator=model.AddComponent<Animator>();
