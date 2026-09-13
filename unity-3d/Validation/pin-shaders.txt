@@ -1,0 +1,12 @@
+pinned Standard
+pinned Particles/Standard Unlit
+pinned Particles/Standard Surface
+pinned Mobile/Particles/Additive
+pinned Legacy Shaders/Particles/Additive
+pinned Unlit/Transparent
+pinned Unlit/Texture
+pinned Eric/URP_AdditiveFlow
+pinned Eric/URP_AlphaBlendFlow
+pinned Legacy Shaders/Particles/Alpha Blended Premultiply
+pinned Hidden/InternalErrorShader
+materialsScanned=915 added=11 total=19

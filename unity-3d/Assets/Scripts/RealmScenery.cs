@@ -40,8 +40,8 @@ namespace LostRealms {
    }
    // Distant silhouettes frame the route without obstructing the playable camera corridor.
    foreach(Transform t in world.transform)if(t.name=="Distant canopy"||t.name=="Distant realm spire"){t.gameObject.SetActive(false);Object.Destroy(t.gameObject);}
-   for(int i=0;i<18;i++){float side=i%2==0?-1:1;var root=new GameObject("Distant floating crag").transform;root.SetParent(world.transform,false);root.localPosition=new Vector3(side*(23+i%3*8),-14-i%4*3,-22+i*11);Cliff(root,12+i%4*3,15,i,rock);IslandTop(root,12+i%4*3,15,i,terrain);if(realm==0)Tree(Vector3.zero,root,i);}
-   RealmAtmosphere.Apply(world,realm);
+    for(int i=0;i<18;i++){float side=i%2==0?-1:1;var root=new GameObject("Distant floating crag").transform;root.SetParent(world.transform,false);root.localPosition=new Vector3(side*(23+i%3*8),-14-i%4*3,-22+i*11);Cliff(root,12+i%4*3,15,i,rock);IslandTop(root,12+i%4*3,15,i,terrain);if(realm==0)Tree(Vector3.zero,root,i);}
+    RealmAtmosphere.Apply(world,realm);
   }
   static void MeshObject(string name,Transform parent,Mesh mesh,Material material){var g=new GameObject(name);g.transform.SetParent(parent,false);g.AddComponent<MeshFilter>().sharedMesh=mesh;parent.GetComponentInParent<RealmArtLifetime>().Keep(mesh);g.AddComponent<MeshRenderer>().sharedMaterial=material;}
   static void Cliff(Transform parent,float width,float length,int seed,Material material){

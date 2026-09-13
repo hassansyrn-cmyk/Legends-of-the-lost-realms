@@ -1,0 +1,464 @@
+run015932 start
+run015932 hasCam=False
+run015932 cam-ok
+run015932 I-null-before=True
+run015932 build-done
+run015932 after-addcomponent
+run015932 got-g null=False
+run015932 world-managed-null=False
+run015932 world-unity-null=False
+run015932 islands=17 kids=227 hasLast=True
+run015932 lastPos=(0, 0, 110)
+run015932 island Walkable stone local=(0, -0.92, 0) active=True collider=on renderer=OFF gate=-
+run015932 dumped island Walkable stone
+run015932 island Realm surface local=(0, 0.02, 0) active=True collider=OFF renderer=OFF gate=-
+run015932 dumped island Realm surface
+run015932 island CurbNorth local=(0, 0.08, 7.5) active=False collider=OFF renderer=on gate=-
+run015932 dumped island CurbNorth
+run015932 island CurbSouth local=(0, 0.08, -7.5) active=False collider=OFF renderer=on gate=-
+run015932 dumped island CurbSouth
+run015932 island CurbEast local=(4.5, 0.08, 0) active=False collider=OFF renderer=on gate=-
+run015932 dumped island CurbEast
+run015932 island CurbWest local=(-4.5, 0.08, 0) active=False collider=OFF renderer=on gate=-
+run015932 dumped island CurbWest
+run015932 island CliffShelf local=(0, -2.1, 0) active=False collider=OFF renderer=on gate=-
+run015932 dumped island CliffShelf
+run015932 island RockKeel local=(0, -3.6, 0) active=False collider=OFF renderer=on gate=-
+run015932 dumped island RockKeel
+run015932 island FloatingKeystone local=(-1.2, -5.2, 0.01) active=False collider=OFF renderer=on gate=-
+run015932 dumped island FloatingKeystone
+run015932 island Ancient trunk local=(-3.65, 1.6, -6.55) active=False collider=OFF renderer=on gate=-
+run015932 dumped island Ancient trunk
+run015932 island Foliage local=(-3.65, 2.7, -6.2) active=False collider=OFF renderer=on gate=-
+run015932 dumped island Foliage
+run015932 island Foliage local=(-3.24, 3.3, -6.7) active=False collider=OFF renderer=on gate=-
+run015932 dumped island Foliage
+run015932 island Foliage local=(-3.99, 3.9, -6.78) active=False collider=OFF renderer=on gate=-
+run015932 dumped island Foliage
+run015932 island MossyCairn local=(-3.25, 0.2, -6.85) active=True collider=OFF renderer=on gate=-
+run015932 dumped island MossyCairn
+run015932 island Ancient trunk local=(-3.65, 1.6, 6.55) active=False collider=OFF renderer=on gate=-
+run015932 dumped island Ancient trunk
+run015932 island Foliage local=(-3.65, 2.7, 6.9) active=False collider=OFF renderer=on gate=-
+run015932 dumped island Foliage
+run015932 island Foliage local=(-3.24, 3.3, 6.4) active=False collider=OFF renderer=on gate=-
+run015932 dumped island Foliage
+run015932 island Foliage local=(-3.99, 3.9, 6.32) active=False collider=OFF renderer=on gate=-
+run015932 dumped island Foliage
+run015932 island MossyCairn local=(-3.25, 0.2, 6.25) active=True collider=OFF renderer=on gate=-
+run015932 dumped island MossyCairn
+run015932 island Ancient trunk local=(3.65, 1.6, -6.55) active=False collider=OFF renderer=on gate=-
+run015932 dumped island Ancient trunk
+run015932 island Foliage local=(3.65, 2.7, -6.2) active=False collider=OFF renderer=on gate=-
+run015932 dumped island Foliage
+run015932 island Foliage local=(4.06, 3.3, -6.7) active=False collider=OFF renderer=on gate=-
+run015932 dumped island Foliage
+run015932 island Foliage local=(3.31, 3.9, -6.78) active=False collider=OFF renderer=on gate=-
+run015932 dumped island Foliage
+run015932 island MossyCairn local=(4.05, 0.2, -6.85) active=True collider=OFF renderer=on gate=-
+run015932 dumped island MossyCairn
+run015932 island Ancient trunk local=(3.65, 1.6, 6.55) active=False collider=OFF renderer=on gate=-
+run015932 dumped island Ancient trunk
+run015932 island Foliage local=(3.65, 2.7, 6.9) active=False collider=OFF renderer=on gate=-
+run015932 dumped island Foliage
+run015932 island Foliage local=(4.06, 3.3, 6.4) active=False collider=OFF renderer=on gate=-
+run015932 dumped island Foliage
+run015932 island Foliage local=(3.31, 3.9, 6.32) active=False collider=OFF renderer=on gate=-
+run015932 dumped island Foliage
+run015932 island MossyCairn local=(4.05, 0.2, 6.25) active=True collider=OFF renderer=on gate=-
+run015932 dumped island MossyCairn
+run015932 island Rune ring local=(0, 0.11, 0) active=True collider=- renderer=- gate=-
+run015932 dumped island Rune ring
+run015932 island>Rune Rune local=(0, 0, 0.55) active=True collider=OFF renderer=on gate=-
+run015932 dumped island>Rune Rune
+run015932 island>Rune Rune local=(0.14, 0, 0.53) active=True collider=OFF renderer=on gate=-
+run015932 dumped island>Rune Rune
+run015932 island>Rune Rune local=(0.28, 0, 0.48) active=True collider=OFF renderer=on gate=-
+run015932 dumped island>Rune Rune
+run015932 island>Rune Rune local=(0.39, 0, 0.39) active=True collider=OFF renderer=on gate=-
+run015932 dumped island>Rune Rune
+run015932 island>Rune Rune local=(0.48, 0, 0.28) active=True collider=OFF renderer=on gate=-
+run015932 dumped island>Rune Rune
+run015932 island>Rune Rune local=(0.53, 0, 0.14) active=True collider=OFF renderer=on gate=-
+run015932 dumped island>Rune Rune
+run015932 island>Rune Rune local=(0.55, 0, 0) active=True collider=OFF renderer=on gate=-
+run015932 dumped island>Rune Rune
+run015932 island>Rune Rune local=(0.53, 0, -0.14) active=True collider=OFF renderer=on gate=-
+run015932 dumped island>Rune Rune
+run015932 island>Rune Rune local=(0.48, 0, -0.28) active=True collider=OFF renderer=on gate=-
+run015932 dumped island>Rune Rune
+run015932 island>Rune Rune local=(0.39, 0, -0.39) active=True collider=OFF renderer=on gate=-
+run015932 dumped island>Rune Rune
+run015932 island>Rune Rune local=(0.28, 0, -0.48) active=True collider=OFF renderer=on gate=-
+run015932 dumped island>Rune Rune
+run015932 island>Rune Rune local=(0.14, 0, -0.53) active=True collider=OFF renderer=on gate=-
+run015932 dumped island>Rune Rune
+run015932 island>Rune Rune local=(0, 0, -0.55) active=True collider=OFF renderer=on gate=-
+run015932 dumped island>Rune Rune
+run015932 island>Rune Rune local=(-0.14, 0, -0.53) active=True collider=OFF renderer=on gate=-
+run015932 dumped island>Rune Rune
+run015932 island>Rune Rune local=(-0.28, 0, -0.48) active=True collider=OFF renderer=on gate=-
+run015932 dumped island>Rune Rune
+run015932 island>Rune Rune local=(-0.39, 0, -0.39) active=True collider=OFF renderer=on gate=-
+run015932 dumped island>Rune Rune
+run015932 island>Rune Rune local=(-0.48, 0, -0.27) active=True collider=OFF renderer=on gate=-
+run015932 dumped island>Rune Rune
+run015932 island>Rune Rune local=(-0.53, 0, -0.14) active=True collider=OFF renderer=on gate=-
+run015932 dumped island>Rune Rune
+run015932 island>Rune Rune local=(-0.55, 0, 0) active=True collider=OFF renderer=on gate=-
+run015932 dumped island>Rune Rune
+run015932 island>Rune Rune local=(-0.53, 0, 0.14) active=True collider=OFF renderer=on gate=-
+run015932 dumped island>Rune Rune
+run015932 island>Rune Rune local=(-0.48, 0, 0.27) active=True collider=OFF renderer=on gate=-
+run015932 dumped island>Rune Rune
+run015932 island>Rune Rune local=(-0.39, 0, 0.39) active=True collider=OFF renderer=on gate=-
+run015932 dumped island>Rune Rune
+run015932 island>Rune Rune local=(-0.27, 0, 0.48) active=True collider=OFF renderer=on gate=-
+run015932 dumped island>Rune Rune
+run015932 island>Rune Rune local=(-0.14, 0, 0.53) active=True collider=OFF renderer=on gate=-
+run015932 dumped island>Rune Rune
+run015932 island Sculpted cliff local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island Sculpted cliff
+run015932 island Natural island top local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island Natural island top
+run015932 island Crooked oak local=(-3.9, 1.2, -6.2) active=True collider=OFF renderer=on gate=-
+run015932 dumped island Crooked oak
+run015932 island Faceted leaves local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island Faceted leaves
+run015932 island Faceted leaves local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island Faceted leaves
+run015932 island Faceted leaves local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island Faceted leaves
+run015932 island Faceted leaves local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island Faceted leaves
+run015932 island Exposed root local=(-3.9, 0.22, -5.85) active=True collider=OFF renderer=on gate=-
+run015932 dumped island Exposed root
+run015932 island Exposed root local=(-3.6, 0.22, -6.38) active=True collider=OFF renderer=on gate=-
+run015932 dumped island Exposed root
+run015932 island Exposed root local=(-4.21, 0.22, -6.37) active=True collider=OFF renderer=on gate=-
+run015932 dumped island Exposed root
+run015932 island Weathered edge rock local=(-4.25, 0.22, -6.88) active=True collider=OFF renderer=on gate=-
+run015932 dumped island Weathered edge rock
+run015932 island Weathered edge rock local=(-4.25, 0.22, 4.78) active=True collider=OFF renderer=on gate=-
+run015932 dumped island Weathered edge rock
+run015932 island Weathered edge rock local=(-4.25, 0.22, 6.57) active=True collider=OFF renderer=on gate=-
+run015932 dumped island Weathered edge rock
+run015932 island Weathered edge rock local=(-4.25, 0.22, 0.07) active=True collider=OFF renderer=on gate=-
+run015932 dumped island Weathered edge rock
+run015932 island Weathered edge rock local=(-4.25, 0.22, 1.15) active=True collider=OFF renderer=on gate=-
+run015932 dumped island Weathered edge rock
+run015932 island Crooked oak local=(3.9, 1.09, -6.2) active=True collider=OFF renderer=on gate=-
+run015932 dumped island Crooked oak
+run015932 island Faceted leaves local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island Faceted leaves
+run015932 island Faceted leaves local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island Faceted leaves
+run015932 island Faceted leaves local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island Faceted leaves
+run015932 island Faceted leaves local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island Faceted leaves
+run015932 island Exposed root local=(3.9, 0.22, -5.85) active=True collider=OFF renderer=on gate=-
+run015932 dumped island Exposed root
+run015932 island Exposed root local=(4.2, 0.22, -6.38) active=True collider=OFF renderer=on gate=-
+run015932 dumped island Exposed root
+run015932 island Exposed root local=(3.59, 0.22, -6.37) active=True collider=OFF renderer=on gate=-
+run015932 dumped island Exposed root
+run015932 island Weathered edge rock local=(4.25, 0.22, -4.41) active=True collider=OFF renderer=on gate=-
+run015932 dumped island Weathered edge rock
+run015932 island Weathered edge rock local=(4.25, 0.22, -6.11) active=True collider=OFF renderer=on gate=-
+run015932 dumped island Weathered edge rock
+run015932 island Weathered edge rock local=(4.25, 0.22, 3.51) active=True collider=OFF renderer=on gate=-
+run015932 dumped island Weathered edge rock
+run015932 island Weathered edge rock local=(4.25, 0.22, 0.65) active=True collider=OFF renderer=on gate=-
+run015932 dumped island Weathered edge rock
+run015932 island Weathered edge rock local=(4.25, 0.22, -6.43) active=True collider=OFF renderer=on gate=-
+run015932 dumped island Weathered edge rock
+run015932 island Undergrowth local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island Undergrowth
+run015932 island Ancient stepping stone local=(0.24, 0.12, -2) active=True collider=OFF renderer=on gate=-
+run015932 dumped island Ancient stepping stone
+run015932 island Ancient stepping stone local=(-0.24, 0.12, 0) active=True collider=OFF renderer=on gate=-
+run015932 dumped island Ancient stepping stone
+run015932 island Ancient stepping stone local=(0.24, 0.12, 2) active=True collider=OFF renderer=on gate=-
+run015932 dumped island Ancient stepping stone
+run015932 island Prop Tree_04 local=(-3.8, 0.02, 3.71) active=True collider=on renderer=- gate=-
+run015932 dumped island Prop Tree_04
+run015932 island>Tree_04_LOD0 Tree_04_LOD0 local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island>Tree_04_LOD0 Tree_04_LOD0
+run015932 island>Tree_04_LOD1 Tree_04_LOD1 local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island>Tree_04_LOD1 Tree_04_LOD1
+run015932 island Prop Tree_01 local=(3.45, 0.02, 4.71) active=True collider=on renderer=- gate=-
+run015932 dumped island Prop Tree_01
+run015932 island>Tree_01_LOD0 Tree_01_LOD0 local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island>Tree_01_LOD0 Tree_01_LOD0
+run015932 island>Tree_01_LOD1 Tree_01_LOD1 local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island>Tree_01_LOD1 Tree_01_LOD1
+run015932 island Prop Tree_03 local=(-2.62, 0.02, 6.79) active=True collider=on renderer=- gate=-
+run015932 dumped island Prop Tree_03
+run015932 island>Tree_03_LOD0 Tree_03_LOD0 local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island>Tree_03_LOD0 Tree_03_LOD0
+run015932 island>Tree_03_LOD1 Tree_03_LOD1 local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island>Tree_03_LOD1 Tree_03_LOD1
+run015932 island Prop Rock_02 local=(-1.67, 0.02, 5.57) active=True collider=on renderer=on gate=-
+run015932 dumped island Prop Rock_02
+run015932 island Prop Rock_03 local=(2.99, 0.02, -3.97) active=True collider=on renderer=on gate=-
+run015932 dumped island Prop Rock_03
+run015932 island Prop Grass_01 local=(-2.84, 0.02, 0.27) active=True collider=on renderer=- gate=-
+run015932 dumped island Prop Grass_01
+run015932 island>Grass_01_LOD0 Grass_01_LOD0 local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island>Grass_01_LOD0 Grass_01_LOD0
+run015932 island>Grass_01_LOD1 Grass_01_LOD1 local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island>Grass_01_LOD1 Grass_01_LOD1
+run015932 island Prop Flowers_01 local=(2.34, 0.02, -3.55) active=True collider=on renderer=- gate=-
+run015932 dumped island Prop Flowers_01
+run015932 island>Flowers_01_LOD0 Flowers_01_LOD0 local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island>Flowers_01_LOD0 Flowers_01_LOD0
+run015932 island>Flowers_01_LOD1 Flowers_01_LOD1 local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island>Flowers_01_LOD1 Flowers_01_LOD1
+run015932 island Prop Flowers_01 local=(-3.48, 0.02, 0.27) active=True collider=on renderer=- gate=-
+run015932 dumped island Prop Flowers_01
+run015932 island>Flowers_01_LOD0 Flowers_01_LOD0 local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island>Flowers_01_LOD0 Flowers_01_LOD0
+run015932 island>Flowers_01_LOD1 Flowers_01_LOD1 local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island>Flowers_01_LOD1 Flowers_01_LOD1
+run015932 island Prop Bush_02 local=(3.8, 0.02, -3.07) active=True collider=on renderer=- gate=-
+run015932 dumped island Prop Bush_02
+run015932 island>Bush_02_LOD0 Bush_02_LOD0 local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island>Bush_02_LOD0 Bush_02_LOD0
+run015932 island>Bush_02_LOD1 Bush_02_LOD1 local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island>Bush_02_LOD1 Bush_02_LOD1
+run015932 island Prop Bush_03 local=(-2.93, 0.02, -2.06) active=True collider=on renderer=- gate=-
+run015932 dumped island Prop Bush_03
+run015932 island>Bush_03_LOD0 Bush_03_LOD0 local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island>Bush_03_LOD0 Bush_03_LOD0
+run015932 island>Bush_03_LOD1 Bush_03_LOD1 local=(0, 0, 0) active=True collider=- renderer=on gate=-
+run015932 dumped island>Bush_03_LOD1 Bush_03_LOD1
+run015932 island Prop Crystal local=(-3.8, 0.02, 3.29) active=True collider=on renderer=on gate=-
+run015932 dumped island Prop Crystal
+run015932 island Prop Crystal local=(3.64, 0.02, -4.48) active=True collider=on renderer=on gate=-
+run015932 dumped island Prop Crystal
+run015932 gate Realm gate local=(0, 0, 115) active=True collider=- renderer=- gate=YES
+run015932 dumped gate Realm gate
+run015932 gate>Gate column Gate column local=(-1.85, 2.1, 0) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Gate column Gate column
+run015932 gate>ColumnCapital ColumnCapital local=(-1.85, 4.3, 0) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>ColumnCapital ColumnCapital
+run015932 gate>Gate column Gate column local=(1.85, 2.1, 0) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Gate column Gate column
+run015932 gate>ColumnCapital ColumnCapital local=(1.85, 4.3, 0) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>ColumnCapital ColumnCapital
+run015932 gate>Gate lintel Gate lintel local=(0, 4.45, 0) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Gate lintel Gate lintel
+run015932 gate>Realm crystal Realm crystal local=(0, 3.5, 0) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Realm crystal Realm crystal
+run015932 gate>Rune ring Rune ring local=(0, 0.04, 0) active=True collider=- renderer=- gate=-
+run015932 dumped gate>Rune ring Rune ring
+run015932 gate>Rune ring>Rune Rune local=(0, 0, 1.6) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.41, 0, 1.55) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.8, 0, 1.39) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(1.13, 0, 1.13) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(1.39, 0, 0.8) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(1.55, 0, 0.41) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(1.6, 0, 0) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(1.55, 0, -0.41) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(1.39, 0, -0.8) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(1.13, 0, -1.13) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.8, 0, -1.39) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.41, 0, -1.55) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0, 0, -1.6) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.41, 0, -1.55) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.8, 0, -1.39) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-1.13, 0, -1.13) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-1.39, 0, -0.8) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-1.55, 0, -0.41) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-1.6, 0, 0) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-1.55, 0, 0.41) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-1.39, 0, 0.8) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-1.13, 0, 1.13) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.8, 0, 1.39) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.41, 0, 1.55) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring Rune ring local=(0, 0.6, 0) active=True collider=- renderer=- gate=-
+run015932 dumped gate>Rune ring Rune ring
+run015932 gate>Rune ring>Rune Rune local=(0, 0, 1.3) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.34, 0, 1.26) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.65, 0, 1.13) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.92, 0, 0.92) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(1.13, 0, 0.65) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(1.26, 0, 0.34) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(1.3, 0, 0) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(1.26, 0, -0.34) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(1.13, 0, -0.65) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.92, 0, -0.92) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.65, 0, -1.13) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.34, 0, -1.26) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0, 0, -1.3) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.34, 0, -1.26) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.65, 0, -1.13) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.92, 0, -0.92) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-1.13, 0, -0.65) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-1.26, 0, -0.34) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-1.3, 0, 0) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-1.26, 0, 0.34) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-1.13, 0, 0.65) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.92, 0, 0.92) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.65, 0, 1.13) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.34, 0, 1.26) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring Rune ring local=(0, 1.4, 0) active=True collider=- renderer=- gate=-
+run015932 dumped gate>Rune ring Rune ring
+run015932 gate>Rune ring>Rune Rune local=(0, 0, 1.05) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.27, 0, 1.01) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.53, 0, 0.91) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.74, 0, 0.74) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.91, 0, 0.52) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(1.01, 0, 0.27) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(1.05, 0, 0) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(1.01, 0, -0.27) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.91, 0, -0.53) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.74, 0, -0.74) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.53, 0, -0.91) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.27, 0, -1.01) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0, 0, -1.05) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.27, 0, -1.01) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.53, 0, -0.91) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.74, 0, -0.74) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.91, 0, -0.52) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-1.01, 0, -0.27) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-1.05, 0, 0) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-1.01, 0, 0.27) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.91, 0, 0.52) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.74, 0, 0.74) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.52, 0, 0.91) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.27, 0, 1.01) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring Rune ring local=(0, 2.2, 0) active=True collider=- renderer=- gate=-
+run015932 dumped gate>Rune ring Rune ring
+run015932 gate>Rune ring>Rune Rune local=(0, 0, 0.8) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.21, 0, 0.77) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.4, 0, 0.69) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.57, 0, 0.57) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.69, 0, 0.4) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.77, 0, 0.21) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.8, 0, 0) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.77, 0, -0.21) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.69, 0, -0.4) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.57, 0, -0.57) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.4, 0, -0.69) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0.21, 0, -0.77) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(0, 0, -0.8) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.21, 0, -0.77) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.4, 0, -0.69) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.57, 0, -0.57) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.69, 0, -0.4) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.77, 0, -0.21) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.8, 0, 0) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.77, 0, 0.21) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.69, 0, 0.4) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.57, 0, 0.57) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.4, 0, 0.69) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Rune ring>Rune Rune local=(-0.21, 0, 0.77) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Rune ring>Rune Rune
+run015932 gate>Realm crystal Realm crystal local=(1.2, 1, 0) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Realm crystal Realm crystal
+run015932 gate>Realm crystal Realm crystal local=(-1.2, 1, 0) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Realm crystal Realm crystal
+run015932 gate>Gate beam Gate beam local=(0, 2.2, 0) active=True collider=OFF renderer=on gate=-
+run015932 dumped gate>Gate beam Gate beam
+run015932 gate>Gate light Gate light local=(0, 2, 0) active=True collider=- renderer=- gate=-
+run015932 dumped gate>Gate light Gate light
+run015932 gateWORLD=(0, 0, 115)
+run015932 gate-loop-done
+run015932 worldPos=(0, 0, 0) EndZ=114

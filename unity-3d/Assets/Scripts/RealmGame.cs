@@ -3,47 +3,65 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace LostRealms {
  public enum GameScreen { Menu, Map, Playing, Paused, Complete, Defeated, Settings }
- [Serializable] public class Progress {
-  public int unlocked=1, equippedWeapon=-1, coins, gems, healthRank, powerRank; public int[] stars=new int[10]; public float[] best=new float[10]; public bool music=true,sound=true;
- }
+[Serializable] public class Progress {
+   public int version=2;public int unlocked=1, equippedWeapon=-1, coins, gems, healthRank, powerRank, arsenalRank, aetherRank, moxieRank, tempoRank, windRank; public int[] stars=new int[10]; public float[] best=new float[10]; public bool music=true,sound=true,postFx=true,shake=true;
+  }
  public class RealmGame : MonoBehaviour {
   public static RealmGame I; public static bool Testing=>Array.IndexOf(Environment.GetCommandLineArgs(),"-realmTest")>=0; public static readonly string[] Titles={"Mosslight Trail","Whispering Falls","Rootbound Ruins","The Elder Grove","Sunscorched Pass","Temple of Keys","Sandstone Colossus","Frostwind Climb","Crystal Hollow","Crown of Winter"};
   public static readonly string[] Realms={"VERDANT KINGDOM","BURNING DUNES","FROZEN PEAKS"};
   public static readonly Color[] Accents={new Color(.38f,.95f,.7f),new Color(1,.67f,.28f),new Color(.4f,.83f,1)};
   public GameScreen Screen=GameScreen.Menu; public Progress Save=new Progress(); public Hero Player; public RealmWorld World; public FollowCamera CameraRig;
-  public int Level=1, Realm, Coins, Gems, DamageTaken, EarnedStars; public float Elapsed; public Vector3 Checkpoint; public bool CheckpointActive; public string Notice=""; float noticeUntil; public Color Accent=>Accents[Realm];
+  public int Level=1, Realm, Coins, Gems, DamageTaken, EarnedStars, Combo; public float Elapsed; public Vector3 Checkpoint; public bool CheckpointActive; public string Notice=""; float noticeUntil,comboUntil; public Color Accent=>Accents[Realm];
   public WeaponDefinition CurrentWeapon=>WeaponCatalog.Get(Save.equippedWeapon);
-  public Vector2 MoveInput; public bool JumpPressed,DashPressed,AttackPressed,AttackReleased,CastPressed,ParryPressed; public bool AttackHeld;
+  public Vector2 MoveInput; public bool JumpPressed,DashPressed,AttackPressed,AttackReleased,CastPressed,ParryPressed,SpellPressed,SpellReleased,GrapplePressed; public bool AttackHeld,SpellHeld,JumpHeld;
   public readonly List<Enemy> Enemies=new List<Enemy>(); public AudioSource Music,Sfx;
-  Transform worldRoot; GUIStyle title,label,small,button; Texture2D pixel; readonly TouchRouter touch=new TouchRouter(); float yawInput; float hitStopUntil;
+  Transform worldRoot; GUIStyle title,titleC,label,small,button,center,big,smallC,tinyC; Texture2D pixel,circleFill,circleRing; readonly TouchRouter touch=new TouchRouter(); float yawInput; float hitStopUntil;
   public static readonly Color[] ElementColors={new Color(1f,.45f,.1f),new Color(.2f,.85f,1f),new Color(.2f,1f,.55f)};
-  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Boot(){if(FindAnyObjectByType<RealmGame>()==null)new GameObject("Lost Realms 3D").AddComponent<RealmGame>();}
-  void Awake(){ I=this; Application.targetFrameRate=60; QualitySettings.vSyncCount=1; Time.fixedDeltaTime=1f/60f; UnityEngine.Screen.orientation=ScreenOrientation.LandscapeLeft;
-   try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v1"))Save=JsonUtility.FromJson<Progress>(PlayerPrefs.GetString("LostRealms3D.v1"))??new Progress();}catch{Save=new Progress();}
-   if(Save.stars==null||Save.stars.Length!=10)Save.stars=new int[10]; if(Save.best==null||Save.best.Length!=10)Save.best=new float[10];    Save.unlocked=Mathf.Clamp(Save.unlocked,1,10);Save.equippedWeapon=Mathf.Clamp(Save.equippedWeapon,-1,28);
-   Music=gameObject.AddComponent<AudioSource>(); Music.loop=true; Music.volume=.24f; Sfx=gameObject.AddComponent<AudioSource>(); Sfx.volume=.7f;
-   var cam=new GameObject("Adventure Camera").AddComponent<Camera>(); cam.tag="MainCamera"; cam.gameObject.AddComponent<AudioListener>(); cam.nearClipPlane=.25f; cam.farClipPlane=320; cam.fieldOfView=58; CameraRig=cam.gameObject.AddComponent<FollowCamera>();
-   LoadLevel(1); Screen=GameScreen.Menu; Tell("The Heart of Realms is waiting.",4);
+  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Boot(){
+   var existing=FindObjectsByType<RealmGame>(FindObjectsSortMode.None);
+   if(existing.Length==0){new GameObject("Lost Realms 3D").AddComponent<RealmGame>();return;}
+   // Never allow two game instances (two cameras/listeners/OnGUI = dead menus).
+   for(int i=1;i<existing.Length;i++)if(existing[i])Destroy(existing[i].gameObject);
   }
-  public void Persist(){if(Testing)return;PlayerPrefs.SetString("LostRealms3D.v1",JsonUtility.ToJson(Save));PlayerPrefs.Save();}
+  void Awake(){ I=this; Application.targetFrameRate=60; QualitySettings.vSyncCount=1; Time.fixedDeltaTime=1f/60f; UnityEngine.Screen.orientation=ScreenOrientation.LandscapeLeft;
+try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson<Progress>(PlayerPrefs.GetString("LostRealms3D.v2"))??new Progress();
+     else if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v1")){Save=JsonUtility.FromJson<Progress>(PlayerPrefs.GetString("LostRealms3D.v1"))??new Progress();Save.version=2;Persist();}}catch{Save=new Progress();}
+    if(Save.stars==null||Save.stars.Length!=10)Save.stars=new int[10]; if(Save.best==null||Save.best.Length!=10)Save.best=new float[10];
+    Save.unlocked=Mathf.Clamp(Save.unlocked,1,10);Save.equippedWeapon=Mathf.Clamp(Save.equippedWeapon,-1,40);
+    Save.healthRank=Mathf.Clamp(Save.healthRank,0,3);Save.powerRank=Mathf.Clamp(Save.powerRank,0,3);Save.arsenalRank=Mathf.Clamp(Save.arsenalRank,0,3);
+    Save.aetherRank=Mathf.Clamp(Save.aetherRank,0,3);Save.moxieRank=Mathf.Clamp(Save.moxieRank,0,3);Save.tempoRank=Mathf.Clamp(Save.tempoRank,0,3);Save.windRank=Mathf.Clamp(Save.windRank,0,3);
+   Music=gameObject.AddComponent<AudioSource>(); Music.loop=true; Music.volume=.24f; Sfx=gameObject.AddComponent<AudioSource>(); Sfx.volume=.7f;
+   var cam=new GameObject("Adventure Camera").AddComponent<Camera>(); cam.tag="MainCamera"; cam.gameObject.AddComponent<AudioListener>(); cam.nearClipPlane=.25f; cam.farClipPlane=320; cam.fieldOfView=58; cam.gameObject.AddComponent<RealmPostFx>(); CameraRig=cam.gameObject.AddComponent<FollowCamera>();
+   // Exactly one audio listener: silence any stray scene camera/listener so the
+   // console spam and doubled audio cannot happen.
+   foreach(var listener in FindObjectsByType<AudioListener>(FindObjectsSortMode.None))if(listener&&listener.gameObject!=cam.gameObject)listener.enabled=false;
+   // Startup must never leave the menu dead: if the first level fails to build,
+   // log it and still show a working main menu.
+   try{LoadLevel(1);}catch(System.Exception e){Debug.LogError("STARTUP_LOAD_FAILED "+e);}
+   Screen=GameScreen.Menu; Tell("The Heart of Realms is waiting.",4);
+  }
+  public void Persist(){if(Testing)return;PlayerPrefs.SetString("LostRealms3D.v2",JsonUtility.ToJson(Save));PlayerPrefs.Save();}
   public void LoadLevel(int id){
-   Time.timeScale=1; touch.Reset(); if(worldRoot){worldRoot.gameObject.SetActive(false);Destroy(worldRoot.gameObject);} Enemies.Clear(); Level=Mathf.Clamp(id,1,10); Realm=Level<=4?0:Level<=7?1:2; Coins=Gems=DamageTaken=EarnedStars=0; Elapsed=0; CheckpointActive=false;
-   worldRoot=new GameObject("Realm "+Level+" - "+Titles[Level-1]).transform; World=worldRoot.gameObject.AddComponent<RealmWorld>(); World.Build(Level,Realm);
+   Time.timeScale=1; touch.Reset(); if(worldRoot){worldRoot.gameObject.SetActive(false);Destroy(worldRoot.gameObject);} Enemies.Clear(); Level=Mathf.Clamp(id,1,10); Realm=Level<=4?0:Level<=7?1:2; Coins=Gems=DamageTaken=EarnedStars=0; Elapsed=0; CheckpointActive=false;Combo=0;comboUntil=0;
+   worldRoot=new GameObject("Realm "+Level+" - "+Titles[Level-1]).transform; World=worldRoot.gameObject.AddComponent<RealmWorld>();
+   try{World.Build(Level,Realm);}catch(System.Exception e){Debug.LogError("LEVEL_BUILD_FAILED "+Level+": "+e);}
+   GUI.enabled=true;
    var hero=new GameObject("Aster"); hero.transform.SetParent(worldRoot); hero.transform.position=World.Spawn; Player=hero.AddComponent<Hero>(); Checkpoint=World.Spawn;
    // Restore the camera only after the newly-created Hero Awake path completes.
    CameraRig.Target=Player.transform;
    CameraRig.Snap();
-   var clip=Resources.Load<AudioClip>("Audio/"+(World.IsBoss?"boss_battle_theme":Realm==0?"verdant_theme":Realm==1?"desert_exploration_theme":"frozen_exploration_theme"));Music.clip=clip;if(clip&&Save.music)Music.Play();
+   if(World.IsBoss)CameraRig.ZoomBias=-1.3f;
+   var clip=Resources.Load<AudioClip>("Audio/boss_battle_theme");Music.clip=clip;if(clip&&Save.music)Music.Play();
    Screen=GameScreen.Playing; Tell(Level==1?"WASD / left stick to move. Jump twice to reach the next island.":World.IsBoss?"Break the guardian's corruption. Dodge red warnings, strike during recovery.":Titles[Level-1]+"  /  Follow the golden trail to the realm gate.",6);
   }
   void Update(){
-   JumpPressed=DashPressed=AttackPressed=AttackReleased=CastPressed=ParryPressed=false; MoveInput=Vector2.zero; yawInput=0;
+   JumpPressed=DashPressed=AttackPressed=AttackReleased=CastPressed=ParryPressed=SpellPressed=SpellReleased=GrapplePressed=false; MoveInput=Vector2.zero; yawInput=0;
    if(hitStopUntil>0f&&Time.unscaledTime>=hitStopUntil){hitStopUntil=0f;Time.timeScale=1f;}
    if(!I||!Player)return;
    if(Input.GetKeyDown(KeyCode.Escape)){if(Screen==GameScreen.Playing)Pause();else if(Screen==GameScreen.Paused)Resume();else Screen=GameScreen.Menu;}
-   if(Screen!=GameScreen.Playing){AttackHeld=false;touch.Reset();return;} Elapsed+=Time.deltaTime;
+   if(Screen!=GameScreen.Playing){AttackHeld=false;touch.Reset();return;} Elapsed+=Time.deltaTime; if(comboUntil>0f&&Elapsed>=comboUntil){Combo=0;comboUntil=0;}
    MoveInput=new Vector2((Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow)?1:0)-(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow)?1:0),(Input.GetKey(KeyCode.W)||Input.GetKey(KeyCode.UpArrow)?1:0)-(Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.DownArrow)?1:0));
-   JumpPressed=Input.GetKeyDown(KeyCode.Space);DashPressed=Input.GetKeyDown(KeyCode.LeftShift);AttackPressed=Input.GetKeyDown(KeyCode.J);AttackReleased=Input.GetKeyUp(KeyCode.J);AttackHeld=Input.GetKey(KeyCode.J);CastPressed=Input.GetKeyDown(KeyCode.K);ParryPressed=Input.GetKeyDown(KeyCode.L);
+   JumpPressed=Input.GetKeyDown(KeyCode.Space);DashPressed=Input.GetKeyDown(KeyCode.LeftShift);AttackPressed=Input.GetKeyDown(KeyCode.J);AttackReleased=Input.GetKeyUp(KeyCode.J);AttackHeld=Input.GetKey(KeyCode.J);CastPressed=Input.GetKeyDown(KeyCode.K);ParryPressed=Input.GetKeyDown(KeyCode.L);SpellPressed=Input.GetKeyDown(KeyCode.F);SpellReleased=Input.GetKeyUp(KeyCode.F);SpellHeld=Input.GetKey(KeyCode.F);GrapplePressed=Input.GetKeyDown(KeyCode.G);JumpHeld=Input.GetKey(KeyCode.Space);
    if(Input.GetKeyDown(KeyCode.Q))Player.Power=(Player.Power+1)%3;
    if(Input.touchCount==0&&Input.GetMouseButton(1))yawInput=Input.GetAxis("Mouse X")*3;
    float sx=1280f/UnityEngine.Screen.width,sy=720f/UnityEngine.Screen.height;
@@ -51,7 +69,7 @@ namespace LostRealms {
    foreach(var t in Input.touches)touch.Sample(t.fingerId,new Vector2(t.position.x*sx,(UnityEngine.Screen.height-t.position.y)*sy),t.deltaPosition*sx,t.phase);
    if(Input.touchCount==0)touch.Reset();
    MoveInput+=touch.Move;JumpPressed|=touch.Jump;DashPressed|=touch.Dodge;CastPressed|=touch.Power;
-   AttackPressed|=touch.BladePressed;AttackReleased|=touch.BladeReleased;AttackHeld|=touch.BladeHeld;ParryPressed|=touch.Parry;yawInput+=touch.Yaw;
+   AttackPressed|=touch.BladePressed;AttackReleased|=touch.BladeReleased;AttackHeld|=touch.BladeHeld;ParryPressed|=touch.Parry;SpellPressed|=touch.Spell;SpellReleased|=touch.SpellReleased;SpellHeld|=touch.SpellHeld;yawInput+=touch.Yaw;
    MoveInput=Vector2.ClampMagnitude(MoveInput,1); CameraRig.Yaw+=yawInput;
   }
   public void Pause(){Screen=GameScreen.Paused;Music.Pause();touch.Reset();}
@@ -59,6 +77,7 @@ namespace LostRealms {
   void OnApplicationPause(bool paused){if(paused&&Screen==GameScreen.Playing)Pause();Persist();}
   void OnApplicationFocus(bool focused){if(!focused&&Screen==GameScreen.Playing)Pause();}
   public void Tell(string message,float seconds=3){Notice=message;noticeUntil=Time.unscaledTime+seconds;}
+   public void ComboHit(){Combo++;comboUntil=Elapsed+1.1f;}
   public void Sound(string name){if(!Save.sound)return;var clip=Resources.Load<AudioClip>("Audio/sfx_"+name);if(clip)Sfx.PlayOneShot(clip);}
   // A very short screen-wide time dip for perfect defense and counters. Physics
   // runs on the constant fixed step, so this slows the pacing, never the step.
@@ -66,12 +85,12 @@ namespace LostRealms {
   public void Collect(bool gem){if(gem)Gems++;else Coins++;Sound(gem?"gem":"coin");}
   public void EquipWeapon(WeaponId id){
    Save.equippedWeapon=(int)id;Persist();
-   if(Player)EquippedWeapon.Equip(Player,id);
+   if(Player){EquippedWeapon.Equip(Player,id);Vfx.Play("ga_vfx_Sparks_01",Player.transform.position+Vector3.up*1.2f,Quaternion.identity,.9f);}
    var weapon=CurrentWeapon;Sound("upgrade");Tell("EQUIPPED  "+weapon.Name+"  /  "+weapon.Summary,4.5f);
   }
   public void ActivateCheckpoint(Vector3 position){Checkpoint=position;CheckpointActive=true;Sound("checkpoint");Tell("Checkpoint restored. Your trail is safe.");}
-  public void Respawn(){Player.Warp(Checkpoint);Player.Health=Player.MaxHealth;Player.Energy=100;Sound("respawn");Tell("Returned to the checkpoint.");}
-  public void Defeat(){Screen=GameScreen.Defeated;Sound("defeat");}
+  public void Respawn(){Player.Warp(Checkpoint);Player.Health=Player.MaxHealth;Player.Energy=100;Sound("respawn");Vfx.Play("ga_vfx_Portal_01",Checkpoint,Quaternion.identity,1.1f);Tell("Returned to the checkpoint.");}
+  public void Defeat(){Screen=GameScreen.Defeated;Sound("defeat");if(CameraRig)CameraRig.ZoomBias=1.6f;}
   public void Finish(){if(Screen!=GameScreen.Playing)return;if(World.IsBoss&&Enemies.Exists(x=>x&&x.Boss&&x.Health>0)){Tell("Defeat the guardian to open this gate.");return;}
    EarnedStars=1+(Gems>0?1:0)+(DamageTaken==0?1:0); Save.stars[Level-1]=Mathf.Max(Save.stars[Level-1],EarnedStars); if(Save.best[Level-1]<=0||Elapsed<Save.best[Level-1])Save.best[Level-1]=Elapsed;
    Save.coins+=Coins+EarnedStars*10;Save.gems+=Gems;Save.unlocked=Mathf.Max(Save.unlocked,Mathf.Min(10,Level+1));Persist();Screen=GameScreen.Complete;Sound("complete");
@@ -95,10 +114,30 @@ namespace LostRealms {
    if(title!=null)return;pixel=Texture2D.whiteTexture;
    title=new GUIStyle(GUI.skin.label){fontSize=44,fontStyle=FontStyle.Bold,wordWrap=true,alignment=TextAnchor.UpperLeft};
    title.normal.textColor=new Color(1f,.94f,.82f);
+   titleC=new GUIStyle(title){alignment=TextAnchor.MiddleCenter,fontSize=52,wordWrap=false};
    label=new GUIStyle(GUI.skin.label){fontSize=22,wordWrap=true};label.normal.textColor=new Color(.88f,.95f,.96f);
    small=new GUIStyle(label){fontSize=16};
    button=new GUIStyle(GUI.skin.button){fontSize=20,fontStyle=FontStyle.Bold,alignment=TextAnchor.MiddleCenter};
    button.normal.textColor=new Color(1f,.96f,.88f);button.padding=new RectOffset(12,12,10,10);
+   // Strip the skin's button chrome so the hand-drawn frames below show through.
+   button.normal.background=button.hover.background=button.active.background=button.focused.background=null;
+   center=new GUIStyle(GUI.skin.label){fontSize=17,fontStyle=FontStyle.Bold,alignment=TextAnchor.MiddleCenter};
+   center.normal.textColor=new Color(.94f,.98f,1f);
+   big=new GUIStyle(center){fontSize=24};
+   smallC=new GUIStyle(small){alignment=TextAnchor.MiddleCenter};
+   tinyC=new GUIStyle(smallC){fontSize=13};tinyC.normal.textColor=new Color(.72f,.82f,.88f);
+   circleFill=CircleTexture(false);circleRing=CircleTexture(true);
+  }
+  // Anti-aliased filled circle / ring, tinted at draw time via GUI.color.
+  Texture2D CircleTexture(bool ring){
+   const int S=128;var t=new Texture2D(S,S,TextureFormat.ARGB32,false);
+   var c=new Color[S*S];var mid=new Vector2((S-1)*.5f,(S-1)*.5f);
+   for(int y=0;y<S;y++)for(int x=0;x<S;x++){
+    float d=Vector2.Distance(new Vector2(x,y),mid);
+    float a=ring?Mathf.Clamp01(5.5f-Mathf.Abs(d-(S*.5f-5f))):Mathf.Clamp01((S*.5f-1f)-d);
+    c[y*S+x]=new Color(1f,1f,1f,a);
+   }
+   t.SetPixels(c);t.Apply();t.wrapMode=TextureWrapMode.Clamp;return t;
   }
   void Box(Rect r,Color color){GUI.color=color;GUI.DrawTexture(r,pixel);GUI.color=Color.white;}
   void Text(float x,float y,float w,float h,string s,GUIStyle st=null){GUI.Label(new Rect(x,y,w,h),s,st??label);}
@@ -121,7 +160,9 @@ namespace LostRealms {
    Box(new Rect(x+8,y+h-8,w-16,1),new Color(Accent.r,Accent.g,Accent.b,.15f));
   }
   void OnGUI(){
-   if(!Player)return;
+   // Only the in-game HUD needs a live Player; menus must draw and respond even
+   // if startup level construction ever fails.
+   if(Screen==GameScreen.Playing&&!Player)return;
    Styles();
    GUI.matrix=Matrix4x4.TRS(Vector3.zero,Quaternion.identity,new Vector3(UnityEngine.Screen.width/1280f,UnityEngine.Screen.height/720f,1));
    if(Screen==GameScreen.Playing){
@@ -138,6 +179,7 @@ namespace LostRealms {
     Text(282,91,100,26,$"HP {Player.Health}/{Player.MaxHealth}",small);
     Text(42,116,330,20,$"WEAPON  {CurrentWeapon.Name}",small);
     if(Player&&Player.CounterReady)Text(42,138,330,20,"COUNTER READY  /  STRIKE NOW",small);
+    if(Combo>=3){BoxOutline(new Rect(42,160,140,24),new Color(.05f,.09f,.12f,.85f),new Color(1f,.78f,.3f),1f);Text(52,163,122,18,$"COMBO  x{Combo}",small);}
 
     // Collectibles Panel
     Panel(404,20,240,68);
@@ -156,12 +198,29 @@ namespace LostRealms {
     Panel(882,20,135,50);Text(898,32,105,28,$"TIME {Clock(Elapsed)}",small);
     if(Button(1035,20,120,50,"PAUSE"))Pause();
 
+    // Route compass: points at the next island, or the gate once past the last.
+    {
+     Vector3 pos=Player.transform.position;Vector3 tgt=pos;bool found=false;float bestZ=float.MaxValue;
+     foreach(var node in World.Route){float dz=node.z-pos.z;if(dz>1f&&dz<bestZ){bestZ=dz;tgt=node;found=true;}}
+     if(!found)tgt=new Vector3(0,pos.y,World.EndZ);
+     Vector3 to=tgt-pos;to.y=0;float cd=to.magnitude;
+     Vector3 fwd=Player.transform.forward;fwd.y=0;
+     float ang=to.sqrMagnitude>.01f?Vector3.SignedAngle(fwd.normalized,to.normalized,Vector3.up):0f;
+     float cx=500,cw=280;
+     Panel(cx-8,532,cw+16,30);
+     Box(new Rect(cx,545,cw,6),new Color(.1f,.16f,.2f,.9f));
+     Box(new Rect(cx+cw*.5f-1,540,2,16),new Color(.35f,.45f,.5f,.9f));
+     float mx=cx+cw*.5f+Mathf.Clamp(ang/90f,-1f,1f)*cw*.5f;
+     Box(new Rect(mx-3,541,6,14),Accent);
+     Text(cx+8,512,cw,20,$"{(int)cd}m to {(found?"next isle":"realm gate")}",small);
+    }
+
      foreach(var foe in Enemies){if(!foe||foe.Boss||foe.Health<=0||Vector3.Distance(Player.transform.position,foe.transform.position)>12)continue;Vector3 v=Camera.main.WorldToViewportPoint(foe.transform.position+Vector3.up*(foe.Kind==6?2.9f:2.1f));float x=v.x*1280,y=(1-v.y)*720;if(v.z<=0||y<175||y>540||x<45||x>1235)continue;Box(new Rect(x-34,y,68,7),new Color(.03f,.07f,.08f,.85f));Box(new Rect(x-40,y,5,7),ElementColors[foe.WeakElement]);Box(new Rect(x-33,y+1,66*Mathf.Clamp01(foe.Health/foe.MaxHealth),5),ElementColors[foe.WeakElement]);}
     // Boss Bar
     var boss=Enemies.Find(x=>x&&x.Boss&&x.Health>0);
     if(boss&&Vector3.Distance(Player.transform.position,boss.transform.position)<32){
-     Panel(390,105,500,68);
-     Text(410,112,470,26,boss.DisplayName,small);
+Panel(390,105,500,68);
+      Text(410,112,470,26,boss.DisplayName+"   PHASE "+boss.BossPhase+"/3",small);
      BoxOutline(new Rect(410,144,460,14),new Color(.25f,.12f,.15f),new Color(.6f,.25f,.3f),1f);
      Box(new Rect(411,145,458*Mathf.Clamp01(boss.Health/boss.MaxHealth),12),Accent);
     }
@@ -171,11 +230,27 @@ namespace LostRealms {
      Text(282,204,716,48,Notice,small);
     }
 
+    MiniMap();
+
     if(Application.isMobilePlatform){
-     Panel(28,585,145,93);Text(46,600,110,26,"MOVE",small);
-     Box(new Rect(93+touch.Move.x*32,638-touch.Move.y*23,18,18),Accent);
-     Control(660,"DODGE","EVADE");Control(780,"POWER","CAST");Control(900,"BLADE","HOLD TO CHARGE");Control(1020,"JUMP","DOUBLE TAP");Control(1140,"PARRY","GUARD");
-    }else Text(28,675,1200,28,"WASD Move   SPACE Double jump   SHIFT Dodge   J Blade / Hold to charge   K Power   L Parry   Q Element   Right-drag Camera",small);
+     // Virtual joystick: fixed base ring plus a knob tracking live input.
+     float jx=150,jy=612,jr=86;
+     GUI.color=new Color(.02f,.05f,.09f,.42f);GUI.DrawTexture(new Rect(jx-jr,jy-jr,jr*2,jr*2),circleFill);
+     GUI.color=new Color(Accent.r,Accent.g,Accent.b,.5f);GUI.DrawTexture(new Rect(jx-jr,jy-jr,jr*2,jr*2),circleRing);
+     GUI.color=new Color(.06f,.13f,.18f,.9f);GUI.DrawTexture(new Rect(jx-25,jy-25,50,50),circleFill);
+     GUI.color=new Color(Accent.r,Accent.g,Accent.b,.95f);
+     GUI.DrawTexture(new Rect(jx+touch.Move.x*50-19,jy-touch.Move.y*50-19,38,38),circleFill);
+     GUI.color=Color.white;
+     Text(jx-60,jy+jr+6,120,18,"MOVE",tinyC);
+     // Action cluster: big attack button, movement row along the bottom,
+     // cast/defend actions above it (rects owned by TouchRouter.ActionRect).
+     RoundButton(TouchRouter.ActionRect(2),"BLADE","HOLD TO CHARGE",true);
+     RoundButton(TouchRouter.ActionRect(3),"JUMP","×2");
+     RoundButton(TouchRouter.ActionRect(0),"DODGE","");
+     RoundButton(TouchRouter.ActionRect(1),"POWER","ELEMENT");
+     RoundButton(TouchRouter.ActionRect(4),"PARRY","");
+     RoundButton(TouchRouter.ActionRect(5),"SPELL","HOLD TO LOB");
+    }else Text(28,675,1200,28,"WASD Move   SPACE Jump (hold=higher)   SHIFT Dash / air-dash   G Grapple   J Blade (hold charge)   K Power   L Parry   F Spell (hold=lob)   Q Element",small);
     return;
    }
 
@@ -183,16 +258,19 @@ namespace LostRealms {
    Box(new Rect(0,0,1280,720),new Color(.015f,.03f,.045f,.75f));
 
    if(Screen==GameScreen.Menu){
-    Panel(64,65,660,585);
-    Text(96,90,600,32,"✦ LEGENDS OF THE LOST REALMS ✦",small);
-    Text(96,135,600,145,"Three realms.\nOne lost heart.",title);
-    Box(new Rect(96,290,590,2),new Color(Accent.r,Accent.g,Accent.b,.4f));
-    Text(96,308,580,72,"Aster's epic journey in full 3D.\nWield elemental blades, cross treacherous floating isles, and restore the ancient portals.");
-    if(Button(96,415,280,62,"► CONTINUE JOURNEY"))LoadLevel(Save.unlocked);
-    if(Button(396,415,280,62,"🗺 REALM ATLAS"))Screen=GameScreen.Map;
-    if(Button(96,495,280,58,"⚙ SANCTUARY"))Screen=GameScreen.Settings;
-    if(Button(396,495,280,58,"✦ NEW JOURNEY")){Save=new Progress();Save.equippedWeapon=-1;Persist();Sound("upgrade");LoadLevel(1);}
-    Text(96,585,580,26,"UNITY 3D EDITION  *  TOUCH + KEYBOARD",small);
+    // Centered hero composition: eyebrow, big title, divider, tagline,
+    // journey status, then a single stacked column of actions.
+    Text(240,84,800,26,"✦  A  3 D  A D V E N T U R E  ✦",tinyC);
+    GUI.Label(new Rect(140,118,1000,120),"LEGENDS OF THE LOST REALMS",titleC);
+    Box(new Rect(440,252,400,2),new Color(Accent.r,Accent.g,Accent.b,.55f));
+    Box(new Rect(628,249,24,8),Accent);
+    Text(290,270,700,56,"Three realms. One lost heart.\nCross the floating isles, master elemental blades, restore the ancient portals.",smallC);
+    Text(290,340,700,22,$"JOURNEY  {Save.unlocked}/10 CHAPTERS      ✦      {TotalStars()}/30 STARS      ✦      {Save.coins} GOLD      ✦      {Save.gems} GEMS",tinyC);
+    if(Button(410,382,460,64,"►   CONTINUE JOURNEY"))LoadLevel(Save.unlocked);
+    if(Button(450,458,380,54,"REALM ATLAS"))Screen=GameScreen.Map;
+    if(Button(450,522,380,54,"SANCTUARY"))Screen=GameScreen.Settings;
+    if(Button(450,586,380,54,"✦ NEW JOURNEY")){Save=new Progress();Save.equippedWeapon=-1;Persist();Sound("upgrade");LoadLevel(1);}
+    Text(240,672,800,22,"UNITY 3D EDITION   *   TOUCH + KEYBOARD   *   JOURNEY AUTOSAVES",tinyC);
     return;
    }
 
@@ -201,20 +279,23 @@ namespace LostRealms {
     Text(80,65,1080,56,"Realm Atlas",title);
     Text(80,130,1050,34,$"Treasury: {Save.coins} Gold   *   {Save.gems} Gems   *   {TotalStars()}/30 Stars");
     Box(new Rect(80,170,1120,2),new Color(Accent.r,Accent.g,Accent.b,.35f));
+    bool prevEnabled=GUI.enabled;
     for(int i=0;i<10;i++){
      float x=80+(i%5)*228,y=195+(i/5)*175;
      bool unlocked=i+1<=Save.unlocked;
      GUI.enabled=unlocked;
      string starStr=unlocked?(Save.stars[i]>0?new string('★',Save.stars[i]):"---"):"LOCKED";
-     if(Button(x,y,212,145,$"CHAPTER {i+1:00}\n\n{Titles[i]}\n\n{starStr}"))LoadLevel(i+1);
-     GUI.enabled=true;
+     bool go=Button(x,y,212,145,$"CHAPTER {i+1:00}\n\n{Titles[i]}\n\n{starStr}");
+     GUI.enabled=prevEnabled;
+     if(go)LoadLevel(i+1);
     }
+    GUI.enabled=prevEnabled;
     if(Button(80,588,200,56,"◄ BACK"))Screen=GameScreen.Menu;
     return;
    }
 
    if(Screen==GameScreen.Settings){
-    Panel(200,55,880,610);
+    Panel(200,55,880,620);
     Text(240,78,800,58,"Sanctuary & Blessings",title);
     Box(new Rect(240,145,800,2),new Color(Accent.r,Accent.g,Accent.b,.35f));
     if(Button(240,165,385,58,"MUSIC: "+(Save.music?"ENABLED":"MUTED"))){
@@ -223,17 +304,38 @@ namespace LostRealms {
     if(Button(655,165,385,58,"SOUND EFFECTS: "+(Save.sound?"ENABLED":"MUTED"))){
      Save.sound=!Save.sound;Persist();
     }
-    Text(240,250,800,34,$"Available Resources:  {Save.coins} Gold   *   {Save.gems} Gems");
-    if(Button(240,300,800,65,$"VITALITY RANK {Save.healthRank}/3  (Max HP +{Save.healthRank})   -   Cost: {50+Save.healthRank*40} Gold")){
+    Text(240,233,800,28,$"Available Resources:  {Save.coins} Gold   *   {Save.gems} Gems");
+    if(Button(240,266,800,52,$"VITALITY RANK {Save.healthRank}/3  (Max HP +{Save.healthRank})   -   Cost: {50+Save.healthRank*40} Gold")){
      int cost=50+Save.healthRank*40;
      if(Save.healthRank<3&&Save.coins>=cost){Save.coins-=cost;Save.healthRank++;Persist();Sound("upgrade");}
     }
-    if(Button(240,385,800,65,$"ELEMENTAL POWER RANK {Save.powerRank}/3  (Damage +{Save.powerRank*20}%)   -   Cost: {3+Save.powerRank*2} Gems")){
+    if(Button(240,326,800,52,$"ARSENAL RANK {Save.arsenalRank}/3  (Weapon damage +{Save.arsenalRank*8}%)   -   Cost: {80+Save.arsenalRank*60} Gold")){
+     int cost=80+Save.arsenalRank*60;
+     if(Save.arsenalRank<3&&Save.coins>=cost){Save.coins-=cost;Save.arsenalRank++;Persist();Sound("upgrade");}
+    }
+    if(Button(240,386,800,52,$"ELEMENTAL POWER RANK {Save.powerRank}/3  (Spell/Power +{Save.powerRank*20}%)   -   Cost: {3+Save.powerRank*2} Gems")){
      int cost=3+Save.powerRank*2;
      if(Save.powerRank<3&&Save.gems>=cost){Save.gems-=cost;Save.powerRank++;Persist();Sound("upgrade");}
     }
-    Text(240,480,800,54,"Sanctuary blessings apply instantly and persist across all chapters.",small);
-    if(Button(240,565,220,56,"◄ BACK"))Screen=GameScreen.Menu;
+    if(Button(240,446,385,52,$"AETHER RANK {Save.aetherRank}/3\nENERGY REGEN +{Save.aetherRank*25}%   •   Cost: {4+Save.aetherRank*2} Gems")){
+     int cost=4+Save.aetherRank*2;
+     if(Save.aetherRank<3&&Save.gems>=cost){Save.gems-=cost;Save.aetherRank++;Persist();Sound("upgrade");}
+    }
+    if(Button(655,446,385,52,$"MOXIE RANK {Save.moxieRank}/3\n+{Save.moxieRank} AIR DASH CHARGE   •   Cost: {5+Save.moxieRank*2} Gems")){
+     int cost=5+Save.moxieRank*2;
+     if(Save.moxieRank<3&&Save.gems>=cost){Save.gems-=cost;Save.moxieRank++;Persist();Sound("upgrade");}
+    }
+    if(Button(240,506,385,52,$"TEMPO RANK {Save.tempoRank}/3\nCOUNTER +{Save.tempoRank*15}%  PARRY +{Save.tempoRank*5} EN   •   Cost: {5+Save.tempoRank*2} Gems")){
+     int cost=5+Save.tempoRank*2;
+     if(Save.tempoRank<3&&Save.gems>=cost){Save.gems-=cost;Save.tempoRank++;Persist();Sound("upgrade");}
+    }
+    if(Button(655,506,385,52,$"SECOND WIND RANK {Save.windRank}/3\n{Save.windRank} FREE REVIVE/LEVEL   •   Cost: {7+Save.windRank*3} Gems")){
+     int cost=7+Save.windRank*3;
+     if(Save.windRank<3&&Save.gems>=cost){Save.gems-=cost;Save.windRank++;Persist();Sound("upgrade");}
+    }
+    if(Button(240,566,385,46,"VISUAL FX: "+(Save.postFx?"ENHANCED":"OFF"))){Save.postFx=!Save.postFx;Persist();}
+    if(Button(655,566,385,46,"SCREEN SHAKE: "+(Save.shake?"ENABLED":"OFF"))){Save.shake=!Save.shake;Persist();}
+    if(Button(240,624,800,48,"◄ BACK"))Screen=GameScreen.Menu;
     return;
    }
 
@@ -258,11 +360,43 @@ namespace LostRealms {
    if(Button(355,475,270,58,"🗺 ATLAS"))Screen=GameScreen.Map;
    if(Button(645,475,280,58,"↺ RESTART"))LoadLevel(Level);
   }
-  void Control(float x,string name,string key){
-   BoxOutline(new Rect(x,570,112,108),new Color(.05f,.11f,.16f,.85f),Accent*.7f,1.5f);
-   Text(x+8,584,100,32,name,small);
-   Text(x+8,620,100,48,key,small);
-  }
+  // Top-down realm map: route trail, gate, enemies and the heading player.
+   // Cheap IMGUI squares only, so it stays in-sync with the touch layout (the
+   // panel never overlaps the action buttons or the compass).
+   void MiniMap(){
+    if(!World||World.Route.Count<2)return;
+    Rect rect=new Rect(1032,78,228,150);
+    Panel(1028,74,236,158);
+    Text(1044,86,180,16,"REALM MAP",small);
+    float minX=float.MaxValue,maxX=float.MinValue,minZ=float.MaxValue,maxZ=float.MinValue;
+    foreach(var n in World.Route){minX=Mathf.Min(minX,n.x);maxX=Mathf.Max(maxX,n.x);minZ=Mathf.Min(minZ,n.z);maxZ=Mathf.Max(maxZ,n.z);}
+    minX-=4;maxX+=4;minZ-=4;maxZ+=4;
+    float spanX=Mathf.Max(1f,maxX-minX),spanZ=Mathf.Max(1f,maxZ-minZ);
+    float scale=Mathf.Min(rect.width/spanX,rect.height/spanZ);
+    float ox=rect.x+rect.width*.5f,oz=rect.y+rect.height*.5f;
+    Vector2 ToPad(Vector3 w){return new Vector2(ox+(w.x-(minX+maxX)*.5f)*scale,oz+(w.z-(minZ+maxZ)*.5f)*scale);}
+    for(int i=0;i<World.Route.Count;i++){Vector2 p=ToPad(World.Route[i]);Box(new Rect(p.x-2.5f,p.y-2.5f,5,5),new Color(1f,.8f,.3f,.9f));}
+    Vector3 gatePos=World.Route[World.Route.Count-1];gatePos.z+=5f;
+    Vector2 gp=ToPad(gatePos);Box(new Rect(gp.x-4,gp.y-4,8,8),new Color(.95f,.95f,1f));
+    Text(gp.x-16,gp.y+8,34,16,"GATE",small);
+    foreach(var foe in Enemies){if(!foe||foe.Health<=0||Vector3.Distance(foe.transform.position,Player.transform.position)>60f)continue;Vector2 ep=ToPad(foe.transform.position);Box(new Rect(ep.x-2,ep.y-2,4,4),foe.Boss?new Color(1,.3f,.3f):new Color(1,.5f,.5f,.9f));}
+    Vector2 pp=ToPad(Player.transform.position);Box(new Rect(pp.x-4,pp.y-4,8,8),new Color(.35f,1f,.5f));
+    Vector3 fwd=Player.transform.forward;fwd.y=0;if(fwd.sqrMagnitude>.01f){Vector3 tip=Player.transform.position+fwd.normalized*2.2f;Vector2 tp=ToPad(tip);Box(new Rect(tp.x-1.5f,tp.y-1.5f,3,3),Color.white);}
+   }
+   // Circular action button drawn over the TouchRouter.ActionRect hitbox.
+   void RoundButton(Rect r,string name,string sub,bool primary=false){
+    GUI.color=new Color(Accent.r,Accent.g,Accent.b,primary?.95f:.7f);
+    GUI.DrawTexture(r,circleRing);
+    GUI.color=new Color(.02f,.05f,.09f,primary?.62f:.5f);
+    GUI.DrawTexture(r,circleFill);
+    if(primary){
+     GUI.color=new Color(Accent.r,Accent.g,Accent.b,.28f);
+     GUI.DrawTexture(new Rect(r.x+r.width*.08f,r.y+r.height*.08f,r.width*.84f,r.height*.84f),circleRing);
+    }
+    GUI.color=Color.white;
+    GUI.Label(new Rect(r.x,r.y+r.height*(primary?.16f:.26f),r.width,r.height*.38f),name,primary?big:center);
+    if(sub.Length>0)GUI.Label(new Rect(r.x,r.y+r.height*(primary?.58f:.6f),r.width,r.height*.26f),sub,tinyC);
+   }
   int TotalStars(){int n=0;foreach(int s in Save.stars)n+=s;return n;}
  }
 }

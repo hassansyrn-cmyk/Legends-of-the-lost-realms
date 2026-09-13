@@ -1,0 +1,8 @@
+Gate_01 facingYaw(+X)=180 widestOpen=1.50m
+Church_01 facingYaw(+X)=0 widestOpen=0.00m
+House_01 facingYaw(+X)=180 widestOpen=0.25m
+House_02 facingYaw(+X)=0 widestOpen=0.00m
+Ruin_01 facingYaw(+X)=0 widestOpen=0.00m
+Tent_01 facingYaw(+X)=0 widestOpen=0.00m
+Tower_01 facingYaw(+X)=0 widestOpen=0.00m
+Wall_01 facingYaw(+X)=0 widestOpen=0.00m

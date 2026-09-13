@@ -79,7 +79,7 @@ namespace LostRealms {
    Camera.main.backgroundColor=RenderSettings.fogColor;Camera.main.clearFlags=CameraClearFlags.SolidColor;
    var sun=new GameObject("Realm sunlight").AddComponent<Light>();sun.transform.SetParent(transform);sun.type=LightType.Directional;sun.transform.rotation=Quaternion.Euler(48,-35,0);
    sun.color=world==1?new Color(1,.83f,.62f):new Color(.88f,.95f,1);sun.intensity=1.25f;sun.shadows=LightShadows.Soft;
-   int count=IsBoss?8:12;int weaponIsland=random.Next(2,count-2);WeaponId weaponId=(WeaponId)(stage==1?4:random.Next(1,29));
+   int count=IsBoss?8:12;int weaponIsland=random.Next(2,count-2);WeaponId weaponId=(WeaponId)(stage==1?4:random.Next(1,41));
    for(int i=0;i<count;i++){
     float z=i*10f,x=RouteX[stage-1][i],y=RouteY[stage-1][i];
     Vector3 p=new Vector3(x,y,z);Route.Add(p);bool last=i==count-1;float width=last&&IsBoss?19:9;float length=last?15:8.3f;
@@ -90,13 +90,13 @@ namespace LostRealms {
     if(i>=2&&i%4==0){float hx=(i%2==0?-1:1)*(1.2f+(float)random.NextDouble()*.9f);HealPickup(p+new Vector3(hx,.6f,-1.2f+(float)random.NextDouble()*2.4f));}
     if(i==weaponIsland)WeaponDrop(p+new Vector3((i%2==0?-2.3f:2.3f),.18f,-1.4f),weaponId);
      if(i>=2&&!last){int kind=(stage+i)%8;
-      if(stage>=3&&i%6==2)kind=11;else if(stage>=5&&i%5==4)kind=12;else if(stage>=6&&i%7==3)kind=13;else if(stage>=4&&i%6==5)kind=14;
+      if(stage>=9&&i%6==2)kind=17;else if(stage>=3&&i%6==2)kind=11;else if(stage>=5&&i%5==4)kind=12;else if(stage>=6&&i%7==3)kind=13;else if(stage>=4&&i%6==5)kind=14;else if(stage>=4&&i%7==6)kind=15;else if(stage>=5&&i==7)kind=16;
       SpawnEnemy(p+new Vector3(1.8f,.03f,1),kind,false,p,width,length);if(stage>2&&i%3==0)Hazard(p+new Vector3(-2.4f,.08f,1),realm);}
     if(last){EndZ=z+4;Gate(p+new Vector3(0,0,5));if(IsBoss)SpawnEnemy(p+new Vector3(0,.05f,-1),world+8,true,p,width,length);}
    }
    for(int i=0;i<40;i++){float z=-16+i*4.8f;float side=i%2==0?-1:1;Vector3 p=new Vector3(side*(16+(float)random.NextDouble()*24),-4,z);float h=8+(float)random.NextDouble()*22;Art.Shape("Distant realm spire",PrimitiveType.Cylinder,p,new Vector3(6,h,6),stone*.75f,transform);if(realm==0)Art.Shape("Distant canopy",PrimitiveType.Sphere,p+Vector3.up*h*.5f,new Vector3(12,6,12),top*.68f,transform);}
-   RealmScenery.Upgrade(this,realm);
-   RealmProps.Scatter(transform,realm,random);
+    RealmScenery.Upgrade(this,realm);
+    RealmProps.Scatter(transform,realm,random);
   }
   GameObject FindIsland(Vector3 p){foreach(Transform t in transform)if(t.name=="Island"&&Vector3.Distance(t.position,p)<.1f)return t.gameObject;return null;}
   void Island(Vector3 pos,float width,float length,int index){
@@ -158,6 +158,7 @@ namespace LostRealms {
 void WeaponDrop(Vector3 p,WeaponId id){
     var go=new GameObject("Weapon drop - "+WeaponCatalog.Get(id).Name);go.transform.SetParent(transform,false);go.transform.position=p;
     var drop=go.AddComponent<WeaponDrop>();drop.Configure(id,p);
+    Vfx.Play("ga_vfx_LootDrop_01",p+Vector3.up*1f,Quaternion.identity,.85f);
    }
    void HealPickup(Vector3 p){
     var go=new GameObject("Heal pickup");go.transform.SetParent(transform,false);go.transform.position=p;
@@ -169,17 +170,29 @@ void WeaponDrop(Vector3 p,WeaponId id){
     Art.Shape("HeartGlint",PrimitiveType.Cube,new Vector3(-.11f,.2f,0),Vector3.one*.06f,new Color(1f,.86f,.88f),go.transform);
     go.AddComponent<RealmHeal>().Origin=p;
    }
-  void Gate(Vector3 p){
-   var root=new GameObject("Realm gate");root.transform.SetParent(transform);root.transform.position=p;
-   for(int side=-1;side<=1;side+=2){
-    Art.Shape("Gate column",PrimitiveType.Cube,new Vector3(side*1.85f,2.1f,0),new Vector3(.65f,4.2f,.85f),top*1.3f,root.transform);
-    Art.Shape("ColumnCapital",PrimitiveType.Cube,new Vector3(side*1.85f,4.3f,0),new Vector3(.85f,.3f,1f),stone*1.2f,root.transform);
+   void Gate(Vector3 p){
+    var root=new GameObject("Realm gate");root.transform.SetParent(transform);root.transform.position=p;
+    if(IsBoss)root.transform.localScale=Vector3.one*1.25f;
+    for(int side=-1;side<=1;side+=2){
+     Art.Shape("Gate column",PrimitiveType.Cube,new Vector3(side*1.85f,2.1f,0),new Vector3(.65f,4.2f,.85f),top*1.3f,root.transform);
+     Art.Shape("ColumnCapital",PrimitiveType.Cube,new Vector3(side*1.85f,4.3f,0),new Vector3(.85f,.3f,1f),stone*1.2f,root.transform);
+    }
+    Art.Shape("Gate lintel",PrimitiveType.Cube,new Vector3(0,4.45f,0),new Vector3(4.4f,.55f,.9f),stone,root.transform);
+    Art.Crystal(new Vector3(0,3.5f,0),.8f,accent,root.transform);
+    Art.Ring(new Vector3(0,.04f,0),1.6f,accent,root.transform);
+    var gate=root.AddComponent<RealmGate>();
+    for(int i=0;i<3;i++){
+     var halo=Art.Ring(new Vector3(0,.6f+i*.8f,0),1.3f-i*.25f,Color.Lerp(accent,Color.white,.3f),root.transform);
+     gate.spin.Add(halo.transform);gate.speeds.Add((i%2==0?1:-1)*(30+i*14));
+    }
+    Art.Crystal(new Vector3(1.2f,1f,0),.4f,accent,root.transform);
+    Art.Crystal(new Vector3(-1.2f,1f,0),.4f,accent,root.transform);
+    var beam=Art.Shape("Gate beam",PrimitiveType.Cylinder,new Vector3(0,2.2f,0),new Vector3(.5f,4.4f,.5f),Color.Lerp(accent,Color.white,.5f),root.transform);
+    var bm=beam.GetComponent<Renderer>();var bmat=new Material(Shader.Find("Sprites/Default"));bmat.color=new Color(accent.r,accent.g,accent.b,.28f);bm.sharedMaterial=bmat;bm.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;bm.receiveShadows=false;
+    var lightGo=new GameObject("Gate light");lightGo.transform.SetParent(root.transform,false);lightGo.transform.localPosition=Vector3.up*2f;
+    var light=lightGo.AddComponent<Light>();light.type=LightType.Point;light.color=accent;light.range=8f;light.intensity=.8f;light.shadows=LightShadows.None;
+    Vfx.Play("ga_vfx_Heal_02",p+Vector3.up*2f,Quaternion.identity,1.1f);
    }
-   Art.Shape("Gate lintel",PrimitiveType.Cube,new Vector3(0,4.45f,0),new Vector3(4.4f,.55f,.9f),stone,root.transform);
-   Art.Crystal(new Vector3(0,3.5f,0),.8f,accent,root.transform);
-   Art.Ring(new Vector3(0,.04f,0),1.6f,accent,root.transform);
-   root.AddComponent<RealmGate>();
-  }
   void Hazard(Vector3 p,int kind){
    var go=new GameObject("Realm hazard");go.transform.SetParent(transform);go.transform.position=p;
    for(int i=0;i<5;i++){
@@ -191,6 +204,7 @@ void WeaponDrop(Vector3 p,WeaponId id){
   void SpawnEnemy(Vector3 p,int kind,bool boss,Vector3 center,float width,float length){
    var go=new GameObject(boss?"Realm guardian":"Realm enemy");go.transform.SetParent(transform);go.transform.position=p;
    var e=go.AddComponent<Enemy>();e.Configure(kind,boss,center,new Vector2(width,length));
+   if(boss)Vfx.Play("ga_vfx_Portal_02",p+Vector3.up*1.7f,Quaternion.identity,1.2f);
   }
  }
 public class RealmPickup:MonoBehaviour {
@@ -205,7 +219,20 @@ public class RealmPickup:MonoBehaviour {
     transform.position=Origin+Vector3.up*Mathf.Sin(RealmGame.I.Elapsed*2.8f)*.15f;
     if(Vector3.Distance(g.Player.transform.position+Vector3.up*.8f,transform.position)<1.15f){
      HitSpark.Burst(transform.position,Vector3.up,Gem?g.Accent:new Color(1f,.85f,.2f),Gem?18:12);
+     Vfx.Play(Gem?"ga_vfx_LootDrop_02":"ga_vfx_Sparks_01",transform.position,Quaternion.identity,Gem?.8f:.55f);
      g.Collect(Gem);Destroy(gameObject);
+    }
+   }
+   // Spawn one or more gem pickups around a point (enemy drops). Same magnet
+   // behaviour as the scattered route gems, so nothing new to learn.
+   public static void Drop(Vector3 position,int count){
+    var g=RealmGame.I;if(!g||!g.World||count<=0)return;
+    for(int i=0;i<count;i++){
+     var go=new GameObject("Loot gem");go.transform.SetParent(g.World.transform,false);
+     float a=(i+1)*(360f/count)*Mathf.Deg2Rad;
+     go.transform.position=position+new Vector3(Mathf.Cos(a)*.8f,.3f,Mathf.Sin(a)*.8f);
+     RelicArt.Gem(go.transform,g.Accent);
+     var pickup=go.AddComponent<RealmPickup>();pickup.Gem=true;pickup.Origin=go.transform.position;
     }
    }
   }
@@ -217,7 +244,7 @@ public class RealmPickup:MonoBehaviour {
     transform.position=Origin+Vector3.up*Mathf.Sin(RealmGame.I.Elapsed*2.6f)*.13f;
     if(Vector3.Distance(g.Player.transform.position+Vector3.up*.8f,transform.position)<1.15f){
      int before=g.Player.Health;g.Player.Health=Mathf.Min(g.Player.MaxHealth,before+Amount);
-     if(g.Player.Health>before){HitSpark.Burst(transform.position,Vector3.up,new Color(1f,.38f,.48f),22);g.Sound("heal");}
+     if(g.Player.Health>before){HitSpark.Burst(transform.position,Vector3.up,new Color(1f,.38f,.48f),22);Vfx.Play("ga_vfx_Heal_01",transform.position,Quaternion.identity,.9f);g.Sound("heal");}
      else{g.Sound("gem");}
      Destroy(gameObject);
     }
@@ -230,18 +257,19 @@ public class RealmPickup:MonoBehaviour {
    var g=RealmGame.I;
    if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
    if(!active&&Vector3.Distance(g.Player.transform.position,transform.position)<2.05f){
-    active=true;if(visual)visual.Activate();HitSpark.Burst(transform.position+Vector3.up*1.35f,Vector3.up,g.Accent,28);
+    active=true;if(visual)visual.Activate();HitSpark.Burst(transform.position+Vector3.up*1.35f,Vector3.up,g.Accent,28);Vfx.Play("ga_vfx_Portal_01",transform.position+Vector3.up*1.3f,Quaternion.identity,.9f);
     g.ActivateCheckpoint(transform.position+Vector3.forward*1.5f+Vector3.up*.05f);
    }
   }
  }
- public class RealmGate:MonoBehaviour {
-  float next;
-  void Update(){
-   var g=RealmGame.I;
-   if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
+  public class RealmGate:MonoBehaviour {
+   float next;public readonly System.Collections.Generic.List<Transform> spin=new System.Collections.Generic.List<Transform>();public readonly System.Collections.Generic.List<float> speeds=new System.Collections.Generic.List<float>();
+   void Update(){
+    var g=RealmGame.I;
+    if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
+    for(int i=0;i<spin.Count;i++)if(spin[i])spin[i].localRotation*=Quaternion.Euler(0,(speeds.Count>i?speeds[i]:30)*Time.deltaTime,0);
    if(g.Elapsed>next&&Vector3.Distance(g.Player.transform.position,transform.position)<1.6f){
-    next=RealmGame.I.Elapsed+2;HitSpark.Burst(transform.position+Vector3.up*2f,Vector3.up,g.Accent,24);
+    next=RealmGame.I.Elapsed+2;HitSpark.Burst(transform.position+Vector3.up*2f,Vector3.up,g.Accent,24);Vfx.Play("ga_vfx_Portal_02",transform.position+Vector3.up*2f,Quaternion.identity,1.25f);
     g.Finish();
    }
   }

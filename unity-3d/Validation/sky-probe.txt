@@ -1,0 +1,4 @@
+find=OK
+isSupported=YES
+material=OK shaderOnMat=OK
+renderPipeline=BIRP

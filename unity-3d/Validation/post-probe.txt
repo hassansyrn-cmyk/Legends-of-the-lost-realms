@@ -1,0 +1,2 @@
+shader=OK
+magenta%=0.0

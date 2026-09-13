@@ -31,8 +31,26 @@ public static class AsterPhase1 {
   new ClipSpec("double_jump",AnimationSourceRoot+"/Aster_double_jump.fbx",false),
   new ClipSpec("dodge",AnimationSourceRoot+"/Aster_dodge.fbx",false),
   new ClipSpec("hit",AnimationSourceRoot+"/Aster_hit.fbx",false),
-  new ClipSpec("death",AnimationSourceRoot+"/Aster_death.fbx",false)
- };
+   new ClipSpec("death",AnimationSourceRoot+"/Aster_death.fbx",false),
+   // Per-weapon attack styles (Sep 2026 user pass): chop for overhead grips,
+   // spear for pole grips, unarmed for fists. Baked by the same Prepare() run
+   // with identical root-flattening; missing outputs fall back to slash ingame.
+   // Several states share one Mixamo take file (each spec independently
+   // renames + bakes its own state, so sharing is safe).
+   new ClipSpec("chop_1",AnimationSourceRoot+"/Aster_Take_Downward.fbx",false),
+   new ClipSpec("chop_2",AnimationSourceRoot+"/Aster_Take_ClubCombo.fbx",false),
+   new ClipSpec("chop_3",AnimationSourceRoot+"/Aster_Take_GSJump.fbx",false),
+   new ClipSpec("spear_1",AnimationSourceRoot+"/Aster_Take_Boxing.fbx",false),
+   new ClipSpec("spear_2",AnimationSourceRoot+"/Aster_Take_SnSAttack2.fbx",false),
+   new ClipSpec("spear_3",AnimationSourceRoot+"/Aster_Take_SnSAttack3.fbx",false),
+   new ClipSpec("unarmed_1",AnimationSourceRoot+"/Aster_Take_Kick.fbx",false),
+   new ClipSpec("unarmed_2",AnimationSourceRoot+"/Aster_Take_Boxing.fbx",false),
+   new ClipSpec("unarmed_3",AnimationSourceRoot+"/Aster_Take_SnSKick.fbx",false),
+   new ClipSpec("block",AnimationSourceRoot+"/Aster_Take_Block.fbx",false),
+   new ClipSpec("hit_2",AnimationSourceRoot+"/Aster_Take_Hit2.fbx",false),
+   new ClipSpec("hit_3",AnimationSourceRoot+"/Aster_Take_Hit3.fbx",false),
+   new ClipSpec("cast",AnimationSourceRoot+"/Aster_Take_Cast.fbx",false)
+  };
 
  [MenuItem("Lost Realms/Phase 1/Prepare Aster Mixamo Character")]
  public static void Prepare(){

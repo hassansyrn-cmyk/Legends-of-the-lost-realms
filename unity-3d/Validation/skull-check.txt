@@ -1,0 +1,7 @@
+head_y=1.8 hips_y=1
+ORIENTATION HEAD_UP
+handR=(0.56, 1.36, -0.06)
+forearmL=(-0.4, 1.52, -0.06)
+meshbounds=(1.872, 1.824, 0.704) min=(-0.992, 0.016, -0.984)
+top_strip_n=125 c=(0, 1.81, -0.57) bot_strip_n=342 c=(0, 0.04, -0.59)
+CROWN_AT_TOP

@@ -1,0 +1,8 @@
+Gate_01.FBX | size 6.05x11.68x25.00 | facingYaw(+X)=0 widestOpen=0.25m
+Church_01.FBX | size 19.80x18.44x33.15 | facingYaw(+X)=0 widestOpen=0.25m
+House_01.FBX | size 15.48x16.14x8.14 | facingYaw(+X)=0 widestOpen=0.25m
+House_02.FBX | size 19.02x21.91x19.45 | facingYaw(+X)=0 widestOpen=2.25m
+Ruin_01.FBX | size 5.83x7.70x10.19 | facingYaw(+X)=270 widestOpen=0.25m
+Tent_01.FBX | size 3.74x4.69x3.91 | facingYaw(+X)=360 widestOpen=0.00m
+Tower_01.FBX | size 7.17x19.43x7.90 | facingYaw(+X)=360 widestOpen=0.00m
+Wall_01.FBX | size 5.00x11.23x4.84 | facingYaw(+X)=360 widestOpen=0.00m
