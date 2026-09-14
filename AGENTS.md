@@ -120,10 +120,10 @@ Player defense + elemental weakness layer:
 - **Unarmed start:** `Save.equippedWeapon` `-1` = fists. `WeaponCatalog.Get(-1)` returns the synthetic `FISTS` definition (empty `Resource` → no model, damage .85 / reach base .92 / tempo 1.12); `Hero.Start` skips `EquippedWeapon.Equip` whenever `equippedWeapon<0`. Fresh installs and **NEW JOURNEY** (`Screen==Menu` → resets `Save` to a fresh `Progress` and loads chapter 1) begin unarmed; a weapon drop's `EquipWeapon(id)` arms Aster mid-run. Progress' default `equippedWeapon` is `-1` and the save clamp is `-1..28`. Keep the `RuntimeProbe` equip-axe check working (it relies on `WeaponCatalog.Get` being non-null for equipped ids).
 - Healing pickups are red rotating hearts (`RealmHeal`, +3 HP, spark pink).
 
-## Audio
+## Audio (Modern RPG Overhaul - Sep 2026)
 
-- Music lives in `Resources/Audio/<base>.mp3`: `verdant_theme`, `desert_exploration_theme`, `frozen_exploration_theme`, `boss_battle_theme`. `RealmGame.Awake` plays **only `boss_battle_theme` for every stage** (user request: the boss theme is the general music — do not revert it to per-realm tracks). The other three MP3s are unused by code but stay in the repo.
-- All `sfx_*.wav` are the original bundled sound-effects set; do not replace them (a dark-timbre synth experiment was fully reverted on user request). There is intentionally **no `sfx_heal.wav`** — `Sound("heal")` no-ops by design, matching the original game.
+- **Music per stage & boss battles**: Exploration stages play their respective realm theme: `verdant_theme` (Realm 0 Verdant, levels 1-3), `desert_exploration_theme` (Realm 1 Burning Dunes, levels 5-6), `frozen_exploration_theme` (Realm 2 Frozen Peaks, levels 8-9), and `emberfall_exploration_theme` (Realm 3 Emberfall, levels 11-14). Menus play `verdant_theme` and Sanctuary plays `frozen_exploration_theme`. When fighting guardians / boss stages (levels 4, 7, 10, 15), `boss_battle_theme` plays.
+- **Modern Sound Effects Suite**: All 30 `sfx_*.wav` sound effects were overhauled from retro/8-bit chiptune sounds into studio-grade modern fantasy action RPG audio (crisp blade whooshes with singing steel overtones, punchy tactile impacts with sub-bass punch, natural athletic leaps and footsteps, delicate crystalline coin and gem chimes, temple singing bowls for checkpoints, orchestral victory stinger, etc.). Regenerated via `tools/generate_modern_audio.py`. `sfx_heal.wav` provides warm divine restoration audio for heart pickups.
 
 ## Workflow
 

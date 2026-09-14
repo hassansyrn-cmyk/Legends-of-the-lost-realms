@@ -53,22 +53,24 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    CameraRig.Snap();
    if(World.IsBoss)CameraRig.ZoomBias=-1.3f;
    bossIntroUntil=World.IsBoss?Time.unscaledTime+4.4f:0f;
-   var clip=Resources.Load<AudioClip>("Audio/boss_battle_theme");Music.clip=clip;if(clip&&Save.music)Music.Play();
-   Screen=GameScreen.Playing; Tell(Level==1?"WASD / left stick to move. Jump twice to reach the next island.":World.IsBoss?"Break the guardian's corruption. Dodge red warnings, strike during recovery.":Titles[Level-1]+"  /  Follow the golden trail to the realm gate.",6);
+    string stageTrack=World.IsBoss?"boss_battle_theme":Realm==0?"verdant_theme":Realm==1?"desert_exploration_theme":Realm==2?"frozen_exploration_theme":"emberfall_exploration_theme";SetMusic(stageTrack);
+    Screen=GameScreen.Playing; Tell(Level==1?"WASD / left stick to move. Jump twice to reach the next island.":World.IsBoss?"Break the guardian's corruption. Dodge red warnings, strike during recovery.":Titles[Level-1]+"  /  Follow the golden trail to the realm gate.",6);
   }
   void Update(){
    JumpPressed=DashPressed=AttackPressed=AttackReleased=CastPressed=ParryPressed=SpellPressed=SpellReleased=GrapplePressed=false; MoveInput=Vector2.zero; yawInput=0;
    if(hitStopUntil>0f&&Time.unscaledTime>=hitStopUntil){hitStopUntil=0f;Time.timeScale=1f;}
    if(!I||!Player)return;
    if(Input.GetKeyDown(KeyCode.Escape)){if(Screen==GameScreen.Playing)Pause();else if(Screen==GameScreen.Paused)Resume();else Screen=GameScreen.Menu;}
-   // Menu contexts get their own calm themes; levels keep the boss battle
-   // theme everywhere (user request). Same-clip calls are no-ops.
-   if(Screen==GameScreen.Menu||Screen==GameScreen.Map)SetMusic("verdant_theme");
-   else if(Screen==GameScreen.Settings)SetMusic("frozen_exploration_theme");
-   if(Screen!=GameScreen.Playing){AttackHeld=false;touch.Reset();return;} Elapsed+=Time.deltaTime; if(comboUntil>0f&&Elapsed>=comboUntil){Combo=0;comboUntil=0;}
-   MoveInput=new Vector2((Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow)?1:0)-(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow)?1:0),(Input.GetKey(KeyCode.W)||Input.GetKey(KeyCode.UpArrow)?1:0)-(Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.DownArrow)?1:0));
-   JumpPressed=Input.GetKeyDown(KeyCode.Space);DashPressed=Input.GetKeyDown(KeyCode.LeftShift);AttackPressed=Input.GetKeyDown(KeyCode.J);AttackReleased=Input.GetKeyUp(KeyCode.J);AttackHeld=Input.GetKey(KeyCode.J);CastPressed=Input.GetKeyDown(KeyCode.K);ParryPressed=Input.GetKeyDown(KeyCode.L);SpellPressed=Input.GetKeyDown(KeyCode.F);SpellReleased=Input.GetKeyUp(KeyCode.F);SpellHeld=Input.GetKey(KeyCode.F);GrapplePressed=Input.GetKeyDown(KeyCode.G);JumpHeld=Input.GetKey(KeyCode.Space);
-   if(Input.GetKeyDown(KeyCode.Q))Player.Power=(Player.Power+1)%3;
+    if(Screen==GameScreen.Menu||Screen==GameScreen.Map)SetMusic("verdant_theme");
+    else if(Screen==GameScreen.Settings)SetMusic("frozen_exploration_theme");
+    else if(Screen==GameScreen.Playing){
+     string stageTrack=(World&&World.IsBoss)?"boss_battle_theme":Realm==0?"verdant_theme":Realm==1?"desert_exploration_theme":Realm==2?"frozen_exploration_theme":"emberfall_exploration_theme";
+     SetMusic(stageTrack);
+    }
+    if(Screen!=GameScreen.Playing){AttackHeld=false;touch.Reset();return;} Elapsed+=Time.deltaTime; if(comboUntil>0f&&Elapsed>=comboUntil){Combo=0;comboUntil=0;}
+    MoveInput=new Vector2((Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow)?1:0)-(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow)?1:0),(Input.GetKey(KeyCode.W)||Input.GetKey(KeyCode.UpArrow)?1:0)-(Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.DownArrow)?1:0));
+    JumpPressed=Input.GetKeyDown(KeyCode.Space);DashPressed=Input.GetKeyDown(KeyCode.LeftShift);AttackPressed=Input.GetKeyDown(KeyCode.J);AttackReleased=Input.GetKeyUp(KeyCode.J);AttackHeld=Input.GetKey(KeyCode.J);CastPressed=Input.GetKeyDown(KeyCode.K);ParryPressed=Input.GetKeyDown(KeyCode.L);SpellPressed=Input.GetKeyDown(KeyCode.F);SpellReleased=Input.GetKeyUp(KeyCode.F);SpellHeld=Input.GetKey(KeyCode.F);GrapplePressed=Input.GetKeyDown(KeyCode.G);JumpHeld=Input.GetKey(KeyCode.Space);
+    if(Input.GetKeyDown(KeyCode.Q)){Player.Power=(Player.Power+1)%3;Sound("power_select");}
    if(Input.touchCount==0&&Input.GetMouseButton(1))yawInput=Input.GetAxis("Mouse X")*3;
    float sx=1280f/UnityEngine.Screen.width,sy=720f/UnityEngine.Screen.height;
    touch.BeginFrame();
@@ -200,7 +202,7 @@ EarnedStars=1+(Gems>0?1:0)+(DamageTaken==0?1:0); Save.stars[Level-1]=Mathf.Max(S
     // Power Selector & Energy Bar
     string[] powerNames={"EMBER [FIRE]","FROST [ICE]","GALE [WIND]"};
     Color[] powerCols={new Color(1f,.45f,.1f),new Color(.2f,.85f,1f),new Color(.2f,1f,.55f)};
-    if(Button(660,20,205,50,powerNames[Player.Power]))Player.Power=(Player.Power+1)%3;
+    if(Button(660,20,205,50,powerNames[Player.Power])){Player.Power=(Player.Power+1)%3;Sound("power_select");}
     Text(660,72,205,15,"AETHER",small);
     BoxOutline(new Rect(660,88,205,8),new Color(.1f,.15f,.2f),powerCols[Player.Power]*.5f,1f);
     Box(new Rect(661,89,203*Mathf.Clamp01(Player.Energy/100f),6),powerCols[Player.Power]);
@@ -333,33 +335,33 @@ Panel(390,105,500,68);
      Save.sound=!Save.sound;Persist();
     }
     Text(240,233,800,28,$"Available Resources:  {Save.coins} Gold   *   {Save.gems} Gems");
-    if(Button(240,266,800,52,$"VITALITY RANK {Save.healthRank}/3  (Max HP +{Save.healthRank})   -   Cost: {50+Save.healthRank*40} Gold")){
+    if(Button(240,266,800,52,$"VITALITY RANK {Save.healthRank}/3  (Max HP +{Save.healthRank})   -   Cost: {(Save.healthRank<3?(50+Save.healthRank*40).ToString()+" Gold":"MAXED")}")){
      int cost=50+Save.healthRank*40;
-     if(Save.healthRank<3&&Save.coins>=cost){Save.coins-=cost;Save.healthRank++;Persist();Sound("upgrade");}
+     if(Save.healthRank<3){if(Save.coins>=cost){Save.coins-=cost;Save.healthRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
-    if(Button(240,326,800,52,$"ARSENAL RANK {Save.arsenalRank}/3  (Weapon damage +{Save.arsenalRank*8}%)   -   Cost: {80+Save.arsenalRank*60} Gold")){
+    if(Button(240,326,800,52,$"ARSENAL RANK {Save.arsenalRank}/3  (Weapon damage +{Save.arsenalRank*8}%)   -   Cost: {(Save.arsenalRank<3?(80+Save.arsenalRank*60).ToString()+" Gold":"MAXED")}")){
      int cost=80+Save.arsenalRank*60;
-     if(Save.arsenalRank<3&&Save.coins>=cost){Save.coins-=cost;Save.arsenalRank++;Persist();Sound("upgrade");}
+     if(Save.arsenalRank<3){if(Save.coins>=cost){Save.coins-=cost;Save.arsenalRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
-    if(Button(240,386,800,52,$"ELEMENTAL POWER RANK {Save.powerRank}/3  (Spell/Power +{Save.powerRank*20}%)   -   Cost: {3+Save.powerRank*2} Gems")){
+    if(Button(240,386,800,52,$"ELEMENTAL POWER RANK {Save.powerRank}/3  (Spell/Power +{Save.powerRank*20}%)   -   Cost: {(Save.powerRank<3?(3+Save.powerRank*2).ToString()+" Gems":"MAXED")}")){
      int cost=3+Save.powerRank*2;
-     if(Save.powerRank<3&&Save.gems>=cost){Save.gems-=cost;Save.powerRank++;Persist();Sound("upgrade");}
+     if(Save.powerRank<3){if(Save.gems>=cost){Save.gems-=cost;Save.powerRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
-    if(Button(240,446,385,52,$"AETHER RANK {Save.aetherRank}/3\nENERGY REGEN +{Save.aetherRank*25}%   •   Cost: {4+Save.aetherRank*2} Gems")){
+    if(Button(240,446,385,52,$"AETHER RANK {Save.aetherRank}/3\nENERGY REGEN +{Save.aetherRank*25}%   •   Cost: {(Save.aetherRank<3?(4+Save.aetherRank*2).ToString()+" Gems":"MAXED")}")){
      int cost=4+Save.aetherRank*2;
-     if(Save.aetherRank<3&&Save.gems>=cost){Save.gems-=cost;Save.aetherRank++;Persist();Sound("upgrade");}
+     if(Save.aetherRank<3){if(Save.gems>=cost){Save.gems-=cost;Save.aetherRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
-    if(Button(655,446,385,52,$"MOXIE RANK {Save.moxieRank}/3\n+{Save.moxieRank} AIR DASH CHARGE   •   Cost: {5+Save.moxieRank*2} Gems")){
+    if(Button(655,446,385,52,$"MOXIE RANK {Save.moxieRank}/3\n+{Save.moxieRank} AIR DASH CHARGE   •   Cost: {(Save.moxieRank<3?(5+Save.moxieRank*2).ToString()+" Gems":"MAXED")}")){
      int cost=5+Save.moxieRank*2;
-     if(Save.moxieRank<3&&Save.gems>=cost){Save.gems-=cost;Save.moxieRank++;Persist();Sound("upgrade");}
+     if(Save.moxieRank<3){if(Save.gems>=cost){Save.gems-=cost;Save.moxieRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
-    if(Button(240,506,385,52,$"TEMPO RANK {Save.tempoRank}/3\nCOUNTER +{Save.tempoRank*15}%  PARRY +{Save.tempoRank*5} EN   •   Cost: {5+Save.tempoRank*2} Gems")){
+    if(Button(240,506,385,52,$"TEMPO RANK {Save.tempoRank}/3\nCOUNTER +{Save.tempoRank*15}%  PARRY +{Save.tempoRank*5} EN   •   Cost: {(Save.tempoRank<3?(5+Save.tempoRank*2).ToString()+" Gems":"MAXED")}")){
      int cost=5+Save.tempoRank*2;
-     if(Save.tempoRank<3&&Save.gems>=cost){Save.gems-=cost;Save.tempoRank++;Persist();Sound("upgrade");}
+     if(Save.tempoRank<3){if(Save.gems>=cost){Save.gems-=cost;Save.tempoRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
-    if(Button(655,506,385,52,$"SECOND WIND RANK {Save.windRank}/3\n{Save.windRank} FREE REVIVE/LEVEL   •   Cost: {7+Save.windRank*3} Gems")){
+    if(Button(655,506,385,52,$"SECOND WIND RANK {Save.windRank}/3\n{Save.windRank} FREE REVIVE/LEVEL   •   Cost: {(Save.windRank<3?(7+Save.windRank*3).ToString()+" Gems":"MAXED")}")){
      int cost=7+Save.windRank*3;
-     if(Save.windRank<3&&Save.gems>=cost){Save.gems-=cost;Save.windRank++;Persist();Sound("upgrade");}
+     if(Save.windRank<3){if(Save.gems>=cost){Save.gems-=cost;Save.windRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
     if(Button(240,566,385,46,"VISUAL FX: "+(Save.postFx?"ENHANCED":"OFF"))){Save.postFx=!Save.postFx;Persist();}
     if(Button(655,566,385,46,"SCREEN SHAKE: "+(Save.shake?"ENABLED":"OFF"))){Save.shake=!Save.shake;Persist();}

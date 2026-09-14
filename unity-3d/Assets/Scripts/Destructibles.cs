@@ -31,6 +31,7 @@ namespace LostRealms {
     Destroy(f,2.4f);
    }
    if(Random.value<.55f)g.Collect(false);
+   g.Sound("impact");
    HitSpark.Burst(transform.position+Vector3.up*.4f,Vector3.up,new Color(1f,.82f,.42f),10);
    KenneyPuff.Burst(transform.position+Vector3.up*.3f,shardColor,8,.8f);
    ImpactMarks.Place(transform.position,.7f,new Color(.4f,.34f,.26f));

@@ -8,7 +8,7 @@ namespace LostRealms {
   public int windUsed;
   const float MaxMoveSpeed=4.8f,GroundResponse=18f,AirResponse=8f,StopResponse=22f;
   Vector3 velocity;Vector3 moveWish;float vertical,jumpGrace,dashUntil,dashReady,dodgeVisualUntil,hitUntil,immuneUntil,attackReady,comboUntil,chargeStart,attackBufferUntil,spellUntil;int jumps,combo,airDashes;bool charging,attackBufferCharged,spellCharging,wasGrounded;float jumpBuffer,spellChargeStart;string attackState="attack_1",hitState="hit",parryState="charged",dodgeVisualState="dodge";
-  float parryUntil,parryReady,counterUntil,pullUntil;Vector3 pullPoint;bool dodgeRewarded;
+  float parryUntil,parryReady,counterUntil,pullUntil,stepTimer;Vector3 pullPoint;bool dodgeRewarded;
   public bool CounterReady=>RealmGame.I!=null&&RealmGame.I.Elapsed<counterUntil;
   public float HorizontalSpeed{get{var horizontal=velocity;horizontal.y=0;return horizontal.magnitude;}}
   // Read by FollowCamera for FOV kick (dash/attack) without exposing internals.
@@ -155,7 +155,14 @@ namespace LostRealms {
    vertical=Mathf.Max(vertical,-20f);
    Controller.Move((velocity+Vector3.up*vertical)*dt);
    bool nowGrounded=Grounded;
-   if(nowGrounded&&!wasGrounded&&fall<-7f)KenneyPuff.Burst(transform.position+Vector3.up*.05f,new Color(.62f,.56f,.46f),10,.8f);
+   if(nowGrounded&&!wasGrounded){
+    if(fall<-11f){g.Sound("land_hard");KenneyPuff.Burst(transform.position+Vector3.up*.05f,new Color(.62f,.56f,.46f),12,1f);}
+    else if(fall<-4.5f){g.Sound("land_soft");if(fall<-7f)KenneyPuff.Burst(transform.position+Vector3.up*.05f,new Color(.62f,.56f,.46f),10,.8f);}
+   }
+   if(nowGrounded&&HorizontalSpeed>1.2f){
+    stepTimer-=dt;
+    if(stepTimer<=0f){stepTimer=HorizontalSpeed>3.5f?.32f:.42f;g.Sound("step");}
+   }else{stepTimer=.15f;}
    wasGrounded=nowGrounded;
    Energy=Mathf.Min(100,Energy+dt*(12f+4f*RealmGame.I.Save.aetherRank));
   }
