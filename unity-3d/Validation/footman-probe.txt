@@ -1,0 +1,8 @@
+== Footman ==
+  model.localScale=(3.5504, 3.5504, 3.5504)
+  worldBounds size=(15.387, 1.750, 2.242) min=(-7.693, 0.000, -1.121)
+  smr.localScale=(1.0000, 1.0000, 1.0000)
+== BriarGoblin ==
+  model.localScale=(0.9601, 0.9601, 0.9601)
+  worldBounds size=(1.337, 1.350, 0.591) min=(-0.668, 0.000, -0.296)
+  smr.localScale=(100.0000, 100.0000, 100.0000)

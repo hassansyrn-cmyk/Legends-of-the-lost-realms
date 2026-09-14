@@ -13,6 +13,15 @@ namespace LostRealms {
    var g=RealmGame.I;
    if(!mat||g==null||!g.Save.postFx){Graphics.Blit(src,dst);return;}
    mat.SetColor("_Tint",tint);mat.SetFloat("_Bloom",bloom);
+   // Below 30% HP the edges wash red with an unscaled-time pulse, so the
+   // warning keeps breathing even through HitStop.
+   float damage=0f;
+   var p=g.Player;
+   if(p&&g.Screen==GameScreen.Playing){
+    float frac=Mathf.Clamp01((float)p.Health/p.MaxHealth);
+    if(frac<.3f)damage=(.3f-frac)/.3f*(.5f+.18f*Mathf.Sin(Time.unscaledTime*5.5f));
+   }
+   mat.SetFloat("_Damage",damage);
    Graphics.Blit(src,dst,mat);
   }
   void OnDestroy(){if(mat)Destroy(mat);}

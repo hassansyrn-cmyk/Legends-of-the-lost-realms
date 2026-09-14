@@ -16,7 +16,8 @@ public static class AsterPhase1 {
   public readonly string State;
   public readonly string AssetPath;
   public readonly bool Loop;
-  public ClipSpec(string state,string assetPath,bool loop){State=state;AssetPath=assetPath;Loop=loop;}
+  public readonly bool AutoAvatar; // true = auto-map humanoid from this file
+  public ClipSpec(string state,string assetPath,bool loop,bool autoAvatar=false){State=state;AssetPath=assetPath;Loop=loop;AutoAvatar=autoAvatar;}
  }
 
  static readonly ClipSpec[] Clips={
@@ -49,7 +50,13 @@ public static class AsterPhase1 {
    new ClipSpec("block",AnimationSourceRoot+"/Aster_Take_Block.fbx",false),
    new ClipSpec("hit_2",AnimationSourceRoot+"/Aster_Take_Hit2.fbx",false),
    new ClipSpec("hit_3",AnimationSourceRoot+"/Aster_Take_Hit3.fbx",false),
-   new ClipSpec("cast",AnimationSourceRoot+"/Aster_Take_Cast.fbx",false)
+   new ClipSpec("cast",AnimationSourceRoot+"/Aster_Take_Cast.fbx",false),
+   // ExplosiveLLC RPG-Character takes (Sep 2026 feel pass): ground dash rolls,
+   // air dash keeps the existing dodge pose; two extra hit reactions widen the
+   // HitVariant pool. Humanoid retarget via CopyFromOther, same as Mixamo takes.
+   new ClipSpec("roll",AnimationSourceRoot+"/Aster_Take_DiveRoll.fbx",false,true),
+   new ClipSpec("hit_4",AnimationSourceRoot+"/Aster_Take_GetHitF.fbx",false,true),
+   new ClipSpec("hit_5",AnimationSourceRoot+"/Aster_Take_GetHitB.fbx",false,true)
   };
 
  [MenuItem("Lost Realms/Phase 1/Prepare Aster Mixamo Character")]
@@ -145,8 +152,16 @@ var report=new List<string>{"Aster Phase 1 Mixamo integration","Model: "+ModelPa
   ConfigureShared(importer);
   importer.importAnimation=true;
   importer.animationType=ModelImporterAnimationType.Human;
-  importer.avatarSetup=ModelImporterAvatarSetup.CopyFromOther;
-  importer.sourceAvatar=avatar;
+  if(spec.AutoAvatar){
+   // ExplosiveLLC RPG-Character takes (B_* bones): CopyFromOther with the
+   // Mixamo Aster avatar matches no bones and Human import yields ZERO clips.
+   // CreateFromThisModel auto-maps 49 humanoid bones and produces the clip;
+   // the baked muscle curves are avatar-agnostic and play on Aster at runtime.
+   importer.avatarSetup=ModelImporterAvatarSetup.CreateFromThisModel;
+  }else{
+   importer.avatarSetup=ModelImporterAvatarSetup.CopyFromOther;
+   importer.sourceAvatar=avatar;
+  }
   importer.SaveAndReimport();
   importer=AssetImporter.GetAtPath(spec.AssetPath) as ModelImporter;
   var clips=importer.defaultClipAnimations;

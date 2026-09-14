@@ -1,0 +1,5 @@
+  smrPos=(-0.01, 0.16, -0.14) parent=Footman(Clone)
+  baked bounds=Center: (0.01, 0.64, 0.14), Extents: (0.60, 0.75, 0.51) verts=478
+Footman lit=479 box=33x38 at(112,64) ratio=1.15
+BriarGoblin lit=348 box=32x36 at(110,62) ratio=1.13
+Skeleton lit=186 box=38x37 at(109,61) ratio=0.97

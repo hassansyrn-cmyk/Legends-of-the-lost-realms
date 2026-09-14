@@ -9,6 +9,7 @@ Shader "LostRealms/RealmPost" {
   _Vignette ("Vignette", Range(0,1)) = 0.34
   _Bloom ("Bloom", Range(0,2)) = 0.55
   _Threshold ("Bloom threshold", Range(0,1)) = 0.7
+  _Damage ("Damage vignette", Range(0,1)) = 0
  }
  SubShader {
   Cull Off ZWrite Off ZTest Always
@@ -18,7 +19,7 @@ Shader "LostRealms/RealmPost" {
    #pragma fragment frag
    #include "UnityCG.cginc"
    sampler2D _MainTex; float4 _MainTex_TexelSize;
-   fixed4 _Tint; float _Sat,_Contrast,_Vignette,_Bloom,_Threshold;
+   fixed4 _Tint; float _Sat,_Contrast,_Vignette,_Bloom,_Threshold,_Damage;
    struct v2f { float4 pos:SV_POSITION; float2 uv:TEXCOORD0; };
    v2f vert(appdata_base v){v2f o;o.pos=UnityObjectToClipPos(v.vertex);o.uv=v.texcoord;return o;}
    float3 bright(float2 uv){
@@ -39,6 +40,9 @@ Shader "LostRealms/RealmPost" {
     col*=_Tint.rgb;
     float2 d=uv-0.5;
     col*=1.0-_Vignette*dot(d,d)*2.4;
+    // Low-HP damage wash: red edges deepening toward the corners.
+    float edge=smoothstep(0.04,0.5,dot(d,d)*2.0);
+    col=lerp(col,float3(col.r*1.25+0.22,col.g*0.35,col.b*0.3),saturate(_Damage)*edge);
     return fixed4(saturate(col),1);
    }
    ENDCG

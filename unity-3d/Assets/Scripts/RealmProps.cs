@@ -6,7 +6,7 @@ namespace LostRealms {
  // so the realms use real models instead of primitives. Models live in
  // Resources/Props/Nature; one shared palette texture feeds a single material.
  public static class RealmProps {
-   static readonly Material[] byRealm=new Material[3];
+   static readonly Material[] byRealm=new Material[4];
    static readonly Dictionary<string,GameObject> cache=new Dictionary<string,GameObject>();
    static Material stoneMat;
    static readonly Dictionary<string,Material> glowMats=new Dictionary<string,Material>();
@@ -17,15 +17,16 @@ namespace LostRealms {
   // architecture reads as stone instead of lush grass; realm 0 keeps the lush
   // nature palette.
   static Material ForRealm(int realm){
-   if(realm<0||realm>2)realm=0;
-   if(byRealm[realm])return byRealm[realm];
-   var texture=Resources.Load<Texture2D>(realm==2?"Props/Textures/Nature_snow":realm==1?"Props/Textures/Desert_palette":"Props/Textures/Nature_basecolor");
+if(realm<0||realm>3)realm=0;
+    if(byRealm[realm])return byRealm[realm];
+    var texture=Resources.Load<Texture2D>(realm==2?"Props/Textures/Nature_snow":realm==1?"Props/Textures/Desert_palette":realm==3?"Props/Textures/Ember_palette":"Props/Textures/Nature_basecolor");
    if(!texture)return null;
    var material=new Material(Shader.Find("Standard")){name="Realm nature "+realm,color=Color.white};
    material.mainTexture=texture;material.SetFloat("_Metallic",0f);material.SetFloat("_Glossiness",.18f);
    byRealm[realm]=material;return material;
   }
   static string Folder(int realm,string name){
+   if(name.StartsWith("rpgpp_lt_"))return "Village";
    if(realm==2)return "Snow";
    if(realm==1&&(name.StartsWith("House_")||name.StartsWith("Ruin_")||name=="Tower_01"||name=="Gate_01"||name=="Tent_01"||name=="Church_01"||name=="Wall_01"))return "Desert";
    return "Nature";
@@ -36,10 +37,26 @@ namespace LostRealms {
    var model=Resources.Load<GameObject>("Props/"+folder+"/"+name);
    cache[key]=model;return model;
   }
+  // RPGPP_LT village props are UV-mapped to their own atlas (not the realm
+  // palettes), so they get their own material, tinted per realm to sit in the
+  // scene: lush in realm 0, sandy in realm 1, icy in realm 2.
+static readonly Material[] villageByRealm=new Material[4];
+   static Material VillageMat(int realm){
+    if(realm<0||realm>3)realm=0;
+    if(villageByRealm[realm])return villageByRealm[realm];
+    var texture=Resources.Load<Texture2D>("Props/Textures/rpgpp_lt_tex_a");
+    if(!texture)return null;
+    var material=new Material(Shader.Find("Standard")){name="Village atlas "+realm};
+    material.mainTexture=texture;material.SetFloat("_Metallic",0f);material.SetFloat("_Glossiness",.18f);
+    material.color=realm==0?new Color(.92f,.95f,.88f):realm==1?new Color(1f,.85f,.62f):realm==2?new Color(.72f,.82f,1f):new Color(.6f,.42f,.36f);
+   villageByRealm[realm]=material;return material;
+  }
+  static Material MaterialFor(string name,int realm)=>name.StartsWith("rpgpp_lt_")?VillageMat(realm):ForRealm(realm);
   static string[][] Sets(int realm){
-   if(realm==0)return new[]{new[]{"Tree_01","Tree_03","Tree_04"},new[]{"Rock_01","Rock_02","Rock_03"},new[]{"Bush_01","Bush_02","Bush_03","Grass_01","Grass_02","Flowers_01","Mushroom_01"}};
-   if(realm==1)return new[]{new[]{"House_01","House_02","Tower_01","Ruin_01","Gate_01","Tent_01","Church_01"},new[]{"Rock_03","Rock_04","Rock_05"},new[]{"Grass_02","Mushroom_01","Bush_02"}};
-   return new[]{new[]{"Pine_01","Pine_02","Pine_03","Tree_01","Tree_02","DeadTree_01"},new[]{"Cottage_01","Cottage_02","Snowman_01","Well_01","Stump_01","Bridge_01"},new[]{"Fence_01","Fence_02","Sign_01","Stump_01"}};
+   if(realm==0)return new[]{new[]{"Tree_01","Tree_03","Tree_04","rpgpp_lt_tree_01","rpgpp_lt_tree_02"},new[]{"Rock_01","Rock_02","Rock_03"},new[]{"Bush_01","Bush_02","Bush_03","Grass_01","Grass_02","Flowers_01","Mushroom_01","rpgpp_lt_bush_01","rpgpp_lt_flower_01","rpgpp_lt_flower_02","rpgpp_lt_grass_small_01a"}};
+if(realm==1)return new[]{new[]{"House_01","House_02","Tower_01","Ruin_01","Gate_01","Tent_01","Church_01"},new[]{"Rock_03","Rock_04","Rock_05"},new[]{"Grass_02","Mushroom_01","Bush_02","rpgpp_lt_rock_small_01","rpgpp_lt_rock_small_02"}};
+    if(realm==3)return new[]{new[]{"Tree_01","Tree_02","Tree_03","DeadTree_01"},new[]{"Rock_03","Rock_04","Rock_05"},new[]{"Grass_02","Flowers_01","Bush_02","rpgpp_lt_rock_small_01","rpgpp_lt_rock_small_02"}};
+    return new[]{new[]{"Pine_01","Pine_02","Pine_03","Tree_01","Tree_02","DeadTree_01","rpgpp_lt_tree_pine_01"},new[]{"Cottage_01","Cottage_02","Snowman_01","Well_01","Stump_01","Bridge_01"},new[]{"Fence_01","Fence_02","Sign_01","Stump_01","rpgpp_lt_rock_small_01","rpgpp_lt_bucket_01"}};
   }
   public static void Scatter(Transform world,int realm,System.Random rng){
    var material=ForRealm(realm);if(!material)return;
@@ -58,11 +75,27 @@ if(realm==1){PlaceDesertBuildings(island,width,length,rng,material);}
     for(int i=0;i<rocks;i++)Place(island,realm,sets[1][rng.Next(sets[1].Length)],width,length,rng,.6f,1.1f,material);
      int small=5+rng.Next(0,4);
      for(int i=0;i<small;i++)Place(island,realm,sets[2][rng.Next(sets[2].Length)],width,length,rng,.35f,.6f,material);
+     PlaceVillage(island,realm,width,length,rng);
      PlaceOrnaments(island,realm,width,length,rng);
     }
    }
+  // RPGPP village dressing: at most one structure per island, parked beside the
+  // travel lane (same lane-safe philosophy as the desert buildings), plus a few
+  // crates/barrels/benches and small clutter near the edges.
+  static readonly string[] VillageStructures={"rpgpp_lt_shed_wood_01","rpgpp_lt_shed_wood_02","rpgpp_lt_well_01","rpgpp_lt_wagon_01"};
+  static readonly string[] VillageMedium={"rpgpp_lt_barrel_01","rpgpp_lt_barrel_02","rpgpp_lt_crate_01","rpgpp_lt_crate_02","rpgpp_lt_bench_wood_01","rpgpp_lt_box_wood_01","rpgpp_lt_log_wood_01","rpgpp_lt_rock_01","rpgpp_lt_rock_02","rpgpp_lt_rock_03","rpgpp_lt_ladder_01"};
+  static readonly string[] VillageSmall={"rpgpp_lt_sack_01","rpgpp_lt_bucket_01","rpgpp_lt_vase_01","rpgpp_lt_rock_small_01","rpgpp_lt_rock_small_02","rpgpp_lt_bush_02"};
+static void PlaceVillage(Transform island,int realm,float width,float length,System.Random rng){
+    if(realm==3)return;
+    if(width>9f&&rng.Next(0,100)<60)Place(island,realm,VillageStructures[rng.Next(VillageStructures.Length)],width,length,rng,1.9f,2.4f,null);
+   int medium=1+rng.Next(0,3);
+   for(int i=0;i<medium;i++)Place(island,realm,VillageMedium[rng.Next(VillageMedium.Length)],width,length,rng,.7f,1.1f,null);
+   int tiny=1+rng.Next(0,3);
+   for(int i=0;i<tiny;i++)Place(island,realm,VillageSmall[rng.Next(VillageSmall.Length)],width,length,rng,.3f,.5f,null);
+  }
 static void Place(Transform island,int realm,string name,float width,float length,System.Random rng,float hMin,float hMax,Material material){
      var source=Model(Folder(realm,name),name);if(!source)return;
+     material=MaterialFor(name,realm);if(!material)return;
      float halfWidth=Mathf.Max(.6f,width*.5f-.7f);
      int side=rng.Next(0,2)==0?-1:1;
      float x=side*Mathf.Min(halfWidth,1.6f+(float)rng.NextDouble()*halfWidth);
@@ -75,6 +108,16 @@ static void Place(Transform island,int realm,string name,float width,float lengt
      var baseRot=source.transform.localRotation;
      prop.transform.localRotation=baseRot;
      Fit(prop,hMin+(float)rng.NextDouble()*(hMax-hMin));
+     // Some packs (RPGPP village props) ship meshes extending below their pivot
+     // (negative census pivotMinY) — ground every prop on its real bounds so
+     // rocks/logs/wagons never sink into the island.
+     var groundRenderers=prop.GetComponentsInChildren<Renderer>(true);
+     if(groundRenderers.Length>0){
+      Bounds gb=groundRenderers[0].bounds;
+      for(int i=1;i<groundRenderers.Length;i++)gb.Encapsulate(groundRenderers[i].bounds);
+      float surfaceY=island.TransformPoint(new Vector3(0,.02f,0)).y;
+      prop.transform.position+=Vector3.up*(surfaceY-gb.min.y);
+     }
      AddCollider(prop);
      float yaw=(float)rng.NextDouble()*360f;
      prop.transform.localRotation=Quaternion.Euler(0,yaw,0)*baseRot;
@@ -117,8 +160,9 @@ if(prop.name.StartsWith("Prop Tree")){
     }
     static bool IsBuilding(string propName){
      // Desert city buildings + snow cottages/bridge have hollow doorways;
-     // "Prop "+name where name is the model file.
-     foreach(var n in new[]{"Gate_01","Church_01","House_01","House_02","Ruin_01","Tent_01","Tower_01","Wall_01","Cottage_01","Cottage_02","Bridge_01"})if(propName.EndsWith(" "+n))return true;
+     // "Prop "+name where name is the model file. RPGPP sheds/wagons keep their
+     // openings passable the same way.
+     foreach(var n in new[]{"Gate_01","Church_01","House_01","House_02","Ruin_01","Tent_01","Tower_01","Wall_01","Cottage_01","Cottage_02","Bridge_01","rpgpp_lt_shed_wood_01","rpgpp_lt_shed_wood_02","rpgpp_lt_wagon_01"})if(propName.EndsWith(" "+n))return true;
      return false;
     }
     // Desert realm: buildings go to organized, path-safe slots — flanking the
@@ -250,7 +294,7 @@ if(prop.name.StartsWith("Prop Tree")){
      PlaceStatue(island,rng.Next(0,2)==0?"Bomber":"Flyer",3.2f,length*.5f-2.6f,180f,3.1f);
     }
     if(rng.NextDouble()<.7){
-     Color crystal=realm==0?new Color(.3f,1,.5f):realm==1?new Color(1,.6f,.2f):new Color(.5f,.85f,1f);
+     Color crystal=realm==0?new Color(.3f,1,.5f):realm==1?new Color(1,.6f,.2f):realm==2?new Color(.5f,.85f,1f):new Color(1f,.38f,.22f);
      int n=2+rng.Next(0,2);
      for(int i=0;i<n;i++){
       int side=rng.Next(0,2)==0?-1:1;
@@ -258,6 +302,9 @@ if(prop.name.StartsWith("Prop Tree")){
      }
     }
     if(realm==1&&rng.NextDouble()<.35){
+     PlaceBanner(island,-(halfX-.4f),-1.4f);PlaceBanner(island,halfX-.4f,1.4f);
+    }
+    if(realm==3&&rng.NextDouble()<.4){
      PlaceBanner(island,-(halfX-.4f),-1.4f);PlaceBanner(island,halfX-.4f,1.4f);
     }
     if(realm==2&&rng.NextDouble()<.4){

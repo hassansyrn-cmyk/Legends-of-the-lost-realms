@@ -4,17 +4,17 @@ namespace LostRealms {
  public static class RealmScenery {
   static Material Ground(int realm,bool cliff){
    var shader=Resources.Load<Shader>("Shaders/Weathered");var m=new Material(shader?shader:Shader.Find("Standard"));
-   Color[] baseColors=cliff?new[]{new Color(.16f,.22f,.22f),new Color(.35f,.23f,.15f),new Color(.22f,.34f,.43f)}:new[]{new Color(.16f,.29f,.12f),new Color(.49f,.33f,.17f),new Color(.62f,.77f,.82f)};
-   Color[] detailColors=cliff?new[]{new Color(.31f,.37f,.28f),new Color(.6f,.4f,.23f),new Color(.41f,.56f,.64f)}:new[]{new Color(.42f,.49f,.21f),new Color(.75f,.57f,.31f),new Color(.88f,.93f,.9f)};
-   m.color=baseColors[realm];if(m.HasProperty("_Detail"))m.SetColor("_Detail",detailColors[realm]);
-   if(!cliff){string[] textures={"Art/verdant_moss_tile","Art/ember_sand_tile","Art/frost_ice_tile"};var terrainTexture=Resources.Load<Texture2D>(textures[realm]);if(terrainTexture&&m.HasProperty("_MainTex"))m.SetTexture("_MainTex",terrainTexture);if(m.HasProperty("_TileScale"))m.SetFloat("_TileScale",.13f);}
+Color[] baseColors=cliff?new[]{new Color(.16f,.22f,.22f),new Color(.35f,.23f,.15f),new Color(.22f,.34f,.43f),new Color(.12f,.1f,.13f)}:new[]{new Color(.16f,.29f,.12f),new Color(.49f,.33f,.17f),new Color(.62f,.77f,.82f),new Color(.28f,.18f,.2f)};
+    Color[] detailColors=cliff?new[]{new Color(.31f,.37f,.28f),new Color(.6f,.4f,.23f),new Color(.41f,.56f,.64f),new Color(.34f,.21f,.24f)}:new[]{new Color(.42f,.49f,.21f),new Color(.75f,.57f,.31f),new Color(.88f,.93f,.9f),new Color(.52f,.3f,.21f)};
+    m.color=baseColors[realm];if(m.HasProperty("_Detail"))m.SetColor("_Detail",detailColors[realm]);
+    if(!cliff){string[] textures={"Art/verdant_moss_tile","Art/ember_sand_tile","Art/frost_ice_tile","Art/ember_rock_tile"};var terrainTexture=Resources.Load<Texture2D>(textures[realm]);if(terrainTexture&&m.HasProperty("_MainTex"))m.SetTexture("_MainTex",terrainTexture);if(m.HasProperty("_TileScale"))m.SetFloat("_TileScale",.13f);}
    return m;
   }
   public static void Upgrade(RealmWorld world,int realm){
    var lifetime=world.gameObject.AddComponent<RealmArtLifetime>();var terrain=Ground(realm,false);var rock=Ground(realm,true);lifetime.Keep(terrain);lifetime.Keep(rock);var skyShader=Resources.Load<Shader>("Shaders/RealmSky");
-   if(skyShader){var sky=new Material(skyShader);lifetime.Keep(sky);sky.SetColor("_Zenith",realm==0?new Color(.12f,.29f,.35f):realm==1?new Color(.3f,.35f,.43f):new Color(.13f,.25f,.42f));sky.SetColor("_Horizon",realm==0?new Color(.57f,.7f,.58f):realm==1?new Color(.76f,.59f,.4f):new Color(.63f,.76f,.85f));RenderSettings.skybox=sky;Camera.main.clearFlags=CameraClearFlags.Skybox;}
-   RenderSettings.ambientMode=UnityEngine.Rendering.AmbientMode.Trilight;RenderSettings.ambientSkyColor=new Color(.58f,.68f,.74f);RenderSettings.ambientEquatorColor=new Color(.43f,.5f,.43f);RenderSettings.ambientGroundColor=new Color(.2f,.22f,.25f);
-   RenderSettings.fogColor=realm==0?new Color(.43f,.58f,.51f):realm==1?new Color(.63f,.47f,.31f):new Color(.46f,.61f,.73f);RenderSettings.fogDensity=.009f;
+if(skyShader){var sky=new Material(skyShader);lifetime.Keep(sky);sky.SetColor("_Zenith",realm==0?new Color(.12f,.29f,.35f):realm==1?new Color(.3f,.35f,.43f):realm==2?new Color(.13f,.25f,.42f):new Color(.18f,.09f,.16f));sky.SetColor("_Horizon",realm==0?new Color(.57f,.7f,.58f):realm==1?new Color(.76f,.59f,.4f):realm==2?new Color(.63f,.76f,.85f):new Color(.46f,.22f,.17f));RenderSettings.skybox=sky;Camera.main.clearFlags=CameraClearFlags.Skybox;}
+    RenderSettings.ambientMode=UnityEngine.Rendering.AmbientMode.Trilight;RenderSettings.ambientSkyColor=new Color(.58f,.68f,.74f);RenderSettings.ambientEquatorColor=new Color(.43f,.5f,.43f);RenderSettings.ambientGroundColor=new Color(.2f,.22f,.25f);
+    RenderSettings.fogColor=realm==0?new Color(.43f,.58f,.51f):realm==1?new Color(.63f,.47f,.31f):realm==2?new Color(.46f,.61f,.73f):new Color(.36f,.2f,.24f);RenderSettings.fogDensity=.009f;
    int seed=0;
    foreach(Transform island in world.transform){
     if(island.name!="Island")continue;seed++;
@@ -30,7 +30,7 @@ namespace LostRealms {
     if(width>7){
      for(int side=-1;side<=1;side+=2){
       Vector3 p=new Vector3(side*(width*.5f-.6f),.1f,(seed%2==0?1:-1)*(length*.5f-1.3f));
-      if(realm==0)Tree(p,island,seed+side);else if(realm==2)Pine(p,island,seed+side);
+      if(realm==0)Tree(p,island,seed+side);else if(realm==2)Pine(p,island,seed+side);else if(realm==3){var snag=Art.Shape("Charred snag",PrimitiveType.Cylinder,p+Vector3.up*1.1f,new Vector3(.3f,1.1f,.3f),new Color(.12f,.1f,.11f),island);snag.transform.localRotation=Quaternion.Euler(0,0,9*Mathf.Sin(seed+side));var cap=Art.Shape("Charred crown",PrimitiveType.Sphere,p+Vector3.up*1.95f,Vector3.one*.5f,new Color(.2f,.14f,.15f),island);cap.transform.localScale=new Vector3(.4f,.85f,.4f);}
       for(int n=0;n<5;n++){float z=(float)(rng.NextDouble()-.5)*(length-1);Vector3 r=new Vector3(side*(width*.5f-.25f),.22f,z);var b=Art.Shape("Weathered edge rock",PrimitiveType.Sphere,r,new Vector3(.45f,.35f,.65f),Color.white,island);b.GetComponent<Renderer>().sharedMaterial=rock;b.AddComponent<SphereCollider>().radius=.5f;}
      }
     }
@@ -95,10 +95,10 @@ namespace LostRealms {
   static void Pine(Vector3 p,Transform parent,int seed){var trunk=Art.Shape("Pine trunk",PrimitiveType.Cylinder,p+Vector3.up*1.5f,new Vector3(.23f,1.5f,.23f),new Color(.22f,.23f,.23f),parent);var trunkCol=trunk.AddComponent<CapsuleCollider>();trunkCol.direction=1;trunkCol.radius=.5f;trunkCol.height=2f;for(int i=0;i<4;i++)Cone(p+Vector3.up*(1+i*.6f),1.25f-i*.22f,1.4f,i%2==0?new Color(.32f,.48f,.48f):new Color(.78f,.86f,.84f),parent);}
   static void Tufts(Transform parent,float width,float length,int realm,System.Random rng){
    var verts=new List<Vector3>();var tris=new List<int>();var colors=new List<Color>();
-   for(int i=0;i<65;i++){float x=(float)(rng.NextDouble()-.5)*(width-.4f),z=(float)(rng.NextDouble()-.5)*(length-.4f);if(Mathf.Abs(x)<1.6f)continue;float h=.16f+(float)rng.NextDouble()*.28f;Color c=realm==0?Color.Lerp(new Color(.28f,.43f,.12f),new Color(.62f,.61f,.25f),(float)rng.NextDouble()):realm==1?new Color(.66f,.5f,.24f):new Color(.66f,.82f,.84f);
+   for(int i=0;i<65;i++){float x=(float)(rng.NextDouble()-.5)*(width-.4f),z=(float)(rng.NextDouble()-.5)*(length-.4f);if(Mathf.Abs(x)<1.6f)continue;float h=.16f+(float)rng.NextDouble()*.28f;Color c=realm==0?Color.Lerp(new Color(.28f,.43f,.12f),new Color(.62f,.61f,.25f),(float)rng.NextDouble()):realm==1?new Color(.66f,.5f,.24f):realm==2?new Color(.66f,.82f,.84f):Color.Lerp(new Color(.42f,.19f,.13f),new Color(.78f,.38f,.22f),(float)rng.NextDouble());
     for(int n=0;n<3;n++){float a=n*1.05f;Vector3 d=new Vector3(Mathf.Cos(a),0,Mathf.Sin(a))*.09f;Vector3 p=new Vector3(x,.12f,z);int k=verts.Count;verts.AddRange(new[]{p-d,p+Vector3.up*h+d*.4f,p+d});colors.AddRange(new[]{c,c,c});tris.AddRange(new[]{k,k+1,k+2,k+2,k+1,k});}
    }
-   var mesh=new Mesh{name="Batched undergrowth"};mesh.SetVertices(verts);mesh.SetTriangles(tris,0);mesh.SetColors(colors);mesh.RecalculateNormals();var mat=new Material(Shader.Find("Sprites/Default"));parent.GetComponentInParent<RealmArtLifetime>().Keep(mat);mat.color=realm==0?new Color(.57f,.7f,.38f):Color.white;MeshObject("Undergrowth",parent,mesh,mat);
+   var mesh=new Mesh{name="Batched undergrowth"};mesh.SetVertices(verts);mesh.SetTriangles(tris,0);mesh.SetColors(colors);mesh.RecalculateNormals();var mat=new Material(Shader.Find("Sprites/Default"));parent.GetComponentInParent<RealmArtLifetime>().Keep(mat);mat.color=realm==0?new Color(.57f,.7f,.38f):realm==3?new Color(.62f,.42f,.32f):Color.white;MeshObject("Undergrowth",parent,mesh,mat);
   }
  }
  public sealed class RealmArtLifetime:MonoBehaviour { readonly List<Object> owned=new List<Object>();public void Keep(Object asset){owned.Add(asset);}void OnDestroy(){foreach(var asset in owned)if(asset)Destroy(asset);} }

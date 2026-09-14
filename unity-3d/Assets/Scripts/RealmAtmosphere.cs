@@ -10,7 +10,7 @@ namespace LostRealms {
    readonly List<GameObject> rain=new List<GameObject>();
    readonly List<Transform> aurora=new List<Transform>();readonly List<Color> auroraTint=new List<Color>();
   int realm;Color accent;Material moteMaterial,cloudMaterial;
-  static Material[] skyMats=new Material[3];float moteTime;
+  static Material[] skyMats=new Material[4];float moteTime;
 
   public static void Apply(RealmWorld world,int realm){
    var atmosphere=world.gameObject.AddComponent<RealmAtmosphere>();
@@ -18,16 +18,16 @@ namespace LostRealms {
   }
 
   void Build(){
-   Color[] sunColors={new Color(1f,.9f,.67f),new Color(1f,.68f,.39f),new Color(.68f,.86f,1f)};
-   Color[] fogColors={new Color(.24f,.39f,.34f),new Color(.47f,.29f,.21f),new Color(.32f,.49f,.63f)};
-   Color[] skyColors={new Color(.27f,.48f,.42f),new Color(.64f,.39f,.26f),new Color(.37f,.57f,.72f)};
+Color[] sunColors={new Color(1f,.9f,.67f),new Color(1f,.68f,.39f),new Color(.68f,.86f,1f),new Color(1f,.55f,.35f)};
+    Color[] fogColors={new Color(.24f,.39f,.34f),new Color(.47f,.29f,.21f),new Color(.32f,.49f,.63f),new Color(.28f,.16f,.22f)};
+    Color[] skyColors={new Color(.27f,.48f,.42f),new Color(.64f,.39f,.26f),new Color(.37f,.57f,.72f),new Color(.32f,.18f,.25f)};
    var sun=transform.Find("Realm sunlight");
    if(sun){var light=sun.GetComponent<Light>();if(light){light.color=sunColors[realm];light.intensity=1.18f;light.shadows=LightShadows.Soft;light.shadowStrength=.72f;}}
    RenderSettings.ambientMode=AmbientMode.Trilight;
    RenderSettings.ambientSkyColor=Color.Lerp(skyColors[realm],Color.white,.28f);
    RenderSettings.ambientEquatorColor=Color.Lerp(fogColors[realm],Color.white,.12f);
    RenderSettings.ambientGroundColor=Color.Lerp(fogColors[realm],Color.black,.48f);
-   RenderSettings.fog=true;RenderSettings.fogMode=FogMode.ExponentialSquared;RenderSettings.fogColor=fogColors[realm];RenderSettings.fogDensity=realm==2?.0073f:.0085f;
+   RenderSettings.fog=true;RenderSettings.fogMode=FogMode.ExponentialSquared;RenderSettings.fogColor=fogColors[realm];RenderSettings.fogDensity=realm==2?.0073f:realm==3?.012f:.0085f;
    QualitySettings.shadowDistance=28;QualitySettings.shadowResolution=ShadowResolution.Medium;QualitySettings.shadowProjection=ShadowProjection.StableFit;
    if(Camera.main){Camera.main.clearFlags=CameraClearFlags.Skybox;Camera.main.backgroundColor=fogColors[realm];Camera.main.allowHDR=false;}
    CreateHorizon(skyColors[realm],fogColors[realm]);CreateRouteLandmarks();CreateAmbientMotes();
@@ -35,8 +35,8 @@ namespace LostRealms {
    if(realm==2)CreateRain();
    if(Camera.main){
     var post=Camera.main.GetComponent<RealmPostFx>();
-    Color[] postTints={new Color(.99f,1f,.98f),new Color(1.05f,.97f,.88f),new Color(.9f,.96f,1.08f)};
-    float[] postBloom={.45f,.7f,.6f};
+    Color[] postTints={new Color(.99f,1f,.98f),new Color(1.05f,.97f,.88f),new Color(.9f,.96f,1.08f),new Color(1.06f,.92f,.88f)};
+    float[] postBloom={.45f,.7f,.6f,.8f};
     if(post)post.Configure(postTints[realm],postBloom[realm]);
    }
    CreateAurora();CreateAmbience();
@@ -63,16 +63,16 @@ namespace LostRealms {
   // Embers (desert) and snow motes (frozen) drifting on the breeze.
   void CreateAmbience(){
    var tex=Resources.Load<Texture2D>("VFX/Textures/smoke_04");if(!tex)return;
-   Color tint=realm==0?new Color(.7f,1f,.55f):realm==1?new Color(1,.55f,.18f):new Color(.85f,.95f,1f);
+   Color tint=realm==0?new Color(.7f,1f,.55f):realm==1?new Color(1,.55f,.18f):realm==2?new Color(.85f,.95f,1f):new Color(1f,.45f,.2f);
    var go=new GameObject("Realm ambience");go.transform.SetParent(transform,false);go.transform.localPosition=new Vector3(0,6,55);
    var ps=go.AddComponent<ParticleSystem>();
    var main=ps.main;main.playOnAwake=false;ps.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
    main.loop=true;main.duration=30;main.startLifetime=9f;main.startSpeed=.6f;main.startSize=realm==1?.16f:.1f;main.maxParticles=60;main.startColor=tint;main.simulationSpace=ParticleSystemSimulationSpace.World;
-   var em=ps.emission;em.rateOverTime=realm==0?2f:6f;
-   var vel=ps.velocityOverLifetime;vel.enabled=true;
-   // All three axes must share one curve mode or Unity logs "Particle Velocity
-   // curves must all be in the same mode" every simulation frame (device spam).
-   vel.x=new ParticleSystem.MinMaxCurve(-.35f,.35f);vel.y=new ParticleSystem.MinMaxCurve(0f,realm==1?.7f:.35f);vel.z=new ParticleSystem.MinMaxCurve(0f,0f);
+var em=ps.emission;em.rateOverTime=realm==0?2f:realm==1?6f:8f;
+    var vel=ps.velocityOverLifetime;vel.enabled=true;
+    // All three axes must share one curve mode or Unity logs "Particle Velocity
+    // curves must all be in the same mode" every simulation frame (device spam).
+    vel.x=new ParticleSystem.MinMaxCurve(-.35f,.35f);vel.y=new ParticleSystem.MinMaxCurve(0f,realm==1?.7f:realm==3?.8f:.35f);vel.z=new ParticleSystem.MinMaxCurve(0f,0f);
    var sh=ps.shape;sh.shapeType=ParticleSystemShapeType.Box;sh.scale=new Vector3(26,2,120);
    var pr=go.GetComponent<ParticleSystemRenderer>();var am=new Material(Shader.Find("Sprites/Default"));am.mainTexture=tex;am.color=tint;pr.material=am;
    ps.Play();
@@ -94,10 +94,10 @@ namespace LostRealms {
   static Material SkyFor(int r,Color horizon){
    if(skyMats[r])return skyMats[r];
    var shader=Shader.Find("LostRealms/RealmSkyBox");if(!shader)return null;
-   Color[] tops={new Color(.13f,.38f,.52f),new Color(.25f,.45f,.70f),new Color(.05f,.12f,.28f)};
-   Color[] grounds={new Color(.10f,.16f,.16f),new Color(.35f,.22f,.15f),new Color(.08f,.12f,.20f)};
-   Color[] suns={new Color(1,.93f,.75f),new Color(1,.8f,.55f),new Color(.85f,.92f,1f)};
-   float[] stars={.25f,.12f,.85f};
+Color[] tops={new Color(.13f,.38f,.52f),new Color(.25f,.45f,.70f),new Color(.05f,.12f,.28f),new Color(.22f,.12f,.18f)};
+    Color[] grounds={new Color(.10f,.16f,.16f),new Color(.35f,.22f,.15f),new Color(.08f,.12f,.20f),new Color(.55f,.30f,.22f)};
+    Color[] suns={new Color(1,.93f,.75f),new Color(1,.8f,.55f),new Color(.85f,.92f,1f),new Color(1f,.6f,.4f)};
+    float[] stars={.25f,.12f,.85f,.5f};
    var m=new Material(shader){name="Realm sky "+r};
    m.SetColor("_TopColor",tops[r]);m.SetColor("_HorizonColor",horizon);m.SetColor("_GroundColor",grounds[r]);
    m.SetColor("_SunColor",suns[r]);m.SetVector("_SunDir",Quaternion.Euler(48,-35,0)*Vector3.back);
@@ -114,7 +114,7 @@ namespace LostRealms {
    var ps=go.AddComponent<ParticleSystem>();
    var main=ps.main;main.playOnAwake=false;ps.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
    main.loop=true;main.duration=40;main.startLifetime=38;main.startSpeed=.5f;main.startSize=15f;main.maxParticles=34;main.simulationSpace=ParticleSystemSimulationSpace.World;
-   Color[] tints={new Color(.85f,.95f,.88f),new Color(.98f,.9f,.78f),new Color(.82f,.9f,.98f)};
+   Color[] tints={new Color(.85f,.95f,.88f),new Color(.98f,.9f,.78f),new Color(.82f,.9f,.98f),new Color(.95f,.8f,.7f)};
    main.startColor=tints[realm];
    var em=ps.emission;em.rateOverTime=1.1f;
    var sh=ps.shape;sh.shapeType=ParticleSystemShapeType.Box;sh.scale=new Vector3(80,4,140);
@@ -131,8 +131,8 @@ namespace LostRealms {
   // Distant floating rock islets ringing the route for depth.
   void CreateFloatingIslets(){
    var random=new System.Random(realm*331+7);
-   Color rock=realm==0?new Color(.16f,.24f,.22f):realm==1?new Color(.4f,.27f,.18f):new Color(.25f,.36f,.48f);
-   Color topC=realm==0?new Color(.2f,.42f,.3f):realm==1?new Color(.66f,.42f,.22f):new Color(.62f,.78f,.85f);
+Color rock=realm==0?new Color(.16f,.24f,.22f):realm==1?new Color(.4f,.27f,.18f):realm==2?new Color(.25f,.36f,.48f):new Color(.2f,.15f,.17f);
+    Color topC=realm==0?new Color(.2f,.42f,.3f):realm==1?new Color(.66f,.42f,.22f):realm==2?new Color(.62f,.78f,.85f):new Color(.34f,.22f,.26f);
    for(int i=0;i<5;i++){
     float a=(float)i/5f*Mathf.PI*2f+(float)random.NextDouble()*.5f;
     float r=26+(float)random.NextDouble()*18f;
@@ -158,7 +158,7 @@ namespace LostRealms {
   void CreateRouteLandmarks(){
    for(int i=0;i<3;i++){
     float z=20+i*32;float side=i%2==0?-1:1;var root=new GameObject("Realm route landmark");root.transform.SetParent(transform,false);root.transform.localPosition=new Vector3(side*12.5f,-.2f,z);
-    Color stone=realm==0?new Color(.15f,.28f,.2f):realm==1?new Color(.35f,.21f,.14f):new Color(.22f,.38f,.52f);
+    Color stone=realm==0?new Color(.15f,.28f,.2f):realm==1?new Color(.35f,.21f,.14f):realm==2?new Color(.22f,.38f,.52f):new Color(.24f,.16f,.19f);
     var pillar=Art.Shape("Landmark monolith",PrimitiveType.Cylinder,Vector3.up*3.3f,new Vector3(1.15f,3.3f,1.15f),stone,root.transform);SetDecorative(pillar);
     var crown=Art.Shape("Landmark lens",PrimitiveType.Sphere,Vector3.up*6.55f,Vector3.one*.63f,Color.Lerp(accent,Color.white,.28f),root.transform);SetDecorative(crown);
     var ring=Art.Ring(Vector3.up*6.25f,1.05f,accent,root.transform);foreach(Transform piece in ring.transform)SetDecorative(piece.gameObject);
@@ -167,7 +167,7 @@ namespace LostRealms {
 
   void CreateAmbientMotes(){
    moteMaterial=new Material(Shader.Find("Sprites/Default"));moteMaterial.name="Realm ambient mote";moteMaterial.color=Color.Lerp(accent,Color.white,.42f);moteMaterial.renderQueue=3000;
-   int count=realm==0?22:realm==1?18:24;
+   int count=realm==0?22:realm==1?18:realm==2?24:28;
    var random=new System.Random(realm*977+41);
    for(int i=0;i<count;i++){
     float x=(float)(random.NextDouble()-.5)*24f;float y=.45f+(float)random.NextDouble()*4.7f;float z=-9+(float)random.NextDouble()*126f;

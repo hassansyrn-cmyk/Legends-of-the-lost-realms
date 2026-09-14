@@ -29,12 +29,14 @@ namespace LostRealms {
    return root;
   }
   public static void CoinMesh(Transform parent){
+   if(PickupModel("Coin",parent,new Color(1f,.8f,.25f),.34f,null))return;
    Shape("CoinRim",PrimitiveType.Cylinder,Vector3.zero,new Vector3(.46f,.06f,.46f),new Color(1f,.78f,.2f),parent);
    Shape("CoinCore",PrimitiveType.Cylinder,Vector3.zero,new Vector3(.38f,.075f,.38f),new Color(.92f,.68f,.15f),parent);
    var rune=Shape("StarRune",PrimitiveType.Cube,Vector3.zero,new Vector3(.18f,.09f,.18f),new Color(1f,.92f,.45f),parent);
    rune.transform.localRotation=Quaternion.Euler(0,45,0);
   }
   public static void GemMesh(Transform parent,Color accent){
+   if(PickupModel("5SideDiamond",parent,accent,.3f,null))return;
    var top=Shape("GemTop",PrimitiveType.Cube,Vector3.up*.04f,new Vector3(.32f,.32f,.32f),accent,parent);
    top.transform.localRotation=Quaternion.Euler(45,45,0);
    var core=Shape("GemCore",PrimitiveType.Sphere,Vector3.zero,Vector3.one*.22f,Color.Lerp(accent,Color.white,.65f),parent);
@@ -44,41 +46,93 @@ namespace LostRealms {
     shard.transform.localRotation=Quaternion.Euler(30,a*Mathf.Rad2Deg,45);
    }
   }
+  // Instantiate a BenjaTheMaker pickup model, normalized to targetHeight and
+  // tinted. Returns null when the model is missing so builders fall back to
+  // the old procedural shapes.
+ public static GameObject PickupModel(string name,Transform parent,Color color,float targetHeight,Material glow=null){
+     var prefab=Resources.Load<GameObject>("Pickups/"+name);
+     if(!prefab)return null;
+     // worldPositionStays=false: the model must start exactly on the pickup
+     // root. The 2-arg Instantiate keeps the prefab's world pose, which parks
+     // the mesh near the world origin with a giant local offset — the offset
+     // child then whips around the spinning pickup root ("flying pickups").
+     var go=Object.Instantiate(prefab,parent,false);
+     go.name=name;
+     go.transform.localPosition=Vector3.zero;
+     go.transform.localRotation=Quaternion.identity;
+     go.transform.localScale=Vector3.one;
+    var material=glow??new Material(Shader.Find("Standard")){name="Pickup "+name};
+    if(!glow){
+     material.color=color;
+     if(material.HasProperty("_Glossiness"))material.SetFloat("_Glossiness",.7f);
+     if(material.HasProperty("_Metallic"))material.SetFloat("_Metallic",name=="Coin"||name=="StarCoin"?.6f:.12f);
+     if(material.HasProperty("_EmissionColor")){material.EnableKeyword("_EMISSION");material.SetColor("_EmissionColor",color*.45f);}
+    }
+    foreach(var renderer in go.GetComponentsInChildren<Renderer>(true))renderer.sharedMaterial=material;
+    var renderers=go.GetComponentsInChildren<Renderer>(true);
+    if(renderers.Length>0){
+     var bounds=renderers[0].bounds;
+     for(int i=1;i<renderers.Length;i++)bounds.Encapsulate(renderers[i].bounds);
+     if(bounds.size.y>.0001f){
+      float s=targetHeight/bounds.size.y;
+      go.transform.localScale=Vector3.one*s;
+      // Re-measure AFTER scaling, then shift in WORLD space so the mesh sits
+      // grounded and centered on the pickup root. Renderer.bounds is world
+      // space — never mix it into localPosition: far down-route that parks
+      // the visible mesh back near the world origin ("flying pickups").
+      bounds=renderers[0].bounds;
+      for(int i=1;i<renderers.Length;i++)bounds.Encapsulate(renderers[i].bounds);
+      Vector3 anchor=new Vector3(bounds.center.x,bounds.min.y,bounds.center.z);
+      go.transform.position-=anchor-parent.position;
+     }
+    }
+    return go;
+  }
  }
  public class RealmWorld:MonoBehaviour {
   public Vector3 Spawn;public bool IsBoss;public float EndZ; public readonly List<Vector3> Route=new List<Vector3>();
-  static readonly float[][] RouteX={
-   new float[]{0,1,2,2,0,-1,-2,-1,0,2,1,0},
-   new float[]{0,2,4,1,-2,-4,-1,2,4,2,-1,0},
-   new float[]{0,-2,-4,-2,1,4,2,-1,-4,-2,1,0},
-   new float[]{0,0,2,3,1,-2,-1,0},
-   new float[]{0,0,3,5,3,0,-3,-5,-3,0,2,0},
-   new float[]{0,3,5,3,0,-3,-5,-3,0,3,1,0},
-   new float[]{0,2,4,2,0,-3,-2,0},
-   new float[]{0,-2,0,3,1,-2,0,3,1,-2,0,0},
-   new float[]{0,3,0,-3,0,3,5,2,-1,-4,-2,0},
-   new float[]{0,-3,-1,2,4,2,0,0}};
-  static readonly float[][] RouteY={
-   new float[]{0,0,.7f,0,0,.7f,0,0,.7f,0,0,0},
-   new float[]{0,.6f,1.2f,.6f,0,.6f,1.2f,.6f,0,.6f,1.2f,1.2f},
-   new float[]{0,.8f,1.6f,.8f,0,.8f,1.6f,.8f,0,.8f,1.6f,1.6f},
-   new float[]{0,.5f,1,.5f,0,.5f,1,1},
-   new float[]{0,.7f,1.4f,1.4f,.7f,0,.7f,1.4f,1.4f,.7f,0,0},
-   new float[]{0,1,2,3,2,1,0,1,2,3,2,2},
-   new float[]{0,.8f,1.6f,.8f,0,.8f,1.6f,1.6f},
-   new float[]{0,.7f,1.4f,2.1f,2.8f,3.5f,4.2f,4.9f,5.6f,6.3f,7,7},
-   new float[]{0,1,2,3,2,1,2,3,4,3,2,2},
-   new float[]{0,.8f,1.6f,2.4f,3.2f,4,4.8f,4.8f}};
+static readonly float[][] RouteX={
+    new float[]{0,1,2,2,0,-1,-2,-1,0,2,1,0},
+    new float[]{0,2,4,1,-2,-4,-1,2,4,2,-1,0},
+    new float[]{0,-2,-4,-2,1,4,2,-1,-4,-2,1,0},
+    new float[]{0,0,2,3,1,-2,-1,0},
+    new float[]{0,0,3,5,3,0,-3,-5,-3,0,2,0},
+    new float[]{0,3,5,3,0,-3,-5,-3,0,3,1,0},
+    new float[]{0,2,4,2,0,-3,-2,0},
+    new float[]{0,-2,0,3,1,-2,0,3,1,-2,0,0},
+    new float[]{0,3,0,-3,0,3,5,2,-1,-4,-2,0},
+    new float[]{0,-3,-1,2,4,2,0,0},
+    new float[]{0,1,3,1,-1,-3,-1,2,4,2,-1,0},
+    new float[]{0,2,4,2,-1,-4,-2,1,3,1,-2,0},
+    new float[]{0,-1,-3,-1,2,4,2,-1,-4,-2,1,0},
+    new float[]{0,0,2,4,1,-2,-4,-1,2,4,1,0},
+    new float[]{0,2,4,1,-2,-4,-1,0}};
+static readonly float[][] RouteY={
+    new float[]{0,0,.7f,0,0,.7f,0,0,.7f,0,0,0},
+    new float[]{0,.6f,1.2f,.6f,0,.6f,1.2f,.6f,0,.6f,1.2f,1.2f},
+    new float[]{0,.8f,1.6f,.8f,0,.8f,1.6f,.8f,0,.8f,1.6f,1.6f},
+    new float[]{0,.5f,1,.5f,0,.5f,1,1},
+    new float[]{0,.7f,1.4f,1.4f,.7f,0,.7f,1.4f,1.4f,.7f,0,0},
+    new float[]{0,1,2,3,2,1,0,1,2,3,2,2},
+    new float[]{0,.8f,1.6f,.8f,0,.8f,1.6f,1.6f},
+    new float[]{0,.7f,1.4f,2.1f,2.8f,3.5f,4.2f,4.9f,5.6f,6.3f,7,7},
+    new float[]{0,1,2,3,2,1,2,3,4,3,2,2},
+    new float[]{0,.8f,1.6f,2.4f,3.2f,4,4.8f,4.8f},
+    new float[]{0,.5f,1,.5f,0,.6f,1.2f,.8f,.4f,.9f,.4f,.4f},
+    new float[]{0,.7f,1.4f,2.1f,1.4f,.7f,1.5f,2.2f,1.5f,.7f,0,0},
+    new float[]{0,.6f,1.2f,1.8f,2.4f,1.6f,.8f,1.6f,2.2f,1.3f,.5f,0},
+    new float[]{0,.8f,1.6f,2.4f,3.2f,3.9f,3.2f,2.4f,1.6f,.8f,0,0},
+    new float[]{0,1,2,3,2,1,0,0}};
   int realm,level;Color top,stone,accent;System.Random random;
-  public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||stage==7||stage==10;random=new System.Random(stage*793);accent=RealmGame.Accents[world];
-   top=world==0?new Color(.18f,.38f,.29f):world==1?new Color(.63f,.38f,.20f):new Color(.59f,.75f,.82f);
-   stone=world==0?new Color(.10f,.20f,.20f):world==1?new Color(.32f,.20f,.16f):new Color(.23f,.35f,.48f);
-   RenderSettings.fog=true;RenderSettings.fogMode=FogMode.ExponentialSquared;RenderSettings.fogDensity=.011f;
-   RenderSettings.fogColor=world==0?new Color(.13f,.25f,.28f):world==1?new Color(.44f,.25f,.22f):new Color(.22f,.35f,.5f);
-   RenderSettings.ambientLight=new Color(.6f,.66f,.72f);RenderSettings.ambientMode=UnityEngine.Rendering.AmbientMode.Flat;
-   Camera.main.backgroundColor=RenderSettings.fogColor;Camera.main.clearFlags=CameraClearFlags.SolidColor;
-   var sun=new GameObject("Realm sunlight").AddComponent<Light>();sun.transform.SetParent(transform);sun.type=LightType.Directional;sun.transform.rotation=Quaternion.Euler(48,-35,0);
-   sun.color=world==1?new Color(1,.83f,.62f):new Color(.88f,.95f,1);sun.intensity=1.25f;sun.shadows=LightShadows.Soft;
+public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||stage==7||stage==10||stage==15;random=new System.Random(stage*793);accent=RealmGame.Accents[world];
+    top=world==0?new Color(.18f,.38f,.29f):world==1?new Color(.63f,.38f,.20f):world==2?new Color(.59f,.75f,.82f):new Color(.32f,.22f,.27f);
+    stone=world==0?new Color(.10f,.20f,.20f):world==1?new Color(.32f,.20f,.16f):world==2?new Color(.23f,.35f,.48f):new Color(.14f,.12f,.15f);
+    RenderSettings.fog=true;RenderSettings.fogMode=FogMode.ExponentialSquared;RenderSettings.fogDensity=.011f;
+    RenderSettings.fogColor=world==0?new Color(.13f,.25f,.28f):world==1?new Color(.44f,.25f,.22f):world==2?new Color(.22f,.35f,.5f):new Color(.32f,.18f,.20f);
+    RenderSettings.ambientLight=new Color(.6f,.66f,.72f);RenderSettings.ambientMode=UnityEngine.Rendering.AmbientMode.Flat;
+    Camera.main.backgroundColor=RenderSettings.fogColor;Camera.main.clearFlags=CameraClearFlags.SolidColor;
+    var sun=new GameObject("Realm sunlight").AddComponent<Light>();sun.transform.SetParent(transform);sun.type=LightType.Directional;sun.transform.rotation=Quaternion.Euler(48,-35,0);
+    sun.color=world==1?new Color(1,.83f,.62f):world==3?new Color(1,.55f,.38f):new Color(.88f,.95f,1);sun.intensity=world==3?.95f:1.25f;sun.shadows=LightShadows.Soft;
    int count=IsBoss?8:12;int weaponIsland=random.Next(2,count-2);WeaponId weaponId=(WeaponId)(stage==1?4:random.Next(1,41));
    for(int i=0;i<count;i++){
     float z=i*10f,x=RouteX[stage-1][i],y=RouteY[stage-1][i];
@@ -90,9 +144,9 @@ namespace LostRealms {
     if(i>=2&&i%4==0){float hx=(i%2==0?-1:1)*(1.2f+(float)random.NextDouble()*.9f);HealPickup(p+new Vector3(hx,.6f,-1.2f+(float)random.NextDouble()*2.4f));}
     if(i==weaponIsland)WeaponDrop(p+new Vector3((i%2==0?-2.3f:2.3f),.18f,-1.4f),weaponId);
      if(i>=2&&!last){int kind=(stage+i)%8;
-      if(stage>=9&&i%6==2)kind=17;else if(stage>=3&&i%6==2)kind=11;else if(stage>=5&&i%5==4)kind=12;else if(stage>=6&&i%7==3)kind=13;else if(stage>=4&&i%6==5)kind=14;else if(stage>=4&&i%7==6)kind=15;else if(stage>=5&&i==7)kind=16;
+      if(stage>=9&&i%6==2)kind=17;else if(stage>=3&&i%6==2)kind=11;else if(stage>=5&&i%5==4)kind=12;else if(stage>=6&&i%7==3)kind=13;else if(stage>=4&&i%6==5)kind=14;else if(stage>=4&&i%7==6)kind=15;else if(stage>=5&&i==7)kind=16;else if(stage>=3&&((stage+i)%8)==2)kind=18;else if(stage>=4&&((stage+i)%8)==5)kind=19;else if(stage>=4&&((stage+i)%8)==6)kind=20;
       SpawnEnemy(p+new Vector3(1.8f,.03f,1),kind,false,p,width,length);if(stage>2&&i%3==0)Hazard(p+new Vector3(-2.4f,.08f,1),realm);}
-    if(last){EndZ=z+4;Gate(p+new Vector3(0,0,5));if(IsBoss)SpawnEnemy(p+new Vector3(0,.05f,-1),world+8,true,p,width,length);}
+    if(last){EndZ=z+4;Gate(p+new Vector3(0,0,5));if(IsBoss)SpawnEnemy(p+new Vector3(0,.05f,-1),world==3?21:world+8,true,p,width,length);}
    }
    for(int i=0;i<40;i++){float z=-16+i*4.8f;float side=i%2==0?-1:1;Vector3 p=new Vector3(side*(16+(float)random.NextDouble()*24),-4,z);float h=8+(float)random.NextDouble()*22;Art.Shape("Distant realm spire",PrimitiveType.Cylinder,p,new Vector3(6,h,6),stone*.75f,transform);if(realm==0)Art.Shape("Distant canopy",PrimitiveType.Sphere,p+Vector3.up*h*.5f,new Vector3(12,6,12),top*.68f,transform);}
     RealmScenery.Upgrade(this,realm);
@@ -138,9 +192,12 @@ namespace LostRealms {
     Art.Shape("Pillar crown",PrimitiveType.Cube,p+Vector3.up*2.85f,new Vector3(1.2f,.28f,1.2f),accent*.85f,parent);
     var shard=Art.Shape("PillarFragment",PrimitiveType.Cube,p+new Vector3(.45f,.25f,.35f),new Vector3(.45f,.5f,.4f),top*.9f,parent);
     shard.transform.localRotation=Quaternion.Euler(15,35,10);
-   }else{
+   }else if(realm==2){
     var g=Art.Crystal(p+Vector3.up*1.2f,1.25f,accent,parent);g.transform.localScale=new Vector3(.65f,1.85f,.65f);
     Art.Shape("IceShard",PrimitiveType.Cube,p+new Vector3(-.35f,.35f,.25f),new Vector3(.3f,.7f,.3f),Color.Lerp(accent,Color.white,.4f),parent);
+   }else{
+    var g=Art.Crystal(p+Vector3.up*1.2f,1.25f,accent,parent);g.transform.localScale=new Vector3(.75f,2.1f,.75f);
+    Art.Shape("EmberHotStone",PrimitiveType.Cube,p+new Vector3(.4f,.3f,-.2f),new Vector3(.5f,.5f,.5f),top*1.35f,parent);
    }
   }
   void Pickup(Vector3 position,bool gem){
@@ -163,11 +220,13 @@ void WeaponDrop(Vector3 p,WeaponId id){
    void HealPickup(Vector3 p){
     var go=new GameObject("Heal pickup");go.transform.SetParent(transform,false);go.transform.position=p;
     Color heart=new Color(.92f,.12f,.16f);
-    Art.Shape("HeartLobeL",PrimitiveType.Sphere,new Vector3(-.1f,.1f,0),new Vector3(.36f,.4f,.34f),heart,go.transform);
-    Art.Shape("HeartLobeR",PrimitiveType.Sphere,new Vector3(.1f,.1f,0),new Vector3(.36f,.4f,.34f),heart,go.transform);
-    var point=Art.Shape("HeartPoint",PrimitiveType.Cube,new Vector3(0,-.06f,0),new Vector3(.32f,.34f,.3f),new Color(.82f,.1f,.14f),go.transform);
-    point.transform.localRotation=Quaternion.Euler(0,0,45);
-    Art.Shape("HeartGlint",PrimitiveType.Cube,new Vector3(-.11f,.2f,0),Vector3.one*.06f,new Color(1f,.86f,.88f),go.transform);
+    if(!Art.PickupModel("Heart",go.transform,heart,.55f,null)){
+     Art.Shape("HeartLobeL",PrimitiveType.Sphere,new Vector3(-.1f,.1f,0),new Vector3(.36f,.4f,.34f),heart,go.transform);
+     Art.Shape("HeartLobeR",PrimitiveType.Sphere,new Vector3(.1f,.1f,0),new Vector3(.36f,.4f,.34f),heart,go.transform);
+     var point=Art.Shape("HeartPoint",PrimitiveType.Cube,new Vector3(0,-.06f,0),new Vector3(.32f,.34f,.3f),new Color(.82f,.1f,.14f),go.transform);
+     point.transform.localRotation=Quaternion.Euler(0,0,45);
+     Art.Shape("HeartGlint",PrimitiveType.Cube,new Vector3(-.11f,.2f,0),Vector3.one*.06f,new Color(1f,.86f,.88f),go.transform);
+    }
     go.AddComponent<RealmHeal>().Origin=p;
    }
    void Gate(Vector3 p){
@@ -213,10 +272,10 @@ public class RealmPickup:MonoBehaviour {
     var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
     // GemVisual supplies the main faceted motion. Keep the pickup root slow so
     // its orbiting shards read clearly instead of turning into a spinning cube.
-    transform.Rotate(0,(Gem?20f:110f)*Time.deltaTime,0,Space.World);
-    Vector3 target=g.Player.transform.position+Vector3.up*.8f;
-    if(Vector3.Distance(Origin,target)<(Gem?1.85f:2.1f))Origin=Vector3.MoveTowards(Origin,target,Time.deltaTime*(Gem?5.4f:4.5f));
-    transform.position=Origin+Vector3.up*Mathf.Sin(RealmGame.I.Elapsed*2.8f)*.15f;
+transform.Rotate(0,(Gem?12f:45f)*Time.deltaTime,0,Space.World);
+     Vector3 target=g.Player.transform.position+Vector3.up*.8f;
+     if(Vector3.Distance(Origin,target)<(Gem?1.85f:2.1f))Origin=Vector3.MoveTowards(Origin,target,Time.deltaTime*(Gem?5.4f:4.5f));
+     transform.position=Origin+Vector3.up*Mathf.Sin(RealmGame.I.Elapsed*1.4f)*.09f;
     if(Vector3.Distance(g.Player.transform.position+Vector3.up*.8f,transform.position)<1.15f){
      HitSpark.Burst(transform.position,Vector3.up,Gem?g.Accent:new Color(1f,.85f,.2f),Gem?18:12);
      Vfx.Play(Gem?"ga_vfx_LootDrop_02":"ga_vfx_Sparks_01",transform.position,Quaternion.identity,Gem?.8f:.55f);
@@ -240,8 +299,8 @@ public class RealmPickup:MonoBehaviour {
    public Vector3 Origin;public int Amount=3;
    void Update(){
     var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
-    transform.Rotate(0,55f*Time.deltaTime,0,Space.World);
-    transform.position=Origin+Vector3.up*Mathf.Sin(RealmGame.I.Elapsed*2.6f)*.13f;
+    transform.Rotate(0,28f*Time.deltaTime,0,Space.World);
+    transform.position=Origin+Vector3.up*Mathf.Sin(RealmGame.I.Elapsed*1.4f)*.09f;
     if(Vector3.Distance(g.Player.transform.position+Vector3.up*.8f,transform.position)<1.15f){
      int before=g.Player.Health;g.Player.Health=Mathf.Min(g.Player.MaxHealth,before+Amount);
      if(g.Player.Health>before){HitSpark.Burst(transform.position,Vector3.up,new Color(1f,.38f,.48f),22);Vfx.Play("ga_vfx_Heal_01",transform.position,Quaternion.identity,.9f);g.Sound("heal");}

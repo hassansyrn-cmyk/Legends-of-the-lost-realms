@@ -1,0 +1,30 @@
+DEEP DIVE 2026-09-14 16:56:23
+==Assets/Resources/Characters/Goblin.fbx==
+animType=Generic importAnim=True
+take=Goblin|attack loop=False
+take=Goblin|death loop=False
+take=Goblin|idle loop=False
+take=Goblin|walk loop=False
+==Assets/Resources/Characters/Flyer.fbx==
+animType=Generic importAnim=True
+takes=0
+==Assets/Resources/Characters/Bomber.fbx==
+animType=Generic importAnim=True
+takes=0
+Goblin_idle: len=2.50 posCurves=51 maxPos=0.000 rotCurves=119 maxRot=0.00 ex= Goblin=m_LocalRotation.x Goblin=m_LocalRotation.y Goblin=m_LocalRotation.z Goblin=m_LocalRotation.w Goblin/Hips=m_LocalRotation.x Goblin/Hips=m_LocalRotation.y
+Goblin_walk: len=1.25 posCurves=51 maxPos=0.000 rotCurves=119 maxRot=0.12 ex= Goblin=m_LocalRotation.x Goblin=m_LocalRotation.y Goblin=m_LocalRotation.z Goblin=m_LocalRotation.w Goblin/Hips=m_LocalRotation.x Goblin/Hips=m_LocalRotation.y
+Goblin_attack: len=0.63 posCurves=51 maxPos=0.000 rotCurves=119 maxRot=0.16 ex= Goblin=m_LocalRotation.x Goblin=m_LocalRotation.y Goblin=m_LocalRotation.z Goblin=m_LocalRotation.w Goblin/Hips=m_LocalRotation.x Goblin/Hips=m_LocalRotation.y
+Footman_idle: len=1.00 posCurves=15 maxPos=3.864 rotCurves=161 maxRot=0.21 ex= Hips=m_LocalRotation.x Hips=m_LocalRotation.y Hips=m_LocalRotation.z Hips=m_LocalRotation.w Hips/Spine=m_LocalRotation.x Hips/Spine=m_LocalRotation.y Hips/Spine=m_LocalRotation.z
+Footman_walk: len=1.33 posCurves=15 maxPos=9.308 rotCurves=161 maxRot=0.42 ex= Hips=m_LocalRotation.x Hips=m_LocalRotation.y Hips=m_LocalRotation.z Hips=m_LocalRotation.w Hips/Spine=m_LocalRotation.x Hips/Spine=m_LocalRotation.y Hips/Spine=m_LocalRotation.z
+Footman_attack: len=1.33 posCurves=15 maxPos=23.309 rotCurves=161 maxRot=0.66 ex= Hips=m_LocalRotation.x Hips=m_LocalRotation.y Hips=m_LocalRotation.z Hips=m_LocalRotation.w Hips/Spine=m_LocalRotation.x Hips/Spine=m_LocalRotation.y Hips/Spine=m_LocalRotation.z
+DogKnight_idle: len=1.00 posCurves=12 maxPos=0.049 rotCurves=310 maxRot=0.73 ex= =RootT.x =RootT.y =RootT.z =RootQ.x =RootQ.y =RootQ.z =RootQ.w =LeftFootT.x =LeftFootT.y =LeftFootT.z =LeftFootQ.x =LeftFootQ.y =LeftFootQ.z =LeftFootQ.w =RightFootT.x
+DogKnight_walk: len=1.00 posCurves=12 maxPos=0.057 rotCurves=310 maxRot=0.99 ex= =RootT.x =RootT.y =RootT.z =RootQ.x =RootQ.y =RootQ.z =RootQ.w =LeftFootT.x =LeftFootT.y =LeftFootT.z =LeftFootQ.x =LeftFootQ.y =LeftFootQ.z =LeftFootQ.w =RightFootT.x
+DogKnight_attack: len=0.83 posCurves=12 maxPos=0.213 rotCurves=310 maxRot=1.85 ex= =RootT.x =RootT.y =RootT.z =RootQ.x =RootQ.y =RootQ.z =RootQ.w =LeftFootT.x =LeftFootT.y =LeftFootT.z =LeftFootQ.x =LeftFootQ.y =LeftFootQ.z =LeftFootQ.w =RightFootT.x
+==tree Flyer==
+deep Flyer lp=(0.00, 0.00, 0.00) ls=(1.00, 1.00, 1.00)
+  Flyer visual lp=(0.00, 0.00, 0.00) ls=(1.00, 1.00, 1.00)
+    Flyer(Clone) lp=(0.00, 0.00, 0.00) ls=(1.76, 1.76, 1.76) mesh=v28086 mat=Flyer/Standard
+==tree Bomber==
+deep Bomber lp=(0.00, 0.00, 0.00) ls=(1.00, 1.00, 1.00)
+  Bomber visual lp=(0.00, 0.00, 0.00) ls=(1.00, 1.00, 1.00)
+    Bomber(Clone) lp=(0.00, 0.00, 0.00) ls=(0.89, 0.89, 0.89) mesh=v25123 mat=Bomber/Standard

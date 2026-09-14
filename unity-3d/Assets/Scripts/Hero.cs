@@ -7,7 +7,7 @@ namespace LostRealms {
   public CharacterController Controller;public int MaxHealth,Health,Power;public float Energy=100;public bool Grounded=>Controller&&Controller.isGrounded; public CharacterVisual Visual;
   public int windUsed;
   const float MaxMoveSpeed=4.8f,GroundResponse=18f,AirResponse=8f,StopResponse=22f;
-  Vector3 velocity;Vector3 moveWish;float vertical,jumpGrace,dashUntil,dashReady,dodgeVisualUntil,hitUntil,immuneUntil,attackReady,comboUntil,chargeStart,attackBufferUntil,spellUntil;int jumps,combo,airDashes;bool charging,attackBufferCharged,spellCharging,wasGrounded;float jumpBuffer,spellChargeStart;string attackState="attack_1",hitState="hit",parryState="charged";
+  Vector3 velocity;Vector3 moveWish;float vertical,jumpGrace,dashUntil,dashReady,dodgeVisualUntil,hitUntil,immuneUntil,attackReady,comboUntil,chargeStart,attackBufferUntil,spellUntil;int jumps,combo,airDashes;bool charging,attackBufferCharged,spellCharging,wasGrounded;float jumpBuffer,spellChargeStart;string attackState="attack_1",hitState="hit",parryState="charged",dodgeVisualState="dodge";
   float parryUntil,parryReady,counterUntil,pullUntil;Vector3 pullPoint;bool dodgeRewarded;
   public bool CounterReady=>RealmGame.I!=null&&RealmGame.I.Elapsed<counterUntil;
   public float HorizontalSpeed{get{var horizontal=velocity;horizontal.y=0;return horizontal.magnitude;}}
@@ -68,7 +68,7 @@ namespace LostRealms {
 
    // Character Animation state selection with natural speeds
    if(RealmGame.I.Elapsed<dodgeVisualUntil){
-    Visual.Play("dodge");
+    Visual.Play(dodgeVisualState);
    }else if(RealmGame.I.Elapsed<hitUntil){
     Visual.Play(hitState);
    }else if(RealmGame.I.Elapsed<parryUntil){
@@ -124,7 +124,8 @@ namespace LostRealms {
     if(wish.sqrMagnitude<.1f)wish=transform.forward;
     wish.y=0;wish.Normalize();
     velocity=wish*9.5f;velocity.y=0;g.Sound("player_dash");
-    Visual.Restart("dodge");
+    dodgeVisualState=Grounded?"roll":"dodge";
+    Visual.Restart(dodgeVisualState);
    Vfx.Play("ga_vfx_Hyperdrive_01",transform.position+Vector3.up*.9f,Quaternion.LookRotation(transform.forward),.7f);
     HitSpark.Burst(transform.position+Vector3.up*.8f,-wish,new Color(1f,.9f,.7f),8);
    }
@@ -238,7 +239,7 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
    // Timing-based guard: a short window that negates one incoming hit, stuns the
    // attacker and opens a counter. Armed Aster raises a real block; unarmed
    // Aster braces in the charged pose until a dedicated animation is baked.
-   string HitVariant(){int r=Random.Range(0,3);return r==0?"hit":r==1?"hit_2":"hit_3";}
+   string HitVariant(){int r=Random.Range(0,5);return r==0?"hit":r==1?"hit_2":r==2?"hit_3":r==3?"hit_4":"hit_5";}
    string ParryState(){return WeaponCatalog.AttackStyle(RealmGame.I.CurrentWeapon)=="unarmed"?"charged":"block";}
    void Parry(){
    float now=RealmGame.I.Elapsed;if(now<parryReady||!Grounded)return;
@@ -515,20 +516,23 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
   }
   public class CharacterVisual:MonoBehaviour {
   public Animator animator;PlayableGraph graph;AnimationMixerPlayable mixer;AnimationClipPlayable[] playable=new AnimationClipPlayable[2];AnimationClip[] clips;string current="";float blend;int slot;bool hasGraph;Transform fallbackBody;
+  public bool UsesFallback=>fallbackBody!=null;
   // Per-weapon attack style variants (chop/spear/unarmed × combo 1-3), baked by
   // AsterPhase1 alongside the base set. Entries stay null when a style file is
   // missing and playback falls back to the slash clips, so a partial bake set
   // can never break attacks.
   AnimationClip[] chopClips=new AnimationClip[3],spearClips=new AnimationClip[3],unarmedClips=new AnimationClip[3];
   public string CurrentState=>current;
-  static readonly string[] Names={"idle","walk","run","attack_1","attack_2","attack_3","charged","jump","double_jump","dodge","hit","death","block","hit_2","hit_3","cast"};
+  static readonly string[] Names={"idle","walk","run","attack_1","attack_2","attack_3","charged","jump","double_jump","dodge","hit","death","block","hit_2","hit_3","cast","roll","hit_4","hit_5"};
 
   public static CharacterVisual Create(string role,Transform parent,float height,Color color){
    var holder=new GameObject(role+" visual");holder.transform.SetParent(parent,false);var v=holder.AddComponent<CharacterVisual>();
+   GameObject modelRef=null;
    var prefab=Resources.Load<GameObject>("Characters/"+role);
    if(prefab){
     var model=Instantiate(prefab,holder.transform);
     model.transform.localPosition=Vector3.zero;
+    modelRef=model;
     if(role=="Aster"){
      var asterMaterial=Resources.Load<Material>("Materials/Aster");
      if(!asterMaterial)throw new System.Exception("Missing runtime Aster material");
@@ -575,6 +579,39 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
     v.spearClips[s]=Resources.Load<AnimationClip>("Animations/Aster/spear_"+(s+1));
     v.unarmedClips[s]=Resources.Load<AnimationClip>("Animations/Aster/unarmed_"+(s+1));
    }
+   // Rigged enemy models ship clips but no Animator component (FBX roots don't
+   // instantiate with one) — add it only when clips exist, so the static
+   // families keep their EnemyIdleMotion procedural bob.
+   if(modelRef&&!v.animator&&role!="Aster"&&System.Array.Exists(v.clips,c=>c!=null)){
+    v.animator=modelRef.AddComponent<Animator>();
+    v.animator.applyRootMotion=false;
+    v.animator.cullingMode=AnimatorCullingMode.AlwaysAnimate;
+   }
+   // Normalize any FBX model to the requested role height and ground it on its
+   // real bounds — pack FBX ship arbitrary scales and pivot offsets (the golem
+   // imported at 473 units with feet 1.3 below origin). Aster is exempt: its
+   // prefab scale is baked by AsterPhase1.
+    if(modelRef&&role!="Aster"){
+     var renderers=modelRef.GetComponentsInChildren<Renderer>(true);
+     if(renderers.Length>0){
+      Bounds nb=renderers[0].bounds;
+      for(int i=1;i<renderers.Length;i++)nb.Encapsulate(renderers[i].bounds);
+      if(nb.size.y>.01f){
+       float s=height/nb.size.y;
+       modelRef.transform.localScale=Vector3.one*s;
+       // Re-measure AFTER scaling, then shift in WORLD space so the mesh is
+       // centered and grounded on the holder. Renderer.bounds is world
+       // space — never fold it into localPosition: far down-route that
+       // teleports the visible body back toward the world origin, and the
+       // displaced mesh then swings wide whenever the enemy turns
+       // ("flying enemies").
+       nb=renderers[0].bounds;
+       for(int i=1;i<renderers.Length;i++)nb.Encapsulate(renderers[i].bounds);
+       Vector3 anchor=new Vector3(nb.center.x,nb.min.y,nb.center.z);
+       modelRef.transform.position-=anchor-modelRef.transform.parent.position;
+      }
+     }
+    }
 
    if(v.animator&&System.Array.Exists(v.clips,c=>c!=null)){
     v.graph=PlayableGraph.Create(role+" motion");v.graph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
@@ -645,7 +682,7 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
    playable[slot].SetApplyFootIK(false);
    if(state=="jump")playable[slot].SetSpeed(1.9f);
    if(state=="double_jump")playable[slot].SetSpeed(3.55f);
-   if(state=="dodge")playable[slot].SetSpeed(3.35f);
+   if(state=="dodge"||state=="roll")playable[slot].SetSpeed(3.35f);
    if(state=="hit")playable[slot].SetSpeed(2.07f);
    playable[slot].SetTime(0);
    graph.Connect(playable[slot],0,mixer,slot);blend=0;mixer.SetInputWeight(slot,0f);mixer.SetInputWeight(1-slot,1f);
@@ -655,7 +692,7 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
    if(hasGraph){
     float speed=RealmGame.I.Screen==GameScreen.Playing?1:0;
     graph.GetRootPlayable(0).SetSpeed(speed);
-    float blendRate=current=="dodge"||current=="hit"||current=="hit_2"||current=="hit_3"||current=="block"?16f:current=="double_jump"?15f:current.StartsWith("attack_")||current=="charged"||current=="cast"?12f:9f;
+    float blendRate=current=="dodge"||current=="roll"||current=="hit"||current=="hit_2"||current=="hit_3"||current=="hit_4"||current=="hit_5"||current=="block"?16f:current=="double_jump"?15f:current.StartsWith("attack_")||current=="charged"||current=="cast"?12f:9f;
     blend=Mathf.MoveTowards(blend,1,Time.deltaTime*blendRate);
     mixer.SetInputWeight(slot,blend);mixer.SetInputWeight(1-slot,1-blend);
    }else if(fallbackBody){

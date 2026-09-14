@@ -118,7 +118,7 @@ public static class WeaponCatalog {
   public void Configure(WeaponId id,Vector3 origin){Id=id;Origin=origin;phase=((int)id+1)*1.37f;var definition=WeaponCatalog.Get(id);var created=WeaponCatalog.CreateModel(id,transform);model=created?created.transform:null;if(!model)Debug.LogError("WEAPON_DROP_SETUP_FAILED: "+definition.Name);else Art.Ring(new Vector3(0,-.55f,0),.7f,new Color(1f,.85f,.3f),transform);Vfx.Play("ga_vfx_LootDrop_01",origin+Vector3.up*.6f,Quaternion.identity,.9f);}
   void Update(){
    var game=RealmGame.I;if(!game||game.Screen!=GameScreen.Playing||!game.Player)return;
-   float time=game.Elapsed+phase;transform.position=Origin+Vector3.up*(.75f+Mathf.Sin(time*2.4f)*.12f);transform.Rotate(0,Time.deltaTime*42f,0,Space.World);
+   float time=game.Elapsed+phase;transform.position=Origin+Vector3.up*(.75f+Mathf.Sin(time*1.4f)*.09f);transform.Rotate(0,Time.deltaTime*24f,0,Space.World);
    if(model)model.localRotation=Quaternion.Euler(0,0,Mathf.Sin(time*1.8f)*7f);
    if(Vector3.Distance(game.Player.transform.position+Vector3.up*.8f,transform.position)<1.3f){
     game.EquipWeapon(Id);HitSpark.Burst(transform.position,Vector3.up,game.Accent,22);Destroy(gameObject);

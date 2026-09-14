@@ -1,0 +1,42 @@
+==Skeleton==
+animated=True fallback=False
+bones=82 smr=3
+  idle: 1.333s loop=True paths=77 resolved=77 missing=0 ex=root,root/c_traj,root/c_traj/root.x,root/c_traj/root.x/spine_01.x,root/c_traj/root.x/spine_01.x/spine_02.x,root/c_traj/root.x/spine_01.x/spine_02.x/cc_breast.l,root/c_traj/root.x/spine_01.x/spine_02.x/cc_breast.r,root/c_traj/root.x/spine_01.x/spine_02.x/spine_03.x curved=770 maxPos=0.023 maxRot=0.0
+  walk: 0.800s loop=True paths=77 resolved=77 missing=0 ex=root,root/c_traj,root/c_traj/root.x,root/c_traj/root.x/spine_01.x,root/c_traj/root.x/spine_01.x/spine_02.x,root/c_traj/root.x/spine_01.x/spine_02.x/cc_breast.l,root/c_traj/root.x/spine_01.x/spine_02.x/cc_breast.r,root/c_traj/root.x/spine_01.x/spine_02.x/spine_03.x curved=770 maxPos=0.003 maxRot=0.3
+  attack: 1.133s loop=False paths=77 resolved=77 missing=0 ex=root,root/c_traj,root/c_traj/root.x,root/c_traj/root.x/spine_01.x,root/c_traj/root.x/spine_01.x/spine_02.x,root/c_traj/root.x/spine_01.x/spine_02.x/cc_breast.l,root/c_traj/root.x/spine_01.x/spine_02.x/cc_breast.r,root/c_traj/root.x/spine_01.x/spine_02.x/spine_03.x curved=770 maxPos=0.172 maxRot=0.8
+  death: 1.400s loop=False paths=77 resolved=77 missing=0 ex=root,root/c_traj,root/c_traj/root.x,root/c_traj/root.x/spine_01.x,root/c_traj/root.x/spine_01.x/spine_02.x,root/c_traj/root.x/spine_01.x/spine_02.x/cc_breast.l,root/c_traj/root.x/spine_01.x/spine_02.x/cc_breast.r,root/c_traj/root.x/spine_01.x/spine_02.x/spine_03.x curved=770 maxPos=0.378 maxRot=0.6
+Skeleton lit=190 box=38x38 ratio=1.00
+==BriarGoblin==
+animated=True fallback=False
+bones=60 smr=1
+  idle: MISSING
+  walk: MISSING
+  attack: MISSING
+  death: MISSING
+BriarGoblin lit=369 box=33x37 ratio=1.12
+==EmberDemon==
+animated=True fallback=False
+bones=72 smr=1
+  idle: MISSING
+  walk: MISSING
+  attack: MISSING
+  death: MISSING
+EmberDemon lit=526 box=32x35 ratio=1.09
+==DogKnight==
+animated=True fallback=False
+bones=71 smr=1
+  idle: 1.000s loop=True paths=28 resolved=28 missing=0 ex=,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Nose01,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Nose01/Nose02,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Rat01_l,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Rat01_l/Rat02_l,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Dog01_l,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Dog01_l/Dog02_l,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Dog01_l/Dog02_l/Dog03_l curved=322 maxPos=0.049 maxRot=0.7
+  walk: 1.000s loop=True paths=28 resolved=28 missing=0 ex=,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Nose01,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Nose01/Nose02,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Rat01_l,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Rat01_l/Rat02_l,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Dog01_l,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Dog01_l/Dog02_l,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Dog01_l/Dog02_l/Dog03_l curved=322 maxPos=0.057 maxRot=1.0
+  attack: 0.833s loop=True paths=28 resolved=28 missing=0 ex=,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Nose01,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Nose01/Nose02,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Rat01_l,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Rat01_l/Rat02_l,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Dog01_l,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Dog01_l/Dog02_l,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Dog01_l/Dog02_l/Dog03_l curved=322 maxPos=0.213 maxRot=1.9
+  death: 1.167s loop=False paths=28 resolved=28 missing=0 ex=,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Nose01,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Nose01/Nose02,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Rat01_l,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Rat01_l/Rat02_l,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Dog01_l,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Dog01_l/Dog02_l,root/pelvis/spine_01/spine_02/spine_03/neck_01/head/Dog01_l/Dog02_l/Dog03_l curved=322 maxPos=0.303 maxRot=0.6
+DogKnight lit=574 box=46x38 ratio=0.83
+==Spider==
+animated=True fallback=False
+spiderBones=25/25 miss=
+bones=72 smr=1
+  idle: MISSING
+  walk: MISSING
+  attack: MISSING
+  death: MISSING
+Spider lit=392 box=38x16 ratio=0.42
+BriarGoblin lit=348 box=32x36 ratio=1.13

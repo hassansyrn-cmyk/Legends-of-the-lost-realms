@@ -7,13 +7,13 @@ namespace LostRealms {
   // Per-kind tuning so each enemy family reads and plays differently:
   // goblins dart in, demons pressure, frost runners slip wide, the elemental
   // and caster are slower but hit harder / shoot from range.
-   static readonly float[] NoticeRange={8.5f,10.5f,8.5f,9f,10.5f,8.5f,7f,13f,12f,12.5f,13f,11f,9f,12f,11f,10.5f,10f,12f};
-   static readonly float[] ChaseSpeed={2.3f,2.05f,2.3f,2.5f,2.05f,2.3f,1.5f,1.15f,2.1f,2.3f,2.5f,2.9f,3.1f,1.2f,2.6f,2.2f,2.7f,2.4f};
-   static readonly int[] MeleeDamage={1,2,1,1,2,1,2,1,2,2,2,1,2,1,3,2,2,2};
+    static readonly float[] NoticeRange={8.5f,10.5f,8.5f,9f,10.5f,8.5f,7f,13f,12f,12.5f,13f,11f,9f,12f,11f,10.5f,10f,12f,9f,10f,10.5f,12.5f};
+    static readonly float[] ChaseSpeed={2.3f,2.05f,2.3f,2.5f,2.05f,2.3f,1.5f,1.15f,2.1f,2.3f,2.5f,2.9f,3.1f,1.2f,2.6f,2.2f,2.7f,2.4f,3.2f,2.1f,2.3f,2.3f};
+    static readonly int[] MeleeDamage={1,2,1,1,2,1,2,1,2,2,2,1,2,1,3,2,2,2,1,2,3,3};
    // Each family's vulnerable element (0 ember, 1 frost, 2 gale). Matching the
    // player's current element deals bonus damage and triggers that reaction.
-   static readonly int[] Weakness={2,1,0,0,1,0,2,2,0,1,0,2,0,1,0,1,0,1};
-  public int WeakElement=>Weakness[Mathf.Clamp(Kind,0,17)];
+    static readonly int[] Weakness={2,1,0,0,1,0,2,2,0,1,0,2,0,1,0,1,0,1,1,0,2,2};
+   public int WeakElement=>Weakness[Mathf.Clamp(Kind,0,21)];
   // Kind 11 (Flyer) hovers: it ignores the ground clamp and bobs in the air.
   bool aerial;
   // Elite affixes (non-boss, stage>=3): 1 Shielded, 2 Burning, 4 Swift, 8 Vampiric, 16 Armored.
@@ -21,12 +21,12 @@ namespace LostRealms {
    public int BossPhase=>phase;
   public void Configure(int kind,bool boss,Vector3 anchor,Vector2 island){Kind=kind;Boss=boss;center=anchor;area=island;baseY=transform.position.y;Radius=boss?1.1f:kind>=14?.7f:.5f;MaxHealth=(boss?24+RealmGame.I.Realm*8:3+RealmGame.I.Level*.3f)*(kind==14?2.7f:1f);Health=MaxHealth;
    if(boss)bossAddAt=RealmGame.I.Elapsed+11f;
-   string[] roles={"Goblin","Demon","Goblin","Frost","Demon","Goblin","Elemental","Caster","Heartwood","Sunscar","Whiteout","Flyer","Bomber","Summoner","Elite","Skeleton","BriarGoblin","EmberDemon"};string role=roles[Mathf.Clamp(kind,0,17)];DisplayName=boss?new[]{"HEARTWOOD COLOSSUS","SUNSCAR TITAN","WHITEOUT GUARDIAN"}[RealmGame.I.Realm]:role;
-   Visual=CharacterVisual.Create(role,transform,boss?3.6f:kind==6?2.5f:kind==14?2.2f:kind==15?1.7f:kind==16?1.35f:kind==17?1.85f:1.65f,RealmGame.I.Accent);RealmGame.I.Enemies.Add(this);state=State.Patrol;timer=.5f;target=center;
+    string[] roles={"Goblin","Demon","Goblin","Frost","Demon","Goblin","Elemental","Caster","Heartwood","Sunscar","Whiteout","Flyer","Bomber","Summoner","Elite","Skeleton","BriarGoblin","EmberDemon","Spider","Footman","DogKnight","DogKnight"};string role=roles[Mathf.Clamp(kind,0,21)];DisplayName=boss?new[]{"HEARTWOOD COLOSSUS","SUNSCAR TITAN","WHITEOUT GUARDIAN","EMBERFALL WARDEN"}[RealmGame.I.Realm]:role;
+   Visual=CharacterVisual.Create(role,transform,boss?3.6f:kind==6?2.5f:kind==14?2.2f:kind==15?1.7f:kind==16?1.35f:kind==17?1.85f:kind==18?0.6f:kind==19?1.75f:kind==20?1.4f:1.65f,RealmGame.I.Accent);RealmGame.I.Enemies.Add(this);state=State.Patrol;timer=.5f;target=center;
     aerial=kind==11;if(aerial){transform.position+=Vector3.up*2.3f;baseY=transform.position.y;}
     skin=Visual?Visual.GetComponentsInChildren<Renderer>(true):null;
     if(skin!=null&&skin.Length>0)bodyMat=skin[0].material;
-    gameObject.AddComponent<EnemyAura>().Setup(Weakness[Mathf.Clamp(kind,0,17)],boss);
+    gameObject.AddComponent<EnemyAura>().Setup(Weakness[Mathf.Clamp(kind,0,21)],boss);
     if(!boss&&RealmGame.I!=null&&RealmGame.I.Level>=3){
      float chance=Mathf.Clamp01((RealmGame.I.Level-2)*.06f);
      if(Random.value<chance){
@@ -37,18 +37,22 @@ namespace LostRealms {
       Art.Ring(new Vector3(0,.06f,0),Radius+.55f,ac,transform);
      }
     }
-    if(kind>=11&&Visual&&!Visual.animator)gameObject.AddComponent<EnemyIdleMotion>().Setup(0f);
+    // Restyled families (Goblin/Demon/Frost/Elemental/Caster + the bosses) are
+    // static showcase meshes too — everything without a real Animator and
+    // without the primitive fallback (which bobs itself) gets the idle motion.
+    if(Visual&&!Visual.animator&&!Visual.UsesFallback)gameObject.AddComponent<EnemyIdleMotion>().Setup(0f);
      if(kind==15&&Visual)gameObject.AddComponent<SkeletonLimbMotion>().Setup(Visual);
      if(kind==16&&Visual)gameObject.AddComponent<SkeletonLimbMotion>().Setup(Visual,"upper_arm.L","upper_arm.R",null,null,null,null);
      if(kind==17&&Visual)gameObject.AddComponent<SkeletonLimbMotion>().Setup(Visual,"upper_arm.L","upper_arm.R","wing_upper.L","wing_lower.L","wing_upper.R","wing_lower.R");
+     if(kind==18&&Visual)gameObject.AddComponent<SpiderLimbMotion>().Setup(Visual);
     if(aerial)return;
     // Block Aster: a real (non-trigger) capsule so the CharacterController
     // cannot walk through the enemy. Damage stays manual (no contact damage).
     var body=gameObject.AddComponent<CapsuleCollider>();
-    body.height=boss?3.6f:kind==6?2.5f:kind==14?2.2f:kind==15?1.7f:kind==16?1.35f:kind==17?1.85f:1.65f;body.radius=boss?1.15f:kind>=14?.75f:.55f;body.center=Vector3.up*(body.height*.5f);
+    body.height=boss?3.6f:kind==6?2.5f:kind==14?2.2f:kind==15?1.7f:kind==16?1.35f:kind==17?1.85f:kind==18?0.6f:kind==19?1.75f:kind==20?1.4f:1.65f;body.radius=boss?1.15f:kind==18?.45f:kind>=14?.75f:.55f;body.center=Vector3.up*(body.height*.5f);
    }
   void Update(){var game=RealmGame.I;if(game.Screen!=GameScreen.Playing)return;if(state==State.Dead)return;float dt=Time.deltaTime;if(RealmGame.I.Elapsed<burnUntil&&RealmGame.I.Elapsed>=burnTick){burnTick=RealmGame.I.Elapsed+.7f;ApplyDamage(.5f);if(Health<=0)return;}   if(RealmGame.I.Elapsed<freezeUntil){Visual.Play("idle");return;}
-   if(aerial)transform.position=new Vector3(transform.position.x,baseY+Mathf.Sin(RealmGame.I.Elapsed*2.4f+Kind)*.25f,transform.position.z);
+   if(aerial)transform.position=new Vector3(transform.position.x,baseY+Mathf.Sin(RealmGame.I.Elapsed*1.2f+Kind)*.25f,transform.position.z);
     if(bodyMat!=null&&RealmGame.I.Elapsed>=flashUntil)bodyMat.SetColor("_EmissionColor",Color.black);
    if(Boss){int next=Health<MaxHealth*.33f?3:Health<MaxHealth*.67f?2:1;if(next>phase){phase=next;game.Tell(DisplayName+" / PHASE "+phase);HitSpark.Burst(transform.position+Vector3.up*1.5f,Vector3.up,game.Accent,20);Vfx.Play("ga_vfx_Shockwave_01",transform.position+Vector3.up*1.5f,Quaternion.identity,1.7f);}}
     if(Boss&&phase>=2&&RealmGame.I.Elapsed>=bossAddAt){bossAddAt=RealmGame.I.Elapsed+15f;SummonHeralds();}
@@ -56,12 +60,12 @@ namespace LostRealms {
    switch(state){
     case State.Patrol:
      Visual.Play("walk");if(timer<=0){float x=Mathf.Sin(RealmGame.I.Elapsed*.7f)*area.x*.24f,z=Mathf.Cos(RealmGame.I.Elapsed*.5f)*area.y*.22f;target=center+new Vector3(x,.03f,z);timer=2;}
-      MoveTo(target,.7f,dt);if(distance<(Boss?17:NoticeRange[Mathf.Clamp(Kind,0,17)])&&sameHeight){state=State.Notice;timer=.4f;game.Sound("enemy_warning");
+      MoveTo(target,.7f,dt);if(distance<(Boss?17:NoticeRange[Mathf.Clamp(Kind,0,21)])&&sameHeight){state=State.Notice;timer=.4f;game.Sound("enemy_warning");
        // Aggro sharing: nearby patrolling kin join the fight.
        foreach(var other in game.Enemies){if(!other||other==this||other.Boss||other.Health<=0)continue;if(other.state==State.Patrol&&Vector3.Distance(other.transform.position,transform.position)<8f){other.state=State.Notice;other.timer=.55f;}}}break;
     case State.Notice:
       Visual.Play("walk");Face(game.Player.transform.position,dt);
-      float chase=Boss?1.8f+phase*.2f:ChaseSpeed[Mathf.Clamp(Kind,0,17)]*speedMul;
+      float chase=Boss?1.8f+phase*.2f:ChaseSpeed[Mathf.Clamp(Kind,0,21)]*speedMul;
       if(Ranged){
        // Ranged families keep their distance instead of closing in.
        if(distance<3.4f){Vector3 away=transform.position-game.Player.transform.position;away.y=0;if(away.sqrMagnitude<.01f)away=-transform.forward;transform.position=Vector3.MoveTowards(transform.position,Clamp(transform.position+away.normalized*2f),chase*dt);}
@@ -80,7 +84,7 @@ namespace LostRealms {
    // Elite (kind 14) telegraphed follow-up strikes.
    if(comboLeft>0&&RealmGame.I.Elapsed>=comboNext){
     comboLeft--;comboNext=RealmGame.I.Elapsed+.34f;
-    int dmg=MeleeDamage[Mathf.Clamp(Kind,0,17)];Vector3 dc=game.Player.transform.position-transform.position;
+    int dmg=MeleeDamage[Mathf.Clamp(Kind,0,21)];Vector3 dc=game.Player.transform.position-transform.position;
     if(dc.magnitude<3f&&Vector3.Dot(transform.forward,dc.normalized)>.0f){if(game.Player.Damage(dmg,transform.position))DamageTip.Show(game.Player.transform.position+Vector3.up*1.7f,"-"+dmg,new Color(1,.3f,.24f));}
     Visual.Restart("attack");HitSpark.Burst(transform.position+transform.forward,transform.forward,new Color(1,.35f,.18f),8);
    }
@@ -88,14 +92,14 @@ namespace LostRealms {
   void CommitAttack(){var g=RealmGame.I;g.Sound(Boss?"boss":"enemy_dash");
    if(Boss){int attack=(attackCount+Kind)%3;
     if(attack==0){StrikeZone.Create(target,2.2f+phase*.3f,2,.05f);if(phase>=2)StrikeZone.Create(target+Vector3.right*3.5f,1.5f,1,.8f);if(phase==3)StrikeZone.Create(target-Vector3.right*3.5f,1.5f,1,1.2f);}
-    else if(attack==1){if(phase==3){RealmGame.I.Tell(RealmGame.I.Realm==0?"THORN WHEEL":RealmGame.I.Realm==1?"CINDER NOVA":"TEMPEST BURST",1.5f);for(int i=0;i<12;i++){float angle=i*30f;EnemyBolt.Create(transform.position+Vector3.up*1.5f,Quaternion.Euler(0,angle,0)*Vector3.forward,6f,2,true);}}else{for(int i=0;i<phase+1;i++){float angle=(i-phase*.5f)*13;Vector3 dir=Quaternion.Euler(0,angle,0)*(target-transform.position).normalized;EnemyBolt.Create(transform.position+Vector3.up*1.2f,dir,5.5f,2,true);}}}
+    else if(attack==1){if(phase==3){RealmGame.I.Tell(RealmGame.I.Realm==0?"THORN WHEEL":RealmGame.I.Realm==1?"CINDER NOVA":RealmGame.I.Realm==2?"TEMPEST BURST":"EMBERFALL FLOOD",1.5f);for(int i=0;i<12;i++){float angle=i*30f;EnemyBolt.Create(transform.position+Vector3.up*1.5f,Quaternion.Euler(0,angle,0)*Vector3.forward,6f,2,true);}}else{for(int i=0;i<phase+1;i++){float angle=(i-phase*.5f)*13;Vector3 dir=Quaternion.Euler(0,angle,0)*(target-transform.position).normalized;EnemyBolt.Create(transform.position+Vector3.up*1.2f,dir,5.5f,2,true);}}}
     else{Vector3 direction=(target-transform.position).normalized;Vector3 destination=Clamp(transform.position+direction*5);StrikeZone.Create(destination,2,2,.25f);transform.position=destination;}
    }
    else if(Kind==12){StrikeZone.Create(transform.position,2.7f,2,.05f);HitSpark.Burst(transform.position+Vector3.up*.6f,Vector3.up,new Color(1,.45f,.15f),26);ApplyDamage(Health);}
    else if(Kind==13){int alive=0;foreach(var e in g.Enemies)if(e&&!e.Boss&&e.Health>0)alive++;if(alive<16){var minion=new GameObject("Summoned minion");minion.transform.SetParent(transform.parent);minion.transform.position=transform.position+transform.forward*1.6f;minion.AddComponent<Enemy>().Configure(RealmGame.I.Level>=7?16:0,false,center,area);HitSpark.Burst(transform.position+Vector3.up*.7f,Vector3.up,new Color(.78f,.45f,1f),16);Vfx.Play("ga_vfx_Implosion_01",transform.position+Vector3.up*.8f,Quaternion.identity,.9f);}}
    else if(Kind==17)EnemyBolt.Create(transform.position+Vector3.up*1.1f,(g.Player.transform.position+Vector3.up*.8f-transform.position-Vector3.up*1.1f).normalized,6.5f,2,false,17);
     else if(Kind==7||Kind==1)EnemyBolt.Create(transform.position+Vector3.up*.9f,(g.Player.transform.position+Vector3.up*.8f-transform.position-Vector3.up*.9f).normalized,6,1);
-   else{int dmg=MeleeDamage[Mathf.Clamp(Kind,0,17)];if((Affix&2)!=0)dmg+=1;Vector3 d=g.Player.transform.position-transform.position;if(d.magnitude<3&&Vector3.Dot(transform.forward,d.normalized)>.05f){if(g.Player.Damage(dmg,transform.position)){DamageTip.Show(g.Player.transform.position+Vector3.up*1.7f,"-"+dmg,new Color(1,.3f,.24f));if((Affix&8)!=0){Health=Mathf.Min(MaxHealth,Health+.8f);HitSpark.Burst(transform.position+Vector3.up*.9f,Vector3.up,new Color(.75f,.4f,1f),6);}}}HitSpark.Burst(transform.position+transform.forward,transform.forward,new Color(1,.35f,.18f),8);if(Kind==14){comboLeft=2;comboNext=RealmGame.I.Elapsed+.34f;}}
+   else{int dmg=MeleeDamage[Mathf.Clamp(Kind,0,21)];if((Affix&2)!=0)dmg+=1;Vector3 d=g.Player.transform.position-transform.position;if(d.magnitude<3&&Vector3.Dot(transform.forward,d.normalized)>.05f){if(g.Player.Damage(dmg,transform.position)){DamageTip.Show(g.Player.transform.position+Vector3.up*1.7f,"-"+dmg,new Color(1,.3f,.24f));if((Affix&8)!=0){Health=Mathf.Min(MaxHealth,Health+.8f);HitSpark.Burst(transform.position+Vector3.up*.9f,Vector3.up,new Color(.75f,.4f,1f),6);}}}HitSpark.Burst(transform.position+transform.forward,transform.forward,new Color(1,.35f,.18f),8);if(Kind==14){comboLeft=2;comboNext=RealmGame.I.Elapsed+.34f;}}
    }
    // Phase-2 boss mechanic: each realm guardian calls its own minions into the
    // arena every ~15s (capped so the fight never becomes an add-spam). Realm
@@ -104,7 +108,7 @@ namespace LostRealms {
    void SummonHeralds(){
     int alive=0;foreach(var e in RealmGame.I.Enemies)if(e&&!e.Boss&&e.Health>0&&Vector3.Distance(e.transform.position,transform.position)<16f)alive++;
     if(alive>=4){bossAddAt=RealmGame.I.Elapsed+3f;return;}
-    int addKind=RealmGame.I.Realm==0?16:RealmGame.I.Realm==1?17:3;
+    int addKind=RealmGame.I.Realm==0?16:RealmGame.I.Realm==1?17:RealmGame.I.Realm==2?3:18;
     var add=new GameObject("Herald of "+DisplayName);
     add.transform.SetParent(transform.parent);
     add.transform.position=Clamp(transform.position+(Quaternion.Euler(0,Random.Range(0,360),0)*Vector3.forward*2f)+Vector3.up*.1f);
@@ -112,7 +116,7 @@ namespace LostRealms {
     HitSpark.Burst(add.transform.position+Vector3.up*.7f,Vector3.up,RealmGame.I.Accent,16);
     Vfx.Play("ga_vfx_Implosion_01",add.transform.position+Vector3.up*.9f,Quaternion.identity,1f);
     Vfx.Play("ga_vfx_Portal_02",add.transform.position+Vector3.up*1.2f,Quaternion.identity,1f);
-    RealmGame.I.Tell(RealmGame.I.Realm==0?"The colossus calls its children…":RealmGame.I.Realm==1?"The titan's flame kindles…":"The guardian stirs the tempest…",2.5f);
+    RealmGame.I.Tell(RealmGame.I.Realm==0?"The colossus calls its children…":RealmGame.I.Realm==1?"The titan's flame kindles…":RealmGame.I.Realm==2?"The guardian stirs the tempest…":"The warden's embers breathe…",2.5f);
    }
    void Face(Vector3 p,float dt){Vector3 d=p-transform.position;d.y=0;if(d.sqrMagnitude>.01f)transform.rotation=Quaternion.Slerp(transform.rotation,Quaternion.LookRotation(d),dt*8);}
    void MoveTo(Vector3 p,float speed,float dt){Face(p,dt);Vector3 goal=Clamp(p);var player=RealmGame.I.Player;
@@ -128,7 +132,7 @@ namespace LostRealms {
   public void Hit(float damage,int power,bool elemental,Vector3 knockDir=default){
    if(Health<=0)return;
    RealmGame.I?.ComboHit();
-   bool weak=power>=0&&power<3&&Weakness[Mathf.Clamp(Kind,0,17)]==power;
+   bool weak=power>=0&&power<3&&Weakness[Mathf.Clamp(Kind,0,21)]==power;
    if(weak)elemental=true;
    if(Kind==5&&!elemental&&state!=State.Recover&&Vector3.Dot(transform.forward,(RealmGame.I.Player.transform.position-transform.position).normalized)>.5f){
     RealmGame.I.Tell("Shielded! Strike from behind or use a power.",1);
@@ -352,8 +356,8 @@ namespace LostRealms {
   void OnDestroy(){if(mat)Destroy(mat);}
   void Update(){
    var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing)return;
-   float t=g.Elapsed*(element==1?.65f:element==2?1.7f:1.1f);
-   for(int i=0;i<motes.Length;i++){if(!motes[i])continue;float a=t+i*2.0944f;motes[i].localPosition=new Vector3(Mathf.Cos(a)*radius,1f+Mathf.Sin(a*1.7f)*.34f,Mathf.Sin(a)*radius);motes[i].localRotation=Quaternion.Euler(t*80f+i*40f,t*120f,0);}
+float t=g.Elapsed*(element==1?.5f:element==2?1f:.8f);
+    for(int i=0;i<motes.Length;i++){if(!motes[i])continue;float a=t+i*2.0944f;motes[i].localPosition=new Vector3(Mathf.Cos(a)*radius,1f+Mathf.Sin(a*1.1f)*.34f,Mathf.Sin(a)*radius);motes[i].localRotation=Quaternion.Euler(t*40f+i*20f,t*60f,0);}
   }
  }
  // The new families are static showcase meshes (no skeleton), so the visual gets
@@ -365,8 +369,8 @@ namespace LostRealms {
   void Update(){
    if(!visual)return;var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing)return;
    float t=g.Elapsed+phase;
-   visual.localPosition=new Vector3(0,Mathf.Sin(t*1.6f)*.035f,0);
-   visual.localRotation=Quaternion.Euler(Mathf.Sin(t*.9f)*1.5f,facing+Mathf.Sin(t*.6f)*6f,0);
+visual.localPosition=new Vector3(0,Mathf.Sin(t*1.1f)*.02f,0);
+    visual.localRotation=Quaternion.Euler(Mathf.Sin(t*.7f)*1f,facing+Mathf.Sin(t*.45f)*3f,0);
    }
   }
   // Kind 15's mesh carries a real armature (15 bones, no Animator and no clips),
@@ -387,7 +391,7 @@ namespace LostRealms {
    public void Setup(CharacterVisual v,string uaL,string uaR,string wul,string wll,string wur,string wlr){
     visual=v;fUaL=uaL;fUaR=uaR;fWuL=wul;fWlL=wll;fWuR=wur;fWlR=wlr;
    }
-   static Transform FindDeep(Transform t,string n){
+   public static Transform FindDeep(Transform t,string n){
     if(!t)return null;if(t.name==n)return t;
     for(int i=0;i<t.childCount;i++){var f=FindDeep(t.GetChild(i),n);if(f)return f;}
     return null;
@@ -449,6 +453,70 @@ namespace LostRealms {
     var b=db[i];
     Quaternion parentWorld=b.parent?b.parent.rotation:transform.rotation;
     b.rotation=Quaternion.AngleAxis(c*Mathf.Rad2Deg,axis)*(parentWorld*drest[i]);
+   }
+  }
+  // The spider pack ships only a rig (35 bones), no animation takes. Its 8 legs
+  // are split into 4 mirrored Box chains under Dummy02; drive them procedurally
+  // with a metachronal travel wave (rear→front, alternating sides) — the same
+  // no-Animator approach as kinds 16/17, so idle flutter, walk scuttle and the
+  // attack lunge all read from the shared CurrentState, and death tip-over is
+  // untouched.
+  public class SpiderLimbMotion:MonoBehaviour {
+   CharacterVisual visual;Enemy enemy;
+   string[,] legs=new string[4,3]{{"Box09","Box10","Box11"},{"Box20","Box18","Box19"},{"Box25","Box22","Box23"},{"Box26","Box21","Box24"}};
+   string[,] mir=new string[4,3]{{"Box31","Box28","Box29"},{"Box35","Box32","Box36"},{"Box37","Box33","Box34"},{"Box38","Box27","Box30"}};
+   Transform[] lb;Quaternion[] lrest;float[] lcur;
+   Transform hub;Vector3 hubRest;
+   public void Setup(CharacterVisual v){visual=v;}
+   void Start(){
+    enemy=GetComponent<Enemy>();
+    if(!visual)return;
+    lb=new Transform[24];lrest=new Quaternion[24];lcur=new float[24];
+    int k=0;
+    for(int s=0;s<4;s++){
+     for(int j=0;j<3;j++){AddBone(ref k,legs[s,j]);AddBone(ref k,mir[s,j]);}
+    }
+    if(k<24)System.Array.Resize(ref lb,k);
+    hub=SkeletonLimbMotion.FindDeep(visual.transform,"Dummy02");
+    if(hub)hubRest=hub.localPosition;else hubRest=Vector3.zero;
+   }
+   void AddBone(ref int k,string n){
+    var b=visual?SkeletonLimbMotion.FindDeep(visual.transform,n):null;
+    if(!b)return;
+    lb[k]=b;lrest[k]=b.localRotation;k++;
+   }
+   void Update(){
+    if(lb==null||visual==null)return;var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing)return;
+    if(enemy&&enemy.Health<=0)return;
+    float t=g.Elapsed;
+    string st=visual.CurrentState;
+    bool attacking=st=="attack_1";
+    float amp=st=="walk"||attacking?1f:0.22f;
+    // Rear-to-front metachronal wave: each successive leg lags the one behind,
+    // and mirrored sides alternate so it reads as a true scuttle.
+    float wave=(attacking?5.2f:6.4f)*t;
+    for(int s=0;s<4;s++){
+     float ph=-(s*(Mathf.PI/2f))+(attacking?Mathf.PI*0.35f:0f);
+     for(int m=0;m<3;m++){
+      int i=s*3+m;
+      if(lb[i]==null)continue;
+      float delay=(m==0?0f:m==1?.22f:.4f);
+      float stride=(m==0?0.75f:m==1?.4f:-0.2f)*(attacking?1.35f:Mathf.Min(1f,0.4f+Mathf.Abs(Mathf.Sin(t*1.2f))*0.6f));
+      float ang=Mathf.Sin(wave+ph+delay)*stride*amp+m/3f*0.06f*Mathf.Sin(t*1.7f+ph);
+      Apply(i,ang*Mathf.Rad2Deg,transform.right,Time.deltaTime);
+      // Tip bones trail with the same wave plus a soft landing curl.
+      if(m==2)Apply(i,ang*Mathf.Rad2Deg*0.5f-0.08f,Vector3.up,Time.deltaTime);
+     }
+    }
+    if(hub)hub.localPosition=Vector3.Lerp(hub.localPosition,hubRest+Vector3.up*(Mathf.Sin(t*2.1f)*0.02f*amp),Mathf.Min(1f,Time.deltaTime*8f));
+   }
+   void Apply(int i,float target,Vector3 axis,float dt){
+    if(i<0||i>=lb.Length||!lb[i])return;
+    float c=lcur[i]+(target-lcur[i])*Mathf.Min(1f,dt*10f);
+    lcur[i]=c;
+    var b=lb[i];
+    Quaternion parentWorld=b.parent?b.parent.rotation:transform.rotation;
+    b.rotation=Quaternion.AngleAxis(c,axis)*(parentWorld*lrest[i]);
    }
   }
   }

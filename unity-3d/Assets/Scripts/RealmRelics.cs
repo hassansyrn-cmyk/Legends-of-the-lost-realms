@@ -66,9 +66,16 @@ namespace LostRealms {
   public static void Gem(Transform root,Color accent){
    var visual=root.gameObject.AddComponent<GemVisual>();visual.Accent=accent;
    var glow=Glow(accent);var highlight=Glow(Color.Lerp(accent,Color.white,.58f));
-   visual.Core=MeshObject("Faceted gem heart",root,GemCore,glow,Vector3.zero,Vector3.one).transform;
+   // BenjaTheMaker faceted diamond when available; procedural crystal fallback.
+   var model=Art.PickupModel("5SideDiamond",root,accent,.42f,glow);
+   if(model){
+    visual.Core=model.transform;
+    visual.GlowRenderers.AddRange(model.GetComponentsInChildren<Renderer>());
+   }else{
+    visual.Core=MeshObject("Faceted gem heart",root,GemCore,glow,Vector3.zero,Vector3.one).transform;
+    visual.GlowRenderers.Add(visual.Core.GetComponent<Renderer>());
+   }
    var inner=MeshObject("Gem inner light",visual.Core,GemCore,highlight,Vector3.zero,Vector3.one*.52f);visual.GlowRenderers.Add(inner.GetComponent<Renderer>());
-   visual.GlowRenderers.Add(visual.Core.GetComponent<Renderer>());
    var ring=MeshObject("Gem orbit halo",root,Halo,glow,Vector3.zero,Vector3.one*.52f).transform;ring.localRotation=Quaternion.Euler(62,0,0);visual.Halos.Add(ring);
    for(int i=0;i<4;i++){
     var shard=MeshObject("Orbiting gem shard",root,GemShard,glow,Vector3.zero,Vector3.one*(i%2==0?.72f:.58f)).transform;visual.Shards.Add(shard);visual.GlowRenderers.Add(shard.GetComponent<Renderer>());
@@ -107,13 +114,16 @@ namespace LostRealms {
   protected float Clock=>RealmGame.I?RealmGame.I.Elapsed:Time.time;
  }
 
- public sealed class GemVisual:RealmRelicVisual {
-  public Transform Core;public readonly List<Transform> Shards=new List<Transform>();public readonly List<Transform> Halos=new List<Transform>();
-  void Update(){
-   float t=Clock;float pulse=.72f+Mathf.Sin(t*5.4f)*.28f;
-   if(Core){Core.localRotation=Quaternion.Euler(0,t*128f,0);Core.localScale=Vector3.one*(.93f+pulse*.1f);}
-   for(int i=0;i<Shards.Count;i++)if(Shards[i]){float a=t*(1.35f+i*.11f)+i*Mathf.PI*2/Shards.Count;Shards[i].localPosition=new Vector3(Mathf.Cos(a)*.42f,Mathf.Sin(a*1.7f)*.13f,Mathf.Sin(a)*.42f);Shards[i].localRotation=Quaternion.Euler(t*92f+i*38f,t*70f,26);}
-   for(int i=0;i<Halos.Count;i++)if(Halos[i])Halos[i].localRotation=Quaternion.Euler(62,t*(52+i*18),0);
+  public sealed class GemVisual:RealmRelicVisual {
+   public Transform Core;public readonly List<Transform> Shards=new List<Transform>();public readonly List<Transform> Halos=new List<Transform>();
+   // Preserve the model's normalized base scale: PickupModel sizes the FBX to
+   // target height, and stomping localScale to ~1 here would render it HUGE.
+   Vector3 coreBase=Vector3.one;bool measured;
+   void Update(){
+float t=Clock;float pulse=.72f+Mathf.Sin(t*3.2f)*.28f;
+    if(Core){if(!measured){measured=true;coreBase=Core.localScale;}Core.localRotation=Quaternion.Euler(0,t*60f,0);Core.localScale=coreBase*(.93f+pulse*.1f);}
+    for(int i=0;i<Shards.Count;i++)if(Shards[i]){float a=t*(.8f+i*.07f)+i*Mathf.PI*2/Shards.Count;Shards[i].localPosition=new Vector3(Mathf.Cos(a)*.42f,Mathf.Sin(a*1f)*.13f,Mathf.Sin(a)*.42f);Shards[i].localRotation=Quaternion.Euler(t*45f+i*24f,t*40f,26);}
+    for(int i=0;i<Halos.Count;i++)if(Halos[i])Halos[i].localRotation=Quaternion.Euler(62,t*(30+i*10),0);
    SetGlow(.8f+pulse*.85f);
   }
  }
