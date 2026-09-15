@@ -11,6 +11,10 @@ out-tsc
 /build/
 /app/build/
 local.properties
+Temp/
+[Tt]emp/
+unity-3d/.utmp/
+unity-3d/Validation/*.log
 
 # dependencies
 node_modules

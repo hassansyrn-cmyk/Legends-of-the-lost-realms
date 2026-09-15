@@ -11,14 +11,14 @@ namespace LostRealms {
   public static void Diagnose(){
    var sb=new StringBuilder();
    sb.AppendLine("ALL-ROLES DIAGNOSIS "+System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-   string[] roles={"Goblin","Demon","Frost","Elemental","Caster","Flyer","Bomber","Summoner","Elite","Skeleton","BriarGoblin","EmberDemon","Spider","Footman","DogKnight","Heartwood","Sunscar","Whiteout"};
+   string[] roles={"Goblin","Demon","Frost","Elemental","Caster","Flyer","Bomber","Summoner","Elite","Skeleton","BriarGoblin","EmberDemon","Spider","Footman","DogKnight","Heartwood","Sunscar","Whiteout","LavaBoss"};
    foreach(var role in roles){
     sb.AppendLine("=="+role+"==");
     GameObject holder=null;
     try{
      holder=new GameObject("probe "+role);
      holder.transform.position=new Vector3(5,1,60);
-     float h=role=="Spider"?0.6f:(role=="Heartwood"||role=="Sunscar"||role=="Whiteout")?3.6f:1.65f;
+     float h=role=="Spider"?0.6f:(role=="Heartwood"||role=="Sunscar"||role=="Whiteout"||role=="LavaBoss")?3.6f:1.65f;
      var v=CharacterVisual.Create(role,holder.transform,h,Color.white);
      var renderers=v.transform.GetComponentsInChildren<Renderer>(true);
      sb.AppendLine("renderers="+renderers.Length+" smr="+v.transform.GetComponentsInChildren<SkinnedMeshRenderer>(true).Length+" animator="+(v.animator!=null)+" fallback="+v.UsesFallback);
@@ -31,9 +31,9 @@ namespace LostRealms {
      }else sb.AppendLine("WARN: no renderers at all");
      Transform model=v.transform.childCount>0?v.transform.GetChild(0):null;
      foreach(var st in new[]{"idle","walk","attack","death"}){
-      var clip=Resources.Load<AnimationClip>("Animations/"+role+"_"+st)??Resources.Load<AnimationClip>("Animations/Shared/"+st);
+      var clip=Resources.Load<AnimationClip>("Animations/"+role+"/"+st)??Resources.Load<AnimationClip>("Animations/"+role+"_"+st)??Resources.Load<AnimationClip>("Animations/Shared/"+st);
       if(!clip){sb.AppendLine("  "+st+": MISSING (no role clip, no shared fallback)");continue;}
-      string src=Resources.Load<AnimationClip>("Animations/"+role+"_"+st)!=null?"role":"shared";
+      string src=(Resources.Load<AnimationClip>("Animations/"+role+"/"+st)!=null||Resources.Load<AnimationClip>("Animations/"+role+"_"+st)!=null)?"role":"shared";
       var bindings=AnimationUtility.GetCurveBindings(clip);
       var seen=new HashSet<string>();
       int resolved=0,missing=0,curved=0;float maxRot=0f;

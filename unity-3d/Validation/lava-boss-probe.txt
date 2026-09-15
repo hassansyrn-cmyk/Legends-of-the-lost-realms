@@ -1,0 +1,15 @@
+Avatar valid; head above hips: True
+idle duration=4.03 armMotion=5.97 headY=2.71
+walk duration=1.43 armMotion=12.28 headY=2.76
+run duration=0.80 armMotion=22.97 headY=2.79
+slash duration=1.83 armMotion=8.16 headY=2.55
+overhead duration=1.20 armMotion=45.00 headY=2.77
+attack_1 duration=2.67 armMotion=76.94 headY=2.62
+attack_2 duration=2.27 armMotion=95.90 headY=2.68
+attack_3 duration=3.80 armMotion=38.01 headY=2.51
+charged duration=2.17 armMotion=55.98 headY=2.70
+roar duration=5.27 armMotion=27.17 headY=2.58
+flex duration=4.67 armMotion=66.87 headY=2.58
+death duration=4.40 armMotion=25.37 headY=2.71
+LAVA_BOSS_PROBE_PASSED
+Renders: Validation/LavaBoss-20260916-020907

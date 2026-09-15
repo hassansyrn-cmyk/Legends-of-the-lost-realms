@@ -1,6 +1,6 @@
 using UnityEngine;
 namespace LostRealms {
- public class Enemy:MonoBehaviour {
+ public partial class Enemy:MonoBehaviour {
   public int Kind;public bool Boss;public float Health,MaxHealth,Radius;public string DisplayName;public CharacterVisual Visual;
   Vector3 center,target,attackOrigin;Vector2 area;float timer,burnUntil,freezeUntil,burnTick;int phase=1,attackCount;float bossAddAt;enum State{Patrol,Notice,Windup,Attack,Recover,Dead}State state;GameObject warning;float baseY;
   Renderer[] skin;Material bodyMat;float flashUntil;Color flashColor;
@@ -22,7 +22,9 @@ namespace LostRealms {
   public void Configure(int kind,bool boss,Vector3 anchor,Vector2 island){Kind=kind;Boss=boss;center=anchor;area=island;baseY=transform.position.y;Radius=boss?1.1f:kind>=14?.7f:.5f;MaxHealth=(boss?24+RealmGame.I.Realm*8:3+RealmGame.I.Level*.3f)*(kind==14?2.7f:1f);Health=MaxHealth;
    if(boss)bossAddAt=RealmGame.I.Elapsed+11f;
     string[] roles={"Goblin","Demon","Goblin","Frost","Demon","Goblin","Elemental","Caster","Heartwood","Sunscar","Whiteout","Flyer","Bomber","Summoner","Elite","Skeleton","BriarGoblin","EmberDemon","Spider","Footman","DogKnight","DogKnight"};string role=roles[Mathf.Clamp(kind,0,21)];DisplayName=boss?new[]{"HEARTWOOD COLOSSUS","SUNSCAR TITAN","WHITEOUT GUARDIAN","EMBERFALL WARDEN"}[RealmGame.I.Realm]:role;
+   if(boss&&RealmGame.I.Realm==3)role="LavaBoss";
    Visual=CharacterVisual.Create(role,transform,boss?3.6f:kind==6?2.5f:kind==14?2.2f:kind==15?1.7f:kind==16?1.35f:kind==17?1.85f:kind==18?0.6f:kind==19?1.75f:kind==20?1.4f:1.65f,RealmGame.I.Accent);RealmGame.I.Enemies.Add(this);state=State.Patrol;timer=.5f;target=center;
+   if(IsLavaBoss)LavaBossWeapon.Attach(Visual);
     aerial=kind==11;if(aerial){transform.position+=Vector3.up*2.3f;baseY=transform.position.y;}
     skin=Visual?Visual.GetComponentsInChildren<Renderer>(true):null;
     if(skin!=null&&skin.Length>0)bodyMat=skin[0].material;
@@ -56,6 +58,7 @@ namespace LostRealms {
     if(bodyMat!=null&&RealmGame.I.Elapsed>=flashUntil)bodyMat.SetColor("_EmissionColor",Color.black);
    if(Boss){int next=Health<MaxHealth*.33f?3:Health<MaxHealth*.67f?2:1;if(next>phase){phase=next;game.Tell(DisplayName+" / PHASE "+phase);HitSpark.Burst(transform.position+Vector3.up*1.5f,Vector3.up,game.Accent,20);Vfx.Play("ga_vfx_Shockwave_01",transform.position+Vector3.up*1.5f,Quaternion.identity,1.7f);}}
     if(Boss&&phase>=2&&RealmGame.I.Elapsed>=bossAddAt){bossAddAt=RealmGame.I.Elapsed+15f;SummonHeralds();}
+   if(IsLavaBoss){UpdateLavaBoss(dt);return;}
    timer-=dt;Vector3 delta=game.Player.transform.position-transform.position;delta.y=0;float distance=delta.magnitude;bool sameHeight=Mathf.Abs(game.Player.transform.position.y-baseY)<3;
    switch(state){
     case State.Patrol:
@@ -125,6 +128,7 @@ namespace LostRealms {
   Vector3 Clamp(Vector3 p)=>new Vector3(Mathf.Clamp(p.x,center.x-area.x*.5f+Radius+.2f,center.x+area.x*.5f-Radius-.2f),baseY,Mathf.Clamp(p.z,center.z-area.y*.5f+Radius+.2f,center.z+area.y*.5f-Radius-.2f));
   public void Stun(float seconds){
    if(Health<=0)return;
+   if(IsLavaBoss){lavaRoaring=false;Visual.transform.localPosition=Vector3.zero;}
    state=State.Recover;timer=Mathf.Max(timer,seconds);comboLeft=0;ClearGlow();
    if(warning){Destroy(warning);warning=null;}
    Visual.Play("idle");
@@ -141,7 +145,7 @@ namespace LostRealms {
    }
    if(elemental){
     if(power==0){burnUntil=RealmGame.I.Elapsed+3;burnTick=RealmGame.I.Elapsed+.7f;}
-    if(power==1){freezeUntil=RealmGame.I.Elapsed+(Boss?.6f:2.2f);if(warning){var countdown=warning.GetComponent<CombatTelegraph>();if(countdown)countdown.HoldUntil(freezeUntil);}}
+    if(power==1){freezeUntil=RealmGame.I.Elapsed+(Boss?.6f:2.2f);if(IsLavaBoss)Stun(.6f);if(warning){var countdown=warning.GetComponent<CombatTelegraph>();if(countdown)countdown.HoldUntil(freezeUntil);}}
     if(power==2)transform.position=Clamp(transform.position+(transform.position-RealmGame.I.Player.transform.position).normalized*(Boss?1:2.5f));
    }
    // Physical knockback impulse
@@ -167,7 +171,7 @@ namespace LostRealms {
   void ApplyDamage(float amount){
    Health=Mathf.Max(0,Health-amount);
    if(Health<=0){
-    state=State.Dead;comboLeft=0;if(RealmGame.I.Trial)RealmGame.I.Trial.EnemyDefeated();ClearGlow();if(warning)Destroy(warning);Visual.Restart("death");
+    state=State.Dead;comboLeft=0;if(IsLavaBoss)Visual.transform.localPosition=Vector3.zero;if(RealmGame.I.Trial)RealmGame.I.Trial.EnemyDefeated();ClearGlow();if(warning)Destroy(warning);Visual.Restart("death");
     var collider=GetComponent<Collider>();if(collider)collider.enabled=false;
     RealmGame.I.Coins+=Boss?20:3;RealmGame.I.Sound("enemy_defeat");
     // Loot gems: bosses shower, the Elite mini-boss pays well, affixed elites
@@ -180,8 +184,9 @@ namespace LostRealms {
     ImpactMarks.Place(transform.position,.9f,Boss?new Color(.4f,.32f,.32f):new Color(.34f,.29f,.26f));
     if(Boss)Vfx.Play("ga_vfx_Explosion_01",transform.position+Vector3.up*1.4f,Quaternion.identity,1.7f);if(Boss)Vfx.Play("ga_vfx_MeteorRain_01",transform.position+Vector3.up*2f,Quaternion.identity,1.2f);
     if(Boss)RealmGame.I.Tell("Guardian restored. The realm gate is open.",5);
-    gameObject.AddComponent<EnemyDeathFall>().Setup(Boss?1.35f:1.05f);
-    Destroy(gameObject,2.5f);
+    float deathWait=IsLavaBoss?Mathf.Max(1.35f,Visual.ClipLength("death")):Boss?1.35f:1.05f;
+    gameObject.AddComponent<EnemyDeathFall>().Setup(deathWait);
+    if(!IsLavaBoss)Destroy(gameObject,2.5f);
    }
   }
   void OnDestroy(){if(RealmGame.I)RealmGame.I.Enemies.Remove(this);}

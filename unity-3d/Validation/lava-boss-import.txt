@@ -1,0 +1,18 @@
+Lava boss import
+Valid humanoid avatar: golem_from_glb_mixamo_readyAvatar
+idle <- mutant breathing idle.fbx | 4.033s
+walk <- Mutant Walking (1).fbx | 1.433s
+run <- Unarmed Run Forward.fbx | 0.800s
+attack_1 <- Mutant Swiping.fbx | 2.667s
+attack_2 <- Standing Melee Attack Downward.fbx | 2.267s
+attack_3 <- Jump Attack (2).fbx | 3.800s
+charged <- Great Sword Jump Attack.fbx | 2.167s
+jump <- Mutant Jumping.fbx | 3.167s
+death <- Dying (1).fbx | 4.400s
+roar <- mutant roaring.fbx | 5.267s
+flex <- Mutant Flexing Muscles (2).fbx | 4.667s
+slash <- Great Sword Slash.fbx | 1.833s
+overhead <- Great Sword Attack.fbx | 1.200s
+cast <- mutant idle.fbx | 14.033s
+Textures: golem_basecolor, golem_normal
+Mesh: tripo_node_af546222-2d03-4dbc-a844-fca0a089141b vertices=41405 bones=52

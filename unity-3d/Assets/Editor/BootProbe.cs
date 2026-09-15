@@ -21,7 +21,7 @@ namespace LostRealms {
     sb.AppendLine("game="+(RealmGame.I?"OK":"NULL"));
     var g=RealmGame.I;
     if(g){
-     for(int lvl=1;lvl<=4;lvl++){
+     foreach(int lvl in new[]{1,2,4,8,12,15,16}){
       try{g.LoadLevel(lvl);sb.AppendLine("LoadLevel "+lvl+" ok, screen="+g.Screen);}
       catch(System.Exception e){sb.AppendLine("LoadLevel "+lvl+" THREW "+e.GetType().Name+": "+e.Message);}
      }

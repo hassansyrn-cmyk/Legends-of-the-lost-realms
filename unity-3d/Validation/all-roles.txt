@@ -1,18 +1,20 @@
-ALL-ROLES DIAGNOSIS 2026-09-14 17:02:20
+ALL-ROLES DIAGNOSIS 2026-09-16 02:24:02
 ==Goblin==
 renderers=1 smr=1 animator=True fallback=False
-size=(1.63, 1.65, 0.72) center=(5.00, 1.83, 60.00) dist=0.83
-  idle [shared]: len=5.30s paths=1 resolved=1 missing=0 maxRot=2.3
-  walk [shared]: len=1.42s paths=1 resolved=1 missing=0 maxRot=0.9
-  attack [shared]: len=1.10s paths=1 resolved=1 missing=0 maxRot=1.3
-  death [shared]: len=3.43s paths=1 resolved=1 missing=0 maxRot=1.6
+size=(1.90, 1.65, 0.65) center=(5.00, 1.83, 60.00) dist=0.82
+  idle [role]: len=4.03s paths=1 resolved=1 missing=0 maxRot=0.5
+  WARN: clip is nearly static (T-pose suspect)
+  walk [role]: len=1.43s paths=1 resolved=1 missing=0 maxRot=0.6
+  attack [role]: len=2.43s paths=1 resolved=1 missing=0 maxRot=2.2
+  death [role]: len=3.43s paths=1 resolved=1 missing=0 maxRot=1.1
 ==Demon==
 renderers=1 smr=1 animator=True fallback=False
-size=(1.57, 1.65, 0.91) center=(5.00, 1.83, 60.00) dist=0.83
-  idle [shared]: len=5.30s paths=1 resolved=1 missing=0 maxRot=2.3
-  walk [shared]: len=1.42s paths=1 resolved=1 missing=0 maxRot=0.9
-  attack [shared]: len=1.10s paths=1 resolved=1 missing=0 maxRot=1.3
-  death [shared]: len=3.43s paths=1 resolved=1 missing=0 maxRot=1.6
+size=(2.40, 1.65, 0.74) center=(5.00, 1.83, 60.00) dist=0.83
+  idle [role]: len=4.03s paths=1 resolved=1 missing=0 maxRot=0.5
+  WARN: clip is nearly static (T-pose suspect)
+  walk [role]: len=1.43s paths=1 resolved=1 missing=0 maxRot=0.6
+  attack [role]: len=2.60s paths=1 resolved=1 missing=0 maxRot=1.7
+  death [role]: len=3.53s paths=1 resolved=1 missing=0 maxRot=1.1
 ==Frost==
 renderers=1 smr=1 animator=True fallback=False
 size=(1.48, 1.65, 0.88) center=(5.00, 1.83, 60.00) dist=0.83
@@ -35,33 +37,34 @@ size=(1.38, 1.65, 0.60) center=(5.00, 1.83, 60.00) dist=0.82
   attack [shared]: len=1.10s paths=1 resolved=1 missing=0 maxRot=1.3
   death [shared]: len=3.43s paths=1 resolved=1 missing=0 maxRot=1.6
 ==Flyer==
-renderers=7 smr=0 animator=True fallback=False
-size=(1.54, 1.65, 1.54) center=(5.00, 1.83, 60.00) dist=0.82
+renderers=1 smr=0 animator=True fallback=False
+size=(1.66, 1.65, 0.33) center=(5.00, 1.83, 60.00) dist=0.83
   idle [shared]: len=5.30s paths=1 resolved=1 missing=0 maxRot=2.3
   walk [shared]: len=1.42s paths=1 resolved=1 missing=0 maxRot=0.9
   attack [shared]: len=1.10s paths=1 resolved=1 missing=0 maxRot=1.3
   death [shared]: len=3.43s paths=1 resolved=1 missing=0 maxRot=1.6
 ==Bomber==
-renderers=9 smr=0 animator=True fallback=False
-size=(1.58, 1.65, 0.72) center=(5.00, 1.83, 60.00) dist=0.83
-  idle [shared]: len=5.30s paths=1 resolved=1 missing=0 maxRot=2.3
-  walk [shared]: len=1.42s paths=1 resolved=1 missing=0 maxRot=0.9
-  attack [shared]: len=1.10s paths=1 resolved=1 missing=0 maxRot=1.3
-  death [shared]: len=3.43s paths=1 resolved=1 missing=0 maxRot=1.6
+renderers=1 smr=1 animator=True fallback=False
+size=(1.79, 1.65, 0.82) center=(5.00, 1.83, 60.00) dist=0.83
+  idle [role]: len=4.03s paths=1 resolved=1 missing=0 maxRot=0.5
+  WARN: clip is nearly static (T-pose suspect)
+  walk [role]: len=1.43s paths=1 resolved=1 missing=0 maxRot=0.6
+  attack [role]: len=2.60s paths=1 resolved=1 missing=0 maxRot=1.6
+  death [role]: len=3.43s paths=1 resolved=1 missing=0 maxRot=1.1
 ==Summoner==
-renderers=7 smr=0 animator=True fallback=False
-size=(0.46, 1.65, 0.32) center=(5.00, 1.83, 60.00) dist=0.82
-  idle [shared]: len=5.30s paths=1 resolved=1 missing=0 maxRot=2.3
-  walk [shared]: len=1.42s paths=1 resolved=1 missing=0 maxRot=0.9
-  attack [shared]: len=1.10s paths=1 resolved=1 missing=0 maxRot=1.3
-  death [shared]: len=3.43s paths=1 resolved=1 missing=0 maxRot=1.6
+renderers=1 smr=1 animator=True fallback=False
+size=(1.95, 1.65, 0.75) center=(5.00, 1.83, 60.00) dist=0.83
+  idle [role]: len=1.80s paths=1 resolved=1 missing=0 maxRot=1.3
+  walk [role]: len=5.20s paths=1 resolved=1 missing=0 maxRot=1.2
+  attack [role]: len=2.27s paths=1 resolved=1 missing=0 maxRot=1.5
+  death [role]: len=3.60s paths=1 resolved=1 missing=0 maxRot=1.3
 ==Elite==
-renderers=10 smr=0 animator=True fallback=False
-size=(1.11, 1.65, 0.81) center=(5.00, 1.83, 60.00) dist=0.83
-  idle [shared]: len=5.30s paths=1 resolved=1 missing=0 maxRot=2.3
-  walk [shared]: len=1.42s paths=1 resolved=1 missing=0 maxRot=0.9
-  attack [shared]: len=1.10s paths=1 resolved=1 missing=0 maxRot=1.3
-  death [shared]: len=3.43s paths=1 resolved=1 missing=0 maxRot=1.6
+renderers=1 smr=1 animator=True fallback=False
+size=(1.75, 1.65, 0.67) center=(5.00, 1.83, 60.00) dist=0.83
+  idle [role]: len=1.70s paths=1 resolved=1 missing=0 maxRot=0.5
+  walk [role]: len=1.33s paths=1 resolved=1 missing=0 maxRot=0.8
+  attack [role]: len=4.67s paths=1 resolved=1 missing=0 maxRot=2.2
+  death [role]: len=1.53s paths=1 resolved=1 missing=0 maxRot=1.0
 ==Skeleton==
 renderers=3 smr=3 animator=True fallback=False
 size=(1.86, 1.65, 0.36) center=(5.00, 1.83, 60.00) dist=0.83
@@ -95,12 +98,10 @@ size=(1.36, 0.60, 1.43) center=(5.00, 1.30, 60.00) dist=0.30
 ==Footman==
 renderers=1 smr=1 animator=True fallback=False
 size=(1.13, 1.65, 1.24) center=(5.00, 1.83, 60.00) dist=0.83
-  idle [role]: len=1.00s paths=23 resolved=23 missing=0 maxRot=0.2
-  WARN: clip is nearly static (T-pose suspect)
-  walk [role]: len=1.33s paths=23 resolved=23 missing=0 maxRot=0.4
-  WARN: clip is nearly static (T-pose suspect)
-  attack [role]: len=1.33s paths=23 resolved=23 missing=0 maxRot=0.7
-  death [role]: len=1.00s paths=23 resolved=23 missing=0 maxRot=0.6
+  idle [role]: len=1.70s paths=1 resolved=1 missing=0 maxRot=0.5
+  walk [role]: len=1.33s paths=1 resolved=1 missing=0 maxRot=0.8
+  attack [role]: len=4.67s paths=1 resolved=1 missing=0 maxRot=2.2
+  death [role]: len=1.53s paths=1 resolved=1 missing=0 maxRot=1.0
 ==DogKnight==
 renderers=1 smr=1 animator=True fallback=False
 size=(1.92, 1.65, 1.34) center=(5.00, 1.83, 60.00) dist=0.83
@@ -117,18 +118,26 @@ size=(2.55, 3.60, 1.26) center=(5.00, 2.80, 60.00) dist=1.80
   death [shared]: len=3.43s paths=1 resolved=1 missing=0 maxRot=1.6
 ==Sunscar==
 renderers=1 smr=1 animator=True fallback=False
-size=(3.43, 3.60, 2.09) center=(5.00, 2.80, 60.00) dist=1.80
-  idle [shared]: len=5.30s paths=1 resolved=1 missing=0 maxRot=2.3
-  walk [shared]: len=1.42s paths=1 resolved=1 missing=0 maxRot=0.9
-  attack [shared]: len=1.10s paths=1 resolved=1 missing=0 maxRot=1.3
-  death [shared]: len=3.43s paths=1 resolved=1 missing=0 maxRot=1.6
+size=(3.74, 3.60, 1.70) center=(5.00, 2.80, 60.00) dist=1.80
+  idle [role]: len=13.27s paths=1 resolved=1 missing=0 maxRot=2.2
+  walk [role]: len=1.43s paths=1 resolved=1 missing=0 maxRot=0.6
+  attack [role]: len=2.47s paths=1 resolved=1 missing=0 maxRot=2.1
+  death [role]: len=3.43s paths=1 resolved=1 missing=0 maxRot=1.1
 ==Whiteout==
 renderers=1 smr=1 animator=True fallback=False
-size=(3.22, 3.60, 1.91) center=(5.00, 2.80, 60.00) dist=1.80
-  idle [shared]: len=5.30s paths=1 resolved=1 missing=0 maxRot=2.3
-  walk [shared]: len=1.42s paths=1 resolved=1 missing=0 maxRot=0.9
+size=(3.69, 3.60, 1.92) center=(5.00, 2.80, 60.00) dist=1.80
+  idle [role]: len=13.73s paths=1 resolved=1 missing=0 maxRot=1.5
+  walk [role]: len=1.40s paths=1 resolved=1 missing=0 maxRot=0.6
+  attack [role]: len=3.67s paths=1 resolved=1 missing=0 maxRot=1.7
+  death [role]: len=3.43s paths=1 resolved=1 missing=0 maxRot=1.1
+==LavaBoss==
+renderers=1 smr=1 animator=True fallback=False
+size=(3.36, 3.60, 1.64) center=(5.00, 2.80, 60.00) dist=1.80
+  idle [role]: len=4.03s paths=1 resolved=1 missing=0 maxRot=0.5
+  WARN: clip is nearly static (T-pose suspect)
+  walk [role]: len=1.43s paths=1 resolved=1 missing=0 maxRot=0.6
   attack [shared]: len=1.10s paths=1 resolved=1 missing=0 maxRot=1.3
-  death [shared]: len=3.43s paths=1 resolved=1 missing=0 maxRot=1.6
+  death [role]: len=4.40s paths=1 resolved=1 missing=0 maxRot=1.3
 ==Pickups @ (5,0.8,60)==
 Coin: childLocal=(0.00, 0.17, 0.00) childScale=(0.13, 0.13, 0.13)
 Coin: renderers=1 size=(0.34, 0.34, 0.08) dist=0.17

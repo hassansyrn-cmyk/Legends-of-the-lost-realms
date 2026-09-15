@@ -1,0 +1,54 @@
+=== ENEMY PACK INTEGRATION ===
+Role: Bomber | Avatar: Bomber_modelAvatar (human=True, valid=True)
+  Bake: Bomber_idle <- Bomber_idle.fbx (4.03s, loop=True)
+  Bake: Bomber_walk <- Bomber_walk.fbx (1.43s, loop=True)
+  Bake: Bomber_run <- Bomber_run.fbx (0.83s, loop=True)
+  Bake: Bomber_attack <- Bomber_attack.fbx (2.60s, loop=False)
+  Bake: Bomber_death <- Bomber_death.fbx (3.43s, loop=False)
+  Prefab built: Assets/Resources/Characters/Bomber.prefab
+Role: Summoner | Avatar: Summoner_modelAvatar (human=True, valid=True)
+  Bake: Summoner_idle <- Summoner_idle.fbx (1.80s, loop=True)
+  Bake: Summoner_walk <- Summoner_walk.fbx (5.20s, loop=True)
+  Bake: Summoner_attack <- Summoner_attack.fbx (2.27s, loop=False)
+  Bake: Summoner_death <- Summoner_death.fbx (3.60s, loop=False)
+  Prefab built: Assets/Resources/Characters/Summoner.prefab
+Role: Elite | Avatar: Elite_modelAvatar (human=True, valid=True)
+  Bake: Elite_idle <- Elite_idle.fbx (1.70s, loop=True)
+  Bake: Elite_walk <- Elite_walk.fbx (1.33s, loop=True)
+  Bake: Elite_run <- Elite_run.fbx (0.73s, loop=True)
+  Bake: Elite_attack <- Elite_attack.fbx (4.67s, loop=False)
+  Bake: Elite_death <- Elite_death.fbx (1.53s, loop=False)
+  Prefab built: Assets/Resources/Characters/Elite.prefab
+Role: Demon | Avatar: Demon_modelAvatar (human=True, valid=True)
+  Bake: Demon_idle <- Demon_idle.fbx (4.03s, loop=True)
+  Bake: Demon_walk <- Demon_walk.fbx (1.43s, loop=True)
+  Bake: Demon_run <- Demon_run.fbx (0.87s, loop=True)
+  Bake: Demon_attack <- Demon_attack.fbx (2.60s, loop=False)
+  Bake: Demon_death <- Demon_death.fbx (3.53s, loop=False)
+  Prefab built: Assets/Resources/Characters/Demon.prefab
+Role: Goblin | Avatar: Goblin_modelAvatar (human=True, valid=True)
+  Bake: Goblin_idle <- Goblin_idle.fbx (4.03s, loop=True)
+  Bake: Goblin_walk <- Goblin_walk.fbx (1.43s, loop=True)
+  Bake: Goblin_run <- Goblin_run.fbx (0.87s, loop=True)
+  Bake: Goblin_attack <- Goblin_attack.fbx (2.43s, loop=False)
+  Bake: Goblin_death <- Goblin_death.fbx (3.43s, loop=False)
+  Prefab built: Assets/Resources/Characters/Goblin.prefab
+Role: Whiteout | Avatar: Whiteout_modelAvatar (human=True, valid=True)
+  Bake: Whiteout_idle <- Whiteout_idle.fbx (13.73s, loop=True)
+  Bake: Whiteout_walk <- Whiteout_walk.fbx (1.40s, loop=True)
+  Bake: Whiteout_run <- Whiteout_run.fbx (0.87s, loop=True)
+  Bake: Whiteout_attack <- Whiteout_attack.fbx (3.67s, loop=False)
+  Bake: Whiteout_death <- Whiteout_death.fbx (3.43s, loop=False)
+  Prefab built: Assets/Resources/Characters/Whiteout.prefab
+Role: Sunscar | Avatar: Sunscar_modelAvatar (human=True, valid=True)
+  Bake: Sunscar_idle <- Sunscar_idle.fbx (13.27s, loop=True)
+  Bake: Sunscar_walk <- Sunscar_walk.fbx (1.43s, loop=True)
+  Bake: Sunscar_run <- Sunscar_run.fbx (0.87s, loop=True)
+  Bake: Sunscar_attack <- Sunscar_attack.fbx (2.47s, loop=False)
+  Bake: Sunscar_death <- Sunscar_death.fbx (3.43s, loop=False)
+  Prefab built: Assets/Resources/Characters/Sunscar.prefab
+  Flyer prefab built: Assets/Resources/Characters/Flyer.prefab
+  Footman_idle updated from Elite take
+  Footman_walk updated from Elite take
+  Footman_attack updated from Elite take
+  Footman_death updated from Elite take
