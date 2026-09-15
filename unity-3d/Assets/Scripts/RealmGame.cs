@@ -15,6 +15,7 @@ public static readonly string[] Realms={"VERDANT KINGDOM","BURNING DUNES","FROZE
   public WeaponDefinition CurrentWeapon=>WeaponCatalog.Get(Save.equippedWeapon);
   public Vector2 MoveInput; public bool JumpPressed,DashPressed,AttackPressed,AttackReleased,CastPressed,ParryPressed,SpellPressed,SpellReleased,GrapplePressed; public bool AttackHeld,SpellHeld,JumpHeld;
   public readonly List<Enemy> Enemies=new List<Enemy>(); public AudioSource Music,Sfx;
+  public RealmAudio Audio {get;private set;} public RealmTrials Trial {get;private set;}
   Transform worldRoot; GUIStyle title,titleC,label,small,button,center,big,smallC,tinyC; Texture2D pixel,circleFill,circleRing; readonly TouchRouter touch=new TouchRouter(); float yawInput,hitStopUntil,bossIntroUntil;
   public static readonly Color[] ElementColors={new Color(1f,.45f,.1f),new Color(.2f,.85f,1f),new Color(.2f,1f,.55f)};
   [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Boot(){
@@ -32,6 +33,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     Save.healthRank=Mathf.Clamp(Save.healthRank,0,3);Save.powerRank=Mathf.Clamp(Save.powerRank,0,3);Save.arsenalRank=Mathf.Clamp(Save.arsenalRank,0,3);
     Save.aetherRank=Mathf.Clamp(Save.aetherRank,0,3);Save.moxieRank=Mathf.Clamp(Save.moxieRank,0,3);Save.tempoRank=Mathf.Clamp(Save.tempoRank,0,3);Save.windRank=Mathf.Clamp(Save.windRank,0,3);
    Music=gameObject.AddComponent<AudioSource>(); Music.loop=true; Music.volume=.24f; Sfx=gameObject.AddComponent<AudioSource>(); Sfx.volume=.7f;
+   Audio=gameObject.AddComponent<RealmAudio>();Audio.Initialize(this);
    var cam=new GameObject("Adventure Camera").AddComponent<Camera>(); cam.tag="MainCamera"; cam.gameObject.AddComponent<AudioListener>(); cam.nearClipPlane=.25f; cam.farClipPlane=320; cam.fieldOfView=58; cam.gameObject.AddComponent<RealmPostFx>(); CameraRig=cam.gameObject.AddComponent<FollowCamera>();
    // Exactly one audio listener: silence any stray scene camera/listener so the
    // console spam and doubled audio cannot happen.
@@ -43,9 +45,11 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
   }
   public void Persist(){if(Testing)return;PlayerPrefs.SetString("LostRealms3D.v2",JsonUtility.ToJson(Save));PlayerPrefs.Save();}
   public void LoadLevel(int id){
+   if(Audio)Audio.ClearRunSounds();
    Time.timeScale=1; touch.Reset(); if(worldRoot){worldRoot.gameObject.SetActive(false);Destroy(worldRoot.gameObject);} Enemies.Clear(); Level=Mathf.Clamp(id,1,15); Realm=Level<=4?0:Level<=7?1:Level<=10?2:3; Coins=Gems=DamageTaken=EarnedStars=0; Elapsed=0; CheckpointActive=false;Combo=0;comboUntil=0;
    worldRoot=new GameObject("Realm "+Level+" - "+Titles[Level-1]).transform; World=worldRoot.gameObject.AddComponent<RealmWorld>();
    try{World.Build(Level,Realm);}catch(System.Exception e){Debug.LogError("LEVEL_BUILD_FAILED "+Level+": "+e);}
+   Trial=RealmTrials.Build(World,Level);
    GUI.enabled=true;
    var hero=new GameObject("Aster"); hero.transform.SetParent(worldRoot); hero.transform.position=World.Spawn; Player=hero.AddComponent<Hero>(); Checkpoint=World.Spawn;
    // Restore the camera only after the newly-created Hero Awake path completes.
@@ -80,18 +84,16 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    AttackPressed|=touch.BladePressed;AttackReleased|=touch.BladeReleased;AttackHeld|=touch.BladeHeld;ParryPressed|=touch.Parry;SpellPressed|=touch.Spell;SpellReleased|=touch.SpellReleased;SpellHeld|=touch.SpellHeld;yawInput+=touch.Yaw;
    MoveInput=Vector2.ClampMagnitude(MoveInput,1); CameraRig.Yaw+=yawInput;
   }
-  public void Pause(){Screen=GameScreen.Paused;Music.Pause();touch.Reset();}
-  public void Resume(){Screen=GameScreen.Playing;if(Save.music)Music.UnPause();}
+  public void Pause(){Screen=GameScreen.Paused;Audio.Suspend(true);touch.Reset();}
+  public void Resume(){Screen=GameScreen.Playing;Audio.Suspend(false);}
   void SetMusic(string key){
-   var clip=Resources.Load<AudioClip>("Audio/"+key);
-   if(Music.clip==clip&&Music.isPlaying)return;
-   Music.clip=clip;if(clip&&Save.music)Music.Play();else Music.Pause();
+   Audio.SetTrack(key);
   }
   void OnApplicationPause(bool paused){if(paused&&Screen==GameScreen.Playing)Pause();Persist();}
   void OnApplicationFocus(bool focused){if(!focused&&Screen==GameScreen.Playing)Pause();}
   public void Tell(string message,float seconds=3){Notice=message;noticeUntil=Time.unscaledTime+seconds;}
    public void ComboHit(){Combo++;comboUntil=Elapsed+1.1f;}
-  public void Sound(string name){if(!Save.sound)return;var clip=Resources.Load<AudioClip>("Audio/sfx_"+name);if(clip)Sfx.PlayOneShot(clip);}
+  public void Sound(string name){if(Audio)Audio.Play(name);}
   // A very short screen-wide time dip for perfect defense and counters. Physics
   // runs on the constant fixed step, so this slows the pacing, never the step.
   public void HitStop(float seconds,float scale=.12f){if(seconds<=0f)return;Time.timeScale=Mathf.Min(Time.timeScale,scale);float until=Time.unscaledTime+seconds;if(until>hitStopUntil)hitStopUntil=until;}
@@ -261,6 +263,12 @@ Panel(390,105,500,68);
     }
 
     MiniMap();
+    if(Trial){
+     Panel(28,280,300,112);
+     Text(42,290,270,22,Trial.Title,small);
+     Text(42,317,270,52,Trial.Status,small);
+     if(!Trial.Completed){float fraction=Trial.Active?(float)Trial.Count/Trial.Goal:0f;Box(new Rect(42,378,270,4),new Color(.15f,.23f,.26f));Box(new Rect(42,378,270*fraction,4),Accent);}
+    }
 
     if(Application.isMobilePlatform){
      // Virtual joystick: fixed base ring plus a knob tracking live input.
@@ -280,7 +288,7 @@ Panel(390,105,500,68);
      RoundButton(TouchRouter.ActionRect(1),"POWER","ELEMENT");
      RoundButton(TouchRouter.ActionRect(4),"PARRY","");
      RoundButton(TouchRouter.ActionRect(5),"SPELL","HOLD TO LOB");
-    }else Text(28,675,1200,28,"WASD Move   SPACE Jump (hold=higher)   SHIFT Dash / air-dash   G Grapple   J Blade (hold charge)   K Power   L Parry   F Spell (hold=lob)   Q Element",small);
+    }else Text(28,675,1200,28,"WASD Move   SPACE Double jump   SHIFT Dash / air-dash   G Grapple   J Blade (hold charge)   K Power   L Parry   F Spell (hold=lob)   Q Element",small);
     return;
    }
 
@@ -294,7 +302,7 @@ Panel(390,105,500,68);
     GUI.Label(new Rect(140,118,1000,120),"LEGENDS OF THE LOST REALMS",titleC);
     Box(new Rect(440,252,400,2),new Color(Accent.r,Accent.g,Accent.b,.55f));
     Box(new Rect(628,249,24,8),Accent);
-    Text(290,270,700,56,"Three realms. One lost heart.\nCross the floating isles, master elemental blades, restore the ancient portals.",smallC);
+    Text(290,270,700,56,"Four realms. One lost heart.\nCross the floating isles, master elemental blades, restore the ancient portals.",smallC);
     Text(290,340,700,22,$"JOURNEY  {Save.unlocked}/15 CHAPTERS      ✦      {TotalStars()}/45 STARS      ✦      {Save.coins} GOLD      ✦      {Save.gems} GEMS",tinyC);
     if(Button(410,382,460,64,"►   CONTINUE JOURNEY"))LoadLevel(Save.unlocked);
     if(Button(450,458,380,54,"REALM ATLAS"))Screen=GameScreen.Map;
@@ -329,7 +337,7 @@ Panel(390,105,500,68);
     Text(240,78,800,58,"Sanctuary & Blessings",title);
     Box(new Rect(240,145,800,2),new Color(Accent.r,Accent.g,Accent.b,.35f));
     if(Button(240,165,385,58,"MUSIC: "+(Save.music?"ENABLED":"MUTED"))){
-     Save.music=!Save.music;if(Save.music)Music.Play();else Music.Pause();Persist();
+     Save.music=!Save.music;Persist();
     }
     if(Button(655,165,385,58,"SOUND EFFECTS: "+(Save.sound?"ENABLED":"MUTED"))){
      Save.sound=!Save.sound;Persist();

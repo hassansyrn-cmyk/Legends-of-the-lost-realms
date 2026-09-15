@@ -1,0 +1,8 @@
+Build: Failed
+UTC: 2026-09-15T11:28:42.4619006Z
+Size bytes: 421728851
+Duration: 00:05:03.2195071
+Errors: 4
+
+Packaging blocker: Java PipeImpl cannot establish its local connection (UnixDomainSockets: Invalid argument: connect). Direct Gradle retries with IPv4 and a short socket directory also failed. No new quality APK was produced. Existing APK preserved. See quality-gradle-retry.log and quality-gradle-shortpipe.log.
+

@@ -1,5 +1,7 @@
 # Legends of the Lost Realms
 
+> The active game is now the Unity 3D edition: 15 chapters across four realms. See [Unity setup and controls](unity-3d/README.md) and the [quality upgrade plan](unity-3d/QUALITY_UPGRADE_PLAN.md). The historical 2D edition is documented below.
+
 **Legends of the Lost Realms** is an original landscape Android 2D fantasy platformer. This illustrated build contains ten short handcrafted-style levels across the Verdant Kingdom, Burning Dunes, and Frozen Peaks; local save data; touch controls; collectible coins and realm gems; fire, ice, and wind powers; checkpoints; upgrades; and three multi-phase boss encounters.
 
 ## Visual Rebirth v5.0.0

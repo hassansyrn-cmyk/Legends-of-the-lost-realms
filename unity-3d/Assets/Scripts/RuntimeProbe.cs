@@ -72,16 +72,22 @@ target.Hit(999,0,true);Check(target.Health==0,"Combat can defeat enemies");
     Check(g.Player.Health==0,"Third lethal without remaining wind charges triggers Defeat");
     g.Respawn();g.Resume();g.Player.Energy=40;float e0=g.Player.Energy;yield return new WaitForSeconds(1f);
     Check(g.Player.Energy>e0+14f,"Aether rank boosts energy regen above base 12/s rate");
-    string v2=PlayerPrefs.GetString("LostRealms3D.v2");Check(v2.Contains("\"version\":2"),"Save data persisted to v2 key with version field");
+    string v2=JsonUtility.ToJson(g.Save);Check(v2.Contains("\"version\":2"),"Save payload retains v2 version without changing user preferences in tests");
     float clock=g.Elapsed;g.Pause();yield return new WaitForSeconds(.3f);Check(Mathf.Approximately(clock,g.Elapsed),"Pause stops gameplay time");g.Resume();g.ActivateCheckpoint(g.World.Spawn+Vector3.forward);g.Player.Warp(g.World.Spawn+Vector3.forward*2);g.Respawn();Check(Vector3.Distance(g.Player.transform.position,g.Checkpoint)<.1f,"Respawn restores checkpoint position");
-   g.LoadLevel(1);yield return new WaitForSeconds(.6f);string outDir=Path.GetFullPath(Path.Combine(Application.dataPath,"../Validation"));Directory.CreateDirectory(outDir);Capture(outDir+"/Verdant.png");
-   g.LoadLevel(7);yield return new WaitForSeconds(.4f);g.Player.Warp(g.World.Route[g.World.Route.Count-1]+new Vector3(0,.1f,-5));yield return new WaitForSeconds(.4f);Capture(outDir+"/Sunscar.png");
-   g.LoadLevel(10);yield return new WaitForSeconds(.4f);g.Player.Warp(g.World.Route[g.World.Route.Count-1]+new Vector3(0,.1f,-5));yield return new WaitForSeconds(.4f);Capture(outDir+"/Whiteout.png");
-g.LoadLevel(15);yield return new WaitForSeconds(.4f);g.Player.Warp(g.World.Route[g.World.Route.Count-1]+new Vector3(0,.1f,-5));yield return new WaitForSeconds(.4f);Capture(outDir+"/Emberfall.png");
+   yield return QualityUpgradeChecks.Run(Check);
+   g.LoadLevel(1);yield return new WaitForSeconds(.6f);string outDir=Path.GetFullPath(Path.Combine(Application.dataPath,"../Validation"));Directory.CreateDirectory(outDir);string captureDir=Path.Combine(outDir,"QualityUpgrade-"+DateTime.UtcNow.ToString("yyyyMMdd-HHmmss"));Directory.CreateDirectory(captureDir);Capture(captureDir+"/Verdant.png");
+   g.LoadLevel(7);yield return new WaitForSeconds(.4f);g.Player.Warp(g.World.Route[g.World.Route.Count-1]+new Vector3(0,.1f,-5));yield return new WaitForSeconds(.4f);Capture(captureDir+"/Sunscar.png");
+   g.LoadLevel(10);yield return new WaitForSeconds(.4f);g.Player.Warp(g.World.Route[g.World.Route.Count-1]+new Vector3(0,.1f,-5));yield return new WaitForSeconds(.4f);Capture(captureDir+"/Whiteout.png");
+g.LoadLevel(15);yield return new WaitForSeconds(.4f);g.Player.Warp(g.World.Route[g.World.Route.Count-1]+new Vector3(0,.1f,-5));yield return new WaitForSeconds(.4f);Capture(captureDir+"/Emberfall.png");
     Check(runtimeErrors==0,"No runtime exceptions or errors during playthrough checks");
-    File.WriteAllText(outDir+"/runtime-results.txt",$"Passed {assertions} runtime assertions: movement, double jump, fifteen routes, models, four bosses, passive-contact damage, defeat, pause and checkpoint respawn.\n");Debug.Log("REALM_RUNTIME_TESTS_PASSED "+assertions);Quit(0);
+    File.WriteAllText(outDir+"/quality-render-path.txt",captureDir);File.WriteAllText(outDir+"/runtime-results.txt",$"Passed {assertions} runtime assertions: movement, double jump, fifteen routes, models, four bosses, passive-contact damage, defeat, pause and checkpoint respawn.\n");Debug.Log("REALM_RUNTIME_TESTS_PASSED "+assertions);Quit(0);
   }
-  static void Capture(string path){var camera=Camera.main;var rt=new RenderTexture(1280,720,24);camera.targetTexture=rt;camera.Render();RenderTexture.active=rt;var tex=new Texture2D(1280,720,TextureFormat.RGB24,false);tex.ReadPixels(new Rect(0,0,1280,720),0,0);tex.Apply();File.WriteAllBytes(path,tex.EncodeToPNG());RenderTexture.active=null;camera.targetTexture=null;Destroy(rt);Destroy(tex);}
+  static void Capture(string path){
+   var camera=Camera.main;var rt=new RenderTexture(1280,720,24);var previous=RenderTexture.active;var target=camera.targetTexture;Texture2D tex=null;
+   try{camera.targetTexture=rt;camera.Render();RenderTexture.active=rt;tex=new Texture2D(1280,720,TextureFormat.RGB24,false);tex.ReadPixels(new Rect(0,0,1280,720),0,0);tex.Apply();File.WriteAllBytes(path,tex.EncodeToPNG());}
+   catch(Exception e){Debug.LogError("REALM_CAPTURE_FAILED: "+e.Message);Quit(1);throw;}
+   finally{RenderTexture.active=previous;camera.targetTexture=target;Destroy(rt);if(tex)Destroy(tex);}
+  }
   static void Quit(int code){
 #if UNITY_EDITOR
    UnityEditor.EditorApplication.Exit(code);

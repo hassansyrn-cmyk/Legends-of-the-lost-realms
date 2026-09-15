@@ -7,6 +7,7 @@ namespace LostRealms {
  // time: if a prefab is missing, Play() silently returns null.
  public static class Vfx {
   static readonly Dictionary<string,GameObject> cache=new Dictionary<string,GameObject>();
+  static readonly Dictionary<Material,Material> repairedMaterials=new Dictionary<Material,Material>();
   static GameObject Load(string key){
    if(cache.TryGetValue(key,out var prefab)&&prefab)return prefab;
    prefab=Resources.Load<GameObject>("VFX/"+key);
@@ -15,6 +16,7 @@ namespace LostRealms {
   public static GameObject Play(string key,Vector3 pos,Quaternion rotation=default,float scale=1f,Transform parent=null){
    var prefab=Load(key);if(!prefab)return null;
    Transform host=parent?parent:(RealmGame.I?RealmGame.I.World.transform:null);
+   if(rotation==default)rotation=Quaternion.identity;
    var go=Object.Instantiate(prefab,pos,rotation,host);
    go.transform.localScale=Vector3.one*scale;
    Repair(go);
@@ -41,9 +43,9 @@ namespace LostRealms {
   public static void Repair(GameObject go){
    foreach(var ps in go.GetComponentsInChildren<ParticleSystem>(true)){
     var vel=ps.velocityOverLifetime;
-    if(vel.enabled){var c=vel.x;vel.y=c;vel.z=c;}
+    if(vel.enabled&&(vel.x.mode!=vel.y.mode||vel.x.mode!=vel.z.mode)){vel.x=PairedCurves(vel.x);vel.y=PairedCurves(vel.y);vel.z=PairedCurves(vel.z);}
     var force=ps.forceOverLifetime;
-    if(force.enabled){var f=force.x;force.y=f;force.z=f;}
+    if(force.enabled&&(force.x.mode!=force.y.mode||force.x.mode!=force.z.mode)){force.x=PairedCurves(force.x);force.y=PairedCurves(force.y);force.z=PairedCurves(force.z);}
    }
    foreach(var r in go.GetComponentsInChildren<Renderer>(true)){
     var m=r.sharedMaterial;if(!m)continue;
@@ -51,10 +53,19 @@ namespace LostRealms {
     if(n.StartsWith("Sprites/")||n.StartsWith("Unlit/"))continue;
     Texture tex=m.HasProperty("_MainTex")?m.GetTexture("_MainTex"):(m.HasProperty("_BaseMap")?m.GetTexture("_BaseMap"):null);
     Color col=m.HasProperty("_Color")?m.GetColor("_Color"):(m.HasProperty("_BaseColor")?m.GetColor("_BaseColor"):Color.white);
-    var nm=new Material(Shader.Find("Sprites/Default")){name=n+" -> sprite"};
-    nm.mainTexture=tex;nm.color=col;
-    r.material=nm;
+    if(!repairedMaterials.TryGetValue(m,out var nm)||!nm){
+     nm=new Material(Shader.Find("Sprites/Default")){name=n+" -> sprite"};
+     nm.mainTexture=tex;nm.color=col;repairedMaterials[m]=nm;
+    }
+    r.sharedMaterial=nm;
    }
+  }
+  static ParticleSystem.MinMaxCurve PairedCurves(ParticleSystem.MinMaxCurve source){
+   if(source.mode==ParticleSystemCurveMode.TwoCurves)return source;
+   if(source.mode==ParticleSystemCurveMode.Curve)return new ParticleSystem.MinMaxCurve(source.curveMultiplier,source.curve,source.curve);
+   float min=source.mode==ParticleSystemCurveMode.Constant?source.constant:source.constantMin;
+   float max=source.mode==ParticleSystemCurveMode.Constant?source.constant:source.constantMax;
+   return new ParticleSystem.MinMaxCurve(1f,AnimationCurve.Constant(0,1,min),AnimationCurve.Constant(0,1,max));
   }
   // Blade-slash effect matching the current element (0 ember / 1 frost / 2 gale).
   public static string Slash(int power){
@@ -63,11 +74,11 @@ namespace LostRealms {
   static float LifeOf(GameObject go,float scale){
    float longest=0f;
    foreach(var ps in go.GetComponentsInChildren<ParticleSystem>(true)){
-    var main=ps.main;float d=main.duration*Mathf.Max(ps.main.startLifetime.constantMax,ps.main.startLifetime.constantMin);
+    var main=ps.main;float d=main.startDelay.constantMax+main.duration+Mathf.Max(main.startLifetime.constantMax,main.startLifetime.curveMultiplier);
     if(ps.main.loop){d=2.5f;}
     if(d>longest)longest=d;
    }
-   return Mathf.Max(1.4f,longest+1.2f)*scale;
+   return Mathf.Clamp(longest+1.2f,1.4f,15f);
   }
  }
  public sealed class VfxKill:MonoBehaviour {

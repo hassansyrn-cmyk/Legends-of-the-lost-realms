@@ -1,0 +1,106 @@
+DogKnight animator=True avatar=DogKnightAvatar
+avatar=DogKnightAvatar human=True valid=True
+idle humanoid=True transformBindings=195 missing=0
+walk humanoid=True transformBindings=195 missing=0
+attack humanoid=True transformBindings=195 missing=0
+death humanoid=True transformBindings=195 missing=0
+bone DogKnight(Clone)
+bone polySurface1
+bone root
+bone pelvis
+bone Shield
+bone spine_01
+bone spine_02
+bone spine_03
+bone clavicle_l
+bone upperarm_l
+bone lowerarm_l
+bone hand_l
+bone index_01_l
+bone index_02_l
+bone index_03_l
+bone ring_01_l
+bone ring_02_l
+bone ring_03_l
+bone thumb_01_l
+bone thumb_02_l
+bone thumb_03_l
+bone ShoulderPad_l
+bone clavicle_r
+bone upperarm_r
+bone lowerarm_r
+bone hand_r
+bone index_01_r
+bone index_02_r
+bone index_03_r
+bone ring_01_r
+bone ring_02_r
+bone ring_03_r
+bone thumb_01_r
+bone thumb_02_r
+bone thumb_03_r
+bone ShoulderPad_r
+bone neck_01
+bone head
+bone Dog01_l
+bone Dog02_l
+bone Dog03_l
+bone Dog01_r
+bone Dog02_r
+bone Dog03_r
+bone Nose01
+bone Nose02
+bone Rabit01_l
+bone Rabit02_l
+bone Rabit03_l
+bone Rabit01_r
+bone Rabit02_r
+bone Rabit03_r
+bone Rat01_l
+bone Rat02_l
+bone Rat01_r
+bone Rat02_r
+bone Tail05
+bone Tail04
+bone Tail03
+bone Tail02
+bone Tail01
+bone thigh_l
+bone calf_l
+bone foot_l
+bone ball_l
+bone thigh_r
+bone calf_r
+bone foot_r
+bone ball_r
+bone Weapon
+Footman animator=False avatar=none
+idle humanoid=False transformBindings=176 missing=0
+walk humanoid=False transformBindings=176 missing=0
+attack humanoid=False transformBindings=176 missing=0
+death humanoid=False transformBindings=176 missing=0
+bone Footman(Clone)
+bone FootmanMesh
+bone Hips
+bone Shield
+bone Spear
+bone Spine
+bone Armor_L
+bone Armor_R
+bone Head
+bone Upper_Arm_L
+bone Lower_Arm_L
+bone Hand_L
+bone Index_Proximal_L
+bone Upper_Arm_R
+bone Rower_Arm_R
+bone Hand_R
+bone Index_Proximal_R
+bone Upper_Leg_L
+bone Lower_Leg_L
+bone Foot_L
+bone Toes_L
+bone Upper_Reg_R
+bone Rower_Reg_R
+bone Foot_R
+bone Toes_R

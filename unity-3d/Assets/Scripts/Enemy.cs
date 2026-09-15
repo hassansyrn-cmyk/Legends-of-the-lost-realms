@@ -72,10 +72,10 @@ namespace LostRealms {
        else if(distance>3.6f)MoveTo(game.Player.transform.position,chase,dt);
       }else if(distance>(Boss?4:2.1f))MoveTo(game.Player.transform.position,chase,dt);
       if(timer<=0&&(distance<(Boss?8:(Kind==7||Kind==13)?10:2.8f))){state=State.Windup;timer=Boss?1.05f-.1f*phase:(Kind==13?.9f:.7f);target=game.Player.transform.position;target.y=baseY;attackOrigin=transform.position;attackCount++;
-      warning=Art.Ring(Boss?target:transform.position+transform.forward*1.2f,Boss?2.2f+.3f*phase:1.15f,new Color(1,.18f,.13f),game.World.transform);Visual.Restart("attack");}
+      warning=CombatTelegraph.Create(Boss?target:transform.position+transform.forward*1.2f,Boss?2.2f+.3f*phase:1.15f,timer,game.World.transform);Visual.Restart("attack");}
      if(distance>22){state=State.Patrol;timer=0;}break;
     case State.Windup:
-     Visual.Play("attack");Glow(new Color(1,.2f,.13f),.51f);if(warning)warning.transform.localScale=Vector3.one*(1+Mathf.Sin(RealmGame.I.Elapsed*18)*.045f);if(timer<=0){ClearGlow();if(warning)Destroy(warning);state=State.Attack;timer=Boss?.45f:.25f;CommitAttack();}break;
+     Visual.Play("attack");Glow(new Color(1,.2f,.13f),.51f);if(timer<=0){ClearGlow();if(warning)Destroy(warning);state=State.Attack;timer=Boss?.45f:.25f;CommitAttack();}break;
     case State.Attack:
      if(timer<=0){state=State.Recover;timer=Boss?1.65f-.18f*phase:Kind==13?2.4f:1.1f;}break;
      case State.Recover:
@@ -125,7 +125,7 @@ namespace LostRealms {
   Vector3 Clamp(Vector3 p)=>new Vector3(Mathf.Clamp(p.x,center.x-area.x*.5f+Radius+.2f,center.x+area.x*.5f-Radius-.2f),baseY,Mathf.Clamp(p.z,center.z-area.y*.5f+Radius+.2f,center.z+area.y*.5f-Radius-.2f));
   public void Stun(float seconds){
    if(Health<=0)return;
-   state=State.Recover;timer=Mathf.Max(timer,seconds);ClearGlow();
+   state=State.Recover;timer=Mathf.Max(timer,seconds);comboLeft=0;ClearGlow();
    if(warning){Destroy(warning);warning=null;}
    Visual.Play("idle");
   }
@@ -141,7 +141,7 @@ namespace LostRealms {
    }
    if(elemental){
     if(power==0){burnUntil=RealmGame.I.Elapsed+3;burnTick=RealmGame.I.Elapsed+.7f;}
-    if(power==1)freezeUntil=RealmGame.I.Elapsed+(Boss?.6f:2.2f);
+    if(power==1){freezeUntil=RealmGame.I.Elapsed+(Boss?.6f:2.2f);if(warning){var countdown=warning.GetComponent<CombatTelegraph>();if(countdown)countdown.HoldUntil(freezeUntil);}}
     if(power==2)transform.position=Clamp(transform.position+(transform.position-RealmGame.I.Player.transform.position).normalized*(Boss?1:2.5f));
    }
    // Physical knockback impulse
@@ -151,6 +151,7 @@ namespace LostRealms {
    float real=damage*(Boss&&state==State.Recover?1.35f:1)*(weak?1.5f:1);
    if((Affix&16)!=0)real*=.75f;
    if(shield>0f){float absorbed=Mathf.Min(shield,real);shield-=absorbed;real-=absorbed;HitSpark.Burst(transform.position+Vector3.up*.9f,-k,new Color(.5f,.95f,1f),8);if(shield<=0f){Vfx.Play("ga_vfx_Implosion_01",transform.position+Vector3.up*1f,Quaternion.identity,.8f);RealmGame.I.Tell("Guard broken!",1);}}
+   if(real>0&&weak&&RealmGame.I.Trial)RealmGame.I.Trial.WeaknessHit();
    ApplyDamage(real);
    RealmGame.I.Sound("impact");
    RealmGame.I.CameraRig.Shake=Boss?.22f:.12f;
@@ -166,7 +167,7 @@ namespace LostRealms {
   void ApplyDamage(float amount){
    Health=Mathf.Max(0,Health-amount);
    if(Health<=0){
-    state=State.Dead;ClearGlow();if(warning)Destroy(warning);Visual.Restart("death");
+    state=State.Dead;comboLeft=0;if(RealmGame.I.Trial)RealmGame.I.Trial.EnemyDefeated();ClearGlow();if(warning)Destroy(warning);Visual.Restart("death");
     var collider=GetComponent<Collider>();if(collider)collider.enabled=false;
     RealmGame.I.Coins+=Boss?20:3;RealmGame.I.Sound("enemy_defeat");
     // Loot gems: bosses shower, the Elite mini-boss pays well, affixed elites
@@ -267,7 +268,7 @@ namespace LostRealms {
    public static void Create(Vector3 p,float radius,int damage,float delay){
     var go=new GameObject("Telegraphed strike");go.transform.SetParent(RealmGame.I.World.transform);go.transform.position=p;
     var z=go.AddComponent<StrikeZone>();z.radius=radius;z.damage=damage;z.delay=delay;
-    z.ring=Art.Ring(Vector3.up*.08f,radius,new Color(1,.15f,.1f),go.transform);
+    z.ring=CombatTelegraph.Create(p,radius,delay,go.transform);
    }
    void Update(){
     var g=RealmGame.I;if(g.Screen!=GameScreen.Playing)return;age+=Time.deltaTime;if(age<delay)return;

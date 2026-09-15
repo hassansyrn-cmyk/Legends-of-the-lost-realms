@@ -341,15 +341,14 @@ transform.Rotate(0,(Gem?12f:45f)*Time.deltaTime,0,Space.World);
     g.Player.Damage(1,transform.position);
   }
  }
- public class MovingIsland:MonoBehaviour {
-  public Vector3 Origin,Offset;Vector3 prior;
-  void Start(){prior=transform.position;}
-  void Update(){
+ [DefaultExecutionOrder(-10)] public class MovingIsland:MonoBehaviour {
+  public Vector3 Origin,Offset;float motionTime;
+  void FixedUpdate(){
    var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
-   transform.position=Origin+Offset*Mathf.Sin(RealmGame.I.Elapsed*.8f);
-   Vector3 delta=transform.position-prior;prior=transform.position;
-   if(g.Player&&g.Player.Grounded&&Physics.Raycast(g.Player.transform.position+Vector3.up*.1f,Vector3.down,out var hit,.5f)&&hit.transform.IsChildOf(transform))
-    g.Player.Controller.Move(delta);
+   bool riding=g.Player.Grounded&&Physics.Raycast(g.Player.transform.position+Vector3.up*.2f,Vector3.down,out var hit,.65f,~0,QueryTriggerInteraction.Ignore)&&hit.transform.IsChildOf(transform);
+   Vector3 prior=transform.position;motionTime+=Time.fixedDeltaTime;
+   transform.position=Origin+Offset*Mathf.Sin(motionTime*.8f);
+   if(riding)g.Player.CarryByPlatform(transform.position-prior);
   }
  }
 }

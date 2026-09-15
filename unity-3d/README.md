@@ -10,11 +10,15 @@ A third-person 3D rebuild of Aster's adventure for Unity 6000.6.0f1. The source 
 
 The runtime builds the 3D world from the route definitions in `Assets/Scripts/RealmWorld.cs`. An empty Main scene is intentional: `RealmGame` starts the game automatically.
 
-Desktop controls: WASD or arrow keys move; Space jumps and double-jumps; Shift dodges; J attacks (hold for a charged strike); K casts; Q switches Ember/Frost/Gale; right mouse drag orbits the camera; Escape pauses. Android uses the left touch region as a movement stick and the labelled action regions on the right. Drag above the action controls to orbit.
+Desktop controls: WASD or arrow keys move; Space jumps and double-jumps; Shift dodges; J attacks (hold for a charged strike); K casts elemental power; L parries; F fires a spell (hold to lob); G grapples; Q switches Ember/Frost/Gale; right mouse drag orbits the camera; Escape pauses. Android uses the left movement stick and six circular action buttons. Drag above the action controls to orbit.
 
 ## This edition
 
-Ten named stages span Verdant Kingdom, Burning Dunes and Frozen Peaks, with distinct routes and elevation profiles, optional gem islands, moving platforms, hazards, checkpoints, local progression, upgrades, three elemental powers and three guardian fights. Bosses have three health phases, attack warnings and recovery windows. Enemies inflict damage through committed attacks rather than passive contact. The original game's audio is reused.
+Fifteen named chapters span Verdant Kingdom, Burning Dunes, Frozen Peaks and Emberfall, with distinct routes and elevation profiles, optional gem islands, moving platforms, hazards, checkpoints, local progression, upgrades, three elemental powers and four guardian fights. The arsenal has 41 weapon definitions plus fists. Bosses have three health phases, attack warnings and recovery windows. Enemies inflict damage through committed attacks rather than passive contact. Realm exploration music and boss themes accompany the modernized sound effects.
+
+The quality upgrade adds optional shrine trials to exploration chapters: stand still inside the shrine ring on the second island to begin. Defeat enemies, collect three echoes, or exploit elemental weaknesses to earn bonus gold and gems. Finish the chapter to bank the rewards. Lighting, soft bloom, countdown warnings, music transitions and moving-platform carrying are updated together. See `QUALITY_UPGRADE_PLAN.md` for scope and remaining production milestones.
+
+Windows source safeguards: `powershell -File tools/verify-quality-upgrade.ps1` from the repository root. The Unity play-mode suite can be launched with `-batchmode -force-d3d11 -realmTest -executeMethod LostRealms.QualityValidation.Run`; it does not rebake Aster or write test progress into the player's save.
 
 This is the first 3D edition. Its level geometry, camera and combat have been redesigned for 3D. The original 2D game's wall climbing, story cards, full statistics and secret-cache systems have not all been ported. The new save schema and Android application ID are separate; existing Android progress is not automatically imported.
 

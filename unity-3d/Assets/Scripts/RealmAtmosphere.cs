@@ -18,15 +18,18 @@ namespace LostRealms {
   }
 
   void Build(){
-Color[] sunColors={new Color(1f,.9f,.67f),new Color(1f,.68f,.39f),new Color(.68f,.86f,1f),new Color(1f,.55f,.35f)};
+Color[] sunColors={new Color(1f,.94f,.82f),new Color(1f,.86f,.69f),new Color(.82f,.91f,1f),new Color(1f,.83f,.72f)};
     Color[] fogColors={new Color(.24f,.39f,.34f),new Color(.47f,.29f,.21f),new Color(.32f,.49f,.63f),new Color(.28f,.16f,.22f)};
-    Color[] skyColors={new Color(.27f,.48f,.42f),new Color(.64f,.39f,.26f),new Color(.37f,.57f,.72f),new Color(.32f,.18f,.25f)};
+    Color[] skyColors={new Color(.34f,.48f,.48f),new Color(.48f,.48f,.52f),new Color(.42f,.57f,.72f),new Color(.38f,.40f,.51f)};
    var sun=transform.Find("Realm sunlight");
-   if(sun){var light=sun.GetComponent<Light>();if(light){light.color=sunColors[realm];light.intensity=1.18f;light.shadows=LightShadows.Soft;light.shadowStrength=.72f;}}
+   if(sun){var light=sun.GetComponent<Light>();if(light){light.color=sunColors[realm];light.intensity=1.1f;light.shadows=LightShadows.Soft;light.shadowStrength=.58f;light.shadowBias=.045f;light.shadowNormalBias=.25f;}}
+   var fillObject=new GameObject("Cool realm fill");fillObject.transform.SetParent(transform,false);
+   fillObject.transform.localRotation=Quaternion.Euler(35,145,0);
+   var fill=fillObject.AddComponent<Light>();fill.type=LightType.Directional;fill.color=new Color(.65f,.79f,1f);fill.intensity=realm==3?.3f:.18f;fill.shadows=LightShadows.None;
    RenderSettings.ambientMode=AmbientMode.Trilight;
    RenderSettings.ambientSkyColor=Color.Lerp(skyColors[realm],Color.white,.28f);
    RenderSettings.ambientEquatorColor=Color.Lerp(fogColors[realm],Color.white,.12f);
-   RenderSettings.ambientGroundColor=Color.Lerp(fogColors[realm],Color.black,.48f);
+   RenderSettings.ambientGroundColor=Color.Lerp(skyColors[realm],Color.black,.32f);
    RenderSettings.fog=true;RenderSettings.fogMode=FogMode.ExponentialSquared;RenderSettings.fogColor=fogColors[realm];RenderSettings.fogDensity=realm==2?.0073f:realm==3?.012f:.0085f;
    QualitySettings.shadowDistance=28;QualitySettings.shadowResolution=ShadowResolution.Medium;QualitySettings.shadowProjection=ShadowProjection.StableFit;
    if(Camera.main){Camera.main.clearFlags=CameraClearFlags.Skybox;Camera.main.backgroundColor=fogColors[realm];Camera.main.allowHDR=false;}
@@ -35,8 +38,8 @@ Color[] sunColors={new Color(1f,.9f,.67f),new Color(1f,.68f,.39f),new Color(.68f
    if(realm==2)CreateRain();
    if(Camera.main){
     var post=Camera.main.GetComponent<RealmPostFx>();
-    Color[] postTints={new Color(.99f,1f,.98f),new Color(1.05f,.97f,.88f),new Color(.9f,.96f,1.08f),new Color(1.06f,.92f,.88f)};
-    float[] postBloom={.45f,.7f,.6f,.8f};
+    Color[] postTints={new Color(.99f,1f,.99f),new Color(1.02f,1f,.97f),new Color(.97f,1f,1.03f),new Color(1.01f,.99f,1.02f)};
+    float[] postBloom={.28f,.3f,.32f,.26f};
     if(post)post.Configure(postTints[realm],postBloom[realm]);
    }
    CreateAurora();CreateAmbience();
