@@ -18,7 +18,17 @@ namespace LostRealms {
    front.playOnAwake=back.playOnAwake=false;front.loop=back.loop=true;front.volume=back.volume=0;
    for(int i=0;i<voices.Length;i++){voices[i]=gameObject.AddComponent<AudioSource>();voices[i].playOnAwake=false;voices[i].spatialBlend=0;}
   }
-  AudioClip Clip(string key){if(!clips.TryGetValue(key,out var clip)){clip=Resources.Load<AudioClip>("Audio/"+key);clips[key]=clip;}return clip;}
+   AudioClip Clip(string key){
+    if(!clips.TryGetValue(key,out var clip)){
+     clip=Resources.Load<AudioClip>("Audio/"+key);
+     if(!clip&&key=="verdant_theme")clip=Resources.Load<AudioClip>("Audio/verdant_realm_theme");
+     if(!clip&&key=="desert_exploration_theme")clip=Resources.Load<AudioClip>("Audio/sunscar_realm_theme");
+     if(!clip&&key=="frozen_exploration_theme")clip=Resources.Load<AudioClip>("Audio/whiteout_realm_theme");
+     if(!clip&&key=="boss_battle_theme")clip=Resources.Load<AudioClip>("Audio/boss_fight_theme");
+     clips[key]=clip;
+    }
+    return clip;
+   }
   public void SetTrack(string key){
    if(track==key)return;
    var clip=Clip(key);if(!clip)return;
