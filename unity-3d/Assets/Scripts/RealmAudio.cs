@@ -18,49 +18,58 @@ namespace LostRealms {
    front.playOnAwake=back.playOnAwake=false;front.loop=back.loop=true;front.volume=back.volume=0;
    for(int i=0;i<voices.Length;i++){voices[i]=gameObject.AddComponent<AudioSource>();voices[i].playOnAwake=false;voices[i].spatialBlend=0;}
   }
-   AudioClip Clip(string key){
-    if(!clips.TryGetValue(key,out var clip)){
-     clip=Resources.Load<AudioClip>("Audio/"+key);
-     if(!clip&&key=="verdant_theme")clip=Resources.Load<AudioClip>("Audio/verdant_realm_theme");
-     if(!clip&&key=="desert_exploration_theme")clip=Resources.Load<AudioClip>("Audio/sunscar_realm_theme");
-     if(!clip&&key=="frozen_exploration_theme")clip=Resources.Load<AudioClip>("Audio/whiteout_realm_theme");
-     if(!clip&&key=="emberfall_exploration_theme")clip=Resources.Load<AudioClip>("Audio/lava_realm_theme");
-     if(!clip&&key=="lava_realm_theme")clip=Resources.Load<AudioClip>("Audio/emberfall_exploration_theme");
-     if(!clip&&key=="boss_battle_theme")clip=Resources.Load<AudioClip>("Audio/boss_fight_theme");
-     clips[key]=clip;
+    AudioClip Clip(string key){
+     if(!clips.TryGetValue(key,out var clip)){
+      if(key=="sfx_boss"||key=="sfx_boss_roar"){
+       int r=game?game.Realm:0;
+       string[] roars=new[]{"boss_heartwood_roar","boss_sunscar_roar","boss_whiteout_roar","boss_lavaboss_roar"};
+       if(r>=0&&r<roars.Length)clip=Resources.Load<AudioClip>("Audio/sfx_"+roars[r]);
+       if(!clip)clip=Resources.Load<AudioClip>("Audio/sfx_boss");
+      }else{
+       clip=Resources.Load<AudioClip>("Audio/"+key);
+       if(!clip&&key=="sfx_weapon")clip=Resources.Load<AudioClip>("Audio/sfx_weapon_pickup");
+       if(!clip&&key=="sfx_upgrade")clip=Resources.Load<AudioClip>("Audio/sfx_weapon_pickup");
+       if(!clip&&key=="verdant_theme")clip=Resources.Load<AudioClip>("Audio/verdant_realm_theme");
+       if(!clip&&key=="desert_exploration_theme")clip=Resources.Load<AudioClip>("Audio/sunscar_realm_theme");
+       if(!clip&&key=="frozen_exploration_theme")clip=Resources.Load<AudioClip>("Audio/whiteout_realm_theme");
+       if(!clip&&key=="emberfall_exploration_theme")clip=Resources.Load<AudioClip>("Audio/lava_realm_theme");
+       if(!clip&&key=="lava_realm_theme")clip=Resources.Load<AudioClip>("Audio/emberfall_exploration_theme");
+       if(!clip&&key=="boss_battle_theme")clip=Resources.Load<AudioClip>("Audio/boss_fight_theme");
+      }
+      clips[key]=clip;
+     }
+     return clip;
     }
-    return clip;
+   public void SetTrack(string key){
+    if(track==key)return;
+    var clip=Clip(key);if(!clip)return;
+    track=key;var previous=front;front=back;back=previous;game.Music=front;
+    backStart=back.volume;frontStart=0;front.Stop();front.clip=clip;front.volume=0;blend=0;
+    front.mute=!game.Save.music;front.Play();if(suspended)front.Pause();
    }
-  public void SetTrack(string key){
-   if(track==key)return;
-   var clip=Clip(key);if(!clip)return;
-   track=key;var previous=front;front=back;back=previous;game.Music=front;
-   backStart=back.volume;frontStart=0;front.Stop();front.clip=clip;front.volume=0;blend=0;
-   front.mute=!game.Save.music;front.Play();if(suspended)front.Pause();
-  }
-  public void Suspend(bool value){
-   if(suspended==value)return;suspended=value;
-   if(value){front.Pause();back.Pause();foreach(var voice in voices)voice.Pause();}
-   else {front.UnPause();back.UnPause();foreach(var voice in voices)voice.UnPause();}
-  }
-  public void Play(string name){
-   if(!game.Save.sound)return;
-   float now=Time.unscaledTime;
-   bool frequent=name=="step"||name=="coin"||name=="impact"||name=="enemy_warning";
-   float spacing=name=="step"?.12f:frequent?.055f:.025f;
-   if(lastPlayed.TryGetValue(name,out float last)&&now-last<spacing)return;
-   var clip=Clip("sfx_"+name);if(!clip)return;lastPlayed[name]=now;
-   int priority=name=="hurt"||name=="defeat"||name=="complete"||name=="checkpoint"||name=="upgrade"?3:frequent?1:2;
-   int slot=-1;
-   for(int i=0;i<voices.Length;i++)if(!voices[i].isPlaying){slot=i;break;}
-   if(slot<0){for(int i=0;i<voices.Length;i++)if(priorities[i]<priority&&(slot<0||priorities[i]<priorities[slot]))slot=i;}
-   if(slot<0)return;
-   var voice=voices[slot];voice.Stop();voice.clip=clip;priorities[slot]=priority;
-   bool vary=frequent||name=="blade"||name=="enemy_dash"||name=="enemy_defeat";
-   voice.pitch=vary?.94f+(float)variation.NextDouble()*.12f:1f;
-   voice.volume=(name=="step"?.30f:name=="enemy_warning"?.42f:priority==3?.78f:.62f)*(vary?.92f+(float)variation.NextDouble()*.08f:1f);
-   voice.priority=priority==3?48:priority==2?96:160;voice.Play();
-  }
+   public void Suspend(bool value){
+    if(suspended==value)return;suspended=value;
+    if(value){front.Pause();back.Pause();foreach(var voice in voices)voice.Pause();}
+    else {front.UnPause();back.UnPause();foreach(var voice in voices)voice.UnPause();}
+   }
+   public void Play(string name){
+    if(!game.Save.sound)return;
+    float now=Time.unscaledTime;
+    bool frequent=name=="step"||name=="coin"||name=="impact"||name=="enemy_warning";
+    float spacing=name=="step"?.12f:frequent?.055f:.025f;
+    if(lastPlayed.TryGetValue(name,out float last)&&now-last<spacing)return;
+    var clip=Clip("sfx_"+name);if(!clip)return;lastPlayed[name]=now;
+    int priority=name=="hurt"||name=="defeat"||name=="complete"||name=="checkpoint"||name=="upgrade"||name.StartsWith("boss")||name=="weapon_pickup"?3:frequent?1:2;
+    int slot=-1;
+    for(int i=0;i<voices.Length;i++)if(!voices[i].isPlaying){slot=i;break;}
+    if(slot<0){for(int i=0;i<voices.Length;i++)if(priorities[i]<priority&&(slot<0||priorities[i]<priorities[slot]))slot=i;}
+    if(slot<0)return;
+    var voice=voices[slot];voice.Stop();voice.clip=clip;priorities[slot]=priority;
+    bool vary=frequent||name=="blade"||name=="enemy_dash"||name=="enemy_defeat"||name=="player_dash";
+    voice.pitch=vary?.94f+(float)variation.NextDouble()*.12f:1f;
+    voice.volume=(name.StartsWith("boss")?.85f:name=="step"?.32f:name=="enemy_warning"?.42f:priority==3?.78f:.62f)*(vary?.92f+(float)variation.NextDouble()*.08f:1f);
+    voice.priority=priority==3?48:priority==2?96:160;voice.Play();
+   }
   public void ClearRunSounds(){foreach(var voice in voices)voice.Stop();lastPlayed.Clear();}
   void Update(){
    if(!game)return;

@@ -101,7 +101,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
   public void EquipWeapon(WeaponId id){
    Save.equippedWeapon=(int)id;Persist();
    if(Player){EquippedWeapon.Equip(Player,id);Vfx.Play("ga_vfx_Sparks_01",Player.transform.position+Vector3.up*1.2f,Quaternion.identity,.9f);}
-   var weapon=CurrentWeapon;Sound("upgrade");Tell("EQUIPPED  "+weapon.Name+"  /  "+weapon.Summary,4.5f);
+   var weapon=CurrentWeapon;Sound("weapon_pickup");Tell("EQUIPPED  "+weapon.Name+"  /  "+weapon.Summary,4.5f);
   }
   public void ActivateCheckpoint(Vector3 position){Checkpoint=position;CheckpointActive=true;Sound("checkpoint");Tell("Checkpoint restored. Your trail is safe.");}
   public void Respawn(){Player.Warp(Checkpoint);Player.Health=Player.MaxHealth;Player.Energy=100;Sound("respawn");Vfx.Play("ga_vfx_Portal_01",Checkpoint,Quaternion.identity,1.1f);Tell("Returned to the checkpoint.");}

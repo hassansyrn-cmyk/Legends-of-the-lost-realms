@@ -9,7 +9,7 @@ namespace LostRealms {
    if(lavaPhase!=phase){
     lavaPhase=phase;if(warning)Destroy(warning);ClearGlow();Visual.transform.localPosition=Vector3.zero;
     state=State.Recover;timer=phase==1?2f:2.4f;lavaRoaring=true;
-    Visual.PlayBossAction(phase==3?"flex":"roar",timer);return;
+    Visual.PlayBossAction(phase==3?"flex":"roar",timer);g.Sound("boss_roar");return;
    }
    timer-=dt;
    Vector3 delta=g.Player.transform.position-transform.position;delta.y=0;
