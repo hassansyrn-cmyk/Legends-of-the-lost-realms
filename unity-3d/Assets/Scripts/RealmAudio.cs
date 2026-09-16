@@ -24,6 +24,8 @@ namespace LostRealms {
      if(!clip&&key=="verdant_theme")clip=Resources.Load<AudioClip>("Audio/verdant_realm_theme");
      if(!clip&&key=="desert_exploration_theme")clip=Resources.Load<AudioClip>("Audio/sunscar_realm_theme");
      if(!clip&&key=="frozen_exploration_theme")clip=Resources.Load<AudioClip>("Audio/whiteout_realm_theme");
+     if(!clip&&key=="emberfall_exploration_theme")clip=Resources.Load<AudioClip>("Audio/lava_realm_theme");
+     if(!clip&&key=="lava_realm_theme")clip=Resources.Load<AudioClip>("Audio/emberfall_exploration_theme");
      if(!clip&&key=="boss_battle_theme")clip=Resources.Load<AudioClip>("Audio/boss_fight_theme");
      clips[key]=clip;
     }

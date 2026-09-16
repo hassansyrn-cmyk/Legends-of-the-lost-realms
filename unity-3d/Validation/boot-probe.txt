@@ -12013,6 +12013,54 @@ Destroying an object in edit mode destroys it permanently
 Destroying an object in edit mode destroys it permanently
 [Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
 [Error] Realm surface: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
 [Error] CurbNorth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
@@ -14848,6 +14896,54 @@ Destroying an object in edit mode destroys it permanently
 Destroying an object in edit mode destroys it permanently
 [Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
 [Error] Realm surface: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
 [Error] CurbNorth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
@@ -15431,277 +15527,6 @@ Destroying an object in edit mode destroys it permanently
 Destroying an object in edit mode destroys it permanently
 [Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
-[Error] Realm surface: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CurbNorth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CurbSouth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CurbEast: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CurbWest: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CliffShelf: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] RockKeel: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] FloatingKeystone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] IceShard: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] IceShard: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] IceShard: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] IceShard: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Realm surface: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CurbNorth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CurbSouth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CurbEast: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CurbWest: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CliffShelf: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] RockKeel: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] FloatingKeystone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
-[Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Realm surface: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CurbNorth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CurbSouth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CurbEast: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CurbWest: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CliffShelf: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] RockKeel: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] FloatingKeystone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] IceShard: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] IceShard: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] IceShard: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] IceShard: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
 [Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
 [Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
@@ -15749,31 +15574,6 @@ Destroying an object in edit mode destroys it permanently
 [Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
 [Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
-[Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
 [Error] Realm surface: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
@@ -15973,6 +15773,350 @@ Destroying an object in edit mode destroys it permanently
 [Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
 [Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Realm surface: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CurbNorth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CurbSouth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CurbEast: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CurbWest: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CliffShelf: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] RockKeel: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] FloatingKeystone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] IceShard: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] IceShard: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] IceShard: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] IceShard: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+[Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Realm surface: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CurbNorth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CurbSouth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CurbEast: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CurbWest: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CliffShelf: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] RockKeel: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] FloatingKeystone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] IceShard: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] IceShard: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] IceShard: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] IceShard: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Realm surface: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CurbNorth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CurbSouth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CurbEast: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CurbWest: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CliffShelf: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] RockKeel: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] FloatingKeystone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+[Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
 [Error] Realm surface: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
@@ -18265,6 +18409,54 @@ Destroying an object in edit mode destroys it permanently
 Destroying an object in edit mode destroys it permanently
 [Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
 [Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
 [Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
@@ -18760,6 +18952,54 @@ Destroying an object in edit mode destroys it permanently
 Destroying an object in edit mode destroys it permanently
 [Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
 [Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
 [Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
@@ -18856,302 +19096,6 @@ Destroying an object in edit mode destroys it permanently
 [Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
 [Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Realm surface: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CurbNorth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CurbSouth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CurbEast: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CurbWest: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CliffShelf: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] RockKeel: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] FloatingKeystone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] EmberHotStone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] EmberHotStone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] EmberHotStone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] EmberHotStone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Realm surface: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CurbNorth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CurbSouth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CurbEast: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CurbWest: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CliffShelf: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] RockKeel: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] FloatingKeystone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
-[Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Realm surface: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CurbNorth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CurbSouth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CurbEast: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CurbWest: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] CliffShelf: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] RockKeel: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] FloatingKeystone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] EmberHotStone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] EmberHotStone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] EmberHotStone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] EmberHotStone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
-[Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
 [Error] Realm surface: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
@@ -19304,7 +19248,37 @@ Destroying an object in edit mode destroys it permanently
 Destroying an object in edit mode destroys it permanently
 [Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+[Error] Realm surface: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CurbNorth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CurbSouth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CurbEast: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CurbWest: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CliffShelf: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] RockKeel: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] FloatingKeystone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] EmberHotStone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] EmberHotStone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] EmberHotStone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] EmberHotStone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
 [Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
@@ -19351,6 +19325,224 @@ Destroying an object in edit mode destroys it permanently
 [Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
 [Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+[Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Realm surface: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CurbNorth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CurbSouth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CurbEast: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CurbWest: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CliffShelf: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] RockKeel: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] FloatingKeystone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] EmberHotStone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] EmberHotStone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] EmberHotStone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Realm crystal: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] EmberHotStone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Realm surface: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CurbNorth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CurbSouth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CurbEast: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CurbWest: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] CliffShelf: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] RockKeel: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] FloatingKeystone: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+[Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
 [Error] Realm surface: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
@@ -21343,54 +21535,6 @@ Destroying an object in edit mode destroys it permanently
 Destroying an object in edit mode destroys it permanently
 [Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
 [Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
 [Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
@@ -21552,54 +21696,6 @@ Destroying an object in edit mode destroys it permanently
 Destroying an object in edit mode destroys it permanently
 [Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
 [Error] Realm surface: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
 [Error] CurbNorth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
@@ -21734,54 +21830,6 @@ Destroying an object in edit mode destroys it permanently
 [Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
 [Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
 [Error] Realm surface: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
@@ -23698,6 +23746,54 @@ Destroying an object in edit mode destroys it permanently
 Destroying an object in edit mode destroys it permanently
 [Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
 [Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
 [Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
@@ -23859,6 +23955,54 @@ Destroying an object in edit mode destroys it permanently
 Destroying an object in edit mode destroys it permanently
 [Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
 [Error] Realm surface: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
 [Error] CurbNorth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
@@ -23994,54 +24138,6 @@ Destroying an object in edit mode destroys it permanently
 Destroying an object in edit mode destroys it permanently
 [Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
-[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
-Destroying an object in edit mode destroys it permanently
 [Error] Realm surface: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
 [Error] CurbNorth: Destroy may not be called from edit mode! Use DestroyImmediate instead.
@@ -24192,6 +24288,54 @@ Destroying an object in edit mode destroys it permanently
 [Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
 [Error] Cube: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+[Error] Rune: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
 [Error] Thorn: Destroy may not be called from edit mode! Use DestroyImmediate instead.
 Destroying an object in edit mode destroys it permanently
