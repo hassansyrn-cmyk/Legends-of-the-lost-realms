@@ -145,7 +145,7 @@ SkinnedMeshRenderer:
   m_MaskInteraction: 0
   serializedVersion: 2
   m_Quality: 0
-  m_UpdateWhenOffscreen: 0
+  m_UpdateWhenOffscreen: 1
   m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: 733286170092225602, guid: b39731a4ecad1b941bb2eaacd501f614, type: 3}
   m_Bones:
@@ -707,7 +707,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: b39731a4ecad1b941bb2eaacd501f614, type: 3}
   m_Controller: {fileID: 0}
-  m_CullingMode: 1
+  m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0

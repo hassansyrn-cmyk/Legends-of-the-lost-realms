@@ -583,7 +583,7 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
     if(role=="Aster"||role=="LavaBoss")v.clips[i]=Resources.Load<AnimationClip>("Animations/"+role+"/"+Names[i]);
     else{
      string legacy=Names[i].StartsWith("attack_")?"attack":Names[i]=="charged"?"attack":Names[i]=="run"?"walk":Names[i];
-     v.clips[i]=Resources.Load<AnimationClip>("Animations/"+role+"_"+Names[i])??Resources.Load<AnimationClip>("Animations/"+role+"_"+legacy)??Resources.Load<AnimationClip>("Animations/Shared/"+legacy);
+     v.clips[i]=Resources.Load<AnimationClip>("Animations/"+role+"/"+Names[i])??Resources.Load<AnimationClip>("Animations/"+role+"_"+Names[i])??Resources.Load<AnimationClip>("Animations/"+role+"_"+legacy)??Resources.Load<AnimationClip>("Animations/Shared/"+legacy);
     }
    }
    if(role=="Aster"&&System.Array.Exists(v.clips,c=>c==null))throw new System.Exception("Aster Phase 1 animation set is incomplete");

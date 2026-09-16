@@ -86,13 +86,17 @@ namespace LostRealms {
      continue;
     }
 
-    ConfigureModel(modelPath, null);
-    var avatar = AssetDatabase.LoadAllAssetsAtPath(modelPath).OfType<Avatar>().FirstOrDefault(a => a.isValid);
+    ConfigureModel(modelPath);
+    var avatar = AssetDatabase.LoadAllAssetsAtPath(modelPath).OfType<Avatar>().FirstOrDefault(a => a.isHuman && a.isValid);
+    if (!avatar) avatar = AssetDatabase.LoadAllAssetsAtPath(modelPath).OfType<Avatar>().FirstOrDefault(a => a.isValid);
     if (!avatar) {
      report.AppendLine("ERROR " + spec.role + ": failed to create avatar from " + modelPath);
      continue;
     }
     report.AppendLine("Role: " + spec.role + " | Avatar: " + avatar.name + " (human=" + avatar.isHuman + ", valid=" + avatar.isValid + ")");
+
+    float rootY = 0f;
+    Quaternion rootQ = Quaternion.identity;
 
     foreach (var take in spec.takes) {
      string state = take.state;
@@ -104,21 +108,37 @@ namespace LostRealms {
       continue;
      }
 
-     ConfigureTake(takePath, avatar);
+     ConfigureTake(takePath, avatar, loop);
      var importedClip = AssetDatabase.LoadAllAssetsAtPath(takePath).OfType<AnimationClip>().FirstOrDefault(c => !c.name.StartsWith("__preview__"));
      if (!importedClip) {
       report.AppendLine("  No clip imported from " + takeFile);
       continue;
      }
 
-     var baked = new AnimationClip();
-     EditorUtility.CopySerialized(importedClip, baked);
+     var baked = UnityEngine.Object.Instantiate(importedClip);
      baked.name = spec.role + "_" + state;
+
+     if (state == "idle") {
+      foreach (var b in AnimationUtility.GetCurveBindings(baked)) {
+       var curve = AnimationUtility.GetEditorCurve(baked, b);
+       if (b.propertyName == "RootT.y") rootY = curve.Evaluate(0);
+       if (b.propertyName == "RootQ.x") rootQ.x = curve.Evaluate(0);
+       if (b.propertyName == "RootQ.y") rootQ.y = curve.Evaluate(0);
+       if (b.propertyName == "RootQ.z") rootQ.z = curve.Evaluate(0);
+       if (b.propertyName == "RootQ.w") rootQ.w = curve.Evaluate(0);
+      }
+      if (rootQ.x == 0 && rootQ.y == 0 && rootQ.z == 0 && rootQ.w == 0) rootQ = Quaternion.identity;
+     }
 
      foreach (var b in AnimationUtility.GetCurveBindings(baked)) {
       string p = b.propertyName;
-      if (p.StartsWith("RootT") || p.StartsWith("RootQ")) {
-       AnimationUtility.SetEditorCurve(baked, b, AnimationCurve.Constant(0, baked.length, 0f));
+      if (p.StartsWith("RootT")) {
+       float val = (p == "RootT.y") ? rootY : 0f;
+       AnimationUtility.SetEditorCurve(baked, b, AnimationCurve.Constant(0, baked.length, val));
+      }
+      if (p.StartsWith("RootQ")) {
+       float val = (p == "RootQ.x") ? rootQ.x : (p == "RootQ.y") ? rootQ.y : (p == "RootQ.z") ? rootQ.z : rootQ.w;
+       AnimationUtility.SetEditorCurve(baked, b, AnimationCurve.Constant(0, baked.length, val));
       }
      }
 
@@ -126,15 +146,18 @@ namespace LostRealms {
      settings.loopTime = loop;
      AnimationUtility.SetAnimationClipSettings(baked, settings);
 
-     string clipPath = AnimOutput + spec.role + "_" + state + ".anim";
-     var existing = AssetDatabase.LoadAssetAtPath<AnimationClip>(clipPath);
-     if (existing) {
-      EditorUtility.CopySerialized(baked, existing);
-      UnityEngine.Object.DestroyImmediate(baked);
-     } else {
-      AssetDatabase.CreateAsset(baked, clipPath);
+     string roleFolder = AnimOutput + spec.role + "/";
+     Directory.CreateDirectory(roleFolder);
+
+     SaveClip(baked, AnimOutput + spec.role + "_" + state + ".anim");
+     SaveClip(baked, roleFolder + state + ".anim");
+     if (state == "attack") {
+      SaveClip(baked, AnimOutput + spec.role + "_attack_1.anim");
+      SaveClip(baked, roleFolder + "attack_1.anim");
      }
+
      report.AppendLine("  Bake: " + spec.role + "_" + state + " <- " + takeFile + " (" + importedClip.length.ToString("F2") + "s, loop=" + loop + ")");
+     UnityEngine.Object.DestroyImmediate(baked);
     }
 
     BuildRolePrefab(spec.role, modelPath, avatar, report);
@@ -142,7 +165,6 @@ namespace LostRealms {
 
    BuildFlyerPrefab(report);
    RepairFootman(report);
-   RepairSkeleton(report);
 
    AssetDatabase.SaveAssets();
    File.WriteAllText("Validation/enemy-pack-integration.txt", report.ToString());
@@ -150,11 +172,21 @@ namespace LostRealms {
    PropCensus.Run();
   }
 
-  static void ConfigureModel(string path, Avatar avatar) {
+  static void SaveClip(AnimationClip clip, string clipPath) {
+   var existing = AssetDatabase.LoadAssetAtPath<AnimationClip>(clipPath);
+   if (existing) {
+    EditorUtility.CopySerialized(clip, existing);
+   } else {
+    var copy = UnityEngine.Object.Instantiate(clip);
+    copy.name = Path.GetFileNameWithoutExtension(clipPath);
+    AssetDatabase.CreateAsset(copy, clipPath);
+   }
+  }
+
+  static void ConfigureModel(string path) {
    var mi = (ModelImporter)AssetImporter.GetAtPath(path);
    mi.animationType = ModelImporterAnimationType.Human;
-   mi.avatarSetup = avatar ? ModelImporterAvatarSetup.CopyFromOther : ModelImporterAvatarSetup.CreateFromThisModel;
-   if (avatar) mi.sourceAvatar = avatar;
+   mi.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
    mi.importAnimation = true;
    mi.importCameras = false;
    mi.importLights = false;
@@ -163,7 +195,7 @@ namespace LostRealms {
    mi.SaveAndReimport();
   }
 
-  static void ConfigureTake(string path, Avatar avatar) {
+  static void ConfigureTake(string path, Avatar avatar, bool loop) {
    var mi = (ModelImporter)AssetImporter.GetAtPath(path);
    mi.animationType = ModelImporterAnimationType.Human;
    mi.avatarSetup = ModelImporterAvatarSetup.CopyFromOther;
@@ -173,6 +205,20 @@ namespace LostRealms {
    mi.importLights = false;
    mi.optimizeGameObjects = false;
    mi.animationCompression = ModelImporterAnimationCompression.Off;
+
+   var specs = mi.defaultClipAnimations;
+   if (specs != null && specs.Length > 0) {
+    foreach (var spec in specs) {
+     spec.loopTime = loop;
+     spec.keepOriginalOrientation = true;
+     spec.lockRootRotation = true;
+     spec.keepOriginalPositionY = true;
+     spec.lockRootHeightY = true;
+     spec.keepOriginalPositionXZ = true;
+     spec.lockRootPositionXZ = true;
+    }
+    mi.clipAnimations = specs;
+   }
    mi.SaveAndReimport();
   }
 
@@ -188,29 +234,29 @@ namespace LostRealms {
     if (!a) a = go.AddComponent<Animator>();
     a.avatar = avatar;
     a.applyRootMotion = false;
-    a.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
+    a.cullingMode = AnimatorCullingMode.AlwaysAnimate;
 
     var tex = Resources.Load<Texture2D>("Characters/Textures/" + role + "_basecolor");
-    Material mat;
+    if (!tex) tex = Resources.Load<Texture2D>("Characters/Textures/" + role);
     if (tex) {
-     mat = new Material(Shader.Find("Standard")) { name = role + "_mat", color = Color.white };
+     var mat = new Material(Shader.Find("Standard")) { name = role + "_mat", color = Color.white };
      mat.mainTexture = tex;
-    } else {
-     Color c = role == "Sunscar" ? new Color(1f, 0.4f, 0.1f) : role == "Whiteout" ? new Color(0.8f, 0.9f, 1f) : Color.gray;
-     mat = new Material(Shader.Find("Standard")) { name = role + "_mat", color = c };
+     mat.SetFloat("_Metallic", 0.05f);
+     mat.SetFloat("_Glossiness", 0.25f);
+     string matPath = "Assets/Resources/Materials/" + role + ".mat";
+     var existingMat = AssetDatabase.LoadAssetAtPath<Material>(matPath);
+     if (existingMat) {
+      EditorUtility.CopySerialized(mat, existingMat);
+      UnityEngine.Object.DestroyImmediate(mat);
+      mat = existingMat;
+     } else {
+      AssetDatabase.CreateAsset(mat, matPath);
+     }
+     foreach (var r in go.GetComponentsInChildren<Renderer>(true)) {
+      r.sharedMaterial = mat;
+      if (r is SkinnedMeshRenderer smr) smr.updateWhenOffscreen = true;
+     }
     }
-    mat.SetFloat("_Metallic", 0.1f);
-    mat.SetFloat("_Glossiness", 0.3f);
-    string matPath = "Assets/Resources/Materials/" + role + ".mat";
-    var existingMat = AssetDatabase.LoadAssetAtPath<Material>(matPath);
-    if (existingMat) {
-     EditorUtility.CopySerialized(mat, existingMat);
-     UnityEngine.Object.DestroyImmediate(mat);
-     mat = existingMat;
-    } else {
-     AssetDatabase.CreateAsset(mat, matPath);
-    }
-    foreach (var r in go.GetComponentsInChildren<Renderer>(true)) r.sharedMaterial = mat;
 
     PrefabUtility.SaveAsPrefabAsset(go, prefabPath);
     report.AppendLine("  Prefab built: " + prefabPath);
@@ -259,30 +305,8 @@ namespace LostRealms {
     var eliteClip = Resources.Load<AnimationClip>("Animations/Elite_" + state);
     if (eliteClip) {
      string path = AnimOutput + "Footman_" + state + ".anim";
-     var copy = UnityEngine.Object.Instantiate(eliteClip);
-     copy.name = "Footman_" + state;
-     var existing = AssetDatabase.LoadAssetAtPath<AnimationClip>(path);
-     if (existing) {
-      EditorUtility.CopySerialized(copy, existing);
-      UnityEngine.Object.DestroyImmediate(copy);
-     } else {
-      AssetDatabase.CreateAsset(copy, path);
-     }
+     SaveClip(eliteClip, path);
      report.AppendLine("  Footman_" + state + " updated from Elite take");
-    }
-   }
-  }
-
-  static void RepairSkeleton(StringBuilder report) {
-   string path = AnimOutput + "Skeleton_idle.anim";
-   var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(path);
-   if (clip) {
-    var spineBinding = AnimationUtility.GetCurveBindings(clip).FirstOrDefault(b => b.propertyName.Contains("Rotation") || b.propertyName.Contains("Rot"));
-    if (spineBinding.propertyName == null) {
-     var curve = new AnimationCurve(new Keyframe(0f, 0f), new Keyframe(0.66f, 0.08f), new Keyframe(1.33f, 0f));
-     clip.SetCurve("mixamorig:Spine", typeof(Transform), "localEulerAngles.x", curve);
-     EditorUtility.SetDirty(clip);
-     report.AppendLine("  Skeleton_idle curve enhanced");
     }
    }
   }
