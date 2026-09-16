@@ -111,7 +111,8 @@ namespace LostRealms {
       continue;
      }
 
-     var baked = UnityEngine.Object.Instantiate(importedClip);
+     var baked = new AnimationClip();
+     EditorUtility.CopySerialized(importedClip, baked);
      baked.name = spec.role + "_" + state;
 
      foreach (var b in AnimationUtility.GetCurveBindings(baked)) {
@@ -190,22 +191,26 @@ namespace LostRealms {
     a.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
 
     var tex = Resources.Load<Texture2D>("Characters/Textures/" + role + "_basecolor");
+    Material mat;
     if (tex) {
-     var mat = new Material(Shader.Find("Standard")) { name = role + "_mat", color = Color.white };
+     mat = new Material(Shader.Find("Standard")) { name = role + "_mat", color = Color.white };
      mat.mainTexture = tex;
-     mat.SetFloat("_Metallic", 0.1f);
-     mat.SetFloat("_Glossiness", 0.3f);
-     string matPath = "Assets/Resources/Materials/" + role + ".mat";
-     var existingMat = AssetDatabase.LoadAssetAtPath<Material>(matPath);
-     if (existingMat) {
-      EditorUtility.CopySerialized(mat, existingMat);
-      UnityEngine.Object.DestroyImmediate(mat);
-      mat = existingMat;
-     } else {
-      AssetDatabase.CreateAsset(mat, matPath);
-     }
-     foreach (var r in go.GetComponentsInChildren<Renderer>(true)) r.sharedMaterial = mat;
+    } else {
+     Color c = role == "Sunscar" ? new Color(1f, 0.4f, 0.1f) : role == "Whiteout" ? new Color(0.8f, 0.9f, 1f) : Color.gray;
+     mat = new Material(Shader.Find("Standard")) { name = role + "_mat", color = c };
     }
+    mat.SetFloat("_Metallic", 0.1f);
+    mat.SetFloat("_Glossiness", 0.3f);
+    string matPath = "Assets/Resources/Materials/" + role + ".mat";
+    var existingMat = AssetDatabase.LoadAssetAtPath<Material>(matPath);
+    if (existingMat) {
+     EditorUtility.CopySerialized(mat, existingMat);
+     UnityEngine.Object.DestroyImmediate(mat);
+     mat = existingMat;
+    } else {
+     AssetDatabase.CreateAsset(mat, matPath);
+    }
+    foreach (var r in go.GetComponentsInChildren<Renderer>(true)) r.sharedMaterial = mat;
 
     PrefabUtility.SaveAsPrefabAsset(go, prefabPath);
     report.AppendLine("  Prefab built: " + prefabPath);
