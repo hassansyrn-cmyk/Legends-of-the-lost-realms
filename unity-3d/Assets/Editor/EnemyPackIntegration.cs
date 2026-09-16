@@ -149,10 +149,8 @@ namespace LostRealms {
      string roleFolder = AnimOutput + spec.role + "/";
      Directory.CreateDirectory(roleFolder);
 
-     SaveClip(baked, AnimOutput + spec.role + "_" + state + ".anim");
      SaveClip(baked, roleFolder + state + ".anim");
      if (state == "attack") {
-      SaveClip(baked, AnimOutput + spec.role + "_attack_1.anim");
       SaveClip(baked, roleFolder + "attack_1.anim");
      }
 
