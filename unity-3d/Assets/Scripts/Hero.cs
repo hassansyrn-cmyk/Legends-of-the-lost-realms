@@ -171,6 +171,8 @@ namespace LostRealms {
   }
 
   public void Warp(Vector3 p){platformDisplacement=Vector3.zero;Controller.enabled=false;transform.position=p;Controller.enabled=true;vertical=0;velocity=Vector3.zero;jumpBuffer=0;charging=false;dashUntil=0;attackBufferUntil=0;immuneUntil=RealmGame.I.Elapsed+1.2f;parryUntil=0;parryReady=0;counterUntil=0;RealmGame.I.CameraRig.Snap();}
+  public void Bounce(float upwardVelocity,Vector3 horizontalImpulse=default){vertical=upwardVelocity;if(horizontalImpulse.sqrMagnitude>.01f)velocity=horizontalImpulse;jumps=1;airDashes=1+Mathf.Min(3,RealmGame.I.Save.moxieRank);jumpGrace=0;jumpBuffer=0;Visual.Restart("jump");}
+  public void Boost(Vector3 impulse){velocity=Vector3.ClampMagnitude(velocity+impulse,14f);airDashes=Mathf.Max(airDashes,1);}
   public bool Damage(int damage,Vector3 source){
    if(Health<=0)return false;
    if(RealmGame.I.Elapsed<parryUntil){ParrySuccess(source);return false;}
