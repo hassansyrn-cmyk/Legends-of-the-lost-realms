@@ -43,6 +43,7 @@ namespace LostRealms {
     // static showcase meshes too — everything without a real Animator and
     // without the primitive fallback (which bobs itself) gets the idle motion.
     if(Visual&&!Visual.animator&&!Visual.UsesFallback)gameObject.AddComponent<EnemyIdleMotion>().Setup(0f);
+     if(Visual&&Visual.animator&&(kind>=15&&kind<=18))Visual.animator.enabled=false;
      if(kind==15&&Visual)gameObject.AddComponent<SkeletonLimbMotion>().Setup(Visual);
      if(kind==16&&Visual)gameObject.AddComponent<SkeletonLimbMotion>().Setup(Visual,"upper_arm.L","upper_arm.R",null,null,null,null);
      if(kind==17&&Visual)gameObject.AddComponent<SkeletonLimbMotion>().Setup(Visual,"upper_arm.L","upper_arm.R","wing_upper.L","wing_lower.L","wing_upper.R","wing_lower.R");
@@ -390,6 +391,7 @@ visual.localPosition=new Vector3(0,Mathf.Sin(t*1.1f)*.02f,0);
    Transform[] db;Quaternion[] drest;float[] dcur;
    int iHips=-1,iSpine=-1,iChest=-1,iHead=-1,iUaL=-1,iUaR=-1,iFaL=-1,iFaR=-1,iThL=-1,iThR=-1,iShL=-1,iShR=-1;
    int iWuL=-1,iWuR=-1,iWlL=-1,iWlR=-1;
+   float signL=1f,signR=-1f;
    string fUaL="upperarm.L",fUaR="upperarm.R",fWuL=null,fWlL=null,fWuR=null,fWlR=null;
    public void Setup(CharacterVisual v){visual=v;}
    // Rigged families reuse this driver with their own bone names (upper_arm.*
@@ -402,8 +404,15 @@ visual.localPosition=new Vector3(0,Mathf.Sin(t*1.1f)*.02f,0);
     for(int i=0;i<t.childCount;i++){var f=FindDeep(t.GetChild(i),n);if(f)return f;}
     return null;
    }
-   void AddBone(string n,System.Collections.Generic.List<Transform> found,System.Collections.Generic.List<Quaternion> rests,out int idx){
-    var b=visual?FindDeep(visual.transform,n):null;
+   void AddBone(System.Collections.Generic.List<Transform> found,System.Collections.Generic.List<Quaternion> rests,out int idx,params string[] names){
+    Transform b=null;
+    if(visual){
+     for(int i=0;i<names.Length;i++){
+      if(string.IsNullOrEmpty(names[i]))continue;
+      b=FindDeep(visual.transform,names[i]);
+      if(b)break;
+     }
+    }
     if(!b){idx=-1;return;}
     idx=found.Count;found.Add(b);rests.Add(b.localRotation);
    }
@@ -412,20 +421,34 @@ visual.localPosition=new Vector3(0,Mathf.Sin(t*1.1f)*.02f,0);
     if(!visual)return;
     var found=new System.Collections.Generic.List<Transform>();
     var rests=new System.Collections.Generic.List<Quaternion>();
-    AddBone("hips",found,rests,out iHips);AddBone("spine",found,rests,out iSpine);
-    AddBone("chest",found,rests,out iChest);AddBone("head",found,rests,out iHead);
-    AddBone(fUaL,found,rests,out iUaL);AddBone(fUaR,found,rests,out iUaR);
-    AddBone("forearm.L",found,rests,out iFaL);AddBone("forearm.R",found,rests,out iFaR);
-    AddBone("thigh.L",found,rests,out iThL);AddBone("thigh.R",found,rests,out iThR);
-    AddBone("shin.L",found,rests,out iShL);AddBone("shin.R",found,rests,out iShR);
-    if(fWuL!=null)AddBone(fWuL,found,rests,out iWuL);if(fWuR!=null)AddBone(fWuR,found,rests,out iWuR);
-    if(fWlL!=null)AddBone(fWlL,found,rests,out iWlL);if(fWlR!=null)AddBone(fWlR,found,rests,out iWlR);
+    AddBone(found,rests,out iHips,"hips","root.x","pelvis","Hip","Root");
+    AddBone(found,rests,out iSpine,"spine","spine_01.x","Spine1");
+    AddBone(found,rests,out iChest,"chest","spine_02.x","spine_03.x","Spine2");
+    AddBone(found,rests,out iHead,"head","head.x","Head");
+    AddBone(found,rests,out iUaL,fUaL,"upperarm.L","upper_arm.L","arm_stretch.l","arm_twist.l");
+    AddBone(found,rests,out iUaR,fUaR,"upperarm.R","upper_arm.R","arm_stretch.r","arm_twist.r");
+    AddBone(found,rests,out iFaL,"forearm.L","lower_arm.L","forearm_stretch.l","forearm_twist.l");
+    AddBone(found,rests,out iFaR,"forearm.R","lower_arm.R","forearm_stretch.r","forearm_twist.r");
+    AddBone(found,rests,out iThL,"thigh.L","thigh_stretch.l","thigh_twist.l");
+    AddBone(found,rests,out iThR,"thigh.R","thigh_stretch.r","thigh_twist.r");
+    AddBone(found,rests,out iShL,"shin.L","leg_stretch.l","leg_twist.l","calf.L");
+    AddBone(found,rests,out iShR,"shin.R","leg_stretch.r","leg_twist.r","calf.R");
+    if(fWuL!=null)AddBone(found,rests,out iWuL,fWuL);if(fWuR!=null)AddBone(found,rests,out iWuR,fWuR);
+    if(fWlL!=null)AddBone(found,rests,out iWlL,fWlL);if(fWlR!=null)AddBone(found,rests,out iWlR,fWlR);
     db=found.ToArray();drest=rests.ToArray();dcur=new float[db.Length];
+    if(iUaL>=0&&iFaL>=0&&db[iUaL]&&db[iFaL]){
+     Vector3 dirL=db[iFaL].position-db[iUaL].position;
+     signL=Vector3.Dot(dirL,transform.right)<0?1f:-1f;
+    }
+    if(iUaR>=0&&iFaR>=0&&db[iUaR]&&db[iFaR]){
+     Vector3 dirR=db[iFaR].position-db[iUaR].position;
+     signR=Vector3.Dot(dirR,transform.right)>0?-1f:1f;
+    }
    }
-   void Update(){
+   void LateUpdate(){
     if(db==null||visual==null)return;var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing)return;
     if(enemy&&enemy.Health<=0)return;
-    float dt=Time.deltaTime,t=g.Elapsed;
+    float dt=Mathf.Max(Time.deltaTime,0.016f),t=g.Elapsed;
     string st=visual.CurrentState;
     float amp=st=="walk"?1f:0.12f;
     float w=t*7f;
@@ -435,22 +458,37 @@ visual.localPosition=new Vector3(0,Mathf.Sin(t*1.1f)*.02f,0);
     float bendL=(0.15f+0.35f*Mathf.Max(0f,Mathf.Sin(w+2.2f)))*amp;
     float bendR=(0.15f+0.35f*Mathf.Max(0f,Mathf.Sin(w+Mathf.PI+2.2f)))*amp;
     float uaLT=-thLT*0.7f,uaRT=attacking?-2.4f:-thRT*0.7f;
-    float faLT=uaLT-0.3f+0.1f*Mathf.Sin(w-0.7f)*amp;
-    float faRT=attacking?-2.9f:uaRT-0.3f+0.1f*Mathf.Sin(w+Mathf.PI-0.7f)*amp;
+    float faLT=uaLT-0.45f+0.1f*Mathf.Sin(w-0.7f)*amp;
+    float faRT=attacking?-2.9f:uaRT-0.45f+0.1f*Mathf.Sin(w+Mathf.PI-0.7f)*amp;
     Apply(iHips,0.06f*Mathf.Sin(w)*amp,Vector3.up,dt);
     Apply(iSpine,-0.06f-0.02f*Mathf.Sin(t*1.7f),lat,dt);
     Apply(iChest,-0.03f*Mathf.Sin(t*1.7f+0.5f),lat,dt);
     Apply(iHead,0.05f*Mathf.Sin(t*1.7f+1f),lat,dt);
     Apply(iThL,thLT,lat,dt);Apply(iShL,thLT+bendL,lat,dt);
     Apply(iThR,thRT,lat,dt);Apply(iShR,thRT+bendR,lat,dt);
-    Apply(iUaL,uaLT,lat,dt);Apply(iFaL,faLT,lat,dt);
-    Apply(iUaR,uaRT,lat,dt);Apply(iFaR,faRT,lat,dt);
+    float droopL=68f*signL;
+    float droopR=(attacking?12f:68f)*signR;
+    ApplyArm(iUaL,droopL,uaLT,dt);
+    ApplyArm(iUaR,droopR,uaRT,dt);
+    Apply(iFaL,faLT,lat,dt);
+    Apply(iFaR,faRT,lat,dt);
     if(iWuL>=0||iWuR>=0){
      Vector3 fwd=transform.forward;
      float flap=Mathf.Sin(t*3.4f+1f)*0.5f*amp+(attacking?0.55f:0.12f);
      Apply(iWuL,flap,fwd,dt);Apply(iWlL,flap*1.35f+0.15f,fwd,dt);
      Apply(iWuR,-flap,fwd,dt);Apply(iWlR,-flap*1.35f-0.15f,fwd,dt);
     }
+   }
+   void ApplyArm(int i,float droop,float swing,float dt){
+    if(i<0||i>=db.Length)return;
+    float c=dcur[i]+(swing-dcur[i])*Mathf.Min(1f,dt*12f);
+    dcur[i]=c;
+    var b=db[i];
+    Quaternion parentWorld=b.parent?b.parent.rotation:transform.rotation;
+    Quaternion basePose=parentWorld*drest[i];
+    Quaternion droopRot=Quaternion.AngleAxis(droop,transform.forward);
+    Quaternion swingRot=Quaternion.AngleAxis(c*Mathf.Rad2Deg,transform.right);
+    b.rotation=swingRot*droopRot*basePose;
    }
    void Apply(int i,float target,Vector3 axis,float dt){
     if(i<0||i>=db.Length)return;
@@ -491,7 +529,7 @@ visual.localPosition=new Vector3(0,Mathf.Sin(t*1.1f)*.02f,0);
     if(!b)return;
     lb[k]=b;lrest[k]=b.localRotation;k++;
    }
-   void Update(){
+   void LateUpdate(){
     if(lb==null||visual==null)return;var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing)return;
     if(enemy&&enemy.Health<=0)return;
     float t=g.Elapsed;

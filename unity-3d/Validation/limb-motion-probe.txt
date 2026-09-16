@@ -1,0 +1,28 @@
+=== LIMB MOTION PROBE ===
+--- Skeleton (kind 15) ---
+LimbMotion attached: True
+uaL found: True, uaR found: True
+faL found: True, faR found: True
+thL found: True, thR found: True
+uaL->faL dir: (-0.313, -0.937, -0.153)
+Left arm hanging naturally: True
+uaR->faR dir: (0.313, -0.937, -0.153)
+Right arm hanging naturally: True
+--- BriarGoblin (kind 16) ---
+LimbMotion attached: True
+uaL found: True, uaR found: True
+faL found: True, faR found: True
+thL found: True, thR found: True
+uaL->faL dir: (-0.379, -0.915, 0.135)
+Left arm hanging naturally: True
+uaR->faR dir: (0.379, -0.915, 0.135)
+Right arm hanging naturally: True
+--- EmberDemon (kind 17) ---
+LimbMotion attached: True
+uaL found: True, uaR found: True
+faL found: True, faR found: True
+thL found: True, thR found: True
+uaL->faL dir: (-0.234, -0.933, 0.274)
+Left arm hanging naturally: True
+uaR->faR dir: (0.234, -0.933, 0.274)
+Right arm hanging naturally: True
