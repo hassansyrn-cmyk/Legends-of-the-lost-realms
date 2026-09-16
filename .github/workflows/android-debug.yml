@@ -47,7 +47,8 @@ jobs:
           targetPlatform: Android
           buildMethod: RealmBuild.Android
           buildName: LostRealms3D
-          dockerCpuLimit: 2
+          dockerCpuLimit: 1
+          customParameters: -nographics
 
       - name: Read build metadata
         id: metadata
