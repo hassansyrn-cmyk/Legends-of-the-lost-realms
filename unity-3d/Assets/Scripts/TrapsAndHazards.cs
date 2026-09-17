@@ -6,27 +6,72 @@ namespace LostRealms {
  // 1. RETRACTABLE FLOOR SPIKE TRAP
  // =========================================================================
  public sealed class SpikeTrap:MonoBehaviour {
-  Transform spikeRoot;Material spikeMat;Color trapColor;
+  Transform spikeRoot;Color trapColor;
   float timer,phaseOffset;enum State{Dormant,Telegraph,Active,Retract}State state=State.Dormant;
   Vector3 baseLocal;
+  float thrustHeight=.46f;
+  static Material baseMatInst;
+  static Material GetBaseMaterial(){
+   if(!baseMatInst){
+    var tex=Resources.Load<Texture2D>("Props/Textures/SpikeTrap_Base_basecolor");
+    var norm=Resources.Load<Texture2D>("Props/Textures/SpikeTrap_Base_normal");
+    baseMatInst=new Material(Shader.Find("Standard")){name="SpikeTrap_Base_Mat",color=Color.white};
+    if(tex)baseMatInst.mainTexture=tex;
+    if(norm){baseMatInst.SetTexture("_BumpMap",norm);baseMatInst.EnableKeyword("_NORMALMAP");}
+    baseMatInst.SetFloat("_Metallic",.15f);baseMatInst.SetFloat("_Glossiness",.35f);
+   }
+   return baseMatInst;
+  }
+  static Material GetSpikesMaterial(Color accent){
+   var tex=Resources.Load<Texture2D>("Props/Textures/SpikeTrap_Spikes_basecolor");
+   var mat=new Material(Shader.Find("Standard")){name="SpikeTrap_Spikes_Mat",color=Color.Lerp(Color.white,accent,.2f)};
+   if(tex)mat.mainTexture=tex;
+   mat.SetFloat("_Metallic",.65f);mat.SetFloat("_Glossiness",.5f);
+   return mat;
+  }
+
   public static SpikeTrap Place(Transform parent,Vector3 localPos,Color accent){
    var go=new GameObject("Spike Trap");go.transform.SetParent(parent,false);go.transform.localPosition=localPos;
-   // Stone border rim
-   Art.Shape("TrapRim",PrimitiveType.Cube,new Vector3(0,.04f,0),new Vector3(2.1f,.12f,2.1f),new Color(.18f,.18f,.2f),go.transform);
-   // Dark metal grate recessed inside
-   Art.Shape("TrapGrate",PrimitiveType.Cube,new Vector3(0,.05f,0),new Vector3(1.75f,.1f,1.75f),new Color(.08f,.08f,.1f),go.transform);
-   // Moving spikes container
-   var spikes=new GameObject("Spikes");spikes.transform.SetParent(go.transform,false);spikes.transform.localPosition=new Vector3(0,-.35f,0);
-   Color spikeCol=Color.Lerp(Color.gray,accent,.35f);
-   for(int x=-1;x<=1;x++){
-    for(int z=-1;z<=1;z++){
-     var tip=Art.Shape("SpikeTip",PrimitiveType.Cube,new Vector3(x*.55f,.42f,z*.55f),new Vector3(.12f,.75f,.12f),spikeCol,spikes.transform);
-     tip.transform.localRotation=Quaternion.Euler(4,x*15+z*10,4);
-    }
-   }
+   var basePrefab=Resources.Load<GameObject>("Props/SpikeTrap_Base");
+   var spikesPrefab=Resources.Load<GameObject>("Props/SpikeTrap_Spikes");
    var trap=go.AddComponent<SpikeTrap>();
-   trap.spikeRoot=spikes.transform;trap.baseLocal=spikes.transform.localPosition;
    trap.trapColor=accent;trap.phaseOffset=Random.value*1.5f;
+
+   if(basePrefab&&spikesPrefab){
+    go.transform.localScale=new Vector3(2.0f,1.8f,2.0f);
+    var baseObj=Instantiate(basePrefab,go.transform,false);
+    baseObj.name="BaseFrame";
+    baseObj.transform.localPosition=Vector3.zero;
+    baseObj.transform.localRotation=Quaternion.identity;
+    var bMat=GetBaseMaterial();
+    foreach(var r in baseObj.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=bMat;
+
+    var spikes=new GameObject("Spikes");spikes.transform.SetParent(go.transform,false);
+    spikes.transform.localPosition=new Vector3(0,-.28f,0);
+    var spikesObj=Instantiate(spikesPrefab,spikes.transform,false);
+    spikesObj.name="SpikesMesh";
+    spikesObj.transform.localPosition=Vector3.zero;
+    spikesObj.transform.localRotation=Quaternion.identity;
+    var sMat=GetSpikesMaterial(accent);
+    foreach(var r in spikesObj.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=sMat;
+
+    trap.spikeRoot=spikes.transform;trap.baseLocal=spikes.transform.localPosition;
+    trap.thrustHeight=.46f;
+   }else{
+    // Fallback if 3D assets not present
+    Art.Shape("TrapRim",PrimitiveType.Cube,new Vector3(0,.04f,0),new Vector3(2.1f,.12f,2.1f),new Color(.18f,.18f,.2f),go.transform);
+    Art.Shape("TrapGrate",PrimitiveType.Cube,new Vector3(0,.05f,0),new Vector3(1.75f,.1f,1.75f),new Color(.08f,.08f,.1f),go.transform);
+    var spikes=new GameObject("Spikes");spikes.transform.SetParent(go.transform,false);spikes.transform.localPosition=new Vector3(0,-.35f,0);
+    Color spikeCol=Color.Lerp(Color.gray,accent,.35f);
+    for(int x=-1;x<=1;x++){
+     for(int z=-1;z<=1;z++){
+      var tip=Art.Shape("SpikeTip",PrimitiveType.Cube,new Vector3(x*.55f,.42f,z*.55f),new Vector3(.12f,.75f,.12f),spikeCol,spikes.transform);
+      tip.transform.localRotation=Quaternion.Euler(4,x*15+z*10,4);
+     }
+    }
+    trap.spikeRoot=spikes.transform;trap.baseLocal=spikes.transform.localPosition;
+    trap.thrustHeight=1.05f;
+   }
    return trap;
   }
 
@@ -40,8 +85,8 @@ namespace LostRealms {
      break;
     case State.Telegraph:
      // Rattle spikes and warn with sound/sparks
-     float shake=Mathf.Sin(timer*45f)*.04f;
-     spikeRoot.localPosition=baseLocal+Vector3.up*(.18f+shake);
+     float shake=Mathf.Sin(timer*45f)*.02f;
+     spikeRoot.localPosition=baseLocal+Vector3.up*(thrustHeight*.18f+shake);
      if(timer<.05f)g.Sound("step");
      if(timer>=.65f){
       state=State.Active;timer=0;g.Sound("blade");
@@ -50,11 +95,11 @@ namespace LostRealms {
      break;
     case State.Active:
      // Fully thrust upward
-     spikeRoot.localPosition=baseLocal+Vector3.up*1.05f;
+     spikeRoot.localPosition=baseLocal+Vector3.up*thrustHeight;
      // Damage player if in range
      Vector3 pPos=g.Player.transform.position;
      Vector3 delta=pPos-transform.position;
-     if(Mathf.Abs(delta.x)<1.05f&&Mathf.Abs(delta.z)<1.05f&&delta.y>-.2f&&delta.y<1.2f){
+     if(Mathf.Abs(delta.x)<1.05f&&Mathf.Abs(delta.z)<1.05f&&delta.y>-.2f&&delta.y<1.3f){
       if(g.Player.Damage(1,transform.position))
        HitSpark.Burst(pPos+Vector3.up*.8f,Vector3.up,Color.red,12);
      }
@@ -72,7 +117,7 @@ namespace LostRealms {
      break;
     case State.Retract:
      float t=Mathf.Clamp01(timer/.35f);
-     spikeRoot.localPosition=Vector3.Lerp(baseLocal+Vector3.up*1.05f,baseLocal,t);
+     spikeRoot.localPosition=Vector3.Lerp(baseLocal+Vector3.up*thrustHeight,baseLocal,t);
      if(timer>=.35f){state=State.Dormant;timer=0;}
      break;
    }
