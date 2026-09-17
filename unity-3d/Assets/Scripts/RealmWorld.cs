@@ -189,74 +189,99 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
   GameObject FindIsland(Vector3 p){foreach(Transform t in transform)if(t.name=="Island"&&Vector3.Distance(t.position,p)<.1f)return t.gameObject;return null;}
   void Island(Vector3 pos,float width,float length,int index,IslandArchetype archetype=IslandArchetype.Standard){
    var root=new GameObject("Island");root.transform.SetParent(transform);root.transform.position=pos;
-   if(archetype==IslandArchetype.SteppingStones){
-    Vector3[] stepOffsets=new[]{new Vector3(-1.6f,0,-2.5f),new Vector3(1.6f,.25f,0),new Vector3(-1f,.1f,2.5f)};
-    for(int k=0;k<stepOffsets.Length;k++){
-     var sp=Art.Shape("StepPillar",PrimitiveType.Cylinder,stepOffsets[k]+new Vector3(0,-.6f,0),new Vector3(3.4f,1.2f,3.4f),stone,root.transform,true);
-     Art.Shape("StepSurface",PrimitiveType.Cylinder,stepOffsets[k]+new Vector3(0,.02f,0),new Vector3(3.5f,.12f,3.5f),top,root.transform);
-     Art.Ring(stepOffsets[k]+new Vector3(0,.1f,0),1f,accent*.7f,root.transform);
-     if(k==1)CrumblePlatform.Attach(sp.gameObject);
-    }
-    return;
-   }
-   // 1. Walkable solid stone base
-   Art.Shape("Walkable stone",PrimitiveType.Cube,new Vector3(0,-.92f,0),new Vector3(width,1.7f,length),stone,root.transform,true);
-   // 2. Realm terrain surface with slight border reveal
-   Art.Shape("Realm surface",PrimitiveType.Cube,new Vector3(0,.02f,0),new Vector3(width+.08f,.16f,length+.08f),top,root.transform);
-   // 3. Beveled outer stone curb trim
-   Art.Shape("CurbNorth",PrimitiveType.Cube,new Vector3(0,.08f,length*.5f),new Vector3(width+.25f,.14f,.25f),stone*1.25f,root.transform);
-   Art.Shape("CurbSouth",PrimitiveType.Cube,new Vector3(0,.08f,-length*.5f),new Vector3(width+.25f,.14f,.25f),stone*1.25f,root.transform);
-   Art.Shape("CurbEast",PrimitiveType.Cube,new Vector3(width*.5f,.08f,0),new Vector3(.25f,.14f,length+.25f),stone*1.25f,root.transform);
-   Art.Shape("CurbWest",PrimitiveType.Cube,new Vector3(-width*.5f,.08f,0),new Vector3(.25f,.14f,length+.25f),stone*1.25f,root.transform);
-   // 4. Tiered rocky underside (shelf + tapered keel)
-   var shelf=Art.Shape("CliffShelf",PrimitiveType.Cube,new Vector3(0,-2.1f,0),new Vector3(width*.82f,1.6f,length*.82f),stone*.85f,root.transform);
-   shelf.transform.localRotation=Quaternion.Euler(0,4,3);
-   var keel=Art.Shape("RockKeel",PrimitiveType.Cube,new Vector3(0,-3.6f,0),new Vector3(width*.52f,2.6f,length*.52f),stone*.7f,root.transform);
-   keel.transform.localRotation=Quaternion.Euler(0,14,7);
-   // 5. Floating keystone fragment
-   var keystone=Art.Shape("FloatingKeystone",PrimitiveType.Cube,new Vector3(Mathf.Sin(index)*1.2f,-5.2f,Mathf.Cos(index)*1.2f),new Vector3(1.1f,1.3f,1.1f),stone*.65f,root.transform);
-   keystone.transform.localRotation=Quaternion.Euler(20,index*35,15);
-   if(archetype==IslandArchetype.Arena){
-    for(int sx=-1;sx<=1;sx+=2){
-     for(int sz=-1;sz<=1;sz+=2){
-      Art.Shape("ArenaPillar",PrimitiveType.Cube,new Vector3(sx*5.2f,1.8f,sz*5.2f),new Vector3(.85f,3.6f,.85f),stone*1.2f,root.transform);
-      Art.Crystal(new Vector3(sx*5.2f,3.8f,sz*5.2f),.5f,accent,root.transform);
+    if(archetype==IslandArchetype.SteppingStones){
+     Vector3[] stepOffsets=new[]{new Vector3(-1.6f,0,-2.5f),new Vector3(1.6f,.25f,0),new Vector3(-1f,.1f,2.5f)};
+     for(int k=0;k<stepOffsets.Length;k++){
+      var sp=Art.Shape("StepPillar",PrimitiveType.Cylinder,stepOffsets[k]+new Vector3(0,-.6f,0),new Vector3(3.4f,1.2f,3.4f),stone,root.transform,true);
+      Art.Shape("StepSurface",PrimitiveType.Cylinder,stepOffsets[k]+new Vector3(0,.02f,0),new Vector3(3.5f,.12f,3.5f),top,root.transform);
+      Art.Ring(stepOffsets[k]+new Vector3(0,.1f,0),1f,accent*.7f,root.transform);
+      if(k==1){
+       var magmaPrefab=Resources.Load<GameObject>("Props/MagmaPlatform");
+       if(magmaPrefab){
+        var mp=Instantiate(magmaPrefab,sp.transform,false);
+        mp.name="MagmaPlatformVisual";mp.transform.localPosition=Vector3.up*.6f;
+        mp.transform.localScale=new Vector3(.9f,.9f,.9f);
+        var mTex=Resources.Load<Texture2D>("Props/Textures/MagmaPlatform_basecolor");
+        if(mTex){
+         var mmat=new Material(Shader.Find("Standard")){name="MagmaPlat_Mat"};
+         mmat.mainTexture=mTex;mmat.SetFloat("_Glossiness",.25f);
+         foreach(var r in mp.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=mmat;
+        }
+       }
+       CrumblePlatform.Attach(sp.gameObject);
+      }
      }
+     return;
     }
-    BreakableCrate.Place(root.transform,new Vector3(-4.2f,.05f,4f),stone*1.3f);
-    BreakableCrate.Place(root.transform,new Vector3(4.2f,.05f,4f),stone*1.3f,true);
-    ExplosiveBarrel.Place(root.transform,new Vector3(-4.2f,.05f,-4f),accent);
-    if(level>=3&&index%2==1)FloorBladeTrap.Place(root.transform,new Vector3(0,.05f,0),accent);
-    else SpikeTrap.Place(root.transform,new Vector3(0,.05f,0),accent);
-   }else if(archetype==IslandArchetype.NarrowBridge){
-    PendulumTrap.Place(root.transform,new Vector3(0,.05f,0),width,accent);
-   }else if(archetype==IslandArchetype.TieredPlatform){
-    Art.Shape("UpperTerrace",PrimitiveType.Cube,new Vector3(0,.6f,2.2f),new Vector3(width*.85f,1.2f,4.2f),stone,root.transform,true);
-    Art.Shape("TerraceSurface",PrimitiveType.Cube,new Vector3(0,1.25f,2.2f),new Vector3(width*.86f,.12f,4.3f),top,root.transform);
-    Art.Shape("Step1",PrimitiveType.Cube,new Vector3(0,.28f,-.2f),new Vector3(3.6f,.55f,.9f),stone*1.15f,root.transform,true);
-    Art.Shape("Step2",PrimitiveType.Cube,new Vector3(0,.65f,.55f),new Vector3(3.6f,.55f,.9f),stone*1.15f,root.transform,true);
-   }else if(archetype==IslandArchetype.MovingFerry){
-    var skullPrefab=Resources.Load<GameObject>("Props/Platform_Skull_01");
-    if(skullPrefab){
-     var skullObj=Instantiate(skullPrefab,root.transform,false);
-     skullObj.name="SkullPlatformVisual";
-     skullObj.transform.localPosition=new Vector3(0,-.15f,0);
-     skullObj.transform.localRotation=Quaternion.Euler(-90,0,0);
-     skullObj.transform.localScale=new Vector3(width/3.1f,length/3.1f,1.8f);
-     var skullTex=Resources.Load<Texture2D>("Props/Textures/Platform_Skull_basecolor");
-     if(skullTex){
-      var smat=new Material(Shader.Find("Standard")){name="SkullPlat_Mat",color=stone*1.2f};
-      smat.mainTexture=skullTex;smat.SetFloat("_Glossiness",.3f);
-      foreach(var r in skullObj.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=smat;
+    // 1. Walkable solid stone base
+    Art.Shape("Walkable stone",PrimitiveType.Cube,new Vector3(0,-.92f,0),new Vector3(width,1.7f,length),stone,root.transform,true);
+    // 2. Realm terrain surface with slight border reveal
+    Art.Shape("Realm surface",PrimitiveType.Cube,new Vector3(0,.02f,0),new Vector3(width+.08f,.16f,length+.08f),top,root.transform);
+    // 3. Beveled outer stone curb trim
+    Art.Shape("CurbNorth",PrimitiveType.Cube,new Vector3(0,.08f,length*.5f),new Vector3(width+.25f,.14f,.25f),stone*1.25f,root.transform);
+    Art.Shape("CurbSouth",PrimitiveType.Cube,new Vector3(0,.08f,-length*.5f),new Vector3(width+.25f,.14f,.25f),stone*1.25f,root.transform);
+    Art.Shape("CurbEast",PrimitiveType.Cube,new Vector3(width*.5f,.08f,0),new Vector3(.25f,.14f,length+.25f),stone*1.25f,root.transform);
+    Art.Shape("CurbWest",PrimitiveType.Cube,new Vector3(-width*.5f,.08f,0),new Vector3(.25f,.14f,length+.25f),stone*1.25f,root.transform);
+    // 4. Tiered rocky underside (shelf + tapered keel)
+    var shelf=Art.Shape("CliffShelf",PrimitiveType.Cube,new Vector3(0,-2.1f,0),new Vector3(width*.82f,1.6f,length*.82f),stone*.85f,root.transform);
+    shelf.transform.localRotation=Quaternion.Euler(0,4,3);
+    var keel=Art.Shape("RockKeel",PrimitiveType.Cube,new Vector3(0,-3.6f,0),new Vector3(width*.52f,2.6f,length*.52f),stone*.7f,root.transform);
+    keel.transform.localRotation=Quaternion.Euler(0,14,7);
+    // 5. Floating keystone fragment
+    var keystone=Art.Shape("FloatingKeystone",PrimitiveType.Cube,new Vector3(Mathf.Sin(index)*1.2f,-5.2f,Mathf.Cos(index)*1.2f),new Vector3(1.1f,1.3f,1.1f),stone*.65f,root.transform);
+    keystone.transform.localRotation=Quaternion.Euler(20,index*35,15);
+    if(archetype==IslandArchetype.Arena){
+     for(int sx=-1;sx<=1;sx+=2){
+      for(int sz=-1;sz<=1;sz+=2){
+       Art.Shape("ArenaPillar",PrimitiveType.Cube,new Vector3(sx*5.2f,1.8f,sz*5.2f),new Vector3(.85f,3.6f,.85f),stone*1.2f,root.transform);
+       Art.Crystal(new Vector3(sx*5.2f,3.8f,sz*5.2f),.5f,accent,root.transform);
+      }
      }
-    }
-    var motion=root.AddComponent<MovingIsland>();
-    motion.Origin=pos;
-    motion.Offset=new Vector3((index%2==0?1:-1)*3.8f,0,0);
-    motion.Style=IslandMotionStyle.PingPongDwell;
-    motion.Speed=1.35f;motion.DwellTime=1.2f;
-    motion.AddThrusters(accent);
-   }else{
+     BreakableCrate.Place(root.transform,new Vector3(-4.2f,.05f,4f),stone*1.3f);
+     BreakableCrate.Place(root.transform,new Vector3(4.2f,.05f,4f),stone*1.3f,true);
+     ExplosiveBarrel.Place(root.transform,new Vector3(-4.2f,.05f,-4f),accent);
+     if(level>=3&&index%2==1)FloorBladeTrap.Place(root.transform,new Vector3(0,.05f,0),accent);
+     else SpikeTrap.Place(root.transform,new Vector3(0,.05f,0),accent);
+    }else if(archetype==IslandArchetype.NarrowBridge){
+     PendulumTrap.Place(root.transform,new Vector3(0,.05f,0),width,accent);
+    }else if(archetype==IslandArchetype.TieredPlatform){
+     Art.Shape("UpperTerrace",PrimitiveType.Cube,new Vector3(0,.6f,2.2f),new Vector3(width*.85f,1.2f,4.2f),stone,root.transform,true);
+     Art.Shape("TerraceSurface",PrimitiveType.Cube,new Vector3(0,1.25f,2.2f),new Vector3(width*.86f,.12f,4.3f),top,root.transform);
+     Art.Shape("Step1",PrimitiveType.Cube,new Vector3(0,.28f,-.2f),new Vector3(3.6f,.55f,.9f),stone*1.15f,root.transform,true);
+     Art.Shape("Step2",PrimitiveType.Cube,new Vector3(0,.65f,.55f),new Vector3(3.6f,.55f,.9f),stone*1.15f,root.transform,true);
+    }else if(archetype==IslandArchetype.MovingFerry){
+     var crystalPrefab=Resources.Load<GameObject>("Props/CrystalPlatform");
+     var skullPrefab=Resources.Load<GameObject>("Props/Platform_Skull_01");
+     if(index%2==0&&crystalPrefab){
+      var cObj=Instantiate(crystalPrefab,root.transform,false);
+      cObj.name="CrystalPlatformVisual";cObj.transform.localPosition=Vector3.up*.02f;
+      cObj.transform.localScale=new Vector3(width/5.8f,1f,length/5.8f);
+      var cTex=Resources.Load<Texture2D>("Props/Textures/CrystalPlatform_basecolor");
+      if(cTex){
+       var cmat=new Material(Shader.Find("Standard")){name="CrystalPlat_Mat"};
+       cmat.mainTexture=cTex;cmat.SetFloat("_Glossiness",.35f);
+       foreach(var r in cObj.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=cmat;
+      }
+     }else if(skullPrefab){
+      var skullObj=Instantiate(skullPrefab,root.transform,false);
+      skullObj.name="SkullPlatformVisual";
+      skullObj.transform.localPosition=new Vector3(0,-.15f,0);
+      skullObj.transform.localRotation=Quaternion.Euler(-90,0,0);
+      skullObj.transform.localScale=new Vector3(width/3.1f,length/3.1f,1.8f);
+      var skullTex=Resources.Load<Texture2D>("Props/Textures/Platform_Skull_basecolor");
+      if(skullTex){
+       var smat=new Material(Shader.Find("Standard")){name="SkullPlat_Mat",color=stone*1.2f};
+       smat.mainTexture=skullTex;smat.SetFloat("_Glossiness",.3f);
+       foreach(var r in skullObj.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=smat;
+      }
+     }
+     var motion=root.AddComponent<MovingIsland>();
+     motion.Origin=pos;
+     motion.Offset=new Vector3((index%2==0?1:-1)*3.8f,0,0);
+     motion.Style=IslandMotionStyle.PingPongDwell;
+     motion.Speed=1.35f;motion.DwellTime=1.2f;
+     motion.AddThrusters(accent);
+    }else{
     // 6. Perimeter decor & ancient runes
     for(int side=-1;side<=1;side+=2){
      if(width<7)break;
@@ -466,6 +491,17 @@ transform.Rotate(0,(Gem?12f:45f)*Time.deltaTime,0,Space.World);
     motionTime+=Time.fixedDeltaTime*Speed;
     transform.position=Origin+Offset*Mathf.Sin(motionTime*.8f);
    }
-   if(riding)g.Player.CarryByPlatform(transform.position-prior);
+   Vector3 delta=transform.position-prior;
+   if(riding)g.Player.CarryByPlatform(delta);
+   if(g.Enemies!=null){
+    foreach(var foe in g.Enemies){
+     if(!foe||foe.Health<=0)continue;
+     if(Physics.Raycast(foe.transform.position+Vector3.up*.5f,Vector3.down,out var fhit,1.6f,~0,QueryTriggerInteraction.Ignore)&&fhit.transform.IsChildOf(transform)){
+      foe.transform.position+=delta;
+      foe.ShiftCenter(delta);
+     }
+    }
+   }
   }
- }}
+ }
+}

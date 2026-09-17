@@ -143,25 +143,41 @@ namespace LostRealms {
   float pauseTimer;
   public static SawTrap Place(Transform parent,Vector3 startLocal,Vector3 endLocal,Color accent){
    var go=new GameObject("Saw Trap");go.transform.SetParent(parent,false);go.transform.localPosition=startLocal;
-   // Guide rail groove on the island
    Vector3 mid=(startLocal+endLocal)*.5f;float length=Vector3.Distance(startLocal,endLocal);
-   var track=Art.Shape("SawTrack",PrimitiveType.Cube,mid+Vector3.up*.03f,new Vector3(.32f,.06f,length+.4f),new Color(.12f,.12f,.15f),parent);
-   track.transform.localRotation=Quaternion.LookRotation(endLocal-startLocal);
+   var trackPrefab=Resources.Load<GameObject>("Props/RunicTrack");
+   if(trackPrefab){
+    var tr=Instantiate(trackPrefab,parent,false);
+    tr.name="RunicTrack";tr.transform.localPosition=mid+Vector3.up*.02f;
+    tr.transform.localRotation=Quaternion.LookRotation(endLocal-startLocal);
+    tr.transform.localScale=new Vector3(1f,1f,length/4.4f);
+    var tTex=Resources.Load<Texture2D>("Props/Textures/RunicTrack_basecolor");
+    if(tTex){
+     var tmat=new Material(Shader.Find("Standard")){name="RunicTrack_Mat"};
+     tmat.mainTexture=tTex;tmat.SetFloat("_Glossiness",.3f);
+     foreach(var r in tr.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=tmat;
+    }
+   }else{
+    var track=Art.Shape("SawTrack",PrimitiveType.Cube,mid+Vector3.up*.03f,new Vector3(.32f,.06f,length+.4f),new Color(.12f,.12f,.15f),parent);
+    track.transform.localRotation=Quaternion.LookRotation(endLocal-startLocal);
+   }
    // Saw carriage & blade
    var bladeGo=new GameObject("SawBlade");bladeGo.transform.SetParent(go.transform,false);
-   var sawPrefab=Resources.Load<GameObject>("Props/SawBlade");
+   var sawPrefab=Resources.Load<GameObject>("Props/RunicSaw")??Resources.Load<GameObject>("Props/SawBlade");
    if(sawPrefab){
     var sawObj=Instantiate(sawPrefab,bladeGo.transform,false);
-    sawObj.name="SawMesh";
-    sawObj.transform.localPosition=Vector3.up*.45f;
-    sawObj.transform.localRotation=Quaternion.Euler(-90,0,0);
-    sawObj.transform.localScale=new Vector3(1.25f,1.25f,1.25f);
-    var bMat=SpikeTrap.GetBaseMaterial();
-    foreach(var r in sawObj.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=bMat;
+    sawObj.name="RunicSawMesh";
+    sawObj.transform.localPosition=Vector3.up*.55f;
+    sawObj.transform.localRotation=Quaternion.identity;
+    sawObj.transform.localScale=Vector3.one;
+    var sTex=Resources.Load<Texture2D>("Props/Textures/RunicSaw_basecolor");
+    if(sTex){
+     var smat=new Material(Shader.Find("Standard")){name="RunicSaw_Mat"};
+     smat.mainTexture=sTex;smat.SetFloat("_Glossiness",.45f);
+     foreach(var r in sawObj.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=smat;
+    }
    }else{
     Art.Shape("BladeDisc",PrimitiveType.Cylinder,Vector3.up*.45f,new Vector3(1.35f,.05f,1.35f),Color.Lerp(Color.white,accent,.25f),bladeGo.transform);
     Art.Shape("BladeHub",PrimitiveType.Cylinder,Vector3.up*.45f,new Vector3(.45f,.12f,.45f),new Color(.2f,.2f,.22f),bladeGo.transform);
-    // Serrated teeth around rim
     for(int i=0;i<6;i++){
      float ang=i*60f*Mathf.Deg2Rad;
      var tooth=Art.Shape("Tooth",PrimitiveType.Cube,new Vector3(Mathf.Cos(ang)*.65f,.45f,Mathf.Sin(ang)*.65f),new Vector3(.24f,.04f,.24f),Color.white,bladeGo.transform);
@@ -210,9 +226,22 @@ namespace LostRealms {
   Color geyserCol;
   public static FireGeyser Place(Transform parent,Vector3 localPos,Color accent){
    var go=new GameObject("Fire Geyser");go.transform.SetParent(parent,false);go.transform.localPosition=localPos;
-   // Volcanic stone crater
-   Art.Shape("CraterRim",PrimitiveType.Cylinder,new Vector3(0,.06f,0),new Vector3(1.8f,.14f,1.8f),new Color(.22f,.18f,.16f),go.transform);
-   Art.Shape("VentCenter",PrimitiveType.Cylinder,new Vector3(0,.08f,0),new Vector3(1.1f,.12f,1.1f),new Color(.4f,.12f,.05f),go.transform);
+    // Volcanic stone crater
+    var ventPrefab=Resources.Load<GameObject>("Props/LavaVent");
+    if(ventPrefab){
+     var vent=Instantiate(ventPrefab,go.transform,false);
+     vent.name="LavaVentVisual";vent.transform.localPosition=Vector3.zero;
+     vent.transform.localScale=Vector3.one;
+     var vTex=Resources.Load<Texture2D>("Props/Textures/LavaVent_basecolor");
+     if(vTex){
+      var vmat=new Material(Shader.Find("Standard")){name="LavaVent_Mat"};
+      vmat.mainTexture=vTex;
+      foreach(var vr in vent.GetComponentsInChildren<Renderer>(true))vr.sharedMaterial=vmat;
+     }
+    }else{
+     Art.Shape("CraterRim",PrimitiveType.Cylinder,new Vector3(0,.06f,0),new Vector3(1.8f,.14f,1.8f),new Color(.22f,.18f,.16f),go.transform);
+     Art.Shape("VentCenter",PrimitiveType.Cylinder,new Vector3(0,.08f,0),new Vector3(1.1f,.12f,1.1f),new Color(.4f,.12f,.05f),go.transform);
+    }
    // Flame column (deactivated by default)
    var p=Art.Shape("FlameColumn",PrimitiveType.Cylinder,Vector3.up*1.75f,new Vector3(.85f,3.5f,.85f),new Color(1f,.45f,.12f),go.transform);
    var r=p.GetComponent<Renderer>();
@@ -283,40 +312,52 @@ namespace LostRealms {
    // Overhead archway placed on Ignore Raycast layer (2) so FollowCamera is never blocked!
    var archRoot=new GameObject("Archway");archRoot.transform.SetParent(go.transform,false);
    archRoot.layer=2;
-   for(int side=-1;side<=1;side+=2){
-    var col=Art.Shape("ArchPillar",PrimitiveType.Cube,new Vector3(side*(width*.5f),2.5f,0),new Vector3(.65f,5.0f,.65f),new Color(.2f,.22f,.25f),archRoot.transform);
-    col.layer=2;
+   var archPrefab=Resources.Load<GameObject>("Props/CelticArch");
+   if(archPrefab){
+    var arch=Instantiate(archPrefab,archRoot.transform,false);
+    arch.name="CelticArch";arch.transform.localPosition=Vector3.zero;
+    arch.transform.localScale=new Vector3(width/4.6f,1f,1f);
+    var aTex=Resources.Load<Texture2D>("Props/Textures/CelticArch_basecolor");
+    if(aTex){
+     var amat=new Material(Shader.Find("Standard")){name="CelticArch_Mat"};
+     amat.mainTexture=aTex;amat.SetFloat("_Glossiness",.25f);
+     foreach(var r in arch.GetComponentsInChildren<Renderer>(true)){r.sharedMaterial=amat;r.gameObject.layer=2;}
+    }
+   }else{
+    for(int side=-1;side<=1;side+=2){
+     var col=Art.Shape("ArchPillar",PrimitiveType.Cube,new Vector3(side*(width*.5f),2.5f,0),new Vector3(.65f,5.0f,.65f),new Color(.2f,.22f,.25f),archRoot.transform);
+     col.layer=2;
+    }
+    var lintel=Art.Shape("ArchLintel",PrimitiveType.Cube,new Vector3(0,5.0f,0),new Vector3(width+1.1f,.6f,.8f),new Color(.16f,.18f,.2f),archRoot.transform);
+    lintel.layer=2;
    }
-   var lintel=Art.Shape("ArchLintel",PrimitiveType.Cube,new Vector3(0,5.0f,0),new Vector3(width+1.1f,.6f,.8f),new Color(.16f,.18f,.2f),archRoot.transform);
-   lintel.layer=2;
-   // Swinging pendulum rod & blade
-   var pivotGo=new GameObject("Pivot");pivotGo.transform.SetParent(go.transform,false);pivotGo.transform.localPosition=new Vector3(0,4.8f,0);
-   var polePrefab=Resources.Load<GameObject>("Props/Pole01D");
-   var bladePrefab=Resources.Load<GameObject>("Props/Blade01D");
-   if(polePrefab&&bladePrefab){
-    var pole=Instantiate(polePrefab,pivotGo.transform,false);
-    pole.name="Pole";pole.transform.localPosition=new Vector3(0,-2.4f,0);
-    pole.transform.localScale=new Vector3(1f,.85f,1f);
-    var pMat=SpikeTrap.GetBaseMaterial();
-    foreach(var r in pole.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=pMat;
-
-    var bMat=SpikeTrap.GetSpikesMaterial(accent);
-    var bladeL=Instantiate(bladePrefab,pivotGo.transform,false);
-    bladeL.name="BladeL";bladeL.transform.localPosition=new Vector3(-1.8f,-4.2f,0);
-    bladeL.transform.localRotation=Quaternion.identity;bladeL.transform.localScale=new Vector3(1.15f,1.15f,1.15f);
-    foreach(var r in bladeL.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=bMat;
-
-    var bladeR=Instantiate(bladePrefab,pivotGo.transform,false);
-    bladeR.name="BladeR";bladeR.transform.localPosition=new Vector3(1.8f,-4.2f,0);
-    bladeR.transform.localRotation=Quaternion.Euler(0,180f,0);bladeR.transform.localScale=new Vector3(1.15f,1.15f,1.15f);
-    foreach(var r in bladeR.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=bMat;
+   // Swinging pendulum rod & blade mounted at top pivot
+   var pivotGo=new GameObject("Pivot");pivotGo.transform.SetParent(go.transform,false);pivotGo.transform.localPosition=new Vector3(0,4.2f,0);
+   Transform bladeHitPoint=null;
+   var bladePrefab=Resources.Load<GameObject>("Props/GuillotineBlade");
+   if(bladePrefab){
+    var bladeObj=Instantiate(bladePrefab,pivotGo.transform,false);
+    bladeObj.name="GuillotineBladeVisual";
+    bladeObj.transform.localPosition=Vector3.zero;
+    bladeObj.transform.localRotation=Quaternion.identity;
+    bladeObj.transform.localScale=Vector3.one;
+    var bTex=Resources.Load<Texture2D>("Props/Textures/GuillotineBlade_basecolor");
+    if(bTex){
+     var bmat=new Material(Shader.Find("Standard")){name="Guillotine_Mat"};
+     bmat.mainTexture=bTex;bmat.SetFloat("_Glossiness",.35f);
+     foreach(var r in bladeObj.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=bmat;
+    }
+    var anchor=new GameObject("BladeHitAnchor");anchor.transform.SetParent(pivotGo.transform,false);
+    anchor.transform.localPosition=new Vector3(0,-3.2f,0);
+    bladeHitPoint=anchor.transform;
    }else{
     Art.Shape("PivotRod",PrimitiveType.Cylinder,new Vector3(0,-2.1f,0),new Vector3(.14f,4.2f,.14f),new Color(.3f,.3f,.34f),pivotGo.transform);
     var bladeGo=Art.Shape("PendulumBlade",PrimitiveType.Cube,new Vector3(0,-4.15f,0),new Vector3(1.8f,.75f,.16f),Color.Lerp(Color.white,accent,.35f),pivotGo.transform);
     bladeGo.transform.localRotation=Quaternion.Euler(0,0,15);
+    bladeHitPoint=bladeGo.transform;
    }
    var pt=go.AddComponent<PendulumTrap>();
-   pt.pivot=pivotGo.transform;pt.blade=pivotGo.transform;pt.phase=Random.value*6.28f;
+   pt.pivot=pivotGo.transform;pt.blade=bladeHitPoint;pt.phase=Random.value*6.28f;
    return pt;
   }
 
@@ -325,12 +366,30 @@ namespace LostRealms {
    float angle=Mathf.Sin((Time.time+phase)*speed)*maxAngle;
    if(pivot)pivot.localRotation=Quaternion.Euler(0,0,angle);
    // Hazardous at lowest point of swing
-   if(blade&&Mathf.Abs(angle)<24f){
-    Vector3 bPos=blade.position;Vector3 pPos=g.Player.transform.position+Vector3.up*.9f;
-    if(Vector3.Distance(bPos,pPos)<1.35f){
-     Vector3 knock=pPos-bPos;knock.y=0;
-     if(g.Player.Damage(1,bPos))
-      HitSpark.Burst(pPos,knock.normalized,new Color(1f,.85f,.4f),12);
+   if(blade&&Mathf.Abs(angle)<32f){
+    Vector3 bPos=blade.position;
+    // Check Aster
+    if(g.Player){
+     Vector3 pPos=g.Player.transform.position+Vector3.up*.9f;
+     if(Vector3.Distance(bPos,pPos)<1.65f){
+      Vector3 knock=pPos-bPos;knock.y=0;
+      if(g.Player.Damage(1,bPos)){
+       HitSpark.Burst(pPos,knock.normalized,new Color(1f,.85f,.4f),14);
+       g.Sound("impact");
+      }
+     }
+    }
+    // Check nearby enemies crossing the bridge
+    if(g.Enemies!=null){
+     foreach(var foe in g.Enemies){
+      if(!foe||foe.Health<=0)continue;
+      Vector3 fPos=foe.transform.position+Vector3.up*.8f;
+      if(Vector3.Distance(bPos,fPos)<1.8f){
+       Vector3 knock=fPos-bPos;knock.y=0.25f;
+       foe.Hit(3f,0,false,knock.normalized);
+       HitSpark.Burst(fPos,knock.normalized,new Color(1f,.4f,.2f),14);
+      }
+     }
     }
    }
   }
@@ -343,16 +402,32 @@ namespace LostRealms {
   Transform padVisual;Vector3 baseScale=Vector3.one;float squish;Color padColor;
   public static BouncePad Place(Transform parent,Vector3 localPos,Color accent){
    var go=new GameObject("Bounce Pad");go.transform.SetParent(parent,false);go.transform.localPosition=localPos;
-   // Ancient runic dais
-   Art.Shape("DaisBase",PrimitiveType.Cylinder,new Vector3(0,.05f,0),new Vector3(2.3f,.1f,2.3f),new Color(.18f,.2f,.24f),go.transform);
-   var core=Art.Shape("DaisCore",PrimitiveType.Cylinder,new Vector3(0,.09f,0),new Vector3(1.7f,.08f,1.7f),accent*.85f,go.transform);
-   Art.Ring(new Vector3(0,.12f,0),.7f,Color.white,go.transform);
-   for(int i=0;i<4;i++){
-    float ang=i*90f*Mathf.Deg2Rad;
-    Art.Crystal(new Vector3(Mathf.Cos(ang)*.95f,.35f,Mathf.Sin(ang)*.95f),.45f,accent,go.transform);
+   // Ancient runic celestial dais
+   var daisPrefab=Resources.Load<GameObject>("Props/CelestialDais");
+   Transform padCore=null;
+   if(daisPrefab){
+    var dais=Instantiate(daisPrefab,go.transform,false);
+    dais.name="CelestialDaisVisual";dais.transform.localPosition=Vector3.zero;
+    dais.transform.localScale=Vector3.one;
+    var dTex=Resources.Load<Texture2D>("Props/Textures/CelestialDais_basecolor");
+    if(dTex){
+     var dmat=new Material(Shader.Find("Standard")){name="CelestialDais_Mat"};
+     dmat.mainTexture=dTex;dmat.SetFloat("_Glossiness",.35f);
+     foreach(var r in dais.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=dmat;
+    }
+    padCore=dais.transform;
+   }else{
+    Art.Shape("DaisBase",PrimitiveType.Cylinder,new Vector3(0,.05f,0),new Vector3(2.3f,.1f,2.3f),new Color(.18f,.2f,.24f),go.transform);
+    var core=Art.Shape("DaisCore",PrimitiveType.Cylinder,new Vector3(0,.09f,0),new Vector3(1.7f,.08f,1.7f),accent*.85f,go.transform);
+    padCore=core.transform;
+    Art.Ring(new Vector3(0,.12f,0),.7f,Color.white,go.transform);
+    for(int i=0;i<4;i++){
+     float ang=i*90f*Mathf.Deg2Rad;
+     Art.Crystal(new Vector3(Mathf.Cos(ang)*.95f,.35f,Mathf.Sin(ang)*.95f),.45f,accent,go.transform);
+    }
    }
    var bp=go.AddComponent<BouncePad>();
-   bp.padVisual=core.transform;bp.padColor=accent;
+   bp.padVisual=padCore;bp.padColor=accent;
    return bp;
   }
 
@@ -448,9 +523,21 @@ namespace LostRealms {
   public static SpeedRing Place(Transform parent,Vector3 localPos,Vector3 direction,Color accent){
    var go=new GameObject("Aether Speed Ring");go.transform.SetParent(parent,false);go.transform.localPosition=localPos;
    go.transform.rotation=Quaternion.LookRotation(direction);
-   // Torus ring
-   Art.Ring(Vector3.zero,1.4f,accent,go.transform);
-   Art.Ring(Vector3.zero,1.6f,Color.white*.8f,go.transform);
+   var ringPrefab=Resources.Load<GameObject>("Props/RunicSpeedRing");
+   if(ringPrefab){
+    var ring=Instantiate(ringPrefab,go.transform,false);
+    ring.name="RunicRingVisual";ring.transform.localPosition=Vector3.zero;
+    ring.transform.localScale=Vector3.one;
+    var rTex=Resources.Load<Texture2D>("Props/Textures/RunicSpeedRing_basecolor");
+    if(rTex){
+     var rmat=new Material(Shader.Find("Standard")){name="RunicRing_Mat"};
+     rmat.mainTexture=rTex;rmat.SetFloat("_Glossiness",.35f);
+     foreach(var r in ring.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=rmat;
+    }
+   }else{
+    Art.Ring(Vector3.zero,1.4f,accent,go.transform);
+    Art.Ring(Vector3.zero,1.6f,Color.white*.8f,go.transform);
+   }
    var sr=go.AddComponent<SpeedRing>();sr.boostDir=direction.normalized;
    return sr;
   }
