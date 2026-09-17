@@ -9,6 +9,7 @@ Color[] baseColors=cliff?new[]{new Color(.16f,.22f,.22f),new Color(.35f,.23f,.15
     m.color=baseColors[realm];if(m.HasProperty("_Detail"))m.SetColor("_Detail",detailColors[realm]);
     if(!cliff){string[] textures={"Art/verdant_moss_tile","Art/ember_sand_tile","Art/frost_ice_tile","Art/ember_rock_tile"};var terrainTexture=Resources.Load<Texture2D>(textures[realm]);if(terrainTexture&&m.HasProperty("_MainTex"))m.SetTexture("_MainTex",terrainTexture);if(m.HasProperty("_TileScale"))m.SetFloat("_TileScale",.13f);}
    return m;
+   return m;
   }
   public static void Upgrade(RealmWorld world,int realm){
    var lifetime=world.gameObject.AddComponent<RealmArtLifetime>();var terrain=Ground(realm,false);var rock=Ground(realm,true);lifetime.Keep(terrain);lifetime.Keep(rock);var skyShader=Resources.Load<Shader>("Shaders/RealmSky");
@@ -18,14 +19,15 @@ if(skyShader){var sky=new Material(skyShader);lifetime.Keep(sky);sky.SetColor("_
    int seed=0;
    foreach(Transform island in world.transform){
     if(island.name!="Island")continue;seed++;
+    if(island.Find("IslandMeshVisual")!=null)continue;
     var surface=island.Find("Realm surface");if(!surface)continue;
-     float width=surface.localScale.x-.08f,length=surface.localScale.z-.08f;
-     surface.GetComponent<Renderer>().sharedMaterial=terrain;
-     surface.GetComponent<Renderer>().enabled=false;
-     var solid=island.Find("Walkable stone");if(solid)solid.GetComponent<Renderer>().enabled=false;
-     foreach(Transform item in island){if(item.name=="Foliage"||item.name=="Ancient trunk"||item.name=="CliffShelf"||item.name=="RockKeel"||item.name=="FloatingKeystone"||item.name.StartsWith("Curb")){item.gameObject.SetActive(false);Object.Destroy(item.gameObject);}}
-     Cliff(island,width,length,seed,rock);
-     IslandTop(island,width,length,seed,terrain);
+    float width=surface.localScale.x-.08f,length=surface.localScale.z-.08f;
+    surface.GetComponent<Renderer>().sharedMaterial=terrain;
+    surface.GetComponent<Renderer>().enabled=false;
+    var solid=island.Find("Walkable stone");if(solid)solid.GetComponent<Renderer>().enabled=false;
+    foreach(Transform item in island){if(item.name=="Foliage"||item.name=="Ancient trunk"||item.name=="CliffShelf"||item.name=="RockKeel"||item.name=="FloatingKeystone"||item.name.StartsWith("Curb")){item.gameObject.SetActive(false);Object.Destroy(item.gameObject);}}
+    Cliff(island,width,length,seed,rock);
+    IslandTop(island,width,length,seed,terrain);
     var rng=new System.Random(seed*587+realm*1901);
     if(width>7){
      for(int side=-1;side<=1;side+=2){
@@ -40,13 +42,22 @@ if(skyShader){var sky=new Material(skyShader);lifetime.Keep(sky);sky.SetColor("_
    }
    // Distant silhouettes frame the route without obstructing the playable camera corridor.
    foreach(Transform t in world.transform)if(t.name=="Distant canopy"||t.name=="Distant realm spire"){t.gameObject.SetActive(false);Object.Destroy(t.gameObject);}
-    for(int i=0;i<18;i++){float side=i%2==0?-1:1;var root=new GameObject("Distant floating crag").transform;root.SetParent(world.transform,false);root.localPosition=new Vector3(side*(23+i%3*8),-14-i%4*3,-22+i*11);Cliff(root,12+i%4*3,15,i,rock);IslandTop(root,12+i%4*3,15,i,terrain);if(realm==0)Tree(Vector3.zero,root,i);}
+   for(int i=0;i<18;i++){
+    float side=i%2==0?-1:1;var root=new GameObject("Distant floating crag").transform;root.SetParent(world.transform,false);root.localPosition=new Vector3(side*(23+i%3*8),-14-i%4*3,-22+i*11);
+    if(realm==0){
+     var cragPrefab=Resources.Load<GameObject>("Islands/Island_Crag");
+     if(cragPrefab){
+      var cObj=Object.Instantiate(cragPrefab,root,false);
+      cObj.name="CragVisual";float s=0.9f+(i%4)*.35f;cObj.transform.localScale=new Vector3(s,s,s);
+      cObj.transform.localRotation=Quaternion.Euler(0,i*47f,0);
+      var cTex=Resources.Load<Texture2D>("Islands/Textures/Island_Crag_basecolor");
+      if(cTex){var cmat=new Material(Shader.Find("Standard")){name="Crag_Mat"};cmat.mainTexture=cTex;cmat.SetFloat("_Glossiness",.15f);foreach(var r in cObj.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=cmat;}
+      continue;
+     }
+    }
+    Cliff(root,12+i%4*3,15,i,rock);IslandTop(root,12+i%4*3,15,i,terrain);if(realm==0)Tree(Vector3.zero,root,i);
+   }
     RealmAtmosphere.Apply(world,realm);
-  }
-  static void MeshObject(string name,Transform parent,Mesh mesh,Material material){var g=new GameObject(name);g.transform.SetParent(parent,false);g.AddComponent<MeshFilter>().sharedMesh=mesh;parent.GetComponentInParent<RealmArtLifetime>().Keep(mesh);g.AddComponent<MeshRenderer>().sharedMaterial=material;}
-  static void Cliff(Transform parent,float width,float length,int seed,Material material){
-   var verts=new List<Vector3>();var tris=new List<int>();const int sides=16;
-   for(int i=0;i<sides;i++){
     float a=i*Mathf.PI*2/sides,b=(i+1)*Mathf.PI*2/sides;
     Vector3 p=Rim(a,width,length),q=Rim(b,width,length);
     Vector3 r=p*(.45f+.12f*Mathf.Sin(seed+i*2));r.y=-4.5f-.8f*Mathf.Sin(i*3+seed);
