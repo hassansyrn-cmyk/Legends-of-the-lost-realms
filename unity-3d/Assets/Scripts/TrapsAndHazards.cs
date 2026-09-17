@@ -9,54 +9,65 @@ namespace LostRealms {
   Transform spikeRoot;Color trapColor;
   float timer,phaseOffset;enum State{Dormant,Telegraph,Active,Retract}State state=State.Dormant;
   Vector3 baseLocal;
-  float thrustHeight=.46f;
+  float thrustHeight=2.3f;
   static Material baseMatInst;
   static Material GetBaseMaterial(){
    if(!baseMatInst){
-    var tex=Resources.Load<Texture2D>("Props/Textures/SpikeTrap_Base_basecolor");
-    var norm=Resources.Load<Texture2D>("Props/Textures/SpikeTrap_Base_normal");
-    baseMatInst=new Material(Shader.Find("Standard")){name="SpikeTrap_Base_Mat",color=Color.white};
+    var tex=Resources.Load<Texture2D>("Props/Textures/ColorPaletteRED");
+    baseMatInst=new Material(Shader.Find("Standard")){name="GrateTrap_Mat",color=Color.white};
     if(tex)baseMatInst.mainTexture=tex;
-    if(norm){baseMatInst.SetTexture("_BumpMap",norm);baseMatInst.EnableKeyword("_NORMALMAP");}
-    baseMatInst.SetFloat("_Metallic",.15f);baseMatInst.SetFloat("_Glossiness",.35f);
+    baseMatInst.SetFloat("_Metallic",.45f);baseMatInst.SetFloat("_Glossiness",.45f);
    }
    return baseMatInst;
   }
   static Material GetSpikesMaterial(Color accent){
-   var tex=Resources.Load<Texture2D>("Props/Textures/SpikeTrap_Spikes_basecolor");
-   var mat=new Material(Shader.Find("Standard")){name="SpikeTrap_Spikes_Mat",color=Color.Lerp(Color.white,accent,.2f)};
+   var tex=Resources.Load<Texture2D>("Props/Textures/ColorPaletteRED");
+   var mat=new Material(Shader.Find("Standard")){name="SpikeTrap_Mat",color=Color.Lerp(Color.white,accent,.25f)};
    if(tex)mat.mainTexture=tex;
-   mat.SetFloat("_Metallic",.65f);mat.SetFloat("_Glossiness",.5f);
+   mat.SetFloat("_Metallic",.75f);mat.SetFloat("_Glossiness",.6f);
    return mat;
   }
 
   public static SpikeTrap Place(Transform parent,Vector3 localPos,Color accent){
    var go=new GameObject("Spike Trap");go.transform.SetParent(parent,false);go.transform.localPosition=localPos;
-   var basePrefab=Resources.Load<GameObject>("Props/SpikeTrap_Base");
-   var spikesPrefab=Resources.Load<GameObject>("Props/SpikeTrap_Spikes");
+   var gratePrefab=Resources.Load<GameObject>("Props/GrateTrapD");
+   var spearPrefab=Resources.Load<GameObject>("Props/SpearD");
    var trap=go.AddComponent<SpikeTrap>();
    trap.trapColor=accent;trap.phaseOffset=Random.value*1.5f;
 
-   if(basePrefab&&spikesPrefab){
-    go.transform.localScale=new Vector3(2.0f,1.8f,2.0f);
-    var baseObj=Instantiate(basePrefab,go.transform,false);
-    baseObj.name="BaseFrame";
-    baseObj.transform.localPosition=Vector3.zero;
-    baseObj.transform.localRotation=Quaternion.identity;
+   if(gratePrefab&&spearPrefab){
+    var grateObj=Instantiate(gratePrefab,go.transform,false);
+    grateObj.name="GrateFrame";
+    grateObj.transform.localPosition=Vector3.zero;
+    grateObj.transform.localRotation=Quaternion.identity;
     var bMat=GetBaseMaterial();
-    foreach(var r in baseObj.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=bMat;
+    foreach(var r in grateObj.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=bMat;
 
     var spikes=new GameObject("Spikes");spikes.transform.SetParent(go.transform,false);
-    spikes.transform.localPosition=new Vector3(0,-.28f,0);
-    var spikesObj=Instantiate(spikesPrefab,spikes.transform,false);
-    spikesObj.name="SpikesMesh";
-    spikesObj.transform.localPosition=Vector3.zero;
-    spikesObj.transform.localRotation=Quaternion.identity;
+    spikes.transform.localPosition=new Vector3(0,-2.1f,0);
     var sMat=GetSpikesMaterial(accent);
-    foreach(var r in spikesObj.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=sMat;
+
+    Vector2[] spearPositions=new Vector2[]{
+     new Vector2(-0.70f, 0.67f),
+     new Vector2( 0.00f, 0.67f),
+     new Vector2( 0.68f, 0.67f),
+     new Vector2(-0.70f, 0.00f),
+     new Vector2( 0.68f, 0.00f),
+     new Vector2(-0.70f,-0.67f),
+     new Vector2( 0.00f,-0.67f),
+     new Vector2( 0.68f,-0.67f)
+    };
+
+     foreach(var p in spearPositions){
+      var sp=Instantiate(spearPrefab,spikes.transform,false);
+      sp.name="Spear";
+      sp.transform.localPosition=new Vector3(p.x,0,p.y);
+      sp.transform.localRotation=Quaternion.Euler(0,-90f,0);
+      foreach(var r in sp.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=sMat;
+     }
 
     trap.spikeRoot=spikes.transform;trap.baseLocal=spikes.transform.localPosition;
-    trap.thrustHeight=.46f;
+    trap.thrustHeight=2.3f;
    }else{
     // Fallback if 3D assets not present
     Art.Shape("TrapRim",PrimitiveType.Cube,new Vector3(0,.04f,0),new Vector3(2.1f,.12f,2.1f),new Color(.18f,.18f,.2f),go.transform);
@@ -138,13 +149,24 @@ namespace LostRealms {
    track.transform.localRotation=Quaternion.LookRotation(endLocal-startLocal);
    // Saw carriage & blade
    var bladeGo=new GameObject("SawBlade");bladeGo.transform.SetParent(go.transform,false);
-   Art.Shape("BladeDisc",PrimitiveType.Cylinder,Vector3.up*.45f,new Vector3(1.35f,.05f,1.35f),Color.Lerp(Color.white,accent,.25f),bladeGo.transform);
-   Art.Shape("BladeHub",PrimitiveType.Cylinder,Vector3.up*.45f,new Vector3(.45f,.12f,.45f),new Color(.2f,.2f,.22f),bladeGo.transform);
-   // Serrated teeth around rim
-   for(int i=0;i<6;i++){
-    float ang=i*60f*Mathf.Deg2Rad;
-    var tooth=Art.Shape("Tooth",PrimitiveType.Cube,new Vector3(Mathf.Cos(ang)*.65f,.45f,Mathf.Sin(ang)*.65f),new Vector3(.24f,.04f,.24f),Color.white,bladeGo.transform);
-    tooth.transform.localRotation=Quaternion.Euler(0,i*60f+25f,0);
+   var sawPrefab=Resources.Load<GameObject>("Props/SawBlade");
+   if(sawPrefab){
+    var sawObj=Instantiate(sawPrefab,bladeGo.transform,false);
+    sawObj.name="SawMesh";
+    sawObj.transform.localPosition=Vector3.up*.45f;
+    sawObj.transform.localRotation=Quaternion.Euler(-90,0,0);
+    sawObj.transform.localScale=new Vector3(1.25f,1.25f,1.25f);
+    var bMat=GetBaseMaterial();
+    foreach(var r in sawObj.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=bMat;
+   }else{
+    Art.Shape("BladeDisc",PrimitiveType.Cylinder,Vector3.up*.45f,new Vector3(1.35f,.05f,1.35f),Color.Lerp(Color.white,accent,.25f),bladeGo.transform);
+    Art.Shape("BladeHub",PrimitiveType.Cylinder,Vector3.up*.45f,new Vector3(.45f,.12f,.45f),new Color(.2f,.2f,.22f),bladeGo.transform);
+    // Serrated teeth around rim
+    for(int i=0;i<6;i++){
+     float ang=i*60f*Mathf.Deg2Rad;
+     var tooth=Art.Shape("Tooth",PrimitiveType.Cube,new Vector3(Mathf.Cos(ang)*.65f,.45f,Mathf.Sin(ang)*.65f),new Vector3(.24f,.04f,.24f),Color.white,bladeGo.transform);
+     tooth.transform.localRotation=Quaternion.Euler(0,i*60f+25f,0);
+    }
    }
    var st=go.AddComponent<SawTrap>();
    st.sawBlade=bladeGo.transform;st.startPos=startLocal;st.endPos=endLocal;
@@ -269,11 +291,32 @@ namespace LostRealms {
    lintel.layer=2;
    // Swinging pendulum rod & blade
    var pivotGo=new GameObject("Pivot");pivotGo.transform.SetParent(go.transform,false);pivotGo.transform.localPosition=new Vector3(0,4.8f,0);
-   Art.Shape("PivotRod",PrimitiveType.Cylinder,new Vector3(0,-2.1f,0),new Vector3(.14f,4.2f,.14f),new Color(.3f,.3f,.34f),pivotGo.transform);
-   var bladeGo=Art.Shape("PendulumBlade",PrimitiveType.Cube,new Vector3(0,-4.15f,0),new Vector3(1.8f,.75f,.16f),Color.Lerp(Color.white,accent,.35f),pivotGo.transform);
-   bladeGo.transform.localRotation=Quaternion.Euler(0,0,15);
+   var polePrefab=Resources.Load<GameObject>("Props/Pole01D");
+   var bladePrefab=Resources.Load<GameObject>("Props/Blade01D");
+   if(polePrefab&&bladePrefab){
+    var pole=Instantiate(polePrefab,pivotGo.transform,false);
+    pole.name="Pole";pole.transform.localPosition=new Vector3(0,-2.4f,0);
+    pole.transform.localScale=new Vector3(1f,.85f,1f);
+    var pMat=GetBaseMaterial();
+    foreach(var r in pole.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=pMat;
+
+    var bMat=GetSpikesMaterial(accent);
+    var bladeL=Instantiate(bladePrefab,pivotGo.transform,false);
+    bladeL.name="BladeL";bladeL.transform.localPosition=new Vector3(-1.8f,-4.2f,0);
+    bladeL.transform.localRotation=Quaternion.identity;bladeL.transform.localScale=new Vector3(1.15f,1.15f,1.15f);
+    foreach(var r in bladeL.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=bMat;
+
+    var bladeR=Instantiate(bladePrefab,pivotGo.transform,false);
+    bladeR.name="BladeR";bladeR.transform.localPosition=new Vector3(1.8f,-4.2f,0);
+    bladeR.transform.localRotation=Quaternion.Euler(0,180f,0);bladeR.transform.localScale=new Vector3(1.15f,1.15f,1.15f);
+    foreach(var r in bladeR.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=bMat;
+   }else{
+    Art.Shape("PivotRod",PrimitiveType.Cylinder,new Vector3(0,-2.1f,0),new Vector3(.14f,4.2f,.14f),new Color(.3f,.3f,.34f),pivotGo.transform);
+    var bladeGo=Art.Shape("PendulumBlade",PrimitiveType.Cube,new Vector3(0,-4.15f,0),new Vector3(1.8f,.75f,.16f),Color.Lerp(Color.white,accent,.35f),pivotGo.transform);
+    bladeGo.transform.localRotation=Quaternion.Euler(0,0,15);
+   }
    var pt=go.AddComponent<PendulumTrap>();
-   pt.pivot=pivotGo.transform;pt.blade=bladeGo.transform;pt.phase=Random.value*6.28f;
+   pt.pivot=pivotGo.transform;pt.blade=pivotGo.transform;pt.phase=Random.value*6.28f;
    return pt;
   }
 
@@ -473,6 +516,54 @@ namespace LostRealms {
     if(pdist<3.2f)g.Player.Damage(1,transform.position);
    }
    Destroy(gameObject);
+  }
+ }
+
+ // =========================================================================
+ // 9. ROTATING FLOOR BLADE TRAP (FALSE WISP)
+ // =========================================================================
+ public sealed class FloorBladeTrap:MonoBehaviour {
+  Transform bladeRoot;Color trapColor;float timer;
+  public static FloorBladeTrap Place(Transform parent,Vector3 localPos,Color accent){
+   var go=new GameObject("Floor Blade Trap");go.transform.SetParent(parent,false);go.transform.localPosition=localPos;
+   var prefab=Resources.Load<GameObject>("Props/FloorBladeTrap");
+   var fb=go.AddComponent<FloorBladeTrap>();
+   fb.trapColor=accent;
+   if(prefab){
+    var obj=Instantiate(prefab,go.transform,false);
+    obj.transform.localPosition=Vector3.zero;
+    obj.transform.localRotation=Quaternion.identity;
+    obj.transform.localScale=new Vector3(1.2f,1.2f,1.2f);
+    var tex=Resources.Load<Texture2D>("Props/Textures/FloorBladeTrap_basecolor");
+    if(tex){
+     var mat=new Material(Shader.Find("Standard")){name="FloorBlade_Mat",color=Color.white};
+     mat.mainTexture=tex;mat.SetFloat("_Metallic",.4f);mat.SetFloat("_Glossiness",.5f);
+     foreach(var r in obj.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=mat;
+    }
+    fb.bladeRoot=obj.transform;
+   }
+   return fb;
+  }
+  void Update(){
+   var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
+   timer+=Time.deltaTime;
+   if(bladeRoot)bladeRoot.Rotate(0,360f*Time.deltaTime,0,Space.Self);
+   Vector3 pPos=g.Player.transform.position;
+   Vector3 d=pPos-transform.position;
+   if(Mathf.Abs(d.x)<1.1f&&Mathf.Abs(d.z)<1.1f&&d.y>-.2f&&d.y<1.2f){
+    if(g.Player.Damage(1,transform.position)){
+     HitSpark.Burst(pPos+Vector3.up*.8f,Vector3.up,Color.red,12);
+    }
+   }
+   if(g.Enemies!=null){
+    foreach(var foe in g.Enemies){
+     if(!foe||foe.Health<=0)continue;
+     Vector3 fd=foe.transform.position-transform.position;
+     if(Mathf.Abs(fd.x)<1.1f&&Mathf.Abs(fd.z)<1.1f&&Mathf.Abs(fd.y)<1.2f){
+      foe.Hit(1.5f,0,false,Vector3.up);
+     }
+    }
+   }
   }
  }
 }

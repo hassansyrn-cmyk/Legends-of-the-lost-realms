@@ -226,7 +226,8 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     BreakableCrate.Place(root.transform,new Vector3(-4.2f,.05f,4f),stone*1.3f);
     BreakableCrate.Place(root.transform,new Vector3(4.2f,.05f,4f),stone*1.3f,true);
     ExplosiveBarrel.Place(root.transform,new Vector3(-4.2f,.05f,-4f),accent);
-    SpikeTrap.Place(root.transform,new Vector3(0,.05f,0),accent);
+    if(stage>=3&&index%2==1)FloorBladeTrap.Place(root.transform,new Vector3(0,.05f,0),accent);
+    else SpikeTrap.Place(root.transform,new Vector3(0,.05f,0),accent);
    }else if(archetype==IslandArchetype.NarrowBridge){
     PendulumTrap.Place(root.transform,new Vector3(0,.05f,0),width,accent);
    }else if(archetype==IslandArchetype.TieredPlatform){
@@ -235,6 +236,20 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     Art.Shape("Step1",PrimitiveType.Cube,new Vector3(0,.28f,-.2f),new Vector3(3.6f,.55f,.9f),stone*1.15f,root.transform,true);
     Art.Shape("Step2",PrimitiveType.Cube,new Vector3(0,.65f,.55f),new Vector3(3.6f,.55f,.9f),stone*1.15f,root.transform,true);
    }else if(archetype==IslandArchetype.MovingFerry){
+    var skullPrefab=Resources.Load<GameObject>("Props/Platform_Skull_01");
+    if(skullPrefab){
+     var skullObj=Instantiate(skullPrefab,root.transform,false);
+     skullObj.name="SkullPlatformVisual";
+     skullObj.transform.localPosition=new Vector3(0,-.15f,0);
+     skullObj.transform.localRotation=Quaternion.Euler(-90,0,0);
+     skullObj.transform.localScale=new Vector3(width/3.1f,length/3.1f,1.8f);
+     var skullTex=Resources.Load<Texture2D>("Props/Textures/Platform_Skull_basecolor");
+     if(skullTex){
+      var smat=new Material(Shader.Find("Standard")){name="SkullPlat_Mat",color=stone*1.2f};
+      smat.mainTexture=skullTex;smat.SetFloat("_Glossiness",.3f);
+      foreach(var r in skullObj.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=smat;
+     }
+    }
     var motion=root.AddComponent<MovingIsland>();
     motion.Origin=pos;
     motion.Offset=new Vector3((index%2==0?1:-1)*3.8f,0,0);
