@@ -226,7 +226,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     BreakableCrate.Place(root.transform,new Vector3(-4.2f,.05f,4f),stone*1.3f);
     BreakableCrate.Place(root.transform,new Vector3(4.2f,.05f,4f),stone*1.3f,true);
     ExplosiveBarrel.Place(root.transform,new Vector3(-4.2f,.05f,-4f),accent);
-    if(stage>=3&&index%2==1)FloorBladeTrap.Place(root.transform,new Vector3(0,.05f,0),accent);
+    if(level>=3&&index%2==1)FloorBladeTrap.Place(root.transform,new Vector3(0,.05f,0),accent);
     else SpikeTrap.Place(root.transform,new Vector3(0,.05f,0),accent);
    }else if(archetype==IslandArchetype.NarrowBridge){
     PendulumTrap.Place(root.transform,new Vector3(0,.05f,0),width,accent);

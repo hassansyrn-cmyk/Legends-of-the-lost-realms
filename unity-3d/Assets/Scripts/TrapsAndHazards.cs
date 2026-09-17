@@ -11,7 +11,7 @@ namespace LostRealms {
   Vector3 baseLocal;
   float thrustHeight=2.3f;
   static Material baseMatInst;
-  static Material GetBaseMaterial(){
+  public static Material GetBaseMaterial(){
    if(!baseMatInst){
     var tex=Resources.Load<Texture2D>("Props/Textures/ColorPaletteRED");
     baseMatInst=new Material(Shader.Find("Standard")){name="GrateTrap_Mat",color=Color.white};
@@ -20,7 +20,7 @@ namespace LostRealms {
    }
    return baseMatInst;
   }
-  static Material GetSpikesMaterial(Color accent){
+  public static Material GetSpikesMaterial(Color accent){
    var tex=Resources.Load<Texture2D>("Props/Textures/ColorPaletteRED");
    var mat=new Material(Shader.Find("Standard")){name="SpikeTrap_Mat",color=Color.Lerp(Color.white,accent,.25f)};
    if(tex)mat.mainTexture=tex;
@@ -156,7 +156,7 @@ namespace LostRealms {
     sawObj.transform.localPosition=Vector3.up*.45f;
     sawObj.transform.localRotation=Quaternion.Euler(-90,0,0);
     sawObj.transform.localScale=new Vector3(1.25f,1.25f,1.25f);
-    var bMat=GetBaseMaterial();
+    var bMat=SpikeTrap.GetBaseMaterial();
     foreach(var r in sawObj.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=bMat;
    }else{
     Art.Shape("BladeDisc",PrimitiveType.Cylinder,Vector3.up*.45f,new Vector3(1.35f,.05f,1.35f),Color.Lerp(Color.white,accent,.25f),bladeGo.transform);
@@ -297,10 +297,10 @@ namespace LostRealms {
     var pole=Instantiate(polePrefab,pivotGo.transform,false);
     pole.name="Pole";pole.transform.localPosition=new Vector3(0,-2.4f,0);
     pole.transform.localScale=new Vector3(1f,.85f,1f);
-    var pMat=GetBaseMaterial();
+    var pMat=SpikeTrap.GetBaseMaterial();
     foreach(var r in pole.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=pMat;
 
-    var bMat=GetSpikesMaterial(accent);
+    var bMat=SpikeTrap.GetSpikesMaterial(accent);
     var bladeL=Instantiate(bladePrefab,pivotGo.transform,false);
     bladeL.name="BladeL";bladeL.transform.localPosition=new Vector3(-1.8f,-4.2f,0);
     bladeL.transform.localRotation=Quaternion.identity;bladeL.transform.localScale=new Vector3(1.15f,1.15f,1.15f);
