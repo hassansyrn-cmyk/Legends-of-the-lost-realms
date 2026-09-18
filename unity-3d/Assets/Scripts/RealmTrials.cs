@@ -29,8 +29,10 @@ namespace LostRealms {
    CombatTelegraph.Ring(root.transform,.65f,accent,"Inner engraving");
    if(trial.Kind==TrialKind.Echoes){
     for(int i=0;i<3;i++){
+     int rIdx=Mathf.Min(3+i*3,world.Route.Count-1);
+     if(rIdx<0)continue;
      var echo=new GameObject("Trial echo "+(i+1));echo.transform.SetParent(world.transform,false);
-     echo.transform.position=world.Route[3+i*3]+new Vector3(i%2==0?-1.25f:1.25f,.85f,-1.5f);
+     echo.transform.position=world.Route[rIdx]+new Vector3(i%2==0?-1.25f:1.25f,.85f,-1.5f);
      var e=echo.AddComponent<TrialEcho>();e.Owner=trial;e.Origin=echo.transform.position;
      e.Core=Art.Crystal(Vector3.zero,.23f,accent,echo.transform).transform;
      CombatTelegraph.Ring(echo.transform,.42f,accent,"Echo halo");trial.echoes.Add(e);echo.SetActive(false);

@@ -1,0 +1,17 @@
+=== ALL CHAPTERS PROBE (1 TO 15) ===
+[PASS] Chapter 01 (Realm 0, Boss=False): 17 islands, Gate=True, Route=12
+[PASS] Chapter 02 (Realm 0, Boss=False): 19 islands, Gate=True, Route=12
+[PASS] Chapter 03 (Realm 0, Boss=False): 19 islands, Gate=True, Route=12
+[PASS] Chapter 04 (Realm 0, Boss=True): 12 islands, Gate=True, Route=8
+[PASS] Chapter 05 (Realm 1, Boss=False): 19 islands, Gate=True, Route=12
+[PASS] Chapter 06 (Realm 1, Boss=False): 19 islands, Gate=True, Route=12
+[PASS] Chapter 07 (Realm 1, Boss=True): 12 islands, Gate=True, Route=8
+[PASS] Chapter 08 (Realm 2, Boss=False): 19 islands, Gate=True, Route=12
+[PASS] Chapter 09 (Realm 2, Boss=False): 19 islands, Gate=True, Route=12
+[PASS] Chapter 10 (Realm 2, Boss=True): 12 islands, Gate=True, Route=8
+[PASS] Chapter 11 (Realm 3, Boss=False): 19 islands, Gate=True, Route=12
+[PASS] Chapter 12 (Realm 3, Boss=False): 19 islands, Gate=True, Route=12
+[PASS] Chapter 13 (Realm 3, Boss=False): 19 islands, Gate=True, Route=12
+[PASS] Chapter 14 (Realm 3, Boss=False): 19 islands, Gate=True, Route=12
+[PASS] Chapter 15 (Realm 3, Boss=True): 12 islands, Gate=True, Route=8
+=== SUMMARY: 15/15 PASSED, 0 FAILED ===

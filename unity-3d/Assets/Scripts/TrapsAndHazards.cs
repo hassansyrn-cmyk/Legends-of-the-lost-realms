@@ -195,7 +195,7 @@ namespace LostRealms {
    }else{
     Art.Shape("SawTrack",PrimitiveType.Cube,Vector3.zero,new Vector3(length,.08f,.35f),new Color(.12f,.12f,.15f),go.transform);
    }
-   var trackCol=go.GetComponent<BoxCollider>()??go.AddComponent<BoxCollider>();
+   var trackCol=go.AddComponent<BoxCollider>();
    trackCol.center=new Vector3(0,.13f,0);
    trackCol.size=new Vector3(length,.26f,.95f);
 

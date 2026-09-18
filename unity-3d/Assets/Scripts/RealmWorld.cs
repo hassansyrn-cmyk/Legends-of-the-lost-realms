@@ -4,7 +4,7 @@ namespace LostRealms {
  public static class Art {
   static readonly Dictionary<Color,Material> materials=new Dictionary<Color,Material>();
   public static Material Material(Color color){
-   if(materials.TryGetValue(color,out var m))return m;
+   if(materials.TryGetValue(color,out var m)&&m)return m;
    m=new Material(Shader.Find("Standard"));m.color=color;m.SetFloat("_Glossiness",.22f);
    materials[color]=m;return m;
   }
@@ -61,7 +61,7 @@ namespace LostRealms {
      go.transform.localPosition=Vector3.zero;
      go.transform.localRotation=Quaternion.identity;
      go.transform.localScale=Vector3.one;
-    var material=glow??new Material(Shader.Find("Standard")){name="Pickup "+name};
+    var material=(glow!=null&&glow)?glow:new Material(Shader.Find("Standard")){name="Pickup "+name};
     if(!glow){
      material.color=color;
      if(material.HasProperty("_Glossiness"))material.SetFloat("_Glossiness",.7f);
@@ -181,7 +181,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
      if(stage>=9&&i%6==2)kind=17;else if(stage>=3&&i%6==2)kind=11;else if(stage>=5&&i%5==4)kind=12;else if(stage>=6&&i%7==3)kind=13;else if(stage>=4&&i%6==5)kind=14;else if(stage>=4&&i%7==6)kind=15;else if(stage>=5&&i==7)kind=16;else if(stage>=3&&((stage+i)%8)==2)kind=18;else if(stage>=4&&((stage+i)%8)==5)kind=19;else if(stage>=4&&((stage+i)%8)==6)kind=20;
      float ez=arch==IslandArchetype.TieredPlatform?-2.2f:1f;float ey=arch==IslandArchetype.TieredPlatform?1.28f:.03f;
      SpawnEnemy(p+new Vector3(1.8f,ey,ez),kind,false,p,width,length);
-     if(stage>2&&i%3==0){
+     if(stage>2&&i%3==0&&arch!=IslandArchetype.Arena){
       float hz=arch==IslandArchetype.TieredPlatform?-2.2f:1f;float hy=arch==IslandArchetype.TieredPlatform?1.35f:.08f;
       Hazard(islandObj.transform,new Vector3(-0.8f,hy,hz),realm);
      }
@@ -298,7 +298,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
          Art.Crystal(new Vector3(sx*5.2f,3.8f,sz*5.2f),.5f,accent,root.transform);
         }
        }
-      }else{
+      }else if(realm==0){
        for(int sx=-1;sx<=1;sx+=2){
         for(int sz=-1;sz<=1;sz+=2){
          Art.Crystal(new Vector3(sx*(width*.38f),1.1f,sz*(length*.38f)),.5f,accent,root.transform);

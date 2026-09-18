@@ -7,7 +7,7 @@ namespace LostRealms {
   static Mesh gemCore,gemShard,shrineCore,dais,smallDais,halo;
 
   static Material Glow(Color accent){
-   if(GlowMaterials.TryGetValue(accent,out var material))return material;
+   if(GlowMaterials.TryGetValue(accent,out var material)&&material)return material;
    var shader=Shader.Find("Standard");
    material=new Material(shader?shader:Shader.Find("Sprites/Default"));
    material.name="Relic glow "+ColorUtility.ToHtmlStringRGB(accent);
@@ -56,12 +56,12 @@ namespace LostRealms {
    var mesh=new Mesh{name=name};mesh.SetVertices(vertices);mesh.SetTriangles(triangles,0);mesh.RecalculateNormals();mesh.RecalculateBounds();return mesh;
   }
 
-  static Mesh GemCore=>gemCore??(gemCore=Crystal("Faceted gem core",6,.34f,.92f,.64f));
-  static Mesh GemShard=>gemShard??(gemShard=Crystal("Orbiting gem shard",5,.16f,.48f,.55f));
-  static Mesh ShrineCore=>shrineCore??(shrineCore=Crystal("Sanctuary heart",7,.46f,2.05f,.58f));
-  static Mesh Dais=>dais??(dais=Prism("Octagonal shrine dais",8,1f,.22f));
-  static Mesh SmallDais=>smallDais??(smallDais=Prism("Octagonal shrine step",8,1f,.18f));
-  static Mesh Halo=>halo??(halo=Torus("Relic rune halo",1f,.045f,16,4));
+  static Mesh GemCore=>gemCore?gemCore:(gemCore=Crystal("Faceted gem core",6,.34f,.92f,.64f));
+  static Mesh GemShard=>gemShard?gemShard:(gemShard=Crystal("Orbiting gem shard",5,.16f,.48f,.55f));
+  static Mesh ShrineCore=>shrineCore?shrineCore:(shrineCore=Crystal("Sanctuary heart",7,.46f,2.05f,.58f));
+  static Mesh Dais=>dais?dais:(dais=Prism("Octagonal shrine dais",8,1f,.22f));
+  static Mesh SmallDais=>smallDais?smallDais:(smallDais=Prism("Octagonal shrine step",8,1f,.18f));
+  static Mesh Halo=>halo?halo:(halo=Torus("Relic rune halo",1f,.045f,16,4));
 
   public static void Gem(Transform root,Color accent){
    var visual=root.gameObject.AddComponent<GemVisual>();visual.Accent=accent;

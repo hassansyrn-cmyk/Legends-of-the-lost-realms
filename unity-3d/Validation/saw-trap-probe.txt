@@ -1,0 +1,17 @@
+=== SAW TRAP PROBE DIAGNOSTIC ===
+Track Object: RunicTrack
+Rail Total Length: 5.20m (Span: [-2.60, 2.60])
+Carriage: SawCarriage
+BladeSpinRoot: BladeSpinRoot
+RunicSawMesh: RunicSawMesh
+Track BoxCollider: size=(5.20, 0.26, 0.95), center=(0.00, 0.13, 0.00)
+SawTrap.halfLength: 1.525m
+Expected halfLength: 1.525m
+CHECK halfLength matches formula: True
+Max blade reach at maxPos (+1.525m): 2.450m
+Margin at rail end (+2.600m): 0.150m (should be >= 0.15m)
+CHECK saw blade completely inside rail at max: True
+Min blade reach at minPos (-1.525m): -2.450m
+Margin at rail start (-2.600m): 0.150m (should be >= 0.15m)
+CHECK saw blade completely inside rail at min: True
+Total travel stroke: 3.05m (stroke > 3.0m: True)
