@@ -28,7 +28,7 @@ if(realm<0||realm>3)realm=0;
   static string Folder(int realm,string name){
    if(name.StartsWith("rpgpp_lt_"))return "Village";
    if(realm==2)return "Snow";
-   if(realm==1&&(name.StartsWith("House_")||name.StartsWith("Ruin_")||name=="Tower_01"||name=="Gate_01"||name=="Tent_01"||name=="Church_01"||name=="Wall_01"))return "Desert";
+   if(realm==1&&(name.StartsWith("House_")||name.StartsWith("Ruin_")||name=="Tower_01"||name=="Gate_01"||name=="Tent_01"||name=="Wall_01"))return "Desert";
    return "Nature";
   }
   static GameObject Model(string folder,string name){
@@ -54,7 +54,7 @@ static readonly Material[] villageByRealm=new Material[4];
   static Material MaterialFor(string name,int realm)=>name.StartsWith("rpgpp_lt_")?VillageMat(realm):ForRealm(realm);
   static string[][] Sets(int realm){
    if(realm==0)return new[]{new[]{"Tree_01","Tree_03","Tree_04","rpgpp_lt_tree_01","rpgpp_lt_tree_02"},new[]{"Rock_01","Rock_02","Rock_03"},new[]{"Bush_01","Bush_02","Bush_03","Grass_01","Grass_02","Flowers_01","Mushroom_01","rpgpp_lt_bush_01","rpgpp_lt_flower_01","rpgpp_lt_flower_02","rpgpp_lt_grass_small_01a"}};
-if(realm==1)return new[]{new[]{"House_01","House_02","Tower_01","Ruin_01","Gate_01","Tent_01","Church_01"},new[]{"Rock_03","Rock_04","Rock_05"},new[]{"Grass_02","Mushroom_01","Bush_02","rpgpp_lt_rock_small_01","rpgpp_lt_rock_small_02"}};
+if(realm==1)return new[]{new[]{"House_01","House_02","Tower_01","Ruin_01","Gate_01","Tent_01"},new[]{"Rock_03","Rock_04","Rock_05"},new[]{"Grass_02","Mushroom_01","Bush_02","rpgpp_lt_rock_small_01","rpgpp_lt_rock_small_02"}};
     if(realm==3)return new[]{new[]{"Tree_01","Tree_02","Tree_03","DeadTree_01"},new[]{"Rock_03","Rock_04","Rock_05"},new[]{"Grass_02","Flowers_01","Bush_02","rpgpp_lt_rock_small_01","rpgpp_lt_rock_small_02"}};
     return new[]{new[]{"Pine_01","Pine_02","Pine_03","Tree_01","Tree_02","DeadTree_01","rpgpp_lt_tree_pine_01"},new[]{"Cottage_01","Cottage_02","Snowman_01","Well_01","Stump_01","Bridge_01"},new[]{"Fence_01","Fence_02","Sign_01","Stump_01","rpgpp_lt_rock_small_01","rpgpp_lt_bucket_01"}};
   }
@@ -177,7 +177,7 @@ if(prop.name.StartsWith("Prop Tree")){
      // Desert city buildings + snow cottages/bridge have hollow doorways;
      // "Prop "+name where name is the model file. RPGPP sheds/wagons keep their
      // openings passable the same way.
-     foreach(var n in new[]{"Gate_01","Church_01","House_01","House_02","Ruin_01","Tent_01","Tower_01","Wall_01","Cottage_01","Cottage_02","Bridge_01","rpgpp_lt_shed_wood_01","rpgpp_lt_shed_wood_02","rpgpp_lt_wagon_01"})if(propName.EndsWith(" "+n))return true;
+      foreach(var n in new[]{"Gate_01","House_01","House_02","Ruin_01","Tent_01","Tower_01","Wall_01","Cottage_01","Cottage_02","Bridge_01","rpgpp_lt_shed_wood_01","rpgpp_lt_shed_wood_02","rpgpp_lt_wagon_01"})if(propName.EndsWith(" "+n))return true;
      return false;
     }
     // Desert realm: buildings go to organized, path-safe slots — flanking the
@@ -187,7 +187,7 @@ if(prop.name.StartsWith("Prop Tree")){
     // optionally built across the lane as a pass-through arch (yaw 90 puts its
     // opening along the travel axis); its exact mesh collision keeps walls solid.
     static void PlaceDesertBuildings(Transform island,float width,float length,System.Random rng,Material material){
-     string[] flank={"House_01","House_02","Tower_01","Ruin_01","Tent_01","Church_01"};
+      string[] flank={"House_01","House_02","Tower_01","Ruin_01","Tent_01"};
      int n=width>=11f?3:2;
      float halfX=Mathf.Min(Mathf.Max(width*.5f-1.05f,1f),4.2f);
      float zf=Mathf.Max(.9f,length*.22f);

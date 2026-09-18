@@ -105,7 +105,7 @@ namespace LostRealms {
    for(int z=0;z<nz;z++){if(door[z]){run++;if(run>best)best=run;}else run=0;}
    return best*cell;
   }
-  static string[] DesertFiles={"Assets/Resources/Props/Desert/Gate_01.FBX","Assets/Resources/Props/Desert/Church_01.FBX",
+  static string[] DesertFiles={"Assets/Resources/Props/Desert/Gate_01.FBX",
    "Assets/Resources/Props/Desert/House_01.FBX","Assets/Resources/Props/Desert/House_02.FBX",
    "Assets/Resources/Props/Desert/Ruin_01.FBX","Assets/Resources/Props/Desert/Tent_01.FBX",
    "Assets/Resources/Props/Desert/Tower_01.FBX","Assets/Resources/Props/Desert/Wall_01.FBX"};
