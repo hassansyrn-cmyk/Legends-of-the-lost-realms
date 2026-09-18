@@ -195,11 +195,19 @@ namespace LostRealms {
    }else{
     Art.Shape("SawTrack",PrimitiveType.Cube,Vector3.zero,new Vector3(length,.08f,.35f),new Color(.12f,.12f,.15f),go.transform);
    }
+   var trackCol=go.GetComponent<BoxCollider>()??go.AddComponent<BoxCollider>();
+   trackCol.center=new Vector3(0,.13f,0);
+   trackCol.size=new Vector3(length,.26f,.95f);
 
    // 2. Carriage traversing along local X inside track groove (local Z = 0)
+   // Formula: minPos = -halfRail + bladeRadius + safetyMargin; maxPos = halfRail - bladeRadius - safetyMargin
+   float halfRail=length*.5f;
+   float bladeRadius=.925f;
+   float safetyMargin=.15f;
+   float halfLen=Mathf.Max(.2f,halfRail-bladeRadius-safetyMargin);
+
    var carriageObj=new GameObject("SawCarriage");
    carriageObj.transform.SetParent(go.transform,false);
-   float halfLen=Mathf.Max(0.1f,(length-0.5f)*.5f);
    carriageObj.transform.localPosition=new Vector3(-halfLen,.40f,0f);
 
    // 3. Saw blade spinning root (spins around local Z axis - its true axle)
@@ -249,7 +257,7 @@ namespace LostRealms {
 
    if(pauseTimer>0){pauseTimer-=Time.deltaTime;return;}
 
-   // Move carriage strictly along local X
+   // Move carriage strictly along local X between -halfLength and +halfLength
    float targetX=forward?halfLength:-halfLength;
    curX=Mathf.MoveTowards(curX,targetX,speed*Time.deltaTime);
    if(carriage)carriage.localPosition=new Vector3(curX,.40f,0f);
@@ -263,7 +271,7 @@ namespace LostRealms {
    // Hazard damage in world space
    Vector3 hitPos=carriage?carriage.position:transform.position;
    Vector3 pPos=g.Player.transform.position;
-   if(Vector3.Distance(hitPos,pPos+Vector3.up*.8f)<1.15f){
+   if(Vector3.Distance(hitPos,pPos+Vector3.up*.8f)<1.2f){
     Vector3 knock=pPos-hitPos;knock.y=0;
     if(g.Player.Damage(1,hitPos))
      HitSpark.Burst(pPos+Vector3.up*.8f,knock.normalized,new Color(1f,.9f,.4f),12);
@@ -271,8 +279,10 @@ namespace LostRealms {
    if(g.Enemies!=null){
     foreach(var foe in g.Enemies){
      if(!foe||foe.Health<=0)continue;
-     if(Vector3.Distance(hitPos,foe.transform.position+Vector3.up*.8f)<1.2f){
-      foe.Hit(1.5f,0,false,transform.right*(forward?1:-1));
+     Vector3 fPos=foe.transform.position;
+     if(Vector3.Distance(hitPos,fPos+Vector3.up*.8f)<1.2f){
+      Vector3 fKnock=fPos-hitPos;fKnock.y=0;
+      foe.Hit(2f,0,false,fKnock.normalized);
      }
     }
    }

@@ -183,7 +183,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
      SpawnEnemy(p+new Vector3(1.8f,ey,ez),kind,false,p,width,length);
      if(stage>2&&i%3==0){
       float hz=arch==IslandArchetype.TieredPlatform?-2.2f:1f;float hy=arch==IslandArchetype.TieredPlatform?1.35f:.08f;
-      Hazard(islandObj.transform,new Vector3(-2.4f,hy,hz),realm);
+      Hazard(islandObj.transform,new Vector3(-0.8f,hy,hz),realm);
      }
     }
     if(last){EndZ=z+4;Gate(p+new Vector3(0,0,5));if(IsBoss)SpawnEnemy(p+new Vector3(0,.05f,-1),world==3?21:world+8,true,p,width,length);}
@@ -193,46 +193,49 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     RealmProps.Scatter(transform,realm,random);
   }
    GameObject FindIsland(Vector3 p){foreach(Transform t in transform)if(t.name=="Island"&&Vector3.Distance(t.position,p)<.1f)return t.gameObject;return null;}
-   GameObject DressIslandVisual(Transform root,IslandArchetype archetype,float width,float length,int index,bool isBoss){
-    if(realm!=0)return null;
-    string modelName=null;Vector3 baseDim=Vector3.one;
-    if(archetype==IslandArchetype.Arena){
-     modelName="Island_Arena";baseDim=isBoss?new Vector3(19f,1f,15f):new Vector3(13.5f,1f,13f);
-    }else if(archetype==IslandArchetype.NarrowBridge){
-     modelName="Island_Bridge";baseDim=new Vector3(4.2f,1f,14f);
-    }else if(archetype==IslandArchetype.TieredPlatform){
-     modelName="Island_Tiered";baseDim=new Vector3(10.5f,1f,10f);
-    }else if(archetype==IslandArchetype.MovingFerry){
-     modelName="Island_Ferry";baseDim=new Vector3(6f,1f,6f);
-    }else if(index>=100){
-     modelName="Island_Small";baseDim=new Vector3(5.2f,1f,5.2f);
-    }else{
-     if(index%2==0){modelName="Island_Plateau";baseDim=new Vector3(9f,1f,8.3f);}
-     else{modelName="Island_Meadow";baseDim=new Vector3(9f,1f,9f);}
+    GameObject DressIslandVisual(Transform root,IslandArchetype archetype,float width,float length,int index,bool isBoss){
+     if(realm>1)return null;
+     string prefix=realm==1?"R1_":"";
+     string modelName=null;Vector3 baseDim=Vector3.one;
+     if(archetype==IslandArchetype.Arena){
+      modelName=prefix+"Island_Arena";baseDim=isBoss?new Vector3(19f,1f,15f):new Vector3(13.5f,1f,13f);
+     }else if(archetype==IslandArchetype.NarrowBridge){
+      modelName=prefix+"Island_Bridge";baseDim=new Vector3(4.2f,1f,14f);
+     }else if(archetype==IslandArchetype.TieredPlatform){
+      modelName=prefix+"Island_Tiered";baseDim=new Vector3(10.5f,1f,10f);
+     }else if(archetype==IslandArchetype.MovingFerry){
+      modelName=prefix+"Island_Ferry";baseDim=new Vector3(6f,1f,6f);
+     }else if(index>=100){
+      modelName=prefix+"Island_Small";baseDim=new Vector3(5.2f,1f,5.2f);
+     }else{
+      if(index%2==0){modelName=prefix+"Island_Plateau";baseDim=new Vector3(9f,1f,8.3f);}
+      else{modelName=prefix+"Island_Meadow";baseDim=new Vector3(9f,1f,9f);}
+     }
+     var prefab=Resources.Load<GameObject>("Islands/"+modelName);
+     if(!prefab)return null;
+     var go=Instantiate(prefab,root,false);
+     go.name="IslandMeshVisual";
+     go.transform.localPosition=new Vector3(0,.02f,0);
+     go.transform.localRotation=Quaternion.identity;
+     go.transform.localScale=new Vector3(width/baseDim.x,1f,length/baseDim.z);
+     var tex=Resources.Load<Texture2D>("Islands/Textures/"+modelName+"_basecolor");
+     if(tex){
+      var mat=new Material(Shader.Find("Standard")){name=modelName+"_Mat"};
+      mat.mainTexture=tex;mat.SetFloat("_Glossiness",.25f);
+      foreach(var r in go.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=mat;
+     }
+     return go;
     }
-    var prefab=Resources.Load<GameObject>("Islands/"+modelName);
-    if(!prefab)return null;
-    var go=Instantiate(prefab,root,false);
-    go.name="IslandMeshVisual";
-    go.transform.localPosition=new Vector3(0,.02f,0);
-    go.transform.localRotation=Quaternion.identity;
-    go.transform.localScale=new Vector3(width/baseDim.x,1f,length/baseDim.z);
-    var tex=Resources.Load<Texture2D>("Islands/Textures/"+modelName+"_basecolor");
-    if(tex){
-     var mat=new Material(Shader.Find("Standard")){name=modelName+"_Mat"};
-     mat.mainTexture=tex;mat.SetFloat("_Glossiness",.25f);
-     foreach(var r in go.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=mat;
-    }
-    return go;
-   }
-   GameObject Island(Vector3 pos,float width,float length,int index,IslandArchetype archetype=IslandArchetype.Standard,bool isBoss=false){
-    var root=new GameObject("Island");root.transform.SetParent(transform);root.transform.position=pos;
-     if(archetype==IslandArchetype.SteppingStones){
-      Vector3[] stepOffsets=new[]{new Vector3(-1.6f,0,-2.5f),new Vector3(1.6f,.25f,0),new Vector3(-1f,.1f,2.5f)};
-      var stepPrefab=realm==0?Resources.Load<GameObject>("Islands/Island_SteppingStone"):null;
-      var stepTex=stepPrefab?Resources.Load<Texture2D>("Islands/Textures/Island_SteppingStone_basecolor"):null;
-      Material stepMat=null;
-      if(stepTex){stepMat=new Material(Shader.Find("Standard")){name="StepStone_Mat"};stepMat.mainTexture=stepTex;stepMat.SetFloat("_Glossiness",.25f);}
+    GameObject Island(Vector3 pos,float width,float length,int index,IslandArchetype archetype=IslandArchetype.Standard,bool isBoss=false){
+     var root=new GameObject("Island");root.transform.SetParent(transform);root.transform.position=pos;
+      if(archetype==IslandArchetype.SteppingStones){
+       Vector3[] stepOffsets=new[]{new Vector3(-1.6f,0,-2.5f),new Vector3(1.6f,.25f,0),new Vector3(-1f,.1f,2.5f)};
+       string stepModel=realm==1?"Islands/R1_Island_SteppingStone":realm==0?"Islands/Island_SteppingStone":null;
+       var stepPrefab=stepModel!=null?Resources.Load<GameObject>(stepModel):null;
+       string stepTexPath=realm==1?"Islands/Textures/R1_Island_SteppingStone_basecolor":realm==0?"Islands/Textures/Island_SteppingStone_basecolor":null;
+       var stepTex=stepTexPath!=null?Resources.Load<Texture2D>(stepTexPath):null;
+       Material stepMat=null;
+       if(stepTex){stepMat=new Material(Shader.Find("Standard")){name="StepStone_Mat"};stepMat.mainTexture=stepTex;stepMat.SetFloat("_Glossiness",.25f);}
       for(int k=0;k<stepOffsets.Length;k++){
        var sp=Art.Shape("StepPillar",PrimitiveType.Cylinder,stepOffsets[k]+new Vector3(0,-.6f,0),new Vector3(3.4f,1.2f,3.4f),stone,root.transform,true);
        var ss=Art.Shape("StepSurface",PrimitiveType.Cylinder,stepOffsets[k]+new Vector3(0,.02f,0),new Vector3(3.5f,.12f,3.5f),top,root.transform);
@@ -448,7 +451,7 @@ void WeaponDrop(Vector3 p,WeaponId id){
     if(kind==3||realm==3){
      FireGeyser.Place(island,localPos,accent);
     }else if(kind==1||realm==1){
-     SawTrap.Place(island,localPos-new Vector3(1.6f,0,0),localPos+new Vector3(1.6f,0,0),accent);
+     SawTrap.Place(island,localPos-new Vector3(2.6f,0,0),localPos+new Vector3(2.6f,0,0),accent);
     }else if(kind==2||realm==2){
      SpikeTrap.Place(island,localPos,accent);
     }else{
