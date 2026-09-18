@@ -193,8 +193,8 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
   }
    GameObject FindIsland(Vector3 p){foreach(Transform t in transform)if(t.name=="Island"&&Vector3.Distance(t.position,p)<.1f)return t.gameObject;return null;}
     GameObject DressIslandVisual(Transform root,IslandArchetype archetype,float width,float length,int index,bool isBoss){
-     if(realm>1)return null;
-     string prefix=realm==1?"R1_":"";
+     if(realm>2)return null;
+     string prefix=realm==2?"R2_":realm==1?"R1_":"";
      string modelName=null;Vector3 baseDim=Vector3.one;
      if(archetype==IslandArchetype.Arena){
       modelName=prefix+"Island_Arena";baseDim=isBoss?new Vector3(19f,1f,15f):new Vector3(13.5f,1f,13f);
@@ -229,9 +229,9 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
      var root=new GameObject("Island");root.transform.SetParent(transform);root.transform.position=pos;
       if(archetype==IslandArchetype.SteppingStones){
        Vector3[] stepOffsets=new[]{new Vector3(-1.6f,0,-2.5f),new Vector3(1.6f,.25f,0),new Vector3(-1f,.1f,2.5f)};
-       string stepModel=realm==1?"Islands/R1_Island_SteppingStone":realm==0?"Islands/Island_SteppingStone":null;
-       var stepPrefab=stepModel!=null?Resources.Load<GameObject>(stepModel):null;
-       string stepTexPath=realm==1?"Islands/Textures/R1_Island_SteppingStone_basecolor":realm==0?"Islands/Textures/Island_SteppingStone_basecolor":null;
+        string stepModel=realm==2?"Islands/R2_Island_SteppingStone":realm==1?"Islands/R1_Island_SteppingStone":realm==0?"Islands/Island_SteppingStone":null;
+        var stepPrefab=stepModel!=null?Resources.Load<GameObject>(stepModel):null;
+        string stepTexPath=realm==2?"Islands/Textures/R2_Island_SteppingStone_basecolor":realm==1?"Islands/Textures/R1_Island_SteppingStone_basecolor":realm==0?"Islands/Textures/Island_SteppingStone_basecolor":null;
        var stepTex=stepTexPath!=null?Resources.Load<Texture2D>(stepTexPath):null;
        Material stepMat=null;
        if(stepTex){stepMat=new Material(Shader.Find("Standard")){name="StepStone_Mat"};stepMat.mainTexture=stepTex;stepMat.SetFloat("_Glossiness",.25f);}

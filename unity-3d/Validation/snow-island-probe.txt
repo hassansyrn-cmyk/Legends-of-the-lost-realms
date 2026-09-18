@@ -1,0 +1,7 @@
+=== SNOW REALM ISLAND PROBE (CHAPTERS 8, 9, 10) ===
+Chapter 08: IslandMeshVisuals=18, StepVisuals=3, Crags=18
+  Materials: R2_Island_Plateau_Mat, R2_Island_Meadow_Mat, R2_Island_Bridge_Mat, R2_Island_Small_Mat, R2_Island_Arena_Mat, R2_Island_Tiered_Mat, StepStone_Mat, R2_Island_Ferry_Mat, Crag_Mat
+Chapter 09: IslandMeshVisuals=18, StepVisuals=3, Crags=18
+  Materials: R2_Island_Plateau_Mat, R2_Island_Meadow_Mat, R2_Island_Bridge_Mat, R2_Island_Small_Mat, R2_Island_Arena_Mat, R2_Island_Tiered_Mat, StepStone_Mat, R2_Island_Ferry_Mat, Crag_Mat
+Chapter 10: IslandMeshVisuals=11, StepVisuals=3, Crags=18
+  Materials: R2_Island_Plateau_Mat, R2_Island_Meadow_Mat, R2_Island_Bridge_Mat, R2_Island_Small_Mat, R2_Island_Arena_Mat, StepStone_Mat, R2_Island_Ferry_Mat, R2_Island_Tiered_Mat, Crag_Mat
