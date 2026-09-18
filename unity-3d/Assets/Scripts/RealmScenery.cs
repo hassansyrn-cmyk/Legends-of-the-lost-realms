@@ -9,7 +9,6 @@ Color[] baseColors=cliff?new[]{new Color(.16f,.22f,.22f),new Color(.35f,.23f,.15
     m.color=baseColors[realm];if(m.HasProperty("_Detail"))m.SetColor("_Detail",detailColors[realm]);
     if(!cliff){string[] textures={"Art/verdant_moss_tile","Art/ember_sand_tile","Art/frost_ice_tile","Art/ember_rock_tile"};var terrainTexture=Resources.Load<Texture2D>(textures[realm]);if(terrainTexture&&m.HasProperty("_MainTex"))m.SetTexture("_MainTex",terrainTexture);if(m.HasProperty("_TileScale"))m.SetFloat("_TileScale",.13f);}
    return m;
-   return m;
   }
   public static void Upgrade(RealmWorld world,int realm){
    var lifetime=world.gameObject.AddComponent<RealmArtLifetime>();var terrain=Ground(realm,false);var rock=Ground(realm,true);lifetime.Keep(terrain);lifetime.Keep(rock);var skyShader=Resources.Load<Shader>("Shaders/RealmSky");
@@ -58,6 +57,11 @@ if(skyShader){var sky=new Material(skyShader);lifetime.Keep(sky);sky.SetColor("_
     Cliff(root,12+i%4*3,15,i,rock);IslandTop(root,12+i%4*3,15,i,terrain);if(realm==0)Tree(Vector3.zero,root,i);
    }
     RealmAtmosphere.Apply(world,realm);
+  }
+  static void MeshObject(string name,Transform parent,Mesh mesh,Material material){var g=new GameObject(name);g.transform.SetParent(parent,false);g.AddComponent<MeshFilter>().sharedMesh=mesh;parent.GetComponentInParent<RealmArtLifetime>().Keep(mesh);g.AddComponent<MeshRenderer>().sharedMaterial=material;}
+  static void Cliff(Transform parent,float width,float length,int seed,Material material){
+   var verts=new List<Vector3>();var tris=new List<int>();const int sides=16;
+   for(int i=0;i<sides;i++){
     float a=i*Mathf.PI*2/sides,b=(i+1)*Mathf.PI*2/sides;
     Vector3 p=Rim(a,width,length),q=Rim(b,width,length);
     Vector3 r=p*(.45f+.12f*Mathf.Sin(seed+i*2));r.y=-4.5f-.8f*Mathf.Sin(i*3+seed);
