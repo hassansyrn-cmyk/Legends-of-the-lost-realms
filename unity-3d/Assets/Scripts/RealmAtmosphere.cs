@@ -148,32 +148,11 @@ Color[] tops={new Color(.13f,.38f,.52f),new Color(.25f,.45f,.70f),new Color(.05f
    pr.material=cloudMaterial;
    ps.Play();
   }
-  // Distant floating rock islets ringing the route for depth.
-  void CreateFloatingIslets(){
-   var random=new System.Random(realm*331+7);
-Color rock=realm==0?new Color(.16f,.24f,.22f):realm==1?new Color(.4f,.27f,.18f):realm==2?new Color(.25f,.36f,.48f):new Color(.2f,.15f,.17f);
-    Color topC=realm==0?new Color(.2f,.42f,.3f):realm==1?new Color(.66f,.42f,.22f):realm==2?new Color(.62f,.78f,.85f):new Color(.34f,.22f,.26f);
-   for(int i=0;i<5;i++){
-    float a=(float)i/5f*Mathf.PI*2f+(float)random.NextDouble()*.5f;
-    float r=26+(float)random.NextDouble()*18f;
-    var root=new GameObject("Floating islet");root.transform.SetParent(transform,false);
-    root.transform.localPosition=new Vector3(Mathf.Cos(a)*r,-7+(float)random.NextDouble()*9f,55+Mathf.Sin(a)*r);
-    float s=1.5f+(float)random.NextDouble()*2.5f;
-    var crag=Art.Shape("Islet rock",PrimitiveType.Cylinder,Vector3.zero,new Vector3(s*1.1f,s*2.2f,s*1.1f),rock,root.transform);SetDecorative(crag);
-    var cap=Art.Shape("Islet cap",PrimitiveType.Cylinder,new Vector3(0,s*1.05f,0),new Vector3(s*1.35f,s*.3f,s*1.35f),topC,root.transform);SetDecorative(cap);
-    islets.Add(root.transform);isletBase.Add(root.transform.localPosition.y);
-   }
-  }
+  // Distant floating rock islets ringing the route for depth (disabled primitive cylinders).
+  void CreateFloatingIslets(){}
 
-  void CreateHorizon(Color sky,Color fog){
-   Color silhouette=Color.Lerp(fog,Color.black,.36f);
-   for(int i=0;i<15;i++){
-    float side=i%2==0?-1f:1f;float z=-25+i*10.5f;float x=side*(18+(i%4)*5.3f);float height=7+(i%5)*3.1f;
-    var crag=Art.Shape("Atmospheric distant crag",PrimitiveType.Cylinder,new Vector3(x,-4-(i%3)*1.7f,z),new Vector3(4.5f+(i%3),height,4.5f+(i%3)),silhouette,transform);
-    crag.transform.localRotation=Quaternion.Euler((i%3)*4,i*23,7*side);SetDecorative(crag);
-    if(i%3==0){var beacon=Art.Shape("Distant realm beacon",PrimitiveType.Cylinder,new Vector3(x,1.2f,z),new Vector3(.26f,1.6f,.26f),Color.Lerp(accent,sky,.42f),transform);SetDecorative(beacon);}
-   }
-  }
+  // Distant silhouettes frame the route (disabled primitive cylinders).
+  void CreateHorizon(Color sky,Color fog){}
 
   void CreateRouteLandmarks(){
    for(int i=0;i<3;i++){

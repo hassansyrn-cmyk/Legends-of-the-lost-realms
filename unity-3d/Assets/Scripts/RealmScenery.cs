@@ -40,7 +40,7 @@ if(skyShader){var sky=new Material(skyShader);lifetime.Keep(sky);sky.SetColor("_
     for(int n=0;n<3;n++){var slab=Art.Shape("Ancient stepping stone",PrimitiveType.Cube,new Vector3((n%2==0?.24f:-.24f),.12f,(n-1)*2),new Vector3(1.1f,.06f,.85f),Color.white,island);slab.transform.localRotation=Quaternion.Euler(0,(n-1)*11,0);slab.GetComponent<Renderer>().sharedMaterial=rock;}
    }
    // Distant silhouettes frame the route without obstructing the playable camera corridor.
-   foreach(Transform t in world.transform)if(t.name=="Distant canopy"||t.name=="Distant realm spire"){t.gameObject.SetActive(false);Object.Destroy(t.gameObject);}
+   foreach(Transform t in world.transform)if(t.name=="Distant canopy"||t.name=="Distant realm spire"){t.gameObject.SetActive(false);if(Application.isPlaying)Object.Destroy(t.gameObject);else Object.DestroyImmediate(t.gameObject);}
    for(int i=0;i<18;i++){
     float side=i%2==0?-1:1;var root=new GameObject("Distant floating crag").transform;root.SetParent(world.transform,false);root.localPosition=new Vector3(side*(23+i%3*8),-14-i%4*3,-22+i*11);
      if(realm<=1){

@@ -52,8 +52,8 @@ namespace LostRealms {
     if(value){front.Pause();back.Pause();foreach(var voice in voices)voice.Pause();}
     else {front.UnPause();back.UnPause();foreach(var voice in voices)voice.UnPause();}
    }
-   public void Play(string name){
-    if(!game.Save.sound)return;
+   public void Play(string name,float volumeScale=1f){
+    if(!game||!game.Save.sound)return;
     float now=Time.unscaledTime;
     bool frequent=name=="step"||name=="coin"||name=="impact"||name=="enemy_warning";
     float spacing=name=="step"?.12f:frequent?.055f:.025f;
@@ -67,9 +67,22 @@ namespace LostRealms {
     var voice=voices[slot];voice.Stop();voice.clip=clip;priorities[slot]=priority;
     bool vary=frequent||name=="blade"||name=="enemy_dash"||name=="enemy_defeat"||name=="player_dash";
     voice.pitch=vary?.94f+(float)variation.NextDouble()*.12f:1f;
-    voice.volume=(name.StartsWith("boss")?.85f:name=="step"?.32f:name=="enemy_warning"?.42f:priority==3?.78f:.62f)*(vary?.92f+(float)variation.NextDouble()*.08f:1f);
+    float baseVol=(name.StartsWith("boss")?.85f:name=="step"?.32f:name=="enemy_warning"?.42f:priority==3?.78f:.62f)*(vary?.92f+(float)variation.NextDouble()*.08f:1f);
+    voice.volume=baseVol*volumeScale;
     voice.priority=priority==3?48:priority==2?96:160;voice.Play();
    }
+   public void PlaySpatial(string name,Vector3 worldPos,float minDistance=3f,float maxDistance=15f,float volumeMul=1f){
+    if(!game||!game.Save.sound)return;
+    var player=game.Player;
+    Vector3 listener=player?player.transform.position:(Camera.main?Camera.main.transform.position:Vector3.zero);
+    float dist=Vector3.Distance(worldPos,listener);
+    if(dist>=maxDistance)return;
+    float t=Mathf.Clamp01(1f-(dist-minDistance)/Mathf.Max(0.1f,maxDistance-minDistance));
+    float vol=t*t*volumeMul;
+    if(vol<=0.02f)return;
+    Play(name,vol);
+   }
+   public AudioClip GetClip(string key)=>Clip(key);
   public void ClearRunSounds(){foreach(var voice in voices)voice.Stop();lastPlayed.Clear();}
   void Update(){
    if(!game)return;

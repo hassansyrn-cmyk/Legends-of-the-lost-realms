@@ -94,6 +94,9 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
   public void Tell(string message,float seconds=3){Notice=message;noticeUntil=Time.unscaledTime+seconds;}
    public void ComboHit(){Combo++;comboUntil=Elapsed+1.1f;}
   public void Sound(string name){if(Audio)Audio.Play(name);}
+   public void TrapSound(string name,Vector3 position,float minDistance=3f,float maxDistance=15f,float volumeMul=1f){
+    if(Audio)Audio.PlaySpatial(name,position,minDistance,maxDistance,volumeMul);
+   }
   // A very short screen-wide time dip for perfect defense and counters. Physics
   // runs on the constant fixed step, so this slows the pacing, never the step.
   public void HitStop(float seconds,float scale=.12f){if(seconds<=0f)return;Time.timeScale=Mathf.Min(Time.timeScale,scale);float until=Time.unscaledTime+seconds;if(until>hitStopUntil)hitStopUntil=until;}

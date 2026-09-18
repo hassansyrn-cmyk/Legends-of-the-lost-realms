@@ -98,9 +98,9 @@ namespace LostRealms {
      // Rattle spikes and warn with sound/sparks
      float shake=Mathf.Sin(timer*45f)*.02f;
      spikeRoot.localPosition=baseLocal+Vector3.up*(thrustHeight*.18f+shake);
-     if(timer<.05f)g.Sound("step");
+     if(timer<.05f)g.TrapSound("step",transform.position,2.5f,13f,0.6f);
      if(timer>=.65f){
-      state=State.Active;timer=0;g.Sound("blade");
+      state=State.Active;timer=0;g.TrapSound("blade",transform.position,3f,15f,1.0f);
       HitSpark.Burst(transform.position+Vector3.up*.2f,Vector3.up,trapColor,10);
      }
      break;
@@ -141,6 +141,7 @@ namespace LostRealms {
  public sealed class SawTrap:MonoBehaviour {
   Transform carriage;
   Transform bladeSpinRoot;
+  AudioSource audioSource;
   float halfLength;
   float speed=2.8f;
   bool forward=true;
@@ -246,6 +247,15 @@ namespace LostRealms {
    st.bladeSpinRoot=bladeSpin.transform;
    st.halfLength=halfLen;
    st.curX=-halfLen;
+
+   var audio=go.AddComponent<AudioSource>();
+   var clip=Resources.Load<AudioClip>("Audio/sfx_blade");
+   if(clip){
+    audio.clip=clip;audio.loop=true;audio.playOnAwake=false;
+    audio.spatialBlend=1f;audio.minDistance=2.5f;audio.maxDistance=14f;
+    audio.rolloffMode=AudioRolloffMode.Linear;audio.volume=0f;audio.pitch=0.88f;
+   }
+   st.audioSource=audio;
    return st;
   }
 
@@ -254,6 +264,22 @@ namespace LostRealms {
    // Spin around local Z (the circular blade's axle)
    float spinDir=forward?-1f:1f;
    if(bladeSpinRoot)bladeSpinRoot.Rotate(0,0,spinDir*840f*Time.deltaTime,Space.Self);
+
+   // Distance-attenuated continuous sound: only audible when close, fades smoothly with distance
+   if(audioSource&&audioSource.clip){
+    if(!g.Save.sound||g.Screen!=GameScreen.Playing){
+     if(audioSource.isPlaying)audioSource.Pause();
+    }else{
+     float d=Vector3.Distance(carriage?carriage.position:transform.position,g.Player.transform.position);
+     if(d>=14f){
+      if(audioSource.isPlaying)audioSource.Pause();
+     }else{
+      float t=Mathf.Clamp01(1f-(d-2.5f)/11.5f);
+      audioSource.volume=t*t*0.35f;
+      if(!audioSource.isPlaying)audioSource.Play();
+     }
+    }
+   }
 
    if(pauseTimer>0){pauseTimer-=Time.deltaTime;return;}
 
@@ -266,6 +292,7 @@ namespace LostRealms {
     forward=!forward;pauseTimer=.35f;
     Vector3 sparkPos=carriage?carriage.position:transform.position;
     HitSpark.Burst(sparkPos+Vector3.up*.2f,Vector3.up,new Color(1f,.85f,.3f),8);
+    g.TrapSound("impact",sparkPos,3f,14f,0.5f);
    }
 
    // Hazard damage in world space
@@ -273,8 +300,10 @@ namespace LostRealms {
    Vector3 pPos=g.Player.transform.position;
    if(Vector3.Distance(hitPos,pPos+Vector3.up*.8f)<1.2f){
     Vector3 knock=pPos-hitPos;knock.y=0;
-    if(g.Player.Damage(1,hitPos))
+    if(g.Player.Damage(1,hitPos)){
      HitSpark.Burst(pPos+Vector3.up*.8f,knock.normalized,new Color(1f,.9f,.4f),12);
+     g.TrapSound("impact",hitPos,3f,15f,0.8f);
+    }
    }
    if(g.Enemies!=null){
     foreach(var foe in g.Enemies){
@@ -338,12 +367,12 @@ namespace LostRealms {
      break;
     case Phase.Warning:
      // Smoke/rumble telegraph
-     if(timer<.05f){g.Sound("impact");}
+     if(timer<.05f){g.TrapSound("impact",transform.position,3f,14f,0.7f);}
      HitSpark.Burst(transform.position+Vector3.up*.2f,Vector3.up,new Color(1f,.6f,.1f),3);
      if(timer>=.8f){
       phase=Phase.Erupting;timer=0;
       plume.SetActive(true);plumeLight.intensity=1.8f;
-      g.Sound("ember_cast");
+      g.TrapSound("ember_cast",transform.position,3.5f,16f,1.0f);
       Vfx.Play("ga_vfx_FireBall_01",transform.position+Vector3.up*1.5f,Quaternion.Euler(-90,0,0),1.1f);
      }
      break;
@@ -378,7 +407,7 @@ namespace LostRealms {
  // 4. SWINGING PENDULUM GUILLOTINE
  // =========================================================================
  public sealed class PendulumTrap:MonoBehaviour {
-  Transform pivot,blade;float phase,speed=2.4f,maxAngle=55f;
+  Transform pivot,blade;float phase,speed=2.4f,maxAngle=55f;bool wasCenter;
   public static PendulumTrap Place(Transform parent,Vector3 localPos,float width,Color accent){
    var go=new GameObject("Pendulum Trap");go.transform.SetParent(parent,false);go.transform.localPosition=localPos;
    // Overhead archway placed on Ignore Raycast layer (2) so FollowCamera is never blocked!
@@ -437,6 +466,11 @@ namespace LostRealms {
    var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
    float angle=Mathf.Sin((Time.time+phase)*speed)*maxAngle;
    if(pivot)pivot.localRotation=Quaternion.Euler(0,0,angle);
+   bool center=Mathf.Abs(angle)<14f;
+   if(center&&!wasCenter){
+    g.TrapSound("blade",blade?blade.position:transform.position,3f,14f,0.65f);
+   }
+   wasCenter=center;
    // Hazardous at lowest point of swing
    if(blade&&Mathf.Abs(angle)<32f){
     Vector3 bPos=blade.position;
@@ -447,7 +481,7 @@ namespace LostRealms {
       Vector3 knock=pPos-bPos;knock.y=0;
       if(g.Player.Damage(1,bPos)){
        HitSpark.Burst(pPos,knock.normalized,new Color(1f,.85f,.4f),14);
-       g.Sound("impact");
+       g.TrapSound("impact",bPos,3f,15f);
       }
      }
     }
@@ -517,7 +551,7 @@ namespace LostRealms {
     // Trigger bounce
     squish=1f;
     g.Player.Bounce(15.2f);
-    g.Sound("double_jump");
+    g.TrapSound("double_jump",transform.position,3.5f,16f);
     Vfx.Play("ga_vfx_Portal_01",transform.position+Vector3.up*.5f,Quaternion.identity,1.2f);
     HitSpark.Burst(transform.position+Vector3.up*.4f,Vector3.up,padColor,18);
     KenneyPuff.Burst(transform.position+Vector3.up*.2f,padColor,12,1.2f);
@@ -548,7 +582,7 @@ namespace LostRealms {
      bool onIt=g.Player.Grounded&&Physics.Raycast(g.Player.transform.position+Vector3.up*.2f,Vector3.down,out var hit,.65f,~0,QueryTriggerInteraction.Ignore)&&hit.transform.IsChildOf(transform);
      if(onIt){
       state=State.Shaking;shakeTimer=0;
-      g.Sound("step");
+      g.TrapSound("step",transform.position,3f,13f,0.7f);
       HitSpark.Burst(transform.position+Vector3.up*.2f,Vector3.up,new Color(.8f,.7f,.5f),8);
      }
      break;
@@ -558,7 +592,7 @@ namespace LostRealms {
      transform.position=origin+new Vector3(sx,0,sz);
      if(shakeTimer>=.75f){
       state=State.Falling;fallVelocity=0;
-      g.Sound("impact");
+      g.TrapSound("impact",transform.position,3.5f,15f,0.9f);
       KenneyPuff.Burst(transform.position+Vector3.up*.2f,new Color(.6f,.55f,.45f),12,1.2f);
      }
      break;
@@ -655,7 +689,7 @@ namespace LostRealms {
   public void Explode(){
    if(exploded)return;exploded=true;All.Remove(this);
    var g=RealmGame.I;
-   g.Sound("impact");
+   g.TrapSound("impact",transform.position,4f,20f,1.0f);
    Vfx.Play("ga_vfx_FireBall_01",transform.position+Vector3.up*.5f,Quaternion.identity,1.4f);
    HitSpark.Burst(transform.position+Vector3.up*.5f,Vector3.up,new Color(1f,.5f,.1f),24);
    ImpactMarks.Place(transform.position,1.4f,new Color(.15f,.1f,.08f));
@@ -683,6 +717,7 @@ namespace LostRealms {
  // =========================================================================
  public sealed class FloorBladeTrap:MonoBehaviour {
   Transform bladeRoot;Color trapColor;float timer;
+  AudioSource audioSource;
   public static FloorBladeTrap Place(Transform parent,Vector3 localPos,Color accent){
    var go=new GameObject("Floor Blade Trap");go.transform.SetParent(parent,false);go.transform.localPosition=localPos;
    var prefab=Resources.Load<GameObject>("Props/FloorBladeTrap");
@@ -701,17 +736,40 @@ namespace LostRealms {
     }
     fb.bladeRoot=obj.transform;
    }
+   var audio=go.AddComponent<AudioSource>();
+   var clip=Resources.Load<AudioClip>("Audio/sfx_blade");
+   if(clip){
+    audio.clip=clip;audio.loop=true;audio.playOnAwake=false;
+    audio.spatialBlend=1f;audio.minDistance=2.5f;audio.maxDistance=13f;
+    audio.rolloffMode=AudioRolloffMode.Linear;audio.volume=0f;audio.pitch=1.15f;
+   }
+   fb.audioSource=audio;
    return fb;
   }
   void Update(){
    var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
    timer+=Time.deltaTime;
    if(bladeRoot)bladeRoot.Rotate(0,360f*Time.deltaTime,0,Space.Self);
+   if(audioSource&&audioSource.clip){
+    if(!g.Save.sound||g.Screen!=GameScreen.Playing||!g.Player){
+     if(audioSource.isPlaying)audioSource.Pause();
+    }else{
+     float dist=Vector3.Distance(transform.position,g.Player.transform.position);
+     if(dist>=13f){
+      if(audioSource.isPlaying)audioSource.Pause();
+     }else{
+      float t=Mathf.Clamp01(1f-(dist-2.5f)/10.5f);
+      audioSource.volume=t*t*0.35f;
+      if(!audioSource.isPlaying)audioSource.Play();
+     }
+    }
+   }
    Vector3 pPos=g.Player.transform.position;
    Vector3 d=pPos-transform.position;
    if(Mathf.Abs(d.x)<1.1f&&Mathf.Abs(d.z)<1.1f&&d.y>-.2f&&d.y<1.2f){
     if(g.Player.Damage(1,transform.position)){
      HitSpark.Burst(pPos+Vector3.up*.8f,Vector3.up,Color.red,12);
+     g.TrapSound("impact",pPos,3f,14f,0.7f);
     }
    }
    if(g.Enemies!=null){

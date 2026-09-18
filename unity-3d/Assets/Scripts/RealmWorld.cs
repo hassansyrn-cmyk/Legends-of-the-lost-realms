@@ -188,7 +188,6 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     }
     if(last){EndZ=z+4;Gate(p+new Vector3(0,0,5));if(IsBoss)SpawnEnemy(p+new Vector3(0,.05f,-1),world==3?21:world+8,true,p,width,length);}
    }
-   for(int i=0;i<40;i++){float z=-16+i*4.8f;float side=i%2==0?-1:1;Vector3 p=new Vector3(side*(16+(float)random.NextDouble()*24),-4,z);float h=8+(float)random.NextDouble()*22;Art.Shape("Distant realm spire",PrimitiveType.Cylinder,p,new Vector3(6,h,6),stone*.75f,transform);if(realm==0)Art.Shape("Distant canopy",PrimitiveType.Sphere,p+Vector3.up*h*.5f,new Vector3(12,6,12),top*.68f,transform);}
     RealmScenery.Upgrade(this,realm);
     RealmProps.Scatter(transform,realm,random);
   }
