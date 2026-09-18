@@ -102,16 +102,20 @@ var em=ps.emission;em.rateOverTime=realm==0?2f:realm==1?6f:8f;
   // The horizon band matches the fog color, hiding the seam with far geometry.
   static Material SkyFor(int r,Color horizon){
    if(skyMats[r]&&skyMats[r])return skyMats[r];
-   if(r==0){
-    var tex=Resources.Load<Texture2D>("Art/Realm0_Sky360");
-    var panoShader=Resources.Load<Shader>("Shaders/RealmPanoramicSky")??Shader.Find("LostRealms/RealmPanoramicSky");
-    if(tex&&panoShader){
-     var pm=new Material(panoShader){name="Realm 0 Panoramic Sky"};
-     pm.SetTexture("_MainTex",tex);
-     if(pm.HasProperty("_Exposure"))pm.SetFloat("_Exposure",1.05f);
-     if(pm.HasProperty("_Rotation"))pm.SetFloat("_Rotation",90f);
-     skyMats[r]=pm;return pm;
+   var tex=Resources.Load<Texture2D>("Art/Realm"+r+"_Sky360");
+   var panoShader=Resources.Load<Shader>("Shaders/RealmPanoramicSky")??Shader.Find("LostRealms/RealmPanoramicSky");
+   if(tex&&panoShader){
+    var pm=new Material(panoShader){name="Realm "+r+" Panoramic Sky"};
+    pm.SetTexture("_MainTex",tex);
+    if(pm.HasProperty("_Exposure")){
+     float[] exposures={1.05f,1.05f,1.05f,1.05f};
+     pm.SetFloat("_Exposure",r<exposures.Length?exposures[r]:1.05f);
     }
+    if(pm.HasProperty("_Rotation")){
+     float[] rotations={90f,240f,215f,255f};
+     pm.SetFloat("_Rotation",r<rotations.Length?rotations[r]:0f);
+    }
+    skyMats[r]=pm;return pm;
    }
    var shader=Shader.Find("LostRealms/RealmSkyBox");if(!shader)return null;
 Color[] tops={new Color(.13f,.38f,.52f),new Color(.25f,.45f,.70f),new Color(.05f,.12f,.28f),new Color(.22f,.12f,.18f)};
@@ -154,15 +158,18 @@ Color[] tops={new Color(.13f,.38f,.52f),new Color(.25f,.45f,.70f),new Color(.05f
   // Distant silhouettes frame the route (disabled primitive cylinders).
   void CreateHorizon(Color sky,Color fog){}
 
-  void CreateRouteLandmarks(){
-   for(int i=0;i<3;i++){
-    float z=20+i*32;float side=i%2==0?-1:1;var root=new GameObject("Realm route landmark");root.transform.SetParent(transform,false);root.transform.localPosition=new Vector3(side*12.5f,-.2f,z);
-    Color stone=realm==0?new Color(.15f,.28f,.2f):realm==1?new Color(.35f,.21f,.14f):realm==2?new Color(.22f,.38f,.52f):new Color(.24f,.16f,.19f);
-    var pillar=Art.Shape("Landmark monolith",PrimitiveType.Cylinder,Vector3.up*3.3f,new Vector3(1.15f,3.3f,1.15f),stone,root.transform);SetDecorative(pillar);
-    var crown=Art.Shape("Landmark lens",PrimitiveType.Sphere,Vector3.up*6.55f,Vector3.one*.63f,Color.Lerp(accent,Color.white,.28f),root.transform);SetDecorative(crown);
-    var ring=Art.Ring(Vector3.up*6.25f,1.05f,accent,root.transform);foreach(Transform piece in ring.transform)SetDecorative(piece.gameObject);
+   void CreateRouteLandmarks(){
+    for(int i=0;i<3;i++){
+     float z=20+i*32;float side=i%2==0?-1:1;var root=new GameObject("Realm route landmark");root.transform.SetParent(transform,false);root.transform.localPosition=new Vector3(side*12.5f,-.2f,z);
+     Color stone=realm==0?new Color(.15f,.28f,.2f):realm==1?new Color(.35f,.21f,.14f):realm==2?new Color(.22f,.38f,.52f):new Color(.24f,.16f,.19f);
+     var pillar=Art.Shape("Landmark monolith",PrimitiveType.Cylinder,Vector3.up*3.3f,new Vector3(1.15f,3.3f,1.15f),stone,root.transform);SetDecorative(pillar);
+     var crown=Art.Shape("Landmark lens",PrimitiveType.Sphere,Vector3.up*6.55f,Vector3.one*.63f,Color.Lerp(accent,Color.white,.28f),root.transform);SetDecorative(crown);
+     var ring=Art.Ring(Vector3.up*6.25f,1.05f,accent,root.transform);foreach(Transform piece in ring.transform)SetDecorative(piece.gameObject);
+     var pr=pillar.GetComponent<Renderer>();if(pr)pr.enabled=false;
+     var cr=crown.GetComponent<Renderer>();if(cr)cr.enabled=false;
+     foreach(var r in ring.GetComponentsInChildren<Renderer>(true))r.enabled=false;
+    }
    }
-  }
 
   void CreateAmbientMotes(){
    moteMaterial=new Material(Shader.Find("Sprites/Default"));moteMaterial.name="Realm ambient mote";moteMaterial.color=Color.Lerp(accent,Color.white,.42f);moteMaterial.renderQueue=3000;

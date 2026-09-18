@@ -1,0 +1,9 @@
+=== ALL REALMS 360 SKY PROBE ===
+[PASS] Verdant (Realm 0): Sky material=Realm 0 Panoramic Sky, Shader=LostRealms/RealmPanoramicSky, Texture=Realm0_Sky360 (2048x1024)
+       Camera capture magenta: 0.0% (0% expected)
+[PASS] Desert (Realm 1): Sky material=Realm 1 Panoramic Sky, Shader=LostRealms/RealmPanoramicSky, Texture=Realm1_Sky360 (2048x1024)
+       Camera capture magenta: 0.0% (0% expected)
+[PASS] Snow (Realm 2): Sky material=Realm 2 Panoramic Sky, Shader=LostRealms/RealmPanoramicSky, Texture=Realm2_Sky360 (2048x1024)
+       Camera capture magenta: 0.0% (0% expected)
+[PASS] Lava (Realm 3): Sky material=Realm 3 Panoramic Sky, Shader=LostRealms/RealmPanoramicSky, Texture=Realm3_Sky360 (2048x1024)
+       Camera capture magenta: 0.0% (0% expected)
