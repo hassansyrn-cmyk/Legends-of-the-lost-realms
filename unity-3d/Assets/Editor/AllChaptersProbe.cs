@@ -76,6 +76,7 @@ namespace LostRealms {
    System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(outPath));
    System.IO.File.WriteAllText(outPath, sb.ToString());
    Debug.Log(sb.ToString());
+   if (Application.isBatchMode) EditorApplication.Exit(0);
   }
  }
 }

@@ -192,47 +192,47 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     RealmProps.Scatter(transform,realm,random);
   }
    GameObject FindIsland(Vector3 p){foreach(Transform t in transform)if(t.name=="Island"&&Vector3.Distance(t.position,p)<.1f)return t.gameObject;return null;}
-    GameObject DressIslandVisual(Transform root,IslandArchetype archetype,float width,float length,int index,bool isBoss){
-     if(realm>2)return null;
-     string prefix=realm==2?"R2_":realm==1?"R1_":"";
-     string modelName=null;Vector3 baseDim=Vector3.one;
-     if(archetype==IslandArchetype.Arena){
-      modelName=prefix+"Island_Arena";baseDim=isBoss?new Vector3(19f,1f,15f):new Vector3(13.5f,1f,13f);
-     }else if(archetype==IslandArchetype.NarrowBridge){
-      modelName=prefix+"Island_Bridge";baseDim=new Vector3(4.2f,1f,14f);
-     }else if(archetype==IslandArchetype.TieredPlatform){
-      modelName=prefix+"Island_Tiered";baseDim=new Vector3(10.5f,1f,10f);
-     }else if(archetype==IslandArchetype.MovingFerry){
-      modelName=prefix+"Island_Ferry";baseDim=new Vector3(6f,1f,6f);
-     }else if(index>=100){
-      modelName=prefix+"Island_Small";baseDim=new Vector3(5.2f,1f,5.2f);
-     }else{
-      if(index%2==0){modelName=prefix+"Island_Plateau";baseDim=new Vector3(9f,1f,8.3f);}
-      else{modelName=prefix+"Island_Meadow";baseDim=new Vector3(9f,1f,9f);}
+     GameObject DressIslandVisual(Transform root,IslandArchetype archetype,float width,float length,int index,bool isBoss){
+      if(realm>3)return null;
+      string prefix=realm==3?"R3_":realm==2?"R2_":realm==1?"R1_":"";
+      string modelName=null;Vector3 baseDim=Vector3.one;
+      if(archetype==IslandArchetype.Arena){
+       modelName=prefix+"Island_Arena";baseDim=isBoss?new Vector3(19f,1f,15f):new Vector3(13.5f,1f,13f);
+      }else if(archetype==IslandArchetype.NarrowBridge){
+       modelName=prefix+"Island_Bridge";baseDim=new Vector3(4.2f,1f,14f);
+      }else if(archetype==IslandArchetype.TieredPlatform){
+       modelName=prefix+"Island_Tiered";baseDim=new Vector3(10.5f,1f,10f);
+      }else if(archetype==IslandArchetype.MovingFerry){
+       modelName=prefix+"Island_Ferry";baseDim=new Vector3(6f,1f,6f);
+      }else if(index>=100){
+       modelName=prefix+"Island_Small";baseDim=new Vector3(5.2f,1f,5.2f);
+      }else{
+       if(index%2==0){modelName=prefix+"Island_Plateau";baseDim=new Vector3(9f,1f,8.3f);}
+       else{modelName=prefix+"Island_Meadow";baseDim=new Vector3(9f,1f,9f);}
+      }
+      var prefab=Resources.Load<GameObject>("Islands/"+modelName);
+      if(!prefab)return null;
+      var go=Instantiate(prefab,root,false);
+      go.name="IslandMeshVisual";
+      go.transform.localPosition=new Vector3(0,.02f,0);
+      go.transform.localRotation=Quaternion.identity;
+      go.transform.localScale=new Vector3(width/baseDim.x,1f,length/baseDim.z);
+      var tex=Resources.Load<Texture2D>("Islands/Textures/"+modelName+"_basecolor");
+      if(tex){
+       var mat=new Material(Shader.Find("Standard")){name=modelName+"_Mat"};
+       mat.mainTexture=tex;mat.SetFloat("_Glossiness",.25f);
+       foreach(var r in go.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=mat;
+      }
+      return go;
      }
-     var prefab=Resources.Load<GameObject>("Islands/"+modelName);
-     if(!prefab)return null;
-     var go=Instantiate(prefab,root,false);
-     go.name="IslandMeshVisual";
-     go.transform.localPosition=new Vector3(0,.02f,0);
-     go.transform.localRotation=Quaternion.identity;
-     go.transform.localScale=new Vector3(width/baseDim.x,1f,length/baseDim.z);
-     var tex=Resources.Load<Texture2D>("Islands/Textures/"+modelName+"_basecolor");
-     if(tex){
-      var mat=new Material(Shader.Find("Standard")){name=modelName+"_Mat"};
-      mat.mainTexture=tex;mat.SetFloat("_Glossiness",.25f);
-      foreach(var r in go.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=mat;
-     }
-     return go;
-    }
-    GameObject Island(Vector3 pos,float width,float length,int index,IslandArchetype archetype=IslandArchetype.Standard,bool isBoss=false){
-     var root=new GameObject("Island");root.transform.SetParent(transform);root.transform.position=pos;
-      if(archetype==IslandArchetype.SteppingStones){
-       Vector3[] stepOffsets=new[]{new Vector3(-1.6f,0,-2.5f),new Vector3(1.6f,.25f,0),new Vector3(-1f,.1f,2.5f)};
-        string stepModel=realm==2?"Islands/R2_Island_SteppingStone":realm==1?"Islands/R1_Island_SteppingStone":realm==0?"Islands/Island_SteppingStone":null;
-        var stepPrefab=stepModel!=null?Resources.Load<GameObject>(stepModel):null;
-        string stepTexPath=realm==2?"Islands/Textures/R2_Island_SteppingStone_basecolor":realm==1?"Islands/Textures/R1_Island_SteppingStone_basecolor":realm==0?"Islands/Textures/Island_SteppingStone_basecolor":null;
-       var stepTex=stepTexPath!=null?Resources.Load<Texture2D>(stepTexPath):null;
+     GameObject Island(Vector3 pos,float width,float length,int index,IslandArchetype archetype=IslandArchetype.Standard,bool isBoss=false){
+      var root=new GameObject("Island");root.transform.SetParent(transform);root.transform.position=pos;
+       if(archetype==IslandArchetype.SteppingStones){
+        Vector3[] stepOffsets=new[]{new Vector3(-1.6f,0,-2.5f),new Vector3(1.6f,.25f,0),new Vector3(-1f,.1f,2.5f)};
+         string stepModel=realm==3?"Islands/R3_Island_SteppingStone":realm==2?"Islands/R2_Island_SteppingStone":realm==1?"Islands/R1_Island_SteppingStone":realm==0?"Islands/Island_SteppingStone":null;
+         var stepPrefab=stepModel!=null?Resources.Load<GameObject>(stepModel):null;
+         string stepTexPath=realm==3?"Islands/Textures/R3_Island_SteppingStone_basecolor":realm==2?"Islands/Textures/R2_Island_SteppingStone_basecolor":realm==1?"Islands/Textures/R1_Island_SteppingStone_basecolor":realm==0?"Islands/Textures/Island_SteppingStone_basecolor":null;
+        var stepTex=stepTexPath!=null?Resources.Load<Texture2D>(stepTexPath):null;
        Material stepMat=null;
        if(stepTex){stepMat=new Material(Shader.Find("Standard")){name="StepStone_Mat"};stepMat.mainTexture=stepTex;stepMat.SetFloat("_Glossiness",.25f);}
       for(int k=0;k<stepOffsets.Length;k++){
@@ -374,6 +374,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
      }
      Art.Ring(new Vector3(0,.11f,0),.55f,accent*.7f,root.transform);
     }
+    Physics.SyncTransforms();
     return root;
    }
   void Decor(Vector3 p,Transform parent,int seed){
@@ -395,6 +396,11 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
    }
   }
   void Pickup(Vector3 position,bool gem){
+    Physics.SyncTransforms();
+   var hits=Physics.RaycastAll(position+Vector3.up*5f,Vector3.down,10f,~0,QueryTriggerInteraction.Ignore);
+   float bestY=float.NegativeInfinity;
+   for(int i=0;i<hits.Length;i++){if(hits[i].normal.y>=.5f&&!hits[i].transform.name.StartsWith("Prop ")&&hits[i].point.y>bestY)bestY=hits[i].point.y;}
+   if(bestY>float.NegativeInfinity)position=new Vector3(position.x,bestY+(gem?.65f:.48f),position.z);
    var go=new GameObject(gem?"GemPickup":"CoinPickup");
    go.transform.SetParent(transform,false);go.transform.position=position;
    if(gem)RelicArt.Gem(go.transform,accent);
@@ -412,6 +418,11 @@ void WeaponDrop(Vector3 p,WeaponId id){
     Vfx.Play("ga_vfx_LootDrop_01",p+Vector3.up*1f,Quaternion.identity,.85f);
    }
    void HealPickup(Vector3 p){
+    Physics.SyncTransforms();
+    var hits=Physics.RaycastAll(p+Vector3.up*6f,Vector3.down,12f,~0,QueryTriggerInteraction.Ignore);
+    float bestY=float.NegativeInfinity;
+    for(int i=0;i<hits.Length;i++){if(hits[i].normal.y>=.5f&&!hits[i].transform.name.StartsWith("Prop ")&&hits[i].point.y>bestY)bestY=hits[i].point.y;}
+    if(bestY>float.NegativeInfinity)p=new Vector3(p.x,bestY+.75f,p.z);
     var go=new GameObject("Heal pickup");go.transform.SetParent(transform,false);go.transform.position=p;
     Color heart=new Color(.92f,.12f,.16f);
     if(!Art.PickupModel("Heart",go.transform,heart,.55f,null)){
@@ -467,6 +478,13 @@ void WeaponDrop(Vector3 p,WeaponId id){
  }
 public class RealmPickup:MonoBehaviour {
    public bool Gem;public Vector3 Origin;
+   void Start(){
+    var hits=Physics.RaycastAll(Origin+Vector3.up*5f,Vector3.down,10f,~0,QueryTriggerInteraction.Ignore);
+    float bestY=float.NegativeInfinity;
+    for(int i=0;i<hits.Length;i++){if(hits[i].normal.y>=.5f&&hits[i].point.y>bestY)bestY=hits[i].point.y;}
+    if(bestY>float.NegativeInfinity){float minSafe=bestY+(Gem?.65f:.48f);if(Origin.y<minSafe)Origin.y=minSafe;}
+    transform.position=Origin;
+   }
    void Update(){
     var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
     // GemVisual supplies the main faceted motion. Keep the pickup root slow so
@@ -488,7 +506,12 @@ transform.Rotate(0,(Gem?12f:45f)*Time.deltaTime,0,Space.World);
     for(int i=0;i<count;i++){
      var go=new GameObject("Loot gem");go.transform.SetParent(g.World.transform,false);
      float a=(i+1)*(360f/count)*Mathf.Deg2Rad;
-     go.transform.position=position+new Vector3(Mathf.Cos(a)*.8f,.3f,Mathf.Sin(a)*.8f);
+     Vector3 p=position+new Vector3(Mathf.Cos(a)*.8f,.3f,Mathf.Sin(a)*.8f);
+     var hits=Physics.RaycastAll(p+Vector3.up*5f,Vector3.down,10f,~0,QueryTriggerInteraction.Ignore);
+     float bestY=float.NegativeInfinity;
+     for(int k=0;k<hits.Length;k++){if(hits[k].normal.y>=.5f&&hits[k].point.y>bestY)bestY=hits[k].point.y;}
+     if(bestY>float.NegativeInfinity)p.y=bestY+.65f;
+     go.transform.position=p;
      RelicArt.Gem(go.transform,g.Accent);
      var pickup=go.AddComponent<RealmPickup>();pickup.Gem=true;pickup.Origin=go.transform.position;
     }
@@ -496,6 +519,13 @@ transform.Rotate(0,(Gem?12f:45f)*Time.deltaTime,0,Space.World);
   }
   public class RealmHeal:MonoBehaviour {
    public Vector3 Origin;public int Amount=3;
+   void Start(){
+    var hits=Physics.RaycastAll(Origin+Vector3.up*6f,Vector3.down,12f,~0,QueryTriggerInteraction.Ignore);
+    float bestY=float.NegativeInfinity;
+    for(int i=0;i<hits.Length;i++){if(hits[i].normal.y>=.5f&&hits[i].point.y>bestY)bestY=hits[i].point.y;}
+    if(bestY>float.NegativeInfinity){float minSafe=bestY+.75f;if(Origin.y<minSafe)Origin.y=minSafe;}
+    transform.position=Origin;
+   }
    void Update(){
     var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
     transform.Rotate(0,28f*Time.deltaTime,0,Space.World);

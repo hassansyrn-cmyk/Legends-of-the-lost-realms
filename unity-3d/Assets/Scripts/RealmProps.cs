@@ -93,19 +93,27 @@ static void PlaceVillage(Transform island,int realm,float width,float length,Sys
    int tiny=1+rng.Next(0,3);
    for(int i=0;i<tiny;i++)Place(island,realm,VillageSmall[rng.Next(VillageSmall.Length)],width,length,rng,.3f,.5f,null);
   }
-   static float SurfaceY(Transform island,float x,float z){
-    float localY=.02f;
+   static bool TrySurfaceY(Transform island,float x,float z,out float localY){
+    localY=.02f;
     var hits=Physics.RaycastAll(island.TransformPoint(new Vector3(x,8f,z)),Vector3.down,16f,~0,QueryTriggerInteraction.Ignore);
     float bestY=float.NegativeInfinity;
+    bool found=false;
     for(int i=0;i<hits.Length;i++){
      var h=hits[i];
      if(!h.transform.IsChildOf(island))continue;
      string n=h.transform.name;
      if(n.StartsWith("Prop ") || n.StartsWith("Breakable") || n.StartsWith("Pushable"))continue;
+     if(h.normal.y<.55f)continue;
      float ly=island.InverseTransformPoint(h.point).y;
-     if(ly>bestY)bestY=ly;
+     if(ly<-2.5f)continue;
+     if(ly>bestY){bestY=ly;found=true;}
     }
-    return bestY>float.NegativeInfinity?bestY:localY;
+    if(found){localY=bestY;return true;}
+    return false;
+   }
+   static float SurfaceY(Transform island,float x,float z){
+    if(TrySurfaceY(island,x,z,out float ly))return ly;
+    return .02f;
    }
    static void Place(Transform island,int realm,string name,float width,float length,System.Random rng,float hMin,float hMax,Material material){
      var source=Model(Folder(realm,name),name);if(!source)return;
@@ -114,9 +122,15 @@ static void PlaceVillage(Transform island,int realm,float width,float length,Sys
      int side=rng.Next(0,2)==0?-1:1;
      float x=side*Mathf.Min(halfWidth,1.6f+(float)rng.NextDouble()*halfWidth);
      float z=((float)rng.NextDouble()-.5f)*Mathf.Max(.6f,length-.9f);
+     float localY=.02f;
+     bool valid=false;
+     for(int attempt=0;attempt<6;attempt++){
+      if(TrySurfaceY(island,x,z,out localY)){valid=true;break;}
+      x*=.75f;z*=.75f;
+     }
+     if(!valid)return;
      var prop=Object.Instantiate(source,island);
      prop.name="Prop "+name;
-     float localY=SurfaceY(island,x,z);
      prop.transform.localPosition=new Vector3(x,localY,z);
      // Keep the model's import rotation (some packs stand up via a baked root
      // rotation, e.g. (270,180,0)); identity here flattens those props.
@@ -207,15 +221,30 @@ if(prop.name.StartsWith("Prop Tree")){
     }
     static void PlaceBuilding(Transform island,string name,float xMag,int side,float z,System.Random rng,Material material,bool gateway){
      var source=Model("Desert",name);if(!source)return;
+     float x=gateway?0f:side*xMag;
+     float localY=.02f;
+     bool valid=false;
+     for(int attempt=0;attempt<6;attempt++){
+      if(TrySurfaceY(island,x,z,out localY)){valid=true;break;}
+      x*=.8f;z*=.8f;
+     }
+     if(!valid)return;
      var prop=Object.Instantiate(source,island);
      prop.name="Prop "+name;
-     prop.transform.localPosition=new Vector3(gateway?0f:side*xMag,.02f,z);
+     prop.transform.localPosition=new Vector3(x,localY,z);
      var baseRot=source.transform.localRotation;
      // Gateway: gate across the lane (yaw 90 aims its portal down the route); flank
      // buildings face the path with the same side so the layout reads as rows.
      float yaw=gateway?90f:(side==-1?0f:180f);
      prop.transform.localRotation=Quaternion.AngleAxis(yaw,Vector3.up)*baseRot;
      Fit(prop,2.6f+(float)rng.NextDouble()*.9f);
+     var groundRenderers=prop.GetComponentsInChildren<Renderer>(true);
+     if(groundRenderers.Length>0){
+      Bounds gb=groundRenderers[0].bounds;
+      for(int i=1;i<groundRenderers.Length;i++)gb.Encapsulate(groundRenderers[i].bounds);
+      float surfaceY=island.TransformPoint(new Vector3(x,localY,z)).y;
+      prop.transform.position+=Vector3.up*(surfaceY-gb.min.y);
+     }
      AddCollider(prop);
      foreach(var renderer in prop.GetComponentsInChildren<Renderer>(true)){renderer.sharedMaterial=material;renderer.shadowCastingMode=ShadowCastingMode.On;renderer.receiveShadows=true;}
     }
@@ -250,18 +279,38 @@ if(prop.name.StartsWith("Prop Tree")){
    // shared AddCollider gives them a plain box.
    static void PlaceStatue(Transform island,string name,float x,float z,float yaw,float height){
     var source=CharModel(name);if(!source)return;
+    float localY=.02f;
+    bool valid=false;
+    for(int attempt=0;attempt<6;attempt++){
+     if(TrySurfaceY(island,x,z,out localY)){valid=true;break;}
+     x*=.8f;z*=.8f;
+    }
+    if(!valid)return;
     var prop=Object.Instantiate(source,island);
     prop.name="Prop Statue "+name;
-    float localY=SurfaceY(island,x,z);
     prop.transform.localPosition=new Vector3(x,localY,z);
     prop.transform.localRotation=Quaternion.AngleAxis(yaw,Vector3.up)*source.transform.localRotation;
     Fit(prop,height);
+    var groundRenderers=prop.GetComponentsInChildren<Renderer>(true);
+    if(groundRenderers.Length>0){
+     Bounds gb=groundRenderers[0].bounds;
+     for(int i=1;i<groundRenderers.Length;i++)gb.Encapsulate(groundRenderers[i].bounds);
+     float surfaceY=island.TransformPoint(new Vector3(x,localY,z)).y;
+     prop.transform.position+=Vector3.up*(surfaceY-gb.min.y);
+    }
     AddCollider(prop);
     foreach(var renderer in prop.GetComponentsInChildren<Renderer>(true)){renderer.sharedMaterial=Stone();renderer.shadowCastingMode=ShadowCastingMode.On;renderer.receiveShadows=true;}
    }
    static void PlaceCrystal(Transform island,Color color,float x,float z,float size,System.Random rng){
+    float localY=.02f;
+    bool valid=false;
+    for(int attempt=0;attempt<6;attempt++){
+     if(TrySurfaceY(island,x,z,out localY)){valid=true;break;}
+     x*=.8f;z*=.8f;
+    }
+    if(!valid)return;
     var go=new GameObject("Prop Crystal");go.transform.SetParent(island,false);
-    go.transform.localPosition=new Vector3(x,SurfaceY(island,x,z),z);
+    go.transform.localPosition=new Vector3(x,localY,z);
     go.transform.localRotation=Quaternion.Euler((float)rng.NextDouble()*14-7,(float)rng.NextDouble()*360f,(float)rng.NextDouble()*14-7);
     go.transform.localScale=new Vector3(size,size*(1.6f+(float)rng.NextDouble()*.9f),size);
     var mf=go.AddComponent<MeshFilter>();mf.sharedMesh=ShardMesh();
@@ -269,8 +318,15 @@ if(prop.name.StartsWith("Prop Tree")){
     AddCollider(go);
    }
    static void PlaceBanner(Transform island,float x,float z){
+    float localY=.02f;
+    bool valid=false;
+    for(int attempt=0;attempt<6;attempt++){
+     if(TrySurfaceY(island,x,z,out localY)){valid=true;break;}
+     x*=.8f;z*=.8f;
+    }
+    if(!valid)return;
     var go=new GameObject("Prop Banner");go.transform.SetParent(island,false);
-    go.transform.localPosition=new Vector3(x,SurfaceY(island,x,z),z);
+    go.transform.localPosition=new Vector3(x,localY,z);
     Art.Shape("Banner pole",PrimitiveType.Cylinder,Vector3.up*1.1f,new Vector3(.09f,2.2f,.09f),new Color(.3f,.2f,.14f),go.transform);
     var cloth=Art.Shape("Banner cloth",PrimitiveType.Cube,new Vector3(.3f,1.75f,0),new Vector3(.55f,.7f,.05f),new Color(.75f,.16f,.14f),go.transform);
     cloth.transform.localRotation=Quaternion.Euler(0,0,8);
@@ -278,8 +334,15 @@ if(prop.name.StartsWith("Prop Tree")){
     AddCollider(go);
    }
    static void PlaceLantern(Transform island,float x,float z){
+    float localY=.02f;
+    bool valid=false;
+    for(int attempt=0;attempt<6;attempt++){
+     if(TrySurfaceY(island,x,z,out localY)){valid=true;break;}
+     x*=.8f;z*=.8f;
+    }
+    if(!valid)return;
     var go=new GameObject("Prop Lantern");go.transform.SetParent(island,false);
-    go.transform.localPosition=new Vector3(x,SurfaceY(island,x,z),z);
+    go.transform.localPosition=new Vector3(x,localY,z);
     Art.Shape("Lantern post",PrimitiveType.Cube,new Vector3(0,.15f,0),new Vector3(.3f,.3f,.3f),new Color(.25f,.28f,.33f),go.transform);
     var pivot=new GameObject("Lantern pivot");pivot.transform.SetParent(go.transform,false);pivot.transform.localPosition=new Vector3(0,1.7f,0);
     Art.Shape("Lantern arm",PrimitiveType.Cube,new Vector3(0,-.85f,0),new Vector3(.07f,1.7f,.07f),new Color(.25f,.28f,.33f),pivot.transform);
@@ -299,12 +362,22 @@ if(prop.name.StartsWith("Prop Tree")){
      int side=rng.Next(0,2)==0?-1:1;
      float x=side*Mathf.Min(halfX,1.2f+(float)rng.NextDouble()*halfX);
      float z=((float)rng.NextDouble()-.5f)*Mathf.Max(.6f,length-1.2f);
-     BreakableCrate.Place(island,new Vector3(x,SurfaceY(island,x,z),z),wood,rng.NextDouble()<.4f);
+     float localY=.02f;
+     bool valid=false;
+     for(int attempt=0;attempt<6;attempt++){
+      if(TrySurfaceY(island,x,z,out localY)){valid=true;break;}
+      x*=.8f;z*=.8f;
+     }
+     if(!valid)continue;
+     BreakableCrate.Place(island,new Vector3(x,localY,z),wood,rng.NextDouble()<.4f);
     }
     if(width>8f&&rng.NextDouble()<.3f){
      float bx=(rng.Next(0,2)==0?-1:1)*1.4f;
      float bz=((float)rng.NextDouble()-.5f)*2f;
-     PushableBlock.Place(island,new Vector3(bx,SurfaceY(island,bx,bz),bz),new Color(.45f,.42f,.4f));
+     float localY=.02f;
+     if(TrySurfaceY(island,bx,bz,out localY)){
+      PushableBlock.Place(island,new Vector3(bx,localY,bz),new Color(.45f,.42f,.4f));
+     }
     }
    }
    static void PlaceOrnaments(Transform island,int realm,float width,float length,System.Random rng){

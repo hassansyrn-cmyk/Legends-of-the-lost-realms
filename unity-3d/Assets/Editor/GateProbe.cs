@@ -67,6 +67,7 @@ namespace LostRealms {
     Flush("worldPos="+g.World.transform.position.ToString("0.##")+" EndZ="+g.World.EndZ.ToString("0.##"));
    }catch(System.Exception e){Flush("THREW "+e.GetType().Name+": "+e.Message);}
    Debug.Log("GATE_DIAGNOSE_DONE");
+   if (Application.isBatchMode) EditorApplication.Exit(0);
   }
   static void Dump(Transform t,string tag){
    var col=t.GetComponent<Collider>();

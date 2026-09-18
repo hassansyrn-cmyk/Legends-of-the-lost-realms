@@ -1,0 +1,11 @@
+=== LAVA REALM ISLAND PROBE (CHAPTERS 11 - 15) ===
+Chapter 11: IslandMeshVisuals=18, StepVisuals=3, Crags=18
+  Materials: R3_Island_Plateau_Mat, R3_Island_Meadow_Mat, R3_Island_Bridge_Mat, R3_Island_Small_Mat, R3_Island_Arena_Mat, R3_Island_Tiered_Mat, StepStone_Mat, R3_Island_Ferry_Mat, Crag_Mat
+Chapter 12: IslandMeshVisuals=18, StepVisuals=3, Crags=18
+  Materials: R3_Island_Plateau_Mat, R3_Island_Meadow_Mat, R3_Island_Bridge_Mat, R3_Island_Small_Mat, R3_Island_Arena_Mat, R3_Island_Tiered_Mat, StepStone_Mat, R3_Island_Ferry_Mat, Crag_Mat
+Chapter 13: IslandMeshVisuals=18, StepVisuals=3, Crags=18
+  Materials: R3_Island_Plateau_Mat, R3_Island_Meadow_Mat, R3_Island_Bridge_Mat, R3_Island_Small_Mat, R3_Island_Arena_Mat, R3_Island_Tiered_Mat, StepStone_Mat, R3_Island_Ferry_Mat, Crag_Mat
+Chapter 14: IslandMeshVisuals=18, StepVisuals=3, Crags=18
+  Materials: R3_Island_Plateau_Mat, R3_Island_Meadow_Mat, R3_Island_Bridge_Mat, R3_Island_Small_Mat, R3_Island_Arena_Mat, R3_Island_Tiered_Mat, StepStone_Mat, R3_Island_Ferry_Mat, Crag_Mat
+Chapter 15: IslandMeshVisuals=11, StepVisuals=3, Crags=18
+  Materials: R3_Island_Plateau_Mat, R3_Island_Meadow_Mat, R3_Island_Bridge_Mat, R3_Island_Small_Mat, R3_Island_Arena_Mat, StepStone_Mat, R3_Island_Ferry_Mat, R3_Island_Tiered_Mat, Crag_Mat

@@ -115,7 +115,24 @@ public static class WeaponCatalog {
 
  public sealed class WeaponDrop:MonoBehaviour {
   public WeaponId Id;public Vector3 Origin;Transform model;float phase;
-  public void Configure(WeaponId id,Vector3 origin){Id=id;Origin=origin;phase=((int)id+1)*1.37f;var definition=WeaponCatalog.Get(id);var created=WeaponCatalog.CreateModel(id,transform);model=created?created.transform:null;if(!model)Debug.LogError("WEAPON_DROP_SETUP_FAILED: "+definition.Name);else Art.Ring(new Vector3(0,-.55f,0),.7f,new Color(1f,.85f,.3f),transform);Vfx.Play("ga_vfx_LootDrop_01",origin+Vector3.up*.6f,Quaternion.identity,.9f);}
+  public void Configure(WeaponId id,Vector3 origin){
+   Id=id;Origin=origin;phase=((int)id+1)*1.37f;
+   Physics.SyncTransforms();
+   var hits=Physics.RaycastAll(origin+Vector3.up*6f,Vector3.down,12f,~0,QueryTriggerInteraction.Ignore);
+   float bestY=float.NegativeInfinity;
+   for(int i=0;i<hits.Length;i++){if(hits[i].normal.y>=.5f&&!hits[i].transform.name.StartsWith("Prop ")&&hits[i].point.y>bestY)bestY=hits[i].point.y;}
+   if(bestY>float.NegativeInfinity)Origin=new Vector3(origin.x,bestY+.15f,origin.z);
+   transform.position=Origin+Vector3.up*.75f;
+   var definition=WeaponCatalog.Get(id);var created=WeaponCatalog.CreateModel(id,transform);model=created?created.transform:null;if(!model)Debug.LogError("WEAPON_DROP_SETUP_FAILED: "+definition.Name);else Art.Ring(new Vector3(0,-.55f,0),.7f,new Color(1f,.85f,.3f),transform);Vfx.Play("ga_vfx_LootDrop_01",Origin+Vector3.up*.6f,Quaternion.identity,.9f);
+  }
+  void Start(){
+   Physics.SyncTransforms();
+   var hits=Physics.RaycastAll(Origin+Vector3.up*6f,Vector3.down,12f,~0,QueryTriggerInteraction.Ignore);
+   float bestY=float.NegativeInfinity;
+   for(int i=0;i<hits.Length;i++){if(hits[i].normal.y>=.5f&&!hits[i].transform.name.StartsWith("Prop ")&&hits[i].point.y>bestY)bestY=hits[i].point.y;}
+   if(bestY>float.NegativeInfinity){float minSafe=bestY+.15f;if(Origin.y<minSafe)Origin.y=minSafe;}
+   transform.position=Origin+Vector3.up*.75f;
+  }
   void Update(){
    var game=RealmGame.I;if(!game||game.Screen!=GameScreen.Playing||!game.Player)return;
    float time=game.Elapsed+phase;transform.position=Origin+Vector3.up*(.75f+Mathf.Sin(time*1.4f)*.09f);transform.Rotate(0,Time.deltaTime*24f,0,Space.World);

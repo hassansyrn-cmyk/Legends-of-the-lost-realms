@@ -43,14 +43,14 @@ if(skyShader){var sky=new Material(skyShader);lifetime.Keep(sky);sky.SetColor("_
    foreach(Transform t in world.transform)if(t.name=="Distant canopy"||t.name=="Distant realm spire"){t.gameObject.SetActive(false);if(Application.isPlaying)Object.Destroy(t.gameObject);else Object.DestroyImmediate(t.gameObject);}
    for(int i=0;i<18;i++){
     float side=i%2==0?-1:1;var root=new GameObject("Distant floating crag").transform;root.SetParent(world.transform,false);root.localPosition=new Vector3(side*(23+i%3*8),-14-i%4*3,-22+i*11);
-      if(realm<=2){
-       string cragModel=realm==2?"Islands/R2_Island_Crag":realm==1?"Islands/R1_Island_Crag":"Islands/Island_Crag";
+      if(realm<=3){
+       string cragModel=realm==3?"Islands/R3_Island_Crag":realm==2?"Islands/R2_Island_Crag":realm==1?"Islands/R1_Island_Crag":"Islands/Island_Crag";
        var cragPrefab=Resources.Load<GameObject>(cragModel);
        if(cragPrefab){
         var cObj=Object.Instantiate(cragPrefab,root,false);
         cObj.name="CragVisual";float s=0.9f+(i%4)*.35f;cObj.transform.localScale=new Vector3(s,s,s);
         cObj.transform.localRotation=Quaternion.Euler(0,i*47f,0);
-        string cragTexPath=realm==2?"Islands/Textures/R2_Island_Crag_basecolor":realm==1?"Islands/Textures/R1_Island_Crag_basecolor":"Islands/Textures/Island_Crag_basecolor";
+        string cragTexPath=realm==3?"Islands/Textures/R3_Island_Crag_basecolor":realm==2?"Islands/Textures/R2_Island_Crag_basecolor":realm==1?"Islands/Textures/R1_Island_Crag_basecolor":"Islands/Textures/Island_Crag_basecolor";
         var cTex=Resources.Load<Texture2D>(cragTexPath);
         if(cTex){var cmat=new Material(Shader.Find("Standard")){name="Crag_Mat"};cmat.mainTexture=cTex;cmat.SetFloat("_Glossiness",.15f);foreach(var r in cObj.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=cmat;}
         continue;
