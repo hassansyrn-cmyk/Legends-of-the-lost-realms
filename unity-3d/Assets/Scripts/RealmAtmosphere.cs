@@ -101,7 +101,18 @@ var em=ps.emission;em.rateOverTime=realm==0?2f:realm==1?6f:8f;
   // Gradient skybox + sun + stars so the islands read as floating in open sky.
   // The horizon band matches the fog color, hiding the seam with far geometry.
   static Material SkyFor(int r,Color horizon){
-   if(skyMats[r])return skyMats[r];
+   if(skyMats[r]&&skyMats[r])return skyMats[r];
+   if(r==0){
+    var tex=Resources.Load<Texture2D>("Art/Realm0_Sky360");
+    var panoShader=Resources.Load<Shader>("Shaders/RealmPanoramicSky")??Shader.Find("LostRealms/RealmPanoramicSky");
+    if(tex&&panoShader){
+     var pm=new Material(panoShader){name="Realm 0 Panoramic Sky"};
+     pm.SetTexture("_MainTex",tex);
+     if(pm.HasProperty("_Exposure"))pm.SetFloat("_Exposure",1.05f);
+     if(pm.HasProperty("_Rotation"))pm.SetFloat("_Rotation",90f);
+     skyMats[r]=pm;return pm;
+    }
+   }
    var shader=Shader.Find("LostRealms/RealmSkyBox");if(!shader)return null;
 Color[] tops={new Color(.13f,.38f,.52f),new Color(.25f,.45f,.70f),new Color(.05f,.12f,.28f),new Color(.22f,.12f,.18f)};
     Color[] grounds={new Color(.10f,.16f,.16f),new Color(.35f,.22f,.15f),new Color(.08f,.12f,.20f),new Color(.55f,.30f,.22f)};
