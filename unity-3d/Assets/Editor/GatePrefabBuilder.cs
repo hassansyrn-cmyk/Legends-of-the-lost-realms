@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -31,14 +31,81 @@ namespace LostRealms {
    };
 
    string outDir = "Assets/Resources/Gates";
+   string matDir = "Assets/Resources/Gates/Materials";
    if (!Directory.Exists(outDir)) Directory.CreateDirectory(outDir);
+   if (!Directory.Exists(matDir)) Directory.CreateDirectory(matDir);
+
+   // Pre-create / load particle material asset on disk
+   string partMatPath = $"{matDir}/Gate_Particle_Smoke.mat";
+   var partMatAsset = AssetDatabase.LoadAssetAtPath<Material>(partMatPath);
+   var smokeTex = Resources.Load<Texture2D>("VFX/Textures/smoke_04");
+   if (!partMatAsset) {
+    var pShader = Shader.Find("Sprites/Default");
+    partMatAsset = new Material(pShader) { name = "Gate_Particle_Smoke" };
+    if (smokeTex) partMatAsset.mainTexture = smokeTex;
+    AssetDatabase.CreateAsset(partMatAsset, partMatPath);
+   } else {
+    if (smokeTex && partMatAsset.mainTexture != smokeTex) partMatAsset.mainTexture = smokeTex;
+    EditorUtility.SetDirty(partMatAsset);
+   }
 
    for (int r = 0; r < 4; r++) {
     string realm = realmNames[r];
     Color prime = primaryColors[r];
     Color sec = secondaryColors[r];
 
-    var root = new GameObject("TeleportGate_Root");
+    // 1. Create / Load Gate Model Material Asset on disk
+    string gateMatPath = $"{matDir}/Gate_{realm}_Mat.mat";
+    var gateMat = AssetDatabase.LoadAssetAtPath<Material>(gateMatPath);
+    var tex = Resources.Load<Texture2D>($"Gates/Textures/Gate_{realm}_basecolor");
+    if (!gateMat) {
+     var standardShader = Shader.Find("Standard");
+     gateMat = new Material(standardShader) { name = $"Gate_{realm}_Mat" };
+     if (tex) gateMat.mainTexture = tex;
+     gateMat.SetFloat("_Glossiness", 0.25f);
+     gateMat.SetFloat("_Metallic", 0.05f);
+     AssetDatabase.CreateAsset(gateMat, gateMatPath);
+    } else {
+     if (tex) gateMat.mainTexture = tex;
+     gateMat.SetFloat("_Glossiness", 0.25f);
+     gateMat.SetFloat("_Metallic", 0.05f);
+     EditorUtility.SetDirty(gateMat);
+    }
+
+    // 2. Create / Load Portal Energy Material Asset on disk
+    string surfMatPath = $"{matDir}/PortalEnergy_{realm}.mat";
+    var surfMat = AssetDatabase.LoadAssetAtPath<Material>(surfMatPath);
+    var surfShader = Resources.Load<Shader>("Shaders/PortalEnergy") ?? Shader.Find("LostRealms/PortalEnergy");
+    if (!surfMat) {
+     surfMat = new Material(surfShader) { name = $"PortalEnergy_{realm}" };
+     AssetDatabase.CreateAsset(surfMat, surfMatPath);
+    }
+    surfMat.shader = surfShader;
+    surfMat.SetColor("_Color", prime);
+    surfMat.SetColor("_SecondaryColor", sec);
+    surfMat.SetFloat("_Speed", 1.0f);
+    surfMat.SetFloat("_Distort", 0.32f);
+    surfMat.SetFloat("_Opacity", 0.88f);
+    surfMat.SetFloat("_Softness", 0.35f);
+    surfMat.SetFloat("_Emission", 2.0f);
+    surfMat.SetFloat("_Rotation", 1.5f);
+    EditorUtility.SetDirty(surfMat);
+
+    // 3. Create / Load Portal Glow Material Asset on disk
+    string glowMatPath = $"{matDir}/PortalGlow_{realm}.mat";
+    var glowMatAsset = AssetDatabase.LoadAssetAtPath<Material>(glowMatPath);
+    if (!glowMatAsset) {
+     var glowShader = Shader.Find("Sprites/Default");
+     glowMatAsset = new Material(glowShader) { name = $"PortalGlow_{realm}" };
+     AssetDatabase.CreateAsset(glowMatAsset, glowMatPath);
+    }
+    glowMatAsset.color = new Color(prime.r, prime.g, prime.b, 0.32f);
+    if (smokeTex) glowMatAsset.mainTexture = smokeTex;
+    EditorUtility.SetDirty(glowMatAsset);
+
+    AssetDatabase.SaveAssets();
+
+    var root = new GameObject($"TeleportGate_{realm}");
     var controller = root.AddComponent<TeleportGateController>();
     var realmGate = root.AddComponent<RealmGate>();
 
@@ -49,14 +116,8 @@ namespace LostRealms {
     if (fbxPrefab) {
      var model = UnityEngine.Object.Instantiate(fbxPrefab, modelRoot.transform, false);
      model.name = $"Visual_{realm}";
-     var tex = Resources.Load<Texture2D>($"Gates/Textures/Gate_{realm}_basecolor");
-     if (tex) {
-      var mat = new Material(Shader.Find("Standard")) { name = $"Gate_{realm}_Mat" };
-      mat.mainTexture = tex;
-      mat.SetFloat("_Glossiness", 0.25f);
-      foreach (var rend in model.GetComponentsInChildren<Renderer>(true)) {
-       rend.sharedMaterial = mat;
-      }
+     foreach (var rend in model.GetComponentsInChildren<Renderer>(true)) {
+      rend.sharedMaterial = gateMat;
      }
     }
     // Pillar colliders (left, right, lintel) so opening remains clear
@@ -79,19 +140,7 @@ namespace LostRealms {
     var surfCol = surfObj.GetComponent<Collider>();
     if (surfCol) UnityEngine.Object.DestroyImmediate(surfCol);
     var surfRend = surfObj.GetComponent<Renderer>();
-    var surfShader = Resources.Load<Shader>("Shaders/PortalEnergy") ?? Shader.Find("LostRealms/PortalEnergy");
-    if (surfShader) {
-     var smat = new Material(surfShader) { name = $"PortalEnergy_{realm}" };
-     smat.SetColor("_Color", prime);
-     smat.SetColor("_SecondaryColor", sec);
-     smat.SetFloat("_Speed", 1.0f);
-     smat.SetFloat("_Distort", 0.32f);
-     smat.SetFloat("_Opacity", 0.88f);
-     smat.SetFloat("_Softness", 0.35f);
-     smat.SetFloat("_Emission", 2.0f);
-     smat.SetFloat("_Rotation", 1.5f);
-     surfRend.sharedMaterial = smat;
-    }
+    surfRend.sharedMaterial = surfMat;
 
     // 3. PortalGlow
     var glowObj = GameObject.CreatePrimitive(PrimitiveType.Quad);
@@ -102,25 +151,20 @@ namespace LostRealms {
     var glowCol = glowObj.GetComponent<Collider>();
     if (glowCol) UnityEngine.Object.DestroyImmediate(glowCol);
     var glowRend = glowObj.GetComponent<Renderer>();
-    var glowShader = Shader.Find("Sprites/Default");
-    var glowMat = new Material(glowShader) { name = $"PortalGlow_{realm}" };
-    glowMat.color = new Color(prime.r, prime.g, prime.b, 0.32f);
-    var smokeTex = Resources.Load<Texture2D>("VFX/Textures/smoke_04");
-    if (smokeTex) glowMat.mainTexture = smokeTex;
-    glowRend.sharedMaterial = glowMat;
+    glowRend.sharedMaterial = glowMatAsset;
 
     // 4. PortalParticles
     var ppObj = new GameObject("PortalParticles");
     ppObj.transform.SetParent(root.transform, false);
     ppObj.transform.localPosition = new Vector3(0f, 2.3f, 0f);
     var pps = ppObj.AddComponent<ParticleSystem>();
-    ConfigurePortalParticles(pps, prime, sec);
+    ConfigurePortalParticles(pps, prime, sec, partMatAsset);
 
     // 5. RealmParticles
     var rpObj = new GameObject("RealmParticles");
     rpObj.transform.SetParent(root.transform, false);
     rpObj.transform.localPosition = new Vector3(0f, 1.0f, 0f);
-    ConfigureRealmParticles(rpObj, r, prime, sec);
+    ConfigureRealmParticles(rpObj, r, prime, sec, partMatAsset);
 
     // 6. PortalLight
     var plObj = new GameObject("PortalLight");
@@ -199,10 +243,10 @@ namespace LostRealms {
 
    AssetDatabase.SaveAssets();
    AssetDatabase.Refresh();
-   Debug.Log("ALL GATE PREFABS BUILT SUCCESSFULLY!");
+   Debug.Log("ALL GATE PREFABS BUILT WITH PERSISTENT DISK MATERIALS SUCCESSFULLY!");
   }
 
-  static void ConfigurePortalParticles(ParticleSystem ps, Color prime, Color sec) {
+  static void ConfigurePortalParticles(ParticleSystem ps, Color prime, Color sec, Material mat) {
    var main = ps.main;
    main.playOnAwake = true;
    main.loop = true;
@@ -223,33 +267,27 @@ namespace LostRealms {
    shape.radiusThickness = 0.4f;
 
    var pr = ps.GetComponent<ParticleSystemRenderer>();
-   var pmat = new Material(Shader.Find("Sprites/Default"));
-   pmat.color = Color.white;
-   var smokeTex = Resources.Load<Texture2D>("VFX/Textures/smoke_04");
-   if (smokeTex) pmat.mainTexture = smokeTex;
-   pr.material = pmat;
+   if (mat) pr.sharedMaterial = mat;
   }
 
-  static void ConfigureRealmParticles(GameObject parent, int realm, Color prime, Color sec) {
-   var smokeTex = Resources.Load<Texture2D>("VFX/Textures/smoke_04");
-
+  static void ConfigureRealmParticles(GameObject parent, int realm, Color prime, Color sec, Material mat) {
    if (realm == 0) {
-    var leaves = CreatePS(parent, "Leaves", new Color(0.2f, 0.85f, 0.35f, 0.8f), smokeTex, 12, 35, 0.18f, new Vector3(3f, 3f, 2f), -0.6f);
-    var sparks = CreatePS(parent, "Sparks", prime, smokeTex, 14, 25, 0.08f, new Vector3(2f, 1.5f, 1f), 0.7f);
+    CreatePS(parent, "Leaves", new Color(0.2f, 0.85f, 0.35f, 0.8f), mat, 12, 35, 0.18f, new Vector3(3f, 3f, 2f), -0.6f);
+    CreatePS(parent, "Sparks", prime, mat, 14, 25, 0.08f, new Vector3(2f, 1.5f, 1f), 0.7f);
    } else if (realm == 1) {
-    var sand = CreatePS(parent, "SandDrift", new Color(0.95f, 0.8f, 0.3f, 0.6f), smokeTex, 16, 40, 0.10f, new Vector3(2.5f, 1.0f, 2f), 0.4f);
-    var sparks = CreatePS(parent, "GoldSparks", sec, smokeTex, 10, 20, 0.09f, new Vector3(2f, 2f, 1f), 0.6f);
+    CreatePS(parent, "SandDrift", new Color(0.95f, 0.8f, 0.3f, 0.6f), mat, 16, 40, 0.10f, new Vector3(2.5f, 1.0f, 2f), 0.4f);
+    CreatePS(parent, "GoldSparks", sec, mat, 10, 20, 0.09f, new Vector3(2f, 2f, 1f), 0.6f);
    } else if (realm == 2) {
-    var snow = CreatePS(parent, "Snowflakes", new Color(0.9f, 0.98f, 1f, 0.85f), smokeTex, 18, 45, 0.10f, new Vector3(3f, 3.5f, 2f), -0.8f);
-    var sparks = CreatePS(parent, "IceSparks", prime, smokeTex, 12, 30, 0.08f, new Vector3(2f, 2f, 1.5f), 0.5f);
+    CreatePS(parent, "Snowflakes", new Color(0.9f, 0.98f, 1f, 0.85f), mat, 18, 45, 0.10f, new Vector3(3f, 3.5f, 2f), -0.8f);
+    CreatePS(parent, "IceSparks", prime, mat, 12, 30, 0.08f, new Vector3(2f, 2f, 1.5f), 0.5f);
    } else {
-    var embers = CreatePS(parent, "Embers", new Color(1f, 0.45f, 0.1f, 0.9f), smokeTex, 15, 35, 0.12f, new Vector3(2.5f, 0.5f, 1.5f), 0.9f);
-    var ash = CreatePS(parent, "Ash", new Color(0.3f, 0.25f, 0.25f, 0.7f), smokeTex, 10, 25, 0.14f, new Vector3(2.5f, 3f, 2f), -0.5f);
-    var smoke = CreatePS(parent, "Smoke", new Color(0.2f, 0.15f, 0.15f, 0.4f), smokeTex, 6, 20, 0.35f, new Vector3(1.5f, 3.5f, 1f), 0.6f);
+    CreatePS(parent, "Embers", new Color(1f, 0.45f, 0.1f, 0.9f), mat, 15, 35, 0.12f, new Vector3(2.5f, 0.5f, 1.5f), 0.9f);
+    CreatePS(parent, "Ash", new Color(0.3f, 0.25f, 0.25f, 0.7f), mat, 10, 25, 0.14f, new Vector3(2.5f, 3f, 2f), -0.5f);
+    CreatePS(parent, "Smoke", new Color(0.2f, 0.15f, 0.15f, 0.4f), mat, 6, 20, 0.35f, new Vector3(1.5f, 3.5f, 1f), 0.6f);
    }
   }
 
-  static ParticleSystem CreatePS(GameObject parent, string name, Color col, Texture2D tex, float rate, int max, float size, Vector3 boxScale, float ySpeed) {
+  static ParticleSystem CreatePS(GameObject parent, string name, Color col, Material mat, float rate, int max, float size, Vector3 boxScale, float ySpeed) {
    var go = new GameObject(name);
    go.transform.SetParent(parent.transform, false);
    var ps = go.AddComponent<ParticleSystem>();
@@ -278,9 +316,7 @@ namespace LostRealms {
    }
 
    var pr = ps.GetComponent<ParticleSystemRenderer>();
-   var mat = new Material(Shader.Find("Sprites/Default")) { color = Color.white };
-   if (tex) mat.mainTexture = tex;
-   pr.material = mat;
+   if (mat) pr.sharedMaterial = mat;
 
    return ps;
   }

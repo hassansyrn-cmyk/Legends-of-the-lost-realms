@@ -97,7 +97,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 464cde466749dcb4ea653d1aa11c111e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -131,7 +131,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6424804496734096265}
   - component: {fileID: 7942443051966338172}
-  - component: {fileID: 7718330778184681592}
+  - component: {fileID: 2320343688923110702}
   m_Layer: 0
   m_Name: TeleportGate_Verdant
   m_TagString: Untagged
@@ -196,7 +196,7 @@ MonoBehaviour:
   AmbientLoop: {fileID: 8300000, guid: 910fbdf14cdb47beb9bce2c692c3ebd4, type: 3}
   ActivationClip: {fileID: 8300000, guid: 97f8bced17c849edbe69754bcab048bc, type: 3}
   TeleportClip: {fileID: 8300000, guid: a485dcf0944b472db791fd890b7a4d4c, type: 3}
---- !u!114 &7718330778184681592
+--- !u!114 &2320343688923110702
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -424,7 +424,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: d35ab7c9cfddfcf46ace8ec056693a21, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2692,7 +2692,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 6aeb64014ad47264b9aef9a6bf37a5be, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2943,7 +2943,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 819c90878dad004468219c757e3b5ad5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5340,7 +5340,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 6aeb64014ad47264b9aef9a6bf37a5be, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7669,7 +7669,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 6aeb64014ad47264b9aef9a6bf37a5be, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

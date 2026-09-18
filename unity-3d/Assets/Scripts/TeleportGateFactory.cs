@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 
 namespace LostRealms {
@@ -40,13 +40,10 @@ namespace LostRealms {
    if (fbxPrefab) {
     var model = UnityEngine.Object.Instantiate(fbxPrefab, modelRoot.transform, false);
     model.name = $"Visual_{realmName}";
-    var tex = Resources.Load<Texture2D>($"Gates/Textures/Gate_{realmName}_basecolor");
-    if (tex) {
-     var mat = new Material(Shader.Find("Standard")) { name = $"Gate_{realmName}_Mat" };
-     mat.mainTexture = tex;
-     mat.SetFloat("_Glossiness", 0.25f);
+    var gmat = TeleportGateController.GetGateMaterial(realmName);
+    if (gmat) {
      foreach (var rend in model.GetComponentsInChildren<Renderer>(true)) {
-      rend.sharedMaterial = mat;
+      rend.sharedMaterial = gmat;
      }
     }
    }
@@ -70,19 +67,8 @@ namespace LostRealms {
    var surfCol = surfObj.GetComponent<Collider>();
    if (surfCol) UnityEngine.Object.Destroy(surfCol);
    var surfRend = surfObj.GetComponent<Renderer>();
-   var surfShader = Resources.Load<Shader>("Shaders/PortalEnergy") ?? Shader.Find("LostRealms/PortalEnergy");
-   if (surfShader) {
-    var smat = new Material(surfShader) { name = $"PortalEnergy_{realmName}" };
-    smat.SetColor("_Color", prime);
-    smat.SetColor("_SecondaryColor", sec);
-    smat.SetFloat("_Speed", 1.0f);
-    smat.SetFloat("_Distort", 0.32f);
-    smat.SetFloat("_Opacity", 0.88f);
-    smat.SetFloat("_Softness", 0.35f);
-    smat.SetFloat("_Emission", 2.0f);
-    smat.SetFloat("_Rotation", 1.5f);
-    surfRend.sharedMaterial = smat;
-   }
+   var smat = TeleportGateController.GetPortalEnergyMaterial(realmName, prime, sec);
+   if (smat) surfRend.sharedMaterial = smat;
 
    // 3. PortalGlow
    var glowObj = GameObject.CreatePrimitive(PrimitiveType.Quad);
@@ -93,12 +79,8 @@ namespace LostRealms {
    var glowCol = glowObj.GetComponent<Collider>();
    if (glowCol) UnityEngine.Object.Destroy(glowCol);
    var glowRend = glowObj.GetComponent<Renderer>();
-   var glowShader = Shader.Find("Sprites/Default");
-   var glowMat = new Material(glowShader) { name = $"PortalGlow_{realmName}" };
-   glowMat.color = new Color(prime.r, prime.g, prime.b, 0.32f);
-   var smokeTex = Resources.Load<Texture2D>("VFX/Textures/smoke_04");
-   if (smokeTex) glowMat.mainTexture = smokeTex;
-   glowRend.sharedMaterial = glowMat;
+   var glowMat = TeleportGateController.GetPortalGlowMaterial(realmName, prime);
+   if (glowMat) glowRend.sharedMaterial = glowMat;
 
    // 4. PortalParticles
    var ppObj = new GameObject("PortalParticles");
@@ -200,11 +182,8 @@ namespace LostRealms {
    shape.radiusThickness = 0.4f;
 
    var pr = ps.GetComponent<ParticleSystemRenderer>();
-   var pmat = new Material(Shader.Find("Sprites/Default"));
-   pmat.color = Color.white;
-   var smokeTex = Resources.Load<Texture2D>("VFX/Textures/smoke_04");
-   if (smokeTex) pmat.mainTexture = smokeTex;
-   pr.material = pmat;
+   var pmat = TeleportGateController.GetParticleMaterial();
+   if (pmat) pr.sharedMaterial = pmat;
   }
 
   static void ConfigureRealmParticles(GameObject parent, int realm, Color prime, Color sec) {
@@ -255,9 +234,8 @@ namespace LostRealms {
    }
 
    var pr = ps.GetComponent<ParticleSystemRenderer>();
-   var mat = new Material(Shader.Find("Sprites/Default")) { color = Color.white };
-   if (tex) mat.mainTexture = tex;
-   pr.material = mat;
+   var pmat = TeleportGateController.GetParticleMaterial();
+   if (pmat) pr.sharedMaterial = pmat;
 
    return ps;
   }

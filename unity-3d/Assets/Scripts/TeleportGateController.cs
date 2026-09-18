@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -37,79 +37,225 @@ namespace LostRealms {
   public AudioClip ActivationClip;
   public AudioClip TeleportClip;
 
-  float activationTimer = 0f;
-  Material portalMat;
-  Material glowMat;
-  bool initialized = false;
+   float activationTimer = 0f;
+   Material portalMat;
+   Material glowMat;
+   bool initialized = false;
 
-  void Awake() {
-   InitializeHierarchy();
-  }
+   static readonly System.Collections.Generic.Dictionary<string, Material> gateMats = new System.Collections.Generic.Dictionary<string, Material>();
+   static readonly System.Collections.Generic.Dictionary<string, Material> portalMats = new System.Collections.Generic.Dictionary<string, Material>();
+   static readonly System.Collections.Generic.Dictionary<string, Material> glowMats = new System.Collections.Generic.Dictionary<string, Material>();
+   static Material particleMat;
 
-  void Start() {
-   if (!initialized) InitializeHierarchy();
-   ApplyRealmColors();
-
-   // Boss stages start locked until the guardian is defeated
-   if (RealmGame.I != null && RealmGame.I.World != null && RealmGame.I.World.IsBoss) {
-    SetState(GateState.Locked);
-   } else {
-    SetState(GateState.Active);
-   }
-  }
-
-  public void InitializeHierarchy() {
-   if (initialized) return;
-
-   if (!GateModel) GateModel = transform.Find("GateModel");
-   if (!PortalSurface) PortalSurface = transform.Find("PortalSurface");
-   if (!PortalGlow) PortalGlow = transform.Find("PortalGlow");
-   if (!PortalParticles) {
-    var pp = transform.Find("PortalParticles");
-    if (pp) PortalParticles = pp.GetComponent<ParticleSystem>();
-   }
-   if (RealmParticles == null || RealmParticles.Length == 0) {
-    var rp = transform.Find("RealmParticles");
-    if (rp) RealmParticles = rp.GetComponentsInChildren<ParticleSystem>(true);
-   }
-   if (!PortalLight) {
-    var pl = transform.Find("PortalLight");
-    if (pl) PortalLight = pl.GetComponent<Light>();
-   }
-   if (!PortalAudio) {
-    var pa = transform.Find("PortalAudio");
-    if (pa) PortalAudio = pa.GetComponent<AudioSource>();
-   }
-   if (!TeleportTrigger) {
-    var tt = transform.Find("TeleportTrigger");
-    if (tt) TeleportTrigger = tt.GetComponent<Collider>();
-   }
-   if (!ArrivalPoint) ArrivalPoint = transform.Find("ArrivalPoint");
-
-   if (PortalSurface) {
-    var r = PortalSurface.GetComponent<Renderer>();
-    if (r) portalMat = r.material;
-   }
-   if (PortalGlow) {
-    var r = PortalGlow.GetComponent<Renderer>();
-    if (r) glowMat = r.material;
+   public static string GetRealmName(int index) {
+    string[] names = new[] { "Verdant", "Desert", "Snow", "Lava" };
+    if (index >= 0 && index < names.Length) return names[index];
+    return "Verdant";
    }
 
-   initialized = true;
-  }
+   public static Material GetGateMaterial(string realm) {
+    if (gateMats.TryGetValue(realm, out var m) && m != null) return m;
+    var mat = Resources.Load<Material>($"Gates/Materials/Gate_{realm}_Mat");
+    if (!mat) {
+     var tex = Resources.Load<Texture2D>($"Gates/Textures/Gate_{realm}_basecolor");
+     var s = Shader.Find("Standard");
+     if (s) {
+      mat = new Material(s) { name = $"Gate_{realm}_RuntimeMat" };
+      if (tex) mat.mainTexture = tex;
+      mat.SetFloat("_Glossiness", 0.25f);
+      mat.SetFloat("_Metallic", 0.05f);
+     }
+    }
+    if (mat) gateMats[realm] = mat;
+    return mat;
+   }
 
-  public void ApplyRealmColors() {
-   if (portalMat) {
-    portalMat.SetColor("_Color", RealmColor);
-    portalMat.SetColor("_SecondaryColor", SecondaryColor);
+   public static Material GetPortalEnergyMaterial(string realm, Color prime, Color sec) {
+    if (portalMats.TryGetValue(realm, out var m) && m != null) return m;
+    var mat = Resources.Load<Material>($"Gates/Materials/PortalEnergy_{realm}");
+    if (!mat) {
+     var s = Resources.Load<Shader>("Shaders/PortalEnergy") ?? Shader.Find("LostRealms/PortalEnergy");
+     if (s) {
+      mat = new Material(s) { name = $"PortalEnergy_{realm}_Runtime" };
+      mat.SetColor("_Color", prime);
+      mat.SetColor("_SecondaryColor", sec);
+      mat.SetFloat("_Speed", 1.0f);
+      mat.SetFloat("_Distort", 0.32f);
+      mat.SetFloat("_Opacity", 0.88f);
+      mat.SetFloat("_Softness", 0.35f);
+      mat.SetFloat("_Emission", 2.0f);
+      mat.SetFloat("_Rotation", 1.5f);
+     }
+    }
+    if (mat) portalMats[realm] = mat;
+    return mat;
    }
-   if (glowMat) {
-    glowMat.color = new Color(RealmColor.r, RealmColor.g, RealmColor.b, 0.45f);
+
+   public static Material GetPortalGlowMaterial(string realm, Color prime) {
+    if (glowMats.TryGetValue(realm, out var m) && m != null) return m;
+    var mat = Resources.Load<Material>($"Gates/Materials/PortalGlow_{realm}");
+    if (!mat) {
+     var s = Shader.Find("Sprites/Default");
+     if (s) {
+      mat = new Material(s) { name = $"PortalGlow_{realm}_Runtime" };
+      mat.color = new Color(prime.r, prime.g, prime.b, 0.32f);
+      var smokeTex = Resources.Load<Texture2D>("VFX/Textures/smoke_04");
+      if (smokeTex) mat.mainTexture = smokeTex;
+     }
+    }
+    if (mat) glowMats[realm] = mat;
+    return mat;
    }
-   if (PortalLight) {
-    PortalLight.color = RealmColor;
+
+   public static Material GetParticleMaterial() {
+    if (particleMat != null) return particleMat;
+    particleMat = Resources.Load<Material>("Gates/Materials/Gate_Particle_Smoke");
+    if (!particleMat) {
+     var s = Shader.Find("Sprites/Default");
+     if (s) {
+      particleMat = new Material(s) { name = "GateParticle_Runtime" };
+      var smokeTex = Resources.Load<Texture2D>("VFX/Textures/smoke_04");
+      if (smokeTex) particleMat.mainTexture = smokeTex;
+     }
+    }
+    return particleMat;
    }
-  }
+
+   void Awake() {
+    InitializeHierarchy();
+    EnsureMaterials();
+   }
+
+   void OnEnable() {
+    EnsureMaterials();
+   }
+
+#if UNITY_EDITOR
+   void OnValidate() {
+    EnsureMaterials();
+   }
+#endif
+
+   void Start() {
+    if (!initialized) InitializeHierarchy();
+    EnsureMaterials();
+    ApplyRealmColors();
+
+    // Boss stages start locked until the guardian is defeated
+    if (RealmGame.I != null && RealmGame.I.World != null && RealmGame.I.World.IsBoss) {
+     SetState(GateState.Locked);
+    } else {
+     SetState(GateState.Active);
+    }
+   }
+
+   public void EnsureMaterials() {
+    string realm = GetRealmName(RealmIndex);
+
+    // 1. GateModel: ensure all mesh renderers have valid non-error materials
+    if (GateModel) {
+     var gmat = GetGateMaterial(realm);
+     if (gmat) {
+      foreach (var r in GateModel.GetComponentsInChildren<Renderer>(true)) {
+       if (r is MeshRenderer mr) {
+        if (mr.sharedMaterial == null || mr.sharedMaterial.shader == null || mr.sharedMaterial.shader.name.Contains("InternalError") || mr.sharedMaterial.name.StartsWith("Default")) {
+         mr.sharedMaterial = gmat;
+        }
+       }
+      }
+     }
+    }
+
+    // 2. PortalSurface: ensure valid portal energy material
+    if (PortalSurface) {
+     var r = PortalSurface.GetComponent<Renderer>();
+     if (r) {
+      if (r.sharedMaterial == null || r.sharedMaterial.shader == null || r.sharedMaterial.shader.name.Contains("InternalError")) {
+       var pmat = GetPortalEnergyMaterial(realm, RealmColor, SecondaryColor);
+       if (pmat) r.sharedMaterial = pmat;
+      }
+      if (portalMat == null) portalMat = Application.isPlaying ? r.material : r.sharedMaterial;
+     }
+    }
+
+    // 3. PortalGlow: ensure valid glow material
+    if (PortalGlow) {
+     var r = PortalGlow.GetComponent<Renderer>();
+     if (r) {
+      if (r.sharedMaterial == null || r.sharedMaterial.shader == null || r.sharedMaterial.shader.name.Contains("InternalError")) {
+       var gm = GetPortalGlowMaterial(realm, RealmColor);
+       if (gm) r.sharedMaterial = gm;
+      }
+      if (glowMat == null) glowMat = Application.isPlaying ? r.material : r.sharedMaterial;
+     }
+    }
+
+    // 4. Particle systems: ensure valid non-magenta particle material
+    var pmatShared = GetParticleMaterial();
+    if (pmatShared) {
+     if (PortalParticles) {
+      var psr = PortalParticles.GetComponent<ParticleSystemRenderer>();
+      if (psr && (psr.sharedMaterial == null || psr.sharedMaterial.shader == null || psr.sharedMaterial.shader.name.Contains("InternalError"))) {
+       psr.sharedMaterial = pmatShared;
+      }
+     }
+     if (RealmParticles != null) {
+      foreach (var ps in RealmParticles) {
+       if (!ps) continue;
+       var psr = ps.GetComponent<ParticleSystemRenderer>();
+       if (psr && (psr.sharedMaterial == null || psr.sharedMaterial.shader == null || psr.sharedMaterial.shader.name.Contains("InternalError"))) {
+        psr.sharedMaterial = pmatShared;
+       }
+      }
+     }
+    }
+   }
+
+   public void InitializeHierarchy() {
+    if (initialized) return;
+
+    if (!GateModel) GateModel = transform.Find("GateModel");
+    if (!PortalSurface) PortalSurface = transform.Find("PortalSurface");
+    if (!PortalGlow) PortalGlow = transform.Find("PortalGlow");
+    if (!PortalParticles) {
+     var pp = transform.Find("PortalParticles");
+     if (pp) PortalParticles = pp.GetComponent<ParticleSystem>();
+    }
+    if (RealmParticles == null || RealmParticles.Length == 0) {
+     var rp = transform.Find("RealmParticles");
+     if (rp) RealmParticles = rp.GetComponentsInChildren<ParticleSystem>(true);
+    }
+    if (!PortalLight) {
+     var pl = transform.Find("PortalLight");
+     if (pl) PortalLight = pl.GetComponent<Light>();
+    }
+    if (!PortalAudio) {
+     var pa = transform.Find("PortalAudio");
+     if (pa) PortalAudio = pa.GetComponent<AudioSource>();
+    }
+    if (!TeleportTrigger) {
+     var tt = transform.Find("TeleportTrigger");
+     if (tt) TeleportTrigger = tt.GetComponent<Collider>();
+    }
+    if (!ArrivalPoint) ArrivalPoint = transform.Find("ArrivalPoint");
+
+    EnsureMaterials();
+
+    initialized = true;
+   }
+
+   public void ApplyRealmColors() {
+    if (portalMat) {
+     portalMat.SetColor("_Color", RealmColor);
+     portalMat.SetColor("_SecondaryColor", SecondaryColor);
+    }
+    if (glowMat) {
+     glowMat.color = new Color(RealmColor.r, RealmColor.g, RealmColor.b, 0.45f);
+    }
+    if (PortalLight) {
+     PortalLight.color = RealmColor;
+    }
+   }
 
   public void SetState(GateState newState) {
    State = newState;
