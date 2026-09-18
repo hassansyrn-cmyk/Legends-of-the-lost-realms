@@ -31,10 +31,11 @@ if(realm<0||realm>3)realm=0;
    if(realm==1&&(name.StartsWith("House_")||name.StartsWith("Ruin_")||name=="Tower_01"||name=="Gate_01"||name=="Tent_01"||name=="Wall_01"))return "Desert";
    return "Nature";
   }
-  static GameObject Model(string folder,string name){
+   static GameObject Model(string folder,string name){
    string key=folder+"/"+name;
    if(cache.TryGetValue(key,out var cached))return cached;
    var model=Resources.Load<GameObject>("Props/"+folder+"/"+name);
+   if(!model&&folder=="Snow")model=Resources.Load<GameObject>("Props/Nature/"+name);
    cache[key]=model;return model;
   }
   // RPGPP_LT village props are UV-mapped to their own atlas (not the realm
@@ -56,7 +57,7 @@ static readonly Material[] villageByRealm=new Material[4];
    if(realm==0)return new[]{new[]{"Tree_01","Tree_03","Tree_04","rpgpp_lt_tree_01","rpgpp_lt_tree_02"},new[]{"Rock_01","Rock_02","Rock_03"},new[]{"Bush_01","Bush_02","Bush_03","Grass_01","Grass_02","Flowers_01","Mushroom_01","rpgpp_lt_bush_01","rpgpp_lt_flower_01","rpgpp_lt_flower_02","rpgpp_lt_grass_small_01a"}};
 if(realm==1)return new[]{new[]{"House_01","House_02","Tower_01","Ruin_01","Gate_01","Tent_01"},new[]{"Rock_03","Rock_04","Rock_05"},new[]{"Grass_02","Mushroom_01","Bush_02","rpgpp_lt_rock_small_01","rpgpp_lt_rock_small_02"}};
     if(realm==3)return new[]{new[]{"Tree_01","Tree_02","Tree_03","DeadTree_01"},new[]{"Rock_03","Rock_04","Rock_05"},new[]{"Grass_02","Flowers_01","Bush_02","rpgpp_lt_rock_small_01","rpgpp_lt_rock_small_02"}};
-    return new[]{new[]{"Pine_01","Pine_02","Pine_03","Tree_01","Tree_02","DeadTree_01","rpgpp_lt_tree_pine_01"},new[]{"Cottage_01","Cottage_02","Snowman_01","Well_01","Stump_01","Bridge_01"},new[]{"Fence_01","Fence_02","Sign_01","Stump_01","rpgpp_lt_rock_small_01","rpgpp_lt_bucket_01"}};
+    return new[]{new[]{"Pine_01","Pine_02","Pine_03","Tree_01","Tree_02","DeadTree_01","rpgpp_lt_tree_pine_01"},new[]{"Rock_01","Rock_02","Rock_03","Rock_04","Rock_05","Snowman_01","Well_01","Stump_01","rpgpp_lt_rock_01","rpgpp_lt_rock_02"},new[]{"Sign_01","Stump_01","Bush_01","Bush_02","Mushroom_01","rpgpp_lt_rock_small_01","rpgpp_lt_rock_small_02","rpgpp_lt_bucket_01"}};
   }
   public static void Scatter(Transform world,int realm,System.Random rng){
    var material=ForRealm(realm);if(!material)return;
@@ -65,7 +66,7 @@ if(realm==1)return new[]{new[]{"House_01","House_02","Tower_01","Ruin_01","Gate_
     if(island.name!="Island")continue;
     var surface=island.Find("Realm surface");if(!surface)continue;
     float width=surface.localScale.x-.08f,length=surface.localScale.z-.08f;
-    if(width<=7f)continue;
+    if(width<=7.5f)continue;
 if(realm==1){PlaceDesertBuildings(island,width,length,rng,material);}
      else{
       int trees=2+rng.Next(0,2);
@@ -87,9 +88,9 @@ if(realm==1){PlaceDesertBuildings(island,width,length,rng,material);}
   static readonly string[] VillageSmall={"rpgpp_lt_sack_01","rpgpp_lt_bucket_01","rpgpp_lt_vase_01","rpgpp_lt_rock_small_01","rpgpp_lt_rock_small_02","rpgpp_lt_bush_02"};
 static void PlaceVillage(Transform island,int realm,float width,float length,System.Random rng){
     if(realm==3)return;
-    if(width>9f&&rng.Next(0,100)<60)Place(island,realm,VillageStructures[rng.Next(VillageStructures.Length)],width,length,rng,1.9f,2.4f,null);
-   int medium=1+rng.Next(0,3);
-   for(int i=0;i<medium;i++)Place(island,realm,VillageMedium[rng.Next(VillageMedium.Length)],width,length,rng,.7f,1.1f,null);
+    if(width>9.5f&&rng.Next(0,100)<50)Place(island,realm,VillageStructures[rng.Next(VillageStructures.Length)],width,length,rng,1.8f,2.2f,null);
+   int medium=1+rng.Next(0,2);
+   for(int i=0;i<medium;i++)Place(island,realm,VillageMedium[rng.Next(VillageMedium.Length)],width,length,rng,.65f,1.0f,null);
    int tiny=1+rng.Next(0,3);
    for(int i=0;i<tiny;i++)Place(island,realm,VillageSmall[rng.Next(VillageSmall.Length)],width,length,rng,.3f,.5f,null);
   }
@@ -118,10 +119,10 @@ static void PlaceVillage(Transform island,int realm,float width,float length,Sys
    static void Place(Transform island,int realm,string name,float width,float length,System.Random rng,float hMin,float hMax,Material material){
      var source=Model(Folder(realm,name),name);if(!source)return;
      material=MaterialFor(name,realm);if(!material)return;
-     float halfWidth=Mathf.Max(.6f,width*.5f-.7f);
+     float halfWidth=Mathf.Max(.6f,width*.5f-1.2f);
      int side=rng.Next(0,2)==0?-1:1;
-     float x=side*Mathf.Min(halfWidth,1.6f+(float)rng.NextDouble()*halfWidth);
-     float z=((float)rng.NextDouble()-.5f)*Mathf.Max(.6f,length-.9f);
+     float x=side*Mathf.Min(halfWidth,1.4f+(float)rng.NextDouble()*halfWidth);
+     float z=((float)rng.NextDouble()-.5f)*Mathf.Max(.6f,length-1.8f);
      float localY=.02f;
      bool valid=false;
      for(int attempt=0;attempt<6;attempt++){
@@ -132,14 +133,12 @@ static void PlaceVillage(Transform island,int realm,float width,float length,Sys
      var prop=Object.Instantiate(source,island);
      prop.name="Prop "+name;
      prop.transform.localPosition=new Vector3(x,localY,z);
-     // Keep the model's import rotation (some packs stand up via a baked root
-     // rotation, e.g. (270,180,0)); identity here flattens those props.
+     // Apply rotation FIRST so the prop's bounding box is measured in its final orientation
      var baseRot=source.transform.localRotation;
-     prop.transform.localRotation=baseRot;
+     float yaw=(float)rng.NextDouble()*360f;
+     prop.transform.localRotation=Quaternion.Euler(0,yaw,0)*baseRot;
      Fit(prop,hMin+(float)rng.NextDouble()*(hMax-hMin));
-     // Some packs (RPGPP village props) ship meshes extending below their pivot
-     // (negative census pivotMinY) — ground every prop on its real bounds so
-     // rocks/logs/wagons never sink into the island.
+     // Ground prop accurately on its oriented, scaled bounds
      var groundRenderers=prop.GetComponentsInChildren<Renderer>(true);
      if(groundRenderers.Length>0){
       Bounds gb=groundRenderers[0].bounds;
@@ -148,8 +147,6 @@ static void PlaceVillage(Transform island,int realm,float width,float length,Sys
       prop.transform.position+=Vector3.up*(surfaceY-gb.min.y);
      }
      AddCollider(prop);
-     float yaw=(float)rng.NextDouble()*360f;
-     prop.transform.localRotation=Quaternion.Euler(0,yaw,0)*baseRot;
     foreach(var renderer in prop.GetComponentsInChildren<Renderer>(true)){
      renderer.sharedMaterial=material;renderer.shadowCastingMode=ShadowCastingMode.On;renderer.receiveShadows=true;
     }
@@ -381,7 +378,7 @@ if(prop.name.StartsWith("Prop Tree")){
     }
    }
    static void PlaceOrnaments(Transform island,int realm,float width,float length,System.Random rng){
-    float halfX=Mathf.Max(.6f,width*.5f-.7f);
+    float halfX=Mathf.Max(.6f,width*.5f-1.2f);
     if(width>=14f){
      PlaceStatue(island,rng.Next(0,2)==0?"Elite":"Summoner",-3.2f,length*.5f-2.6f,0f,3.1f);
      PlaceStatue(island,rng.Next(0,2)==0?"Bomber":"Flyer",3.2f,length*.5f-2.6f,180f,3.1f);
@@ -391,7 +388,7 @@ if(prop.name.StartsWith("Prop Tree")){
      int n=2+rng.Next(0,2);
      for(int i=0;i<n;i++){
       int side=rng.Next(0,2)==0?-1:1;
-      PlaceCrystal(island,crystal,side*Mathf.Min(halfX,1.8f+(float)rng.NextDouble()*halfX),((float)rng.NextDouble()-.5f)*Mathf.Max(.6f,length-.9f),.5f+(float)rng.NextDouble()*.6f,rng);
+      PlaceCrystal(island,crystal,side*Mathf.Min(halfX,1.4f+(float)rng.NextDouble()*halfX),((float)rng.NextDouble()-.5f)*Mathf.Max(.6f,length-1.8f),.5f+(float)rng.NextDouble()*.6f,rng);
      }
     }
     if(realm==1&&rng.NextDouble()<.35){

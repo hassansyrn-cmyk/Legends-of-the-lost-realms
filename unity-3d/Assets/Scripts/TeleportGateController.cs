@@ -169,26 +169,26 @@ namespace LostRealms {
     // 2. PortalSurface: ensure valid portal energy material
     if (PortalSurface) {
      var r = PortalSurface.GetComponent<Renderer>();
-     if (r) {
-      if (r.sharedMaterial == null || r.sharedMaterial.shader == null || r.sharedMaterial.shader.name.Contains("InternalError")) {
-       var pmat = GetPortalEnergyMaterial(realm, RealmColor, SecondaryColor);
-       if (pmat) r.sharedMaterial = pmat;
+      if (r) {
+       if (r.sharedMaterial == null || r.sharedMaterial.shader == null || r.sharedMaterial.shader.name.Contains("InternalError")) {
+        var pmat = GetPortalEnergyMaterial(realm, RealmColor, SecondaryColor);
+        if (pmat) r.sharedMaterial = pmat;
+       }
+       if (portalMat == null) portalMat = r.sharedMaterial;
       }
-      if (portalMat == null) portalMat = Application.isPlaying ? r.material : r.sharedMaterial;
      }
-    }
 
-    // 3. PortalGlow: ensure valid glow material
-    if (PortalGlow) {
-     var r = PortalGlow.GetComponent<Renderer>();
-     if (r) {
-      if (r.sharedMaterial == null || r.sharedMaterial.shader == null || r.sharedMaterial.shader.name.Contains("InternalError")) {
-       var gm = GetPortalGlowMaterial(realm, RealmColor);
-       if (gm) r.sharedMaterial = gm;
+     // 3. PortalGlow: ensure valid glow material
+     if (PortalGlow) {
+      var r = PortalGlow.GetComponent<Renderer>();
+      if (r) {
+       if (r.sharedMaterial == null || r.sharedMaterial.shader == null || r.sharedMaterial.shader.name.Contains("InternalError")) {
+        var gm = GetPortalGlowMaterial(realm, RealmColor);
+        if (gm) r.sharedMaterial = gm;
+       }
+       if (glowMat == null) glowMat = r.sharedMaterial;
       }
-      if (glowMat == null) glowMat = Application.isPlaying ? r.material : r.sharedMaterial;
      }
-    }
 
     // 4. Particle systems: ensure valid non-magenta particle material
     var pmatShared = GetParticleMaterial();

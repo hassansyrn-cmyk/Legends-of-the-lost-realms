@@ -85,17 +85,37 @@ namespace LostRealms {
   public static void Checkpoint(Transform root,Color accent,Color stone){
    var visual=root.gameObject.AddComponent<CheckpointVisual>();visual.Accent=accent;
    var glow=Glow(accent);var highlight=Glow(Color.Lerp(accent,Color.white,.56f));var stoneMat=Art.Material(stone*.86f);
-   MeshObject("Sanctuary octagonal dais",root,Dais,stoneMat,new Vector3(0,.11f,0),new Vector3(1.72f,1,1.72f));
-   MeshObject("Sanctuary inner dais",root,SmallDais,stoneMat,new Vector3(0,.31f,0),new Vector3(1.25f,1,1.25f));
-   visual.Core=MeshObject("Checkpoint heart crystal",root,ShrineCore,glow,new Vector3(0,1.45f,0),Vector3.one).transform;visual.GlowRenderers.Add(visual.Core.GetComponent<Renderer>());
+   MeshObject("Sanctuary octagonal dais",root,Dais,stoneMat,new Vector3(0,.05f,0),new Vector3(1.65f,.5f,1.65f));
+   var prefab=Resources.Load<GameObject>("Props/Checkpoint");
+   if(prefab){
+    var model=Object.Instantiate(prefab,root,false);
+    model.name="Checkpoint 3D Pedestal";
+    model.transform.localPosition=new Vector3(0,.12f,0);
+    model.transform.localRotation=Quaternion.identity;
+    model.transform.localScale=Vector3.one*1.35f;
+    var tex=Resources.Load<Texture2D>("Props/Textures/Checkpoint_basecolor");
+    var mat=new Material(Shader.Find("Standard")){name="Checkpoint pedestal mat"};
+    if(tex)mat.mainTexture=tex;
+    mat.SetFloat("_Metallic",.08f);
+    mat.SetFloat("_Glossiness",.55f);
+    mat.EnableKeyword("_EMISSION");
+    mat.SetColor("_EmissionColor",accent*.25f);
+    foreach(var r in model.GetComponentsInChildren<Renderer>()){
+     r.sharedMaterial=mat;
+     visual.GlowRenderers.Add(r);
+    }
+   }else{
+    MeshObject("Sanctuary inner dais",root,SmallDais,stoneMat,new Vector3(0,.31f,0),new Vector3(1.25f,1,1.25f));
+   }
+   visual.Core=MeshObject("Checkpoint heart crystal",root,ShrineCore,glow,new Vector3(0,1.55f,0),Vector3.one*.9f).transform;visual.GlowRenderers.Add(visual.Core.GetComponent<Renderer>());
    var inner=MeshObject("Checkpoint inner light",visual.Core,ShrineCore,highlight,Vector3.zero,Vector3.one*.42f);visual.GlowRenderers.Add(inner.GetComponent<Renderer>());
    for(int i=0;i<4;i++){
-    float a=i*Mathf.PI*.5f+Mathf.PI*.25f;var shard=MeshObject("Sanctuary sentinel shard",root,GemShard,glow,new Vector3(Mathf.Cos(a)*1.05f,.85f,Mathf.Sin(a)*1.05f),new Vector3(.82f,1.52f,.82f)).transform;shard.localRotation=Quaternion.Euler(0,-a*Mathf.Rad2Deg,14);visual.Shards.Add(shard);visual.GlowRenderers.Add(shard.GetComponent<Renderer>());
+    float a=i*Mathf.PI*.5f+Mathf.PI*.25f;var shard=MeshObject("Sanctuary sentinel shard",root,GemShard,glow,new Vector3(Mathf.Cos(a)*1.15f,1.1f,Mathf.Sin(a)*1.15f),new Vector3(.78f,1.35f,.78f)).transform;shard.localRotation=Quaternion.Euler(0,-a*Mathf.Rad2Deg,14);visual.Shards.Add(shard);visual.GlowRenderers.Add(shard.GetComponent<Renderer>());
    }
    for(int i=0;i<2;i++){
-    var ring=MeshObject("Floating checkpoint rune",root,Halo,glow,new Vector3(0,.58f+i*.76f,0),Vector3.one*(1.08f-i*.2f)).transform;ring.localRotation=Quaternion.Euler(i==0?0:72,i*32,0);visual.Halos.Add(ring);visual.GlowRenderers.Add(ring.GetComponent<Renderer>());
+    var ring=MeshObject("Floating checkpoint rune",root,Halo,glow,new Vector3(0,.85f+i*.7f,0),Vector3.one*(1.12f-i*.22f)).transform;ring.localRotation=Quaternion.Euler(i==0?0:72,i*32,0);visual.Halos.Add(ring);visual.GlowRenderers.Add(ring.GetComponent<Renderer>());
    }
-   var light=root.gameObject.AddComponent<Light>();light.type=LightType.Point;light.color=accent;light.range=6.5f;light.intensity=.55f;light.shadows=LightShadows.None;light.transform.localPosition=Vector3.up*1.25f;visual.Aura=light;
+   var light=root.gameObject.AddComponent<Light>();light.type=LightType.Point;light.color=accent;light.range=7.5f;light.intensity=.45f;light.shadows=LightShadows.None;light.transform.localPosition=Vector3.up*1.5f;visual.Aura=light;
   }
  }
 
@@ -132,15 +152,24 @@ float t=Clock;float pulse=.72f+Mathf.Sin(t*3.2f)*.28f;
   public Transform Core;public Light Aura;public readonly List<Transform> Shards=new List<Transform>();public readonly List<Transform> Halos=new List<Transform>();
   bool activated;float activationTime;
   public bool Activated=>activated;
-  public void Activate(){if(activated)return;activated=true;activationTime=Clock;}
+  public void Activate(){
+   if(activated)return;
+   activated=true;
+   activationTime=Clock;
+   Vfx.Play("ga_vfx_Sparks_01",transform.position+Vector3.up*1.2f,Quaternion.identity,1.2f);
+  }
   void Update(){
-   float t=Clock;float beat=.5f+Mathf.Sin(t*3.2f)*.18f;float activation=activated?1f:.32f;
-   if(Core){Core.localPosition=Vector3.up*(1.42f+Mathf.Sin(t*2.2f)*.08f);Core.localRotation=Quaternion.Euler(0,t*(activated?64f:28f),0);}
-   for(int i=0;i<Shards.Count;i++)if(Shards[i]){float a=i*Mathf.PI*.5f+Mathf.PI*.25f+t*(activated?18f:7f);Shards[i].localPosition=new Vector3(Mathf.Cos(a)*1.05f,.84f+Mathf.Sin(t*2+i)*.07f,Mathf.Sin(a)*1.05f);}
-   for(int i=0;i<Halos.Count;i++)if(Halos[i]){Halos[i].localRotation=Quaternion.Euler(i==0?0:72,t*(activated?68f:24f)*(i%2==0?1:-1),0);}
-   float arrival=activated?Mathf.Clamp01((t-activationTime)*3.8f):0f;float flare=activated?1f+Mathf.Exp(-Mathf.Max(0,t-activationTime)*4f)*1.4f:1f;
+   float t=Clock;float beat=.5f+Mathf.Sin(t*3.2f)*.18f;float activation=activated?1.8f:.35f;
+   if(Core){Core.localPosition=Vector3.up*(1.52f+Mathf.Sin(t*2.2f)*.09f);Core.localRotation=Quaternion.Euler(0,t*(activated?75f:28f),0);}
+   for(int i=0;i<Shards.Count;i++)if(Shards[i]){float a=i*Mathf.PI*.5f+Mathf.PI*.25f+t*(activated?22f:7f);Shards[i].localPosition=new Vector3(Mathf.Cos(a)*1.15f,1.08f+Mathf.Sin(t*2+i)*.08f,Mathf.Sin(a)*1.15f);}
+   for(int i=0;i<Halos.Count;i++)if(Halos[i]){Halos[i].localRotation=Quaternion.Euler(i==0?0:72,t*(activated?80f:24f)*(i%2==0?1:-1),0);}
+   float arrival=activated?Mathf.Clamp01((t-activationTime)*3.8f):0f;float flare=activated?1f+Mathf.Exp(-Mathf.Max(0,t-activationTime)*3.5f)*2.2f:1f;
    transform.localScale=Vector3.one*(1f+arrival*.04f+Mathf.Sin(t*10f)*.012f*arrival);
-   SetGlow((.34f+beat)*activation*flare);if(Aura)Aura.intensity=(.3f+beat*.38f)*activation*flare;
+   SetGlow((.45f+beat)*activation*flare);
+   if(Aura){
+    Aura.intensity=(.45f+beat*.45f)*activation*flare;
+    Aura.range=activated?9.5f:6.5f;
+   }
   }
  }
 }

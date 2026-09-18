@@ -1,14 +1,14 @@
 === PICKUP AND PROP ELEVATION & BOUNDARY PROBE (CHAPTERS 1 - 15) ===
-Chapter 01 (Realm 0): Heals=2, Weapons=1, Gems=5, Coins=36 | Sunk=0 | Props=212 | FloatingProps=0
-Chapter 02 (Realm 0): Heals=2, Weapons=1, Gems=7, Coins=40 | Sunk=0 | Props=153 | FloatingProps=0
-Chapter 03 (Realm 0): Heals=2, Weapons=1, Gems=7, Coins=40 | Sunk=0 | Props=147 | FloatingProps=0
-Chapter 04 (Realm 0): Heals=1, Weapons=1, Gems=4, Coins=26 | Sunk=0 | Props=95 | FloatingProps=0
-Chapter 05 (Realm 1): Heals=2, Weapons=1, Gems=7, Coins=40 | Sunk=0 | Props=161 | FloatingProps=0
-Chapter 06 (Realm 1): Heals=2, Weapons=1, Gems=7, Coins=40 | Sunk=0 | Props=152 | FloatingProps=0
-Chapter 07 (Realm 1): Heals=1, Weapons=1, Gems=4, Coins=26 | Sunk=0 | Props=97 | FloatingProps=0
-Chapter 08 (Realm 2): Heals=2, Weapons=1, Gems=7, Coins=40 | Sunk=0 | Props=164 | FloatingProps=0
-Chapter 09 (Realm 2): Heals=2, Weapons=1, Gems=7, Coins=40 | Sunk=0 | Props=147 | FloatingProps=0
-Chapter 10 (Realm 2): Heals=1, Weapons=1, Gems=4, Coins=26 | Sunk=0 | Props=102 | FloatingProps=0
+Chapter 01 (Realm 0): Heals=2, Weapons=1, Gems=5, Coins=36 | Sunk=0 | Props=197 | FloatingProps=0
+Chapter 02 (Realm 0): Heals=2, Weapons=1, Gems=7, Coins=40 | Sunk=0 | Props=156 | FloatingProps=0
+Chapter 03 (Realm 0): Heals=2, Weapons=1, Gems=7, Coins=40 | Sunk=0 | Props=141 | FloatingProps=0
+Chapter 04 (Realm 0): Heals=1, Weapons=1, Gems=4, Coins=26 | Sunk=0 | Props=87 | FloatingProps=0
+Chapter 05 (Realm 1): Heals=2, Weapons=1, Gems=7, Coins=40 | Sunk=0 | Props=158 | FloatingProps=0
+Chapter 06 (Realm 1): Heals=2, Weapons=1, Gems=7, Coins=40 | Sunk=0 | Props=141 | FloatingProps=0
+Chapter 07 (Realm 1): Heals=1, Weapons=1, Gems=4, Coins=26 | Sunk=0 | Props=90 | FloatingProps=0
+Chapter 08 (Realm 2): Heals=2, Weapons=1, Gems=7, Coins=40 | Sunk=0 | Props=153 | FloatingProps=0
+Chapter 09 (Realm 2): Heals=2, Weapons=1, Gems=7, Coins=40 | Sunk=0 | Props=148 | FloatingProps=0
+Chapter 10 (Realm 2): Heals=1, Weapons=1, Gems=4, Coins=26 | Sunk=0 | Props=98 | FloatingProps=0
 Chapter 11 (Realm 3): Heals=2, Weapons=1, Gems=7, Coins=40 | Sunk=0 | Props=120 | FloatingProps=0
 Chapter 12 (Realm 3): Heals=2, Weapons=1, Gems=7, Coins=40 | Sunk=0 | Props=106 | FloatingProps=0
 Chapter 13 (Realm 3): Heals=2, Weapons=1, Gems=7, Coins=40 | Sunk=0 | Props=103 | FloatingProps=0
