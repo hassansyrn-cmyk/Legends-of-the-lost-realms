@@ -35,7 +35,7 @@ Color[] sunColors={new Color(1f,.94f,.82f),new Color(1f,.86f,.69f),new Color(.82
    if(Camera.main){Camera.main.clearFlags=CameraClearFlags.Skybox;Camera.main.backgroundColor=fogColors[realm];Camera.main.allowHDR=false;}
    CreateHorizon(skyColors[realm],fogColors[realm]);CreateRouteLandmarks();CreateAmbientMotes();
    CreateSky(fogColors[realm]);CreateCloudSea();CreateFloatingIslets();
-   if(realm==2)CreateRain();
+   if(realm==2){CreateRain();CreateSnow();}
    if(Camera.main){
     var post=Camera.main.GetComponent<RealmPostFx>();
     Color[] postTints={new Color(.99f,1f,.99f),new Color(1.02f,1f,.97f),new Color(.97f,1f,1.03f),new Color(1.01f,.99f,1.02f)};
@@ -89,6 +89,12 @@ var em=ps.emission;em.rateOverTime=realm==0?2f:realm==1?6f:8f;
     go.transform.localScale=Vector3.one*2.5f;
     Vfx.Repair(go);
     rain.Add(go);
+   }
+  }
+  void CreateSnow(){
+   if(!FindAnyObjectByType<SnowFollowCamera>()){
+    var target=Camera.main?Camera.main.transform:(RealmGame.I&&RealmGame.I.Player?RealmGame.I.Player.transform:null);
+    SnowFollowCamera.Create(transform,target);
    }
   }
 
