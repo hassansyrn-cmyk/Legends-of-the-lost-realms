@@ -1,0 +1,81 @@
+=== GATE HIERARCHY & COMPONENT PROBE ===
+
+--- Testing Verdant (Realm 0) ---
+Root Object: Realm gate
+  [OK] Child: GateModel
+  [OK] Child: PortalSurface
+  [OK] Child: PortalGlow
+  [OK] Child: PortalParticles
+  [OK] Child: RealmParticles
+  [OK] Child: PortalLight
+  [OK] Child: PortalAudio
+  [OK] Child: TeleportTrigger
+  [OK] Child: ArrivalPoint
+  [OK] Child: Scripts
+  Hierarchy check: 10/10 nodes present.
+  [OK] TeleportGateController attached.
+  Fields Assigned: ALL VALID
+  State Locked: PASS
+  State Activating: PASS
+  State Active: PASS
+  Captured render: gate_render_realm_0.png
+
+--- Testing Desert (Realm 1) ---
+Root Object: Realm gate
+  [OK] Child: GateModel
+  [OK] Child: PortalSurface
+  [OK] Child: PortalGlow
+  [OK] Child: PortalParticles
+  [OK] Child: RealmParticles
+  [OK] Child: PortalLight
+  [OK] Child: PortalAudio
+  [OK] Child: TeleportTrigger
+  [OK] Child: ArrivalPoint
+  [OK] Child: Scripts
+  Hierarchy check: 10/10 nodes present.
+  [OK] TeleportGateController attached.
+  Fields Assigned: ALL VALID
+  State Locked: PASS
+  State Activating: PASS
+  State Active: PASS
+  Captured render: gate_render_realm_1.png
+
+--- Testing Snow (Realm 2) ---
+Root Object: Realm gate
+  [OK] Child: GateModel
+  [OK] Child: PortalSurface
+  [OK] Child: PortalGlow
+  [OK] Child: PortalParticles
+  [OK] Child: RealmParticles
+  [OK] Child: PortalLight
+  [OK] Child: PortalAudio
+  [OK] Child: TeleportTrigger
+  [OK] Child: ArrivalPoint
+  [OK] Child: Scripts
+  Hierarchy check: 10/10 nodes present.
+  [OK] TeleportGateController attached.
+  Fields Assigned: ALL VALID
+  State Locked: PASS
+  State Activating: PASS
+  State Active: PASS
+  Captured render: gate_render_realm_2.png
+
+--- Testing Lava (Realm 3) ---
+Root Object: Realm gate
+  [OK] Child: GateModel
+  [OK] Child: PortalSurface
+  [OK] Child: PortalGlow
+  [OK] Child: PortalParticles
+  [OK] Child: RealmParticles
+  [OK] Child: PortalLight
+  [OK] Child: PortalAudio
+  [OK] Child: TeleportTrigger
+  [OK] Child: ArrivalPoint
+  [OK] Child: Scripts
+  Hierarchy check: 10/10 nodes present.
+  [OK] TeleportGateController attached.
+  Fields Assigned: ALL VALID
+  State Locked: PASS
+  State Activating: PASS
+  State Active: PASS
+  Captured render: gate_render_realm_3.png

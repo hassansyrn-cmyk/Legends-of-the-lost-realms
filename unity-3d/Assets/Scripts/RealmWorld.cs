@@ -424,26 +424,18 @@ void WeaponDrop(Vector3 p,WeaponId id){
     go.AddComponent<RealmHeal>().Origin=p;
    }
    void Gate(Vector3 p){
-    var root=new GameObject("Realm gate");root.transform.SetParent(transform);root.transform.position=p;
-    if(IsBoss)root.transform.localScale=Vector3.one*1.25f;
-    for(int side=-1;side<=1;side+=2){
-     Art.Shape("Gate column",PrimitiveType.Cube,new Vector3(side*1.85f,2.1f,0),new Vector3(.65f,4.2f,.85f),top*1.3f,root.transform);
-     Art.Shape("ColumnCapital",PrimitiveType.Cube,new Vector3(side*1.85f,4.3f,0),new Vector3(.85f,.3f,1f),stone*1.2f,root.transform);
+    string[] gateNames={"Verdant","Desert","Snow","Lava"};
+    string realmName=realm<gateNames.Length?gateNames[realm]:"Verdant";
+    var prefab=Resources.Load<GameObject>("Gates/TeleportGate_"+realmName);
+    GameObject root;
+    if(prefab!=null){
+     root=Instantiate(prefab,transform);
+     root.name="Realm gate";
+     root.transform.position=p;
+     if(IsBoss)root.transform.localScale=Vector3.one*1.25f;
+    }else{
+     root=TeleportGateFactory.Create(transform,realm,p,IsBoss);
     }
-    Art.Shape("Gate lintel",PrimitiveType.Cube,new Vector3(0,4.45f,0),new Vector3(4.4f,.55f,.9f),stone,root.transform);
-    Art.Crystal(new Vector3(0,3.5f,0),.8f,accent,root.transform);
-    Art.Ring(new Vector3(0,.04f,0),1.6f,accent,root.transform);
-    var gate=root.AddComponent<RealmGate>();
-    for(int i=0;i<3;i++){
-     var halo=Art.Ring(new Vector3(0,.6f+i*.8f,0),1.3f-i*.25f,Color.Lerp(accent,Color.white,.3f),root.transform);
-     gate.spin.Add(halo.transform);gate.speeds.Add((i%2==0?1:-1)*(30+i*14));
-    }
-    Art.Crystal(new Vector3(1.2f,1f,0),.4f,accent,root.transform);
-    Art.Crystal(new Vector3(-1.2f,1f,0),.4f,accent,root.transform);
-    var beam=Art.Shape("Gate beam",PrimitiveType.Cylinder,new Vector3(0,2.2f,0),new Vector3(.5f,4.4f,.5f),Color.Lerp(accent,Color.white,.5f),root.transform);
-    var bm=beam.GetComponent<Renderer>();var bmat=new Material(Shader.Find("Sprites/Default"));bmat.color=new Color(accent.r,accent.g,accent.b,.28f);bm.sharedMaterial=bmat;bm.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;bm.receiveShadows=false;
-    var lightGo=new GameObject("Gate light");lightGo.transform.SetParent(root.transform,false);lightGo.transform.localPosition=Vector3.up*2f;
-    var light=lightGo.AddComponent<Light>();light.type=LightType.Point;light.color=accent;light.range=8f;light.intensity=.8f;light.shadows=LightShadows.None;
     Vfx.Play("ga_vfx_Heal_02",p+Vector3.up*2f,Quaternion.identity,1.1f);
    }
    void Hazard(Transform island,Vector3 localPos,int kind){
@@ -534,12 +526,13 @@ transform.Rotate(0,(Gem?12f:45f)*Time.deltaTime,0,Space.World);
     var g=RealmGame.I;
     if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
     for(int i=0;i<spin.Count;i++)if(spin[i])spin[i].localRotation*=Quaternion.Euler(0,(speeds.Count>i?speeds[i]:30)*Time.deltaTime,0);
-   if(g.Elapsed>next&&Vector3.Distance(g.Player.transform.position,transform.position)<1.6f){
-    next=RealmGame.I.Elapsed+2;HitSpark.Burst(transform.position+Vector3.up*2f,Vector3.up,g.Accent,24);Vfx.Play("ga_vfx_Portal_02",transform.position+Vector3.up*2f,Quaternion.identity,1.25f);
-    g.Finish();
+    if(GetComponent<TeleportGateController>()!=null)return;
+    if(g.Elapsed>next&&Vector3.Distance(g.Player.transform.position,transform.position)<1.6f){
+     next=RealmGame.I.Elapsed+2;HitSpark.Burst(transform.position+Vector3.up*2f,Vector3.up,g.Accent,24);Vfx.Play("ga_vfx_Portal_02",transform.position+Vector3.up*2f,Quaternion.identity,1.25f);
+     g.Finish();
+    }
    }
   }
- }
  public class RealmHazard:MonoBehaviour {
   void Update(){
    var g=RealmGame.I;
