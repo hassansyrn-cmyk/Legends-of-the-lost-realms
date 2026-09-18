@@ -158,8 +158,8 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     }
     float width=last&&IsBoss?19:last?11:arch==IslandArchetype.Arena?13.5f:arch==IslandArchetype.NarrowBridge?4.2f:arch==IslandArchetype.TieredPlatform?10.5f:arch==IslandArchetype.MovingFerry?6f:arch==IslandArchetype.SteppingStones?7.5f:9;
     float length=last?15:arch==IslandArchetype.Arena?13f:arch==IslandArchetype.NarrowBridge?14f:arch==IslandArchetype.TieredPlatform?10f:arch==IslandArchetype.MovingFerry?6f:arch==IslandArchetype.SteppingStones?8f:8.3f;
-    Island(p,width,length,i,arch,last&&IsBoss);if(i==0)Spawn=p+Vector3.up*.05f;
-    for(int j=-1;j<=1;j++){float py=(arch==IslandArchetype.TieredPlatform&&j>0)?2.1f:.8f;Pickup(p+new Vector3(0,py,j*2.2f),false);}
+    var islandObj=Island(p,width,length,i,arch,last&&IsBoss);if(i==0)Spawn=p+Vector3.up*.05f;
+    for(int j=-1;j<=1;j++){float py=(arch==IslandArchetype.TieredPlatform&&j<0)?2.1f:.8f;Pickup(p+new Vector3(0,py,j*2.2f),false);}
     if(i>1&&!last&&i%2==0){var side=p+new Vector3((i%4==0?-1:1)*9.5f,1.2f,0);Island(side,4.8f,5.3f,100+i);Pickup(side+Vector3.up*.9f,true);if(i==6||i==10){var move=FindIsland(side);if(move){var motion=move.AddComponent<MovingIsland>();motion.Origin=move.transform.position;motion.Offset=new Vector3(0,0,1.3f);motion.AddThrusters(accent);}}}
     if(i>=2&&i%3==0&&i<count-1)Checkpoint(p+new Vector3(-2,0,-1));
     if(i>=2&&i%4==0){float hx=(i%2==0?-1:1)*(1.2f+(float)random.NextDouble()*.9f);HealPickup(p+new Vector3(hx,.6f,-1.2f+(float)random.NextDouble()*2.4f));}
@@ -179,7 +179,13 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     }
     if(i>=2&&!last){int kind=(stage+i)%8;
      if(stage>=9&&i%6==2)kind=17;else if(stage>=3&&i%6==2)kind=11;else if(stage>=5&&i%5==4)kind=12;else if(stage>=6&&i%7==3)kind=13;else if(stage>=4&&i%6==5)kind=14;else if(stage>=4&&i%7==6)kind=15;else if(stage>=5&&i==7)kind=16;else if(stage>=3&&((stage+i)%8)==2)kind=18;else if(stage>=4&&((stage+i)%8)==5)kind=19;else if(stage>=4&&((stage+i)%8)==6)kind=20;
-     SpawnEnemy(p+new Vector3(1.8f,arch==IslandArchetype.TieredPlatform?1.28f:.03f,1),kind,false,p,width,length);if(stage>2&&i%3==0)Hazard(p+new Vector3(-2.4f,arch==IslandArchetype.TieredPlatform?1.35f:.08f,1),realm);}
+     float ez=arch==IslandArchetype.TieredPlatform?-2.2f:1f;float ey=arch==IslandArchetype.TieredPlatform?1.28f:.03f;
+     SpawnEnemy(p+new Vector3(1.8f,ey,ez),kind,false,p,width,length);
+     if(stage>2&&i%3==0){
+      float hz=arch==IslandArchetype.TieredPlatform?-2.2f:1f;float hy=arch==IslandArchetype.TieredPlatform?1.35f:.08f;
+      Hazard(islandObj.transform,new Vector3(-2.4f,hy,hz),realm);
+     }
+    }
     if(last){EndZ=z+4;Gate(p+new Vector3(0,0,5));if(IsBoss)SpawnEnemy(p+new Vector3(0,.05f,-1),world==3?21:world+8,true,p,width,length);}
    }
    for(int i=0;i<40;i++){float z=-16+i*4.8f;float side=i%2==0?-1:1;Vector3 p=new Vector3(side*(16+(float)random.NextDouble()*24),-4,z);float h=8+(float)random.NextDouble()*22;Art.Shape("Distant realm spire",PrimitiveType.Cylinder,p,new Vector3(6,h,6),stone*.75f,transform);if(realm==0)Art.Shape("Distant canopy",PrimitiveType.Sphere,p+Vector3.up*h*.5f,new Vector3(12,6,12),top*.68f,transform);}
@@ -219,7 +225,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     }
     return go;
    }
-   void Island(Vector3 pos,float width,float length,int index,IslandArchetype archetype=IslandArchetype.Standard,bool isBoss=false){
+   GameObject Island(Vector3 pos,float width,float length,int index,IslandArchetype archetype=IslandArchetype.Standard,bool isBoss=false){
     var root=new GameObject("Island");root.transform.SetParent(transform);root.transform.position=pos;
      if(archetype==IslandArchetype.SteppingStones){
       Vector3[] stepOffsets=new[]{new Vector3(-1.6f,0,-2.5f),new Vector3(1.6f,.25f,0),new Vector3(-1f,.1f,2.5f)};
@@ -256,7 +262,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
         CrumblePlatform.Attach(sp.gameObject);
        }
       }
-      return;
+      return root;
      }
      // 1. Walkable solid stone base
      var solid=Art.Shape("Walkable stone",PrimitiveType.Cube,new Vector3(0,-.92f,0),new Vector3(width,1.7f,length),stone,root.transform,true);
@@ -304,13 +310,13 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
      }else if(archetype==IslandArchetype.NarrowBridge){
       PendulumTrap.Place(root.transform,new Vector3(0,.05f,0),width,accent);
      }else if(archetype==IslandArchetype.TieredPlatform){
-      var ut=Art.Shape("UpperTerrace",PrimitiveType.Cube,new Vector3(-.80f,.20f,3.00f),new Vector3(8.70f,2.20f,4.30f),stone,root.transform,true);
-      var utRight=Art.Shape("UpperTerraceRight",PrimitiveType.Cube,new Vector3(3.48f,.08f,3.10f),new Vector3(3.35f,2.20f,3.80f),stone,root.transform,true);
-      var ramp=Art.Shape("StairRamp",PrimitiveType.Cube,new Vector3(0,.665f,-.275f),new Vector3(3.80f,.60f,2.56f),stone*1.15f,root.transform,true);
-      ramp.transform.localRotation=Quaternion.Euler(-28.7f,0,0);
-      var wallLeft=Art.Shape("StairWallLeft",PrimitiveType.Cube,new Vector3(-3.53f,.18f,-.18f),new Vector3(3.25f,2.20f,2.05f),stone,root.transform,true);
-      var wallRight=Art.Shape("StairWallRight",PrimitiveType.Cube,new Vector3(3.53f,-.28f,0f),new Vector3(3.25f,1.40f,2.40f),stone,root.transform,true);
-      var ts=Art.Shape("TerraceSurface",PrimitiveType.Cube,new Vector3(-.80f,1.35f,3.00f),new Vector3(8.75f,.12f,4.35f),top,root.transform);
+      var ut=Art.Shape("UpperTerrace",PrimitiveType.Cube,new Vector3(-.84f,.20f,-2.55f),new Vector3(8.50f,2.20f,4.90f),stone,root.transform,true);
+      var utRight=Art.Shape("UpperTerraceRight",PrimitiveType.Cube,new Vector3(3.48f,.08f,-2.90f),new Vector3(3.35f,2.20f,3.80f),stone,root.transform,true);
+      var ramp=Art.Shape("StairRamp",PrimitiveType.Cube,new Vector3(0,.51f,.55f),new Vector3(3.90f,.40f,1.98f),stone*1.15f,root.transform,true);
+      ramp.transform.localRotation=Quaternion.Euler(38.43f,0,0);
+      var wallLeft=Art.Shape("StairWallLeft",PrimitiveType.Cube,new Vector3(-3.45f,.18f,-.20f),new Vector3(3.10f,2.20f,2.00f),stone,root.transform,true);
+      var wallRight=Art.Shape("StairWallRight",PrimitiveType.Cube,new Vector3(3.53f,-.10f,-.10f),new Vector3(3.25f,1.60f,2.20f),stone,root.transform,true);
+      var ts=Art.Shape("TerraceSurface",PrimitiveType.Cube,new Vector3(-.84f,1.35f,-2.55f),new Vector3(8.55f,.12f,4.95f),top,root.transform);
       if(visual!=null){
        var ur=ut.GetComponent<Renderer>();if(ur)ur.enabled=false;
        var urr=utRight.GetComponent<Renderer>();if(urr)urr.enabled=false;
@@ -366,6 +372,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
      }
      Art.Ring(new Vector3(0,.11f,0),.55f,accent*.7f,root.transform);
     }
+    return root;
    }
   void Decor(Vector3 p,Transform parent,int seed){
    if(realm==0){
@@ -437,22 +444,27 @@ void WeaponDrop(Vector3 p,WeaponId id){
     var light=lightGo.AddComponent<Light>();light.type=LightType.Point;light.color=accent;light.range=8f;light.intensity=.8f;light.shadows=LightShadows.None;
     Vfx.Play("ga_vfx_Heal_02",p+Vector3.up*2f,Quaternion.identity,1.1f);
    }
-  void Hazard(Vector3 p,int kind){
-   var go=new GameObject("Realm hazard");go.transform.SetParent(transform);go.transform.position=p;
-   if(kind==3||realm==3){
-    FireGeyser.Place(transform,p,accent);
-   }else if(kind==1||realm==1){
-    SawTrap.Place(transform,p-new Vector3(1.6f,0,0),p+new Vector3(1.6f,0,0),accent);
-   }else if(kind==2||realm==2){
-    SpikeTrap.Place(transform,p,accent);
-   }else{
-    for(int i=0;i<5;i++){
-     var spike=Art.Shape("Thorn",PrimitiveType.Cube,new Vector3((i%3)*.37f-.4f,.28f,(i/3)*.4f),new Vector3(.18f,.65f,.18f),kind==1?new Color(1,.35f,.12f):accent,go.transform);
-     spike.transform.localRotation=Quaternion.Euler(0,30,15);
+   void Hazard(Transform island,Vector3 localPos,int kind){
+    if(kind==3||realm==3){
+     FireGeyser.Place(island,localPos,accent);
+    }else if(kind==1||realm==1){
+     SawTrap.Place(island,localPos-new Vector3(1.6f,0,0),localPos+new Vector3(1.6f,0,0),accent);
+    }else if(kind==2||realm==2){
+     SpikeTrap.Place(island,localPos,accent);
+    }else{
+     var go=new GameObject("Realm hazard");go.transform.SetParent(island,false);go.transform.localPosition=localPos;
+     for(int i=0;i<5;i++){
+      var spike=Art.Shape("Thorn",PrimitiveType.Cube,new Vector3((i%3)*.37f-.4f,.28f,(i/3)*.4f),new Vector3(.18f,.65f,.18f),kind==1?new Color(1,.35f,.12f):accent,go.transform);
+      spike.transform.localRotation=Quaternion.Euler(0,30,15);
+     }
+     go.AddComponent<RealmHazard>();
     }
-    go.AddComponent<RealmHazard>();
    }
-  }
+   void Hazard(Vector3 p,int kind){
+    var island=FindIsland(p);
+    if(island!=null)Hazard(island.transform,island.transform.InverseTransformPoint(p),kind);
+    else Hazard(transform,p,kind);
+   }
   void SpawnEnemy(Vector3 p,int kind,bool boss,Vector3 center,float width,float length){
    var go=new GameObject(boss?"Realm guardian":"Realm enemy");go.transform.SetParent(transform);go.transform.position=p;
    var e=go.AddComponent<Enemy>();e.Configure(kind,boss,center,new Vector2(width,length));

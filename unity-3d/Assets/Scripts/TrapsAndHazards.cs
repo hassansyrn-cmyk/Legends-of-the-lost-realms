@@ -139,17 +139,53 @@ namespace LostRealms {
  // 2. TRAVERSING SAW BLADE TRAP
  // =========================================================================
  public sealed class SawTrap:MonoBehaviour {
-  Transform sawBlade;Vector3 startPos,endPos;float speed=2.8f;bool forward=true;
+  Transform carriage;
+  Transform bladeSpinRoot;
+  float halfLength;
+  float speed=2.8f;
+  bool forward=true;
   float pauseTimer;
+  float curX;
+
   public static SawTrap Place(Transform parent,Vector3 startLocal,Vector3 endLocal,Color accent){
-   var go=new GameObject("Saw Trap");go.transform.SetParent(parent,false);go.transform.localPosition=startLocal;
-   Vector3 mid=(startLocal+endLocal)*.5f;float length=Vector3.Distance(startLocal,endLocal);
+   Vector3 mid=(startLocal+endLocal)*.5f;
+   // If parent is World root, find the island under mid so the trap is parented to the moving platform
+   if(parent&&parent.GetComponent<RealmWorld>()!=null){
+    RaycastHit rh;
+    Vector3 worldMid=parent.TransformPoint(mid);
+    if(Physics.Raycast(worldMid+Vector3.up*8f,Vector3.down,out rh,16f,~0,QueryTriggerInteraction.Ignore)){
+     Transform t=rh.transform;
+     while(t!=null&&t!=parent){
+      if(t.name=="Island"){
+       startLocal=t.InverseTransformPoint(parent.TransformPoint(startLocal));
+       endLocal=t.InverseTransformPoint(parent.TransformPoint(endLocal));
+       mid=(startLocal+endLocal)*.5f;
+       parent=t;
+       break;
+      }
+      t=t.parent;
+     }
+    }
+   }
+
+   var go=new GameObject("Saw Trap");
+   go.transform.SetParent(parent,false);
+   go.transform.localPosition=mid;
+
+   Vector3 dir=endLocal-startLocal;
+   float length=dir.magnitude;
+   if(length<0.2f){length=3.2f;dir=Vector3.right;}
+   Vector3 normDir=dir.normalized;
+   go.transform.localRotation=Quaternion.FromToRotation(Vector3.right,normDir);
+
+   // 1. Runic rail/track along local X
    var trackPrefab=Resources.Load<GameObject>("Props/RunicTrack");
    if(trackPrefab){
-    var tr=Instantiate(trackPrefab,parent,false);
-    tr.name="RunicTrack";tr.transform.localPosition=mid+Vector3.up*.02f;
-    tr.transform.localRotation=Quaternion.LookRotation(endLocal-startLocal);
-    tr.transform.localScale=new Vector3(1f,1f,length/4.4f);
+    var tr=Instantiate(trackPrefab,go.transform,false);
+    tr.name="RunicTrack";
+    tr.transform.localPosition=Vector3.zero;
+    tr.transform.localRotation=Quaternion.identity;
+    tr.transform.localScale=new Vector3(length/4.4f,1f,1f);
     var tTex=Resources.Load<Texture2D>("Props/Textures/RunicTrack_basecolor");
     if(tTex){
      var tmat=new Material(Shader.Find("Standard")){name="RunicTrack_Mat"};
@@ -157,16 +193,26 @@ namespace LostRealms {
      foreach(var r in tr.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=tmat;
     }
    }else{
-    var track=Art.Shape("SawTrack",PrimitiveType.Cube,mid+Vector3.up*.03f,new Vector3(.32f,.06f,length+.4f),new Color(.12f,.12f,.15f),parent);
-    track.transform.localRotation=Quaternion.LookRotation(endLocal-startLocal);
+    Art.Shape("SawTrack",PrimitiveType.Cube,Vector3.zero,new Vector3(length,.08f,.35f),new Color(.12f,.12f,.15f),go.transform);
    }
-   // Saw carriage & blade
-   var bladeGo=new GameObject("SawBlade");bladeGo.transform.SetParent(go.transform,false);
+
+   // 2. Carriage traversing along local X inside track groove (local Z = 0)
+   var carriageObj=new GameObject("SawCarriage");
+   carriageObj.transform.SetParent(go.transform,false);
+   float halfLen=Mathf.Max(0.1f,(length-0.5f)*.5f);
+   carriageObj.transform.localPosition=new Vector3(-halfLen,.40f,0f);
+
+   // 3. Saw blade spinning root (spins around local Z axis - its true axle)
+   var bladeSpin=new GameObject("BladeSpinRoot");
+   bladeSpin.transform.SetParent(carriageObj.transform,false);
+   bladeSpin.transform.localPosition=Vector3.zero;
+   bladeSpin.transform.localRotation=Quaternion.identity;
+
    var sawPrefab=Resources.Load<GameObject>("Props/RunicSaw")??Resources.Load<GameObject>("Props/SawBlade");
    if(sawPrefab){
-    var sawObj=Instantiate(sawPrefab,bladeGo.transform,false);
+    var sawObj=Instantiate(sawPrefab,bladeSpin.transform,false);
     sawObj.name="RunicSawMesh";
-    sawObj.transform.localPosition=Vector3.up*.55f;
+    sawObj.transform.localPosition=Vector3.zero;
     sawObj.transform.localRotation=Quaternion.identity;
     sawObj.transform.localScale=Vector3.one;
     var sTex=Resources.Load<Texture2D>("Props/Textures/RunicSaw_basecolor");
@@ -176,41 +222,57 @@ namespace LostRealms {
      foreach(var r in sawObj.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=smat;
     }
    }else{
-    Art.Shape("BladeDisc",PrimitiveType.Cylinder,Vector3.up*.45f,new Vector3(1.35f,.05f,1.35f),Color.Lerp(Color.white,accent,.25f),bladeGo.transform);
-    Art.Shape("BladeHub",PrimitiveType.Cylinder,Vector3.up*.45f,new Vector3(.45f,.12f,.45f),new Color(.2f,.2f,.22f),bladeGo.transform);
+    var disc=Art.Shape("BladeDisc",PrimitiveType.Cylinder,Vector3.zero,new Vector3(1.35f,.05f,1.35f),Color.Lerp(Color.white,accent,.25f),bladeSpin.transform);
+    disc.transform.localRotation=Quaternion.Euler(90f,0,0);
+    var hub=Art.Shape("BladeHub",PrimitiveType.Cylinder,Vector3.zero,new Vector3(.45f,.12f,.45f),new Color(.2f,.2f,.22f),bladeSpin.transform);
+    hub.transform.localRotation=Quaternion.Euler(90f,0,0);
     for(int i=0;i<6;i++){
      float ang=i*60f*Mathf.Deg2Rad;
-     var tooth=Art.Shape("Tooth",PrimitiveType.Cube,new Vector3(Mathf.Cos(ang)*.65f,.45f,Mathf.Sin(ang)*.65f),new Vector3(.24f,.04f,.24f),Color.white,bladeGo.transform);
-     tooth.transform.localRotation=Quaternion.Euler(0,i*60f+25f,0);
+     var tooth=Art.Shape("Tooth",PrimitiveType.Cube,new Vector3(Mathf.Cos(ang)*.65f,Mathf.Sin(ang)*.65f,0f),new Vector3(.24f,.04f,.24f),Color.white,bladeSpin.transform);
+     tooth.transform.localRotation=Quaternion.Euler(0,0,i*60f+25f);
     }
    }
+
    var st=go.AddComponent<SawTrap>();
-   st.sawBlade=bladeGo.transform;st.startPos=startLocal;st.endPos=endLocal;
+   st.carriage=carriageObj.transform;
+   st.bladeSpinRoot=bladeSpin.transform;
+   st.halfLength=halfLen;
+   st.curX=-halfLen;
    return st;
   }
 
   void Update(){
    var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
-   if(sawBlade)sawBlade.Rotate(0,720f*Time.deltaTime,0,Space.Self);
+   // Spin around local Z (the circular blade's axle)
+   float spinDir=forward?-1f:1f;
+   if(bladeSpinRoot)bladeSpinRoot.Rotate(0,0,spinDir*840f*Time.deltaTime,Space.Self);
+
    if(pauseTimer>0){pauseTimer-=Time.deltaTime;return;}
-   Vector3 cur=transform.localPosition;Vector3 target=forward?endPos:startPos;
-   transform.localPosition=Vector3.MoveTowards(cur,target,speed*Time.deltaTime);
-   if(Vector3.Distance(transform.localPosition,target)<.05f){
+
+   // Move carriage strictly along local X
+   float targetX=forward?halfLength:-halfLength;
+   curX=Mathf.MoveTowards(curX,targetX,speed*Time.deltaTime);
+   if(carriage)carriage.localPosition=new Vector3(curX,.40f,0f);
+
+   if(Mathf.Abs(curX-targetX)<.02f){
     forward=!forward;pauseTimer=.35f;
-    HitSpark.Burst(transform.position+Vector3.up*.2f,Vector3.up,new Color(1f,.85f,.3f),8);
+    Vector3 sparkPos=carriage?carriage.position:transform.position;
+    HitSpark.Burst(sparkPos+Vector3.up*.2f,Vector3.up,new Color(1f,.85f,.3f),8);
    }
-   // Hazard damage
+
+   // Hazard damage in world space
+   Vector3 hitPos=carriage?carriage.position:transform.position;
    Vector3 pPos=g.Player.transform.position;
-   if(Vector3.Distance(transform.position+Vector3.up*.45f,pPos+Vector3.up*.8f)<1.05f){
-    Vector3 knock=pPos-transform.position;knock.y=0;
-    if(g.Player.Damage(1,transform.position))
+   if(Vector3.Distance(hitPos,pPos+Vector3.up*.8f)<1.15f){
+    Vector3 knock=pPos-hitPos;knock.y=0;
+    if(g.Player.Damage(1,hitPos))
      HitSpark.Burst(pPos+Vector3.up*.8f,knock.normalized,new Color(1f,.9f,.4f),12);
    }
    if(g.Enemies!=null){
     foreach(var foe in g.Enemies){
      if(!foe||foe.Health<=0)continue;
-     if(Vector3.Distance(transform.position+Vector3.up*.45f,foe.transform.position+Vector3.up*.8f)<1.1f){
-      foe.Hit(1.5f,0,false,transform.forward);
+     if(Vector3.Distance(hitPos,foe.transform.position+Vector3.up*.8f)<1.2f){
+      foe.Hit(1.5f,0,false,transform.right*(forward?1:-1));
      }
     }
    }
