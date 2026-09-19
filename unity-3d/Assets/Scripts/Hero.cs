@@ -255,7 +255,7 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
      counterUntil=0;
      g.HitStop(.16f,.05f);
      g.CameraRig.Shake=.35f;
-     g.CameraRig.Kick(transform.forward*1.5f);
+     g.CameraRig.Kick(transform.forward,.5f);
      g.Sound("impact");
      HitSpark.Burst(transform.position+Vector3.up*1.2f,transform.forward,new Color(1f,.92f,.25f),32);
      Vfx.Play("ga_vfx_Hyperdrive_01",transform.position+Vector3.up*.9f,Quaternion.LookRotation(transform.forward),1.2f);
@@ -301,7 +301,7 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
    var g=RealmGame.I;
    attackReady=g.Elapsed+.25f;
    g.CameraRig.Shake=.42f;
-   g.CameraRig.Kick(Vector3.down*.6f);
+   g.CameraRig.Kick(Vector3.down,.6f);
    g.Sound("land_hard");g.Sound("impact");
    Color elemColor=Power==0?new Color(1f,.45f,.1f):Power==1?new Color(.2f,.85f,1f):new Color(.2f,1f,.55f);
    Vfx.Play("ga_vfx_Shockwave_01",transform.position+Vector3.up*.15f,Quaternion.identity,1.6f);
