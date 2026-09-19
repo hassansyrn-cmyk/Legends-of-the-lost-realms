@@ -458,10 +458,10 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     if(toCenter.sqrMagnitude>.01f)go.transform.rotation=Quaternion.LookRotation(toCenter);
     RelicArt.Checkpoint(go.transform,accent,stone);
     var cp=go.AddComponent<RealmCheckpoint>();
-    Vector3 spawnPos=checkPos+go.transform.forward*1.85f;
+    Vector3 spawnPos=checkPos+go.transform.forward*2.2f;
     var sHits=Physics.RaycastAll(spawnPos+Vector3.up*6f,Vector3.down,12f,~0,QueryTriggerInteraction.Ignore);
     float sY=float.NegativeInfinity;
-    for(int j=0;j<sHits.Length;j++){if(sHits[j].normal.y>=.4f&&sHits[j].point.y>sY)sY=sHits[j].point.y;}
+    for(int j=0;j<sHits.Length;j++){if(!sHits[j].transform.IsChildOf(go.transform)&&sHits[j].normal.y>=.4f&&sHits[j].point.y>sY)sY=sHits[j].point.y;}
     if(sY>float.NegativeInfinity)spawnPos.y=sY+.05f;else spawnPos.y=checkPos.y+.05f;
     cp.SpawnPoint=spawnPos;
    }
@@ -592,20 +592,34 @@ transform.Rotate(0,(Gem?12f:45f)*Time.deltaTime,0,Space.World);
     }
    }
   }
- public class RealmCheckpoint:MonoBehaviour {
-  public Vector3 SpawnPoint;
-  bool active;CheckpointVisual visual;
-  void Awake(){visual=GetComponent<CheckpointVisual>();}
-  void Update(){
-   var g=RealmGame.I;
-   if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
-   if(!active&&Vector3.Distance(g.Player.transform.position,transform.position)<2.65f){
-    active=true;if(visual)visual.Activate();HitSpark.Burst(transform.position+Vector3.up*1.35f,Vector3.up,g.Accent,28);Vfx.Play("ga_vfx_Portal_01",transform.position+Vector3.up*1.3f,Quaternion.identity,.9f);
-    Vector3 spawn=SpawnPoint!=Vector3.zero?SpawnPoint:(transform.position+transform.forward*1.85f+Vector3.up*.05f);
-    g.ActivateCheckpoint(spawn);
+  public class RealmCheckpoint:MonoBehaviour {
+   public Vector3 SpawnPoint;
+   bool active;CheckpointVisual visual;
+   void Awake(){visual=GetComponent<CheckpointVisual>();}
+   void Update(){
+    var g=RealmGame.I;
+    if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
+    Vector3 pPos=g.Player.transform.position;
+    Vector3 cpPos=transform.position;
+    float dx=pPos.x-cpPos.x;
+    float dz=pPos.z-cpPos.z;
+    float hDistSq=dx*dx+dz*dz;
+    if(!active&&hDistSq<2.85f*2.85f&&Mathf.Abs(pPos.y-cpPos.y)<3.5f){
+     active=true;if(visual)visual.Activate();HitSpark.Burst(transform.position+Vector3.up*1.35f,Vector3.up,g.Accent,28);Vfx.Play("ga_vfx_Portal_01",transform.position+Vector3.up*1.3f,Quaternion.identity,.9f);
+     Vector3 spawn=SpawnPoint!=Vector3.zero?SpawnPoint:(transform.position+transform.forward*2.2f+Vector3.up*.05f);
+     g.ActivateCheckpoint(spawn);
+    }
+    float minSafeDist=1.28f;
+    if(hDistSq<minSafeDist*minSafeDist&&pPos.y>=cpPos.y-0.6f&&pPos.y<=cpPos.y+3.5f){
+     Vector3 dir=new Vector3(dx,0,dz);
+     if(dir.sqrMagnitude<0.001f)dir=transform.forward;
+     dir.Normalize();
+     Vector3 targetPos=cpPos+dir*minSafeDist;
+     targetPos.y=pPos.y;
+     g.Player.Push(targetPos);
+    }
    }
   }
- }
   public class RealmGate:MonoBehaviour {
    float next;public readonly System.Collections.Generic.List<Transform> spin=new System.Collections.Generic.List<Transform>();public readonly System.Collections.Generic.List<float> speeds=new System.Collections.Generic.List<float>();
    void Update(){

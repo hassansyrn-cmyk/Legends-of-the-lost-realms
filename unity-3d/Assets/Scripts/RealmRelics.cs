@@ -112,7 +112,7 @@ namespace LostRealms {
     MeshObject("Sanctuary inner dais",root,SmallDais,stoneMat,new Vector3(0,.31f,0),new Vector3(1.25f,1,1.25f));
    }
    var col=root.gameObject.AddComponent<CapsuleCollider>();
-   col.center=new Vector3(0,.65f,0);col.radius=.75f;col.height=1.35f;col.direction=1;
+   col.center=new Vector3(0,1.6f,0);col.radius=.92f;col.height=5.2f;col.direction=1;
    var coreObj=MeshObject("Checkpoint heart crystal",root,ShrineCore,glow,new Vector3(0,1.35f,0),prefab?Vector3.one*.22f:Vector3.one*.9f);
    visual.Core=coreObj.transform;visual.GlowRenderers.Add(coreObj.GetComponent<Renderer>());
    var inner=MeshObject("Checkpoint inner light",visual.Core,ShrineCore,highlight,Vector3.zero,Vector3.one*.42f);visual.GlowRenderers.Add(inner.GetComponent<Renderer>());
