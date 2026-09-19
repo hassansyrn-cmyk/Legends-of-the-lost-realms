@@ -668,12 +668,17 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
    // The supplied Mixamo Aster clips are generated into Resources/Animations/Aster.
    // Other characters retain the existing shared fallback set.
     for(int i=0;i<Names.Length;i++){
-    if(role=="Aster"||role=="LavaBoss")v.clips[i]=Resources.Load<AnimationClip>("Animations/"+role+"/"+Names[i]);
-    else{
-     string legacy=Names[i].StartsWith("attack_")?"attack":Names[i]=="charged"?"attack":Names[i]=="run"?"walk":Names[i];
-     v.clips[i]=Resources.Load<AnimationClip>("Animations/"+role+"/"+Names[i])??Resources.Load<AnimationClip>("Animations/"+role+"_"+Names[i])??Resources.Load<AnimationClip>("Animations/"+role+"_"+legacy)??Resources.Load<AnimationClip>("Animations/Shared/"+legacy);
+     if(role=="Aster")v.clips[i]=Resources.Load<AnimationClip>("Animations/"+role+"/"+Names[i]);
+     else{
+      string legacy=Names[i].StartsWith("attack_")?"attack":Names[i]=="charged"?"attack":Names[i]=="run"?"walk":Names[i];
+      v.clips[i]=Resources.Load<AnimationClip>("Animations/"+role+"/"+Names[i])
+        ??Resources.Load<AnimationClip>("Animations/"+role+"/"+legacy)
+        ??(role=="Footman"?Resources.Load<AnimationClip>("Animations/Elite/"+legacy):null)
+        ??Resources.Load<AnimationClip>("Animations/"+role+"_"+Names[i])
+        ??Resources.Load<AnimationClip>("Animations/"+role+"_"+legacy)
+        ??Resources.Load<AnimationClip>("Animations/Shared/"+legacy);
+     }
     }
-   }
    if(role=="Aster"&&System.Array.Exists(v.clips,c=>c==null))throw new System.Exception("Aster Phase 1 animation set is incomplete");
    if(role=="Aster")for(int s=0;s<3;s++){
     v.chopClips[s]=Resources.Load<AnimationClip>("Animations/Aster/chop_"+(s+1));
