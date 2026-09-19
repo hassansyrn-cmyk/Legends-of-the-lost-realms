@@ -7,7 +7,7 @@ namespace LostRealms {
   public CharacterController Controller;public int MaxHealth,Health,Power;public float Energy=100;public bool Grounded=>Controller&&Controller.isGrounded; public CharacterVisual Visual;
   public int windUsed;
   const float MaxMoveSpeed=4.8f,GroundResponse=18f,AirResponse=8f,StopResponse=22f;
-  Vector3 velocity;Vector3 moveWish;float vertical,jumpGrace,dashUntil,dashReady,dodgeVisualUntil,hitUntil,immuneUntil,attackReady,comboUntil,chargeStart,attackBufferUntil,spellUntil;int jumps,combo,airDashes;bool charging,attackBufferCharged,spellCharging,wasGrounded;float jumpBuffer,spellChargeStart;string attackState="attack_1",hitState="hit",parryState="charged",dodgeVisualState="dodge";
+  Vector3 velocity;Vector3 moveWish;float vertical,jumpGrace,dashUntil,dashReady,dodgeVisualUntil,hitUntil,immuneUntil,attackReady,comboUntil,chargeStart,attackBufferUntil,spellUntil;int jumps,combo,airDashes;bool charging,attackBufferCharged,spellCharging,wasGrounded,plunging;float jumpBuffer,spellChargeStart;string attackState="attack_1",hitState="hit",parryState="charged",dodgeVisualState="dodge";
   float parryUntil,parryReady,counterUntil,pullUntil,stepTimer;Vector3 pullPoint;bool dodgeRewarded;
   Vector3 platformDisplacement;
   public void CarryByPlatform(Vector3 delta){platformDisplacement+=delta;}
@@ -17,6 +17,7 @@ namespace LostRealms {
   public bool Dashing=>RealmGame.I!=null&&RealmGame.I.Elapsed<dashUntil;
   public bool Attacking=>RealmGame.I!=null&&RealmGame.I.Elapsed<attackReady-.06f;
   public bool Pulling=>RealmGame.I!=null&&RealmGame.I.Elapsed<pullUntil;
+  public bool Plunging=>plunging;
   void Awake(){
    Controller=gameObject.AddComponent<CharacterController>();Controller.height=1.75f;Controller.radius=.32f;Controller.center=Vector3.up*.9f;Controller.stepOffset=.35f;Controller.slopeLimit=48;Controller.skinWidth=.08f;Controller.minMoveDistance=.001f;
    MaxHealth=5+RealmGame.I.Save.healthRank;Health=MaxHealth;
@@ -55,7 +56,13 @@ namespace LostRealms {
    }
 
    // Attack inputs (taps chain via a short queue so swings link smoothly)
-   if(g.AttackPressed){charging=true;chargeStart=RealmGame.I.Elapsed;}
+   if(g.AttackPressed){
+    if(!Grounded&&!plunging&&transform.position.y>-6f){
+     StartPlunge();
+    }else{
+     charging=true;chargeStart=RealmGame.I.Elapsed;
+    }
+   }
    if(charging&&g.AttackReleased){Attack(RealmGame.I.Elapsed-chargeStart>=.38f);charging=false;}
    if(charging&&RealmGame.I.Elapsed-chargeStart>=.75f){Attack(true);charging=false;}
    if(attackBufferUntil>0&&RealmGame.I.Elapsed>=attackReady&&RealmGame.I.Elapsed>=dodgeVisualUntil&&RealmGame.I.Elapsed>=hitUntil){attackBufferUntil=0;Attack(attackBufferCharged);}
@@ -75,6 +82,8 @@ namespace LostRealms {
     Visual.Play(hitState);
    }else if(RealmGame.I.Elapsed<parryUntil){
     Visual.Play(parryState);
+   }else if(plunging){
+    Visual.Play("charged");
    }else if(RealmGame.I.Elapsed<attackReady-.06f){
     Visual.Play(attackState);
    }else if(!Grounded){
@@ -117,8 +126,10 @@ namespace LostRealms {
    // touch devices (JumpHeld is never true for a tap), breaking island gaps.
 
    // Dash (one extra allowed per airtime)
-   if(dashPressed&&RealmGame.I.Elapsed>=dashReady&&(Grounded||airDashes>0)){
+   bool canDodgeCancel=Grounded&&RealmGame.I.Elapsed<attackReady&&RealmGame.I.Elapsed>=attackReady-.35f;
+   if(dashPressed&&(RealmGame.I.Elapsed>=dashReady||canDodgeCancel)&&(Grounded||airDashes>0)){
     if(!Grounded)airDashes--;
+    if(canDodgeCancel){dashReady=0;attackReady=RealmGame.I.Elapsed;charging=false;plunging=false;}
     dashUntil=RealmGame.I.Elapsed+.22f;dodgeVisualUntil=RealmGame.I.Elapsed+.63f;dashReady=RealmGame.I.Elapsed+.9f;
     dodgeRewarded=false;
     immuneUntil=Mathf.Max(immuneUntil,dashUntil+.1f);
@@ -158,6 +169,9 @@ namespace LostRealms {
    Controller.Move((velocity+Vector3.up*vertical)*dt+platformDisplacement);
    platformDisplacement=Vector3.zero;
    bool nowGrounded=Grounded;
+   if(nowGrounded&&plunging){
+    LandPlunge();
+   }
    if(nowGrounded&&!wasGrounded){
     if(fall<-11f){g.Sound("land_hard");KenneyPuff.Burst(transform.position+Vector3.up*.05f,new Color(.62f,.56f,.46f),12,1f);}
     else if(fall<-4.5f){g.Sound("land_soft");if(fall<-7f)KenneyPuff.Burst(transform.position+Vector3.up*.05f,new Color(.62f,.56f,.46f),10,.8f);}
@@ -170,11 +184,12 @@ namespace LostRealms {
    Energy=Mathf.Min(100,Energy+dt*(12f+4f*RealmGame.I.Save.aetherRank));
   }
 
-  public void Warp(Vector3 p){platformDisplacement=Vector3.zero;Controller.enabled=false;transform.position=p;Controller.enabled=true;vertical=0;velocity=Vector3.zero;jumpBuffer=0;charging=false;dashUntil=0;attackBufferUntil=0;immuneUntil=RealmGame.I.Elapsed+1.2f;parryUntil=0;parryReady=0;counterUntil=0;RealmGame.I.CameraRig.Snap();}
+  public void Warp(Vector3 p){platformDisplacement=Vector3.zero;Controller.enabled=false;transform.position=p;Controller.enabled=true;vertical=0;velocity=Vector3.zero;jumpBuffer=0;charging=false;plunging=false;dashUntil=0;attackBufferUntil=0;immuneUntil=RealmGame.I.Elapsed+1.2f;parryUntil=0;parryReady=0;counterUntil=0;RealmGame.I.CameraRig.Snap();}
   public void Push(Vector3 p){Controller.enabled=false;transform.position=p;Controller.enabled=true;}
   public void Bounce(float upwardVelocity,Vector3 horizontalImpulse=default){vertical=upwardVelocity;if(horizontalImpulse.sqrMagnitude>.01f)velocity=horizontalImpulse;jumps=1;airDashes=1+Mathf.Min(3,RealmGame.I.Save.moxieRank);jumpGrace=0;jumpBuffer=0;Visual.Restart("jump");}
   public void Boost(Vector3 impulse){velocity=Vector3.ClampMagnitude(velocity+impulse,14f);airDashes=Mathf.Max(airDashes,1);}
   public bool Damage(int damage,Vector3 source){
+   plunging=false;
    if(Health<=0)return false;
    if(RealmGame.I.Elapsed<parryUntil){ParrySuccess(source);return false;}
    if(RealmGame.I.Elapsed<immuneUntil){if(RealmGame.I.Elapsed<dashUntil)PerfectDodge(source);return false;}
@@ -204,29 +219,50 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
    float attackDuration=clipLen>0f?clipLen/playSpeed:(charged?.84f:(combo==2?.78f:(combo==3?.64f:.66f)))/weapon.Tempo;
    attackReady=RealmGame.I.Elapsed+attackDuration;
    comboUntil=attackReady+.35f;
-   dashUntil=0;
+    bool isDashStrike=RealmGame.I.Elapsed<dashUntil;
+    dashUntil=0;
 
-   // Small facing assist keeps nearby targets usable with a phone stick.
-   // Partial turn only: an instant snap reads as a teleport pop.
-   Enemy closest=null;float nearest=3.5f;foreach(var foe in g.Enemies){if(!foe||foe.Health<=0)continue;Vector3 d=foe.transform.position-transform.position;d.y=0;if(d.magnitude<nearest&&Vector3.Dot(transform.forward,d.normalized)>.35f){closest=foe;nearest=d.magnitude;}}
-   if(closest){Vector3 aim=closest.transform.position-transform.position;aim.y=0;if(aim.sqrMagnitude>.01f)transform.rotation=Quaternion.Slerp(transform.rotation,Quaternion.LookRotation(aim.normalized),.65f);}
-   // Forward attack step blended with current momentum (never a teleport
-   // pop), softened in air so jump arcs survive the swing.
-   Vector3 lungeDir=transform.forward;lungeDir.y=0;
-   if(lungeDir.sqrMagnitude<.01f)lungeDir=Vector3.forward;
-   lungeDir.Normalize();
-   float lungeStep=(charged?3f:2f)*(Grounded?1f:.5f);
-   velocity=Vector3.ClampMagnitude(velocity*.55f+lungeDir*lungeStep*.45f,MaxMoveSpeed);velocity.y=0;
+    // Small facing assist keeps nearby targets usable with a phone stick.
+    // Partial turn only: an instant snap reads as a teleport pop.
+    Enemy closest=null;float nearest=3.5f;foreach(var foe in g.Enemies){if(!foe||foe.Health<=0)continue;Vector3 d=foe.transform.position-transform.position;d.y=0;if(d.magnitude<nearest&&Vector3.Dot(transform.forward,d.normalized)>.35f){closest=foe;nearest=d.magnitude;}}
+    if(closest){Vector3 aim=closest.transform.position-transform.position;aim.y=0;if(aim.sqrMagnitude>.01f)transform.rotation=Quaternion.Slerp(transform.rotation,Quaternion.LookRotation(aim.normalized),.65f);}
+    // Forward attack step blended with current momentum (never a teleport
+    // pop), softened in air so jump arcs survive the swing.
+    Vector3 lungeDir=transform.forward;lungeDir.y=0;
+    if(lungeDir.sqrMagnitude<.01f)lungeDir=Vector3.forward;
+    lungeDir.Normalize();
+    float lungeStep=(isDashStrike?4.2f:charged?3f:2f)*(Grounded?1f:.5f);
+    velocity=Vector3.ClampMagnitude(velocity*.55f+lungeDir*lungeStep*.45f,MaxMoveSpeed);velocity.y=0;
 
-   Visual.PlayAttack(combo,charged,weapon.Tempo,style);
-   g.Sound("blade");
+    Visual.PlayAttack(combo,charged,weapon.Tempo,style);
+    g.Sound("blade");
+    if(isDashStrike){
+     Vfx.Play("ga_vfx_Hyperdrive_01",transform.position+Vector3.up*.9f,Quaternion.LookRotation(transform.forward),.8f);
+     DamageTip.Show(transform.position+Vector3.up*1.6f,"DASH STRIKE!",new Color(1f,.95f,.4f));
+    }
+    if(combo==3&&!charged){
+     g.CameraRig.Shake=.2f;
+     HitSpark.Burst(transform.position+Vector3.up*1f,transform.forward,new Color(1f,.85f,.3f),16);
+     DamageTip.Show(transform.position+Vector3.up*1.8f,"FINISHER!",new Color(1f,.85f,.2f));
+    }
 
-   float reach=(charged?3.4f:2.7f)*weapon.Reach;
-   float damage=(charged?3.5f:combo==3?2.5f:1.5f)*weapon.Damage;
-   damage*=1f+g.Save.arsenalRank*.08f;
-   if(RealmGame.I.Elapsed<counterUntil){damage*=1.6f+RealmGame.I.Save.tempoRank*.15f;counterUntil=0;HitSpark.Burst(transform.position+Vector3.up*1.2f,transform.forward,new Color(1f,.9f,.52f),14);}
-   // Moon Chakram's charged throw: a returning disc that hits on both passes.
-   if(charged&&weapon.Id==WeaponId.MoonChakram)ChakramProjectile.Throw(transform.position+Vector3.up*1f,transform.forward,damage,Power);
+    float reach=(charged?3.4f:2.7f)*weapon.Reach;
+    float damage=(charged?3.5f:combo==3?2.5f:1.5f)*weapon.Damage;
+    if(isDashStrike){damage*=1.35f;reach*=1.2f;}
+    damage*=1f+g.Save.arsenalRank*.08f;
+    if(RealmGame.I.Elapsed<counterUntil){
+     damage*=2.2f+RealmGame.I.Save.tempoRank*.25f;
+     counterUntil=0;
+     g.HitStop(.16f,.05f);
+     g.CameraRig.Shake=.35f;
+     g.CameraRig.Kick(transform.forward*1.5f);
+     g.Sound("impact");
+     HitSpark.Burst(transform.position+Vector3.up*1.2f,transform.forward,new Color(1f,.92f,.25f),32);
+     Vfx.Play("ga_vfx_Hyperdrive_01",transform.position+Vector3.up*.9f,Quaternion.LookRotation(transform.forward),1.2f);
+     DamageTip.Show(transform.position+Vector3.up*2.2f,"CRITICAL RIPOSTE!",new Color(1f,.92f,.25f));
+    }
+    // Moon Chakram's charged throw: a returning disc that hits on both passes.
+    if(charged&&weapon.Id==WeaponId.MoonChakram)ChakramProjectile.Throw(transform.position+Vector3.up*1f,transform.forward,damage,Power);
 
 // Dynamic 3D curved slash arc ribbon + imported particle slash
     SlashArc.Create(transform.position+Vector3.up*.85f,transform.forward,combo,charged,Power);
@@ -246,6 +282,55 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
     var c=BreakableCrate.All[i];if(!c)continue;
     Vector3 d=c.transform.position-transform.position;d.y=0;
     if(d.magnitude<reach+.6f&&Vector3.Dot(transform.forward,d.normalized)>-.2f)c.Break();
+   }
+  }
+
+  void StartPlunge(){
+   var g=RealmGame.I;
+   plunging=true;charging=false;
+   vertical=-20f;
+   velocity=Vector3.ClampMagnitude(velocity*.2f,1.5f);
+   attackState="charged";
+   attackReady=g.Elapsed+1.5f;
+   g.Sound("blade");
+   Vfx.Play(Vfx.Slash(Power),transform.position+Vector3.up*.9f,Quaternion.Euler(90,0,0),1.1f);
+   DamageTip.Show(transform.position+Vector3.up*1.7f,"AIR PLUNGE!",new Color(1f,.85f,.3f));
+  }
+  void LandPlunge(){
+   plunging=false;
+   var g=RealmGame.I;
+   attackReady=g.Elapsed+.25f;
+   g.CameraRig.Shake=.42f;
+   g.CameraRig.Kick(Vector3.down*.6f);
+   g.Sound("land_hard");g.Sound("impact");
+   Color elemColor=Power==0?new Color(1f,.45f,.1f):Power==1?new Color(.2f,.85f,1f):new Color(.2f,1f,.55f);
+   Vfx.Play("ga_vfx_Shockwave_01",transform.position+Vector3.up*.15f,Quaternion.identity,1.6f);
+   Vfx.Play("ga_vfx_Explosion_01",transform.position+Vector3.up*.25f,Quaternion.identity,1.1f);
+   HitSpark.Burst(transform.position+Vector3.up*.2f,Vector3.up,elemColor,28);
+   ImpactMarks.Place(transform.position,1.3f,elemColor);
+   DamageTip.Show(transform.position+Vector3.up*1.8f,"EARTH SHATTER!",elemColor);
+   var weapon=g.CurrentWeapon;
+   float pReach=4.8f*weapon.Reach;
+   float pDmg=3.8f*weapon.Damage*(1f+g.Save.arsenalRank*.08f);
+   foreach(var foe in g.Enemies.ToArray()){
+    if(!foe||foe.Health<=0)continue;
+    Vector3 toFoe=foe.transform.position-transform.position;toFoe.y=0;
+    if(toFoe.magnitude<pReach+foe.Radius){
+     foe.Hit(pDmg,Power,true,toFoe.normalized);
+     foe.Stun(.8f);
+    }
+   }
+   for(int i=BreakableCrate.All.Count-1;i>=0;i--){
+    var c=BreakableCrate.All[i];if(!c)continue;
+    Vector3 d=c.transform.position-transform.position;d.y=0;
+    if(d.magnitude<pReach)c.Break();
+   }
+   if(Power==2){
+    foreach(var pickup in FindObjectsByType<RealmPickup>(FindObjectsSortMode.None)){
+     if(pickup&&Vector3.Distance(transform.position,pickup.transform.position)<14f){
+      pickup.transform.position=Vector3.MoveTowards(pickup.transform.position,transform.position+Vector3.up*.8f,18f*Time.deltaTime);
+     }
+    }
    }
   }
 

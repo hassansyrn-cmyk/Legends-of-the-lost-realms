@@ -174,17 +174,27 @@ namespace LostRealms {
      HitSpark.Burst(transform.position+Vector3.up*.9f,-transform.forward,new Color(.9f,.9f,1f),8);
      return;
     }
-    if(elemental){
-     if(power==0){burnUntil=RealmGame.I.Elapsed+3;burnTick=RealmGame.I.Elapsed+.7f;}
-     if(power==1){freezeUntil=RealmGame.I.Elapsed+(Boss?.6f:2.2f);if(IsLavaBoss)Stun(.6f);if(warning){var countdown=warning.GetComponent<CombatTelegraph>();if(countdown)countdown.HoldUntil(freezeUntil);}}
-     if(power==2)transform.position=transform.position+(transform.position-RealmGame.I.Player.transform.position).normalized*(Boss?1f:2.8f);
-    }
-    // Physical knockback impulse (unconstrained so enemies can be knocked off ledges into the abyss!)
-    Vector3 k=knockDir==default?(transform.position-RealmGame.I.Player.transform.position).normalized:knockDir.normalized;
-    transform.position=transform.position+k*(Boss?.35f:1.15f);
+     if(elemental){
+      if(power==0){burnUntil=RealmGame.I.Elapsed+3;burnTick=RealmGame.I.Elapsed+.7f;}
+      if(power==1){freezeUntil=RealmGame.I.Elapsed+(Boss?.6f:2.2f);if(IsLavaBoss)Stun(.6f);if(warning){var countdown=warning.GetComponent<CombatTelegraph>();if(countdown)countdown.HoldUntil(freezeUntil);}}
+      if(power==2){
+       transform.position=transform.position+(transform.position-RealmGame.I.Player.transform.position).normalized*(Boss?1f:2.8f);
+       Vfx.Play("ga_vfx_Implosion_01",transform.position+Vector3.up*.8f,Quaternion.identity,.8f);
+      }
+     }
+     // Physical knockback impulse (unconstrained so enemies can be knocked off ledges into the abyss!)
+     Vector3 k=knockDir==default?(transform.position-RealmGame.I.Player.transform.position).normalized:knockDir.normalized;
+     transform.position=transform.position+k*(Boss?.35f:1.15f);
 
-   float real=damage*(Boss&&state==State.Recover?1.35f:1)*(weak?1.5f:1);
-   if((Affix&16)!=0)real*=.75f;
+    float real=damage*(Boss&&state==State.Recover?1.35f:1)*(weak?1.5f:1);
+    if(freezeUntil>RealmGame.I.Elapsed&&(power==1||damage>=2.4f)){
+     freezeUntil=0;real*=1.5f;
+     HitSpark.Burst(transform.position+Vector3.up*(Boss?1.8f:.9f),k,new Color(.25f,.88f,1f),26);
+     Vfx.Play("ga_vfx_Nova_01",transform.position+Vector3.up*(Boss?1.8f:.9f),Quaternion.identity,1.2f);
+     DamageTip.Show(transform.position+Vector3.up*(Boss?2.5f:1.5f),"ICE SHATTER!",new Color(.35f,.92f,1f));
+     RealmGame.I.Sound("impact");
+    }
+    if((Affix&16)!=0)real*=.75f;
    if(shield>0f){float absorbed=Mathf.Min(shield,real);shield-=absorbed;real-=absorbed;HitSpark.Burst(transform.position+Vector3.up*.9f,-k,new Color(.5f,.95f,1f),8);if(shield<=0f){Vfx.Play("ga_vfx_Implosion_01",transform.position+Vector3.up*1f,Quaternion.identity,.8f);RealmGame.I.Tell("Guard broken!",1);}}
    if(real>0&&weak&&RealmGame.I.Trial)RealmGame.I.Trial.WeaknessHit();
    ApplyDamage(real);
@@ -205,6 +215,20 @@ namespace LostRealms {
     state=State.Dead;comboLeft=0;if(IsLavaBoss)Visual.transform.localPosition=Vector3.zero;if(RealmGame.I.Trial)RealmGame.I.Trial.EnemyDefeated();ClearGlow();if(warning)Destroy(warning);Visual.Restart("death");
     var collider=GetComponent<Collider>();if(collider)collider.enabled=false;
     RealmGame.I.Coins+=Boss?20:3;RealmGame.I.Sound("enemy_defeat");
+    if(RealmGame.I.Elapsed<burnUntil){
+     Vfx.Play("ga_vfx_Explosion_01",transform.position+Vector3.up*(Boss?1.8f:.9f),Quaternion.identity,1.15f);
+     HitSpark.Burst(transform.position+Vector3.up*(Boss?1.8f:.9f),Vector3.up,new Color(1f,.45f,.1f),20);
+     DamageTip.Show(transform.position+Vector3.up*1.6f,"CONFLAGRATION!",new Color(1f,.55f,.15f));
+     foreach(var foe in RealmGame.I.Enemies.ToArray()){
+      if(foe&&foe!=this&&foe.Health>0&&Vector3.Distance(transform.position,foe.transform.position)<4.2f){
+       foe.Hit(2.5f,0,true,(foe.transform.position-transform.position).normalized);
+      }
+     }
+     for(int i=BreakableCrate.All.Count-1;i>=0;i--){
+      var c=BreakableCrate.All[i];if(!c)continue;
+      if(Vector3.Distance(transform.position,c.transform.position)<4.5f)c.Break();
+     }
+    }
     // Loot gems: bosses shower, the Elite mini-boss pays well, affixed elites
     // drop a couple, regular enemies rarely drop one so gems become a real
     // stream that funds the Sanctuary's gem-only tracks.
@@ -330,6 +354,7 @@ namespace LostRealms {
    void Update(){
     var g=RealmGame.I;if(g&&g.Screen!=GameScreen.Playing)return;
     age+=Time.deltaTime;transform.position+=Vector3.up*Time.deltaTime*1.15f;
+    if(Camera.main)transform.rotation=Camera.main.transform.rotation;
     float a=Mathf.Clamp01(1f-age/life);
     if(mesh)mesh.color=new Color(color.r,color.g,color.b,a);
     if(age>=life)Destroy(gameObject);
