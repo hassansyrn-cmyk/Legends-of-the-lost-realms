@@ -161,10 +161,9 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     var islandObj=Island(p,width,length,i,arch,last&&IsBoss);if(i==0)Spawn=p+Vector3.up*.05f;
     for(int j=-1;j<=1;j++){float py=(arch==IslandArchetype.TieredPlatform&&j<0)?2.1f:.8f;Pickup(p+new Vector3(0,py,j*2.2f),false);}
     if(i>1&&!last&&i%2==0){var side=p+new Vector3((i%4==0?-1:1)*9.5f,1.2f,0);Island(side,4.8f,5.3f,100+i);Pickup(side+Vector3.up*.9f,true);if(i==6||i==10){var move=FindIsland(side);if(move){var motion=move.AddComponent<MovingIsland>();motion.Origin=move.transform.position;motion.Offset=new Vector3(0,0,1.3f);motion.AddThrusters(accent);}}}
-     int mid1=count/3,mid2=(count*2)/3;
+     int mid1=IsBoss?3:3,mid2=IsBoss?6:7;
      if(i==mid1||i==mid2){
-      float cpX=Mathf.Clamp(-2.2f,-width*.35f,width*.35f);
-      Checkpoint(p+new Vector3(cpX,0,-0.8f));
+      Checkpoint(islandObj?islandObj.transform:null,p,width,length);
      }
     if(i>=2&&i%4==0){float hx=(i%2==0?-1:1)*(1.2f+(float)random.NextDouble()*.9f);HealPickup(p+new Vector3(hx,.6f,-1.2f+(float)random.NextDouble()*2.4f));}
     if(i==weaponIsland)WeaponDrop(p+new Vector3((i%2==0?-2.3f:2.3f),.18f,-1.4f),weaponId);
@@ -423,19 +422,50 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
    else Art.CoinMesh(go.transform);
    var pickup=go.AddComponent<RealmPickup>();pickup.Gem=gem;pickup.Origin=position;
   }
-   void Checkpoint(Vector3 p){
+   void Checkpoint(Transform island,Vector3 p,float width,float length){
     Physics.SyncTransforms();
-    var hits=Physics.RaycastAll(p+Vector3.up*6f,Vector3.down,12f,~0,QueryTriggerInteraction.Ignore);
+    float offX=-Mathf.Clamp(width*.22f,1.2f,2.2f),offZ=-0.5f;
+    Vector3 checkPos=p+new Vector3(offX,0,offZ);
     float bestY=float.NegativeInfinity;
-    for(int j=0;j<hits.Length;j++){
-     var h=hits[j];
-     if(h.normal.y>=.5f&&!h.transform.name.StartsWith("Prop ")&&h.point.y>bestY)bestY=h.point.y;
+    for(int attempt=0;attempt<8;attempt++){
+     var hits=Physics.RaycastAll(checkPos+Vector3.up*10f,Vector3.down,20f,~0,QueryTriggerInteraction.Ignore);
+     float foundY=float.NegativeInfinity;
+     for(int j=0;j<hits.Length;j++){
+      var h=hits[j];
+      if(island&&!h.transform.IsChildOf(island))continue;
+      if(h.normal.y<.45f)continue;
+      if(h.point.y>foundY)foundY=h.point.y;
+     }
+     if(foundY>float.NegativeInfinity){
+      bool allSupported=true;
+      Vector3[] offsets=new[]{new Vector3(.6f,0,0),new Vector3(-.6f,0,0),new Vector3(0,0,.6f),new Vector3(0,0,-.6f)};
+      for(int k=0;k<offsets.Length;k++){
+       var ch=Physics.RaycastAll(checkPos+offsets[k]+Vector3.up*10f,Vector3.down,20f,~0,QueryTriggerInteraction.Ignore);
+       bool cornerHit=false;
+       for(int m=0;m<ch.Length;m++){
+        if((!island||ch[m].transform.IsChildOf(island))&&ch[m].normal.y>=.4f&&Mathf.Abs(ch[m].point.y-foundY)<.45f){cornerHit=true;break;}
+       }
+       if(!cornerHit){allSupported=false;break;}
+      }
+      if(allSupported){bestY=foundY;break;}
+     }
+     offX*=.72f;offZ*=.72f;
+     checkPos=p+new Vector3(offX,0,offZ);
     }
-    if(bestY>float.NegativeInfinity)p=new Vector3(p.x,bestY,p.z);
-    var go=new GameObject("Checkpoint shrine");go.transform.SetParent(transform);go.transform.position=p;
+    if(bestY>float.NegativeInfinity)checkPos.y=bestY;else checkPos=p+Vector3.up*.05f;
+    var go=new GameObject("Checkpoint shrine");go.transform.SetParent(transform);go.transform.position=checkPos;
+    Vector3 toCenter=(p+Vector3.forward*2f-checkPos);toCenter.y=0;
+    if(toCenter.sqrMagnitude>.01f)go.transform.rotation=Quaternion.LookRotation(toCenter);
     RelicArt.Checkpoint(go.transform,accent,stone);
-    go.AddComponent<RealmCheckpoint>();
+    var cp=go.AddComponent<RealmCheckpoint>();
+    Vector3 spawnPos=checkPos+go.transform.forward*1.85f;
+    var sHits=Physics.RaycastAll(spawnPos+Vector3.up*6f,Vector3.down,12f,~0,QueryTriggerInteraction.Ignore);
+    float sY=float.NegativeInfinity;
+    for(int j=0;j<sHits.Length;j++){if(sHits[j].normal.y>=.4f&&sHits[j].point.y>sY)sY=sHits[j].point.y;}
+    if(sY>float.NegativeInfinity)spawnPos.y=sY+.05f;else spawnPos.y=checkPos.y+.05f;
+    cp.SpawnPoint=spawnPos;
    }
+   void Checkpoint(Vector3 p){Checkpoint(null,p,9f,9f);}
 void WeaponDrop(Vector3 p,WeaponId id){
     var go=new GameObject("Weapon drop - "+WeaponCatalog.Get(id).Name);go.transform.SetParent(transform,false);go.transform.position=p;
     var drop=go.AddComponent<WeaponDrop>();drop.Configure(id,p);
@@ -563,14 +593,16 @@ transform.Rotate(0,(Gem?12f:45f)*Time.deltaTime,0,Space.World);
    }
   }
  public class RealmCheckpoint:MonoBehaviour {
+  public Vector3 SpawnPoint;
   bool active;CheckpointVisual visual;
   void Awake(){visual=GetComponent<CheckpointVisual>();}
   void Update(){
    var g=RealmGame.I;
    if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
-    if(!active&&Vector3.Distance(g.Player.transform.position,transform.position)<2.45f){
+   if(!active&&Vector3.Distance(g.Player.transform.position,transform.position)<2.65f){
     active=true;if(visual)visual.Activate();HitSpark.Burst(transform.position+Vector3.up*1.35f,Vector3.up,g.Accent,28);Vfx.Play("ga_vfx_Portal_01",transform.position+Vector3.up*1.3f,Quaternion.identity,.9f);
-    g.ActivateCheckpoint(transform.position+Vector3.forward*1.5f+Vector3.up*.05f);
+    Vector3 spawn=SpawnPoint!=Vector3.zero?SpawnPoint:(transform.position+transform.forward*1.85f+Vector3.up*.05f);
+    g.ActivateCheckpoint(spawn);
    }
   }
  }

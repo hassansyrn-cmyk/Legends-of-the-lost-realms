@@ -63,9 +63,12 @@ namespace LostRealms {
       bool hasAura = visual.Aura != null;
       var pedestal = cp.transform.Find("Checkpoint 3D Pedestal");
       bool has3dModel = pedestal != null;
+      var col = cp.GetComponent<Collider>();
+      bool hasCollider = col != null && !col.isTrigger;
+      bool hasSpawnPoint = cp.SpawnPoint != Vector3.zero && Vector3.Distance(cp.transform.position, cp.SpawnPoint) >= 1.2f;
 
-      if (!hasCore || !hasShards || !hasHalos || !hasAura || !has3dModel) {
-       sb.AppendLine($"[FAIL] Ch {level:D2} CP#{ci}: Visual incomplete: Core={hasCore}, Shards={visual.Shards.Count}, Halos={visual.Halos.Count}, Aura={hasAura}, 3DPedestal={has3dModel}");
+      if (!hasCore || !hasShards || !hasHalos || !hasAura || !has3dModel || !hasCollider || !hasSpawnPoint) {
+       sb.AppendLine($"[FAIL] Ch {level:D2} CP#{ci}: Visual/Physics incomplete: Core={hasCore}, Shards={visual.Shards.Count}, Halos={visual.Halos.Count}, Aura={hasAura}, 3DPedestal={has3dModel}, Collider={hasCollider}, SpawnPoint={hasSpawnPoint}");
        allOk = false;
        continue;
       }
