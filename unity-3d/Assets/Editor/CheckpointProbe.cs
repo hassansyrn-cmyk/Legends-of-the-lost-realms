@@ -41,42 +41,50 @@ namespace LostRealms {
      Physics.SyncTransforms();
 
      var checkpoints = world.GetComponentsInChildren<RealmCheckpoint>(true);
-     if (checkpoints.Length != 1) {
-      sb.AppendLine($"[FAIL] Ch {level:D2}: Expected exactly 1 checkpoint, found {checkpoints.Length}");
+     if (checkpoints.Length != 2) {
+      sb.AppendLine($"[FAIL] Ch {level:D2}: Expected exactly 2 checkpoints, found {checkpoints.Length}");
       failCount++;
       continue;
      }
 
-     var cp = checkpoints[0];
-     var visual = cp.GetComponent<CheckpointVisual>();
-     if (visual == null) {
-      sb.AppendLine($"[FAIL] Ch {level:D2}: Missing CheckpointVisual component!");
+     bool allOk = true;
+     for (int ci = 0; ci < checkpoints.Length; ci++) {
+      var cp = checkpoints[ci];
+      var visual = cp.GetComponent<CheckpointVisual>();
+      if (visual == null) {
+       sb.AppendLine($"[FAIL] Ch {level:D2} CP#{ci}: Missing CheckpointVisual component!");
+       allOk = false;
+       continue;
+      }
+
+      bool hasCore = visual.Core != null;
+      bool hasShards = visual.Shards.Count == 4;
+      bool hasHalos = visual.Halos.Count == 2;
+      bool hasAura = visual.Aura != null;
+      var pedestal = cp.transform.Find("Checkpoint 3D Pedestal");
+      bool has3dModel = pedestal != null;
+
+      if (!hasCore || !hasShards || !hasHalos || !hasAura || !has3dModel) {
+       sb.AppendLine($"[FAIL] Ch {level:D2} CP#{ci}: Visual incomplete: Core={hasCore}, Shards={visual.Shards.Count}, Halos={visual.Halos.Count}, Aura={hasAura}, 3DPedestal={has3dModel}");
+       allOk = false;
+       continue;
+      }
+
+      // Test activation
+      visual.Activate();
+      if (!visual.Activated) {
+       sb.AppendLine($"[FAIL] Ch {level:D2} CP#{ci}: Checkpoint failed to activate!");
+       allOk = false;
+       continue;
+      }
+     }
+
+     if (!allOk) {
       failCount++;
       continue;
      }
 
-     bool hasCore = visual.Core != null;
-     bool hasShards = visual.Shards.Count == 4;
-     bool hasHalos = visual.Halos.Count == 2;
-     bool hasAura = visual.Aura != null;
-     var pedestal = cp.transform.Find("Checkpoint 3D Pedestal");
-     bool has3dModel = pedestal != null;
-
-     if (!hasCore || !hasShards || !hasHalos || !hasAura || !has3dModel) {
-      sb.AppendLine($"[FAIL] Ch {level:D2}: Visual incomplete: Core={hasCore}, Shards={visual.Shards.Count}, Halos={visual.Halos.Count}, Aura={hasAura}, 3DPedestal={has3dModel}");
-      failCount++;
-      continue;
-     }
-
-     // Test activation
-     visual.Activate();
-     if (!visual.Activated) {
-      sb.AppendLine($"[FAIL] Ch {level:D2}: Checkpoint failed to activate!");
-      failCount++;
-      continue;
-     }
-
-     sb.AppendLine($"[PASS] Chapter {level:D2} (Realm {realm}): 1 Checkpoint at {cp.transform.position}, 3D Pedestal=OK, Shards=4, Halos=2, Aura=OK, Activated=OK");
+     sb.AppendLine($"[PASS] Chapter {level:D2} (Realm {realm}): 2 Checkpoints at [{checkpoints[0].transform.position}, {checkpoints[1].transform.position}], 3D Pedestals=OK, Shards=4, Halos=2, Aura=OK, Activated=OK");
      passCount++;
 
     } catch (Exception ex) {

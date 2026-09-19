@@ -161,8 +161,11 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     var islandObj=Island(p,width,length,i,arch,last&&IsBoss);if(i==0)Spawn=p+Vector3.up*.05f;
     for(int j=-1;j<=1;j++){float py=(arch==IslandArchetype.TieredPlatform&&j<0)?2.1f:.8f;Pickup(p+new Vector3(0,py,j*2.2f),false);}
     if(i>1&&!last&&i%2==0){var side=p+new Vector3((i%4==0?-1:1)*9.5f,1.2f,0);Island(side,4.8f,5.3f,100+i);Pickup(side+Vector3.up*.9f,true);if(i==6||i==10){var move=FindIsland(side);if(move){var motion=move.AddComponent<MovingIsland>();motion.Origin=move.transform.position;motion.Offset=new Vector3(0,0,1.3f);motion.AddThrusters(accent);}}}
-     int mid=count/2;
-     if(i==mid)Checkpoint(p+new Vector3(-2.2f,0,-0.8f));
+     int mid1=count/3,mid2=(count*2)/3;
+     if(i==mid1||i==mid2){
+      float cpX=Mathf.Clamp(-2.2f,-width*.35f,width*.35f);
+      Checkpoint(p+new Vector3(cpX,0,-0.8f));
+     }
     if(i>=2&&i%4==0){float hx=(i%2==0?-1:1)*(1.2f+(float)random.NextDouble()*.9f);HealPickup(p+new Vector3(hx,.6f,-1.2f+(float)random.NextDouble()*2.4f));}
     if(i==weaponIsland)WeaponDrop(p+new Vector3((i%2==0?-2.3f:2.3f),.18f,-1.4f),weaponId);
     if(stage>=2&&!last&&(i==3||i==7)){
