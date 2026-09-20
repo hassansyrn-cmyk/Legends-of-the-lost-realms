@@ -40,7 +40,13 @@ Color[] sunColors={new Color(1f,.94f,.82f),new Color(1f,.86f,.69f),new Color(.82
     var post=Camera.main.GetComponent<RealmPostFx>();
     Color[] postTints={new Color(.99f,1f,.99f),new Color(1.02f,1f,.97f),new Color(.97f,1f,1.03f),new Color(1.01f,.99f,1.02f)};
     float[] postBloom={.28f,.3f,.32f,.26f};
-    if(post)post.Configure(postTints[realm],postBloom[realm]);
+    // Height fog per realm: the cloud sea below the route reads as thick
+    // atmosphere; dunes haze lighter, frozen air crisper.
+    float[] fogDensity={.13f,.10f,.17f,.14f};
+    if(post){
+     post.Configure(postTints[realm],postBloom[realm]);
+     post.ConfigureFog(RenderSettings.fogColor,fogDensity[realm],-2f);
+    }
    }
    CreateAurora();CreateAmbience();
   }

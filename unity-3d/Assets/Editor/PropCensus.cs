@@ -6,7 +6,7 @@ namespace LostRealms {
  public static class PropCensus {
   public static void Run(){
    var sb=new StringBuilder();
-   string[] roots={"Assets/Resources/Props/Nature","Assets/Resources/Props/Desert","Assets/Resources/Props/Snow","Assets/Resources/Props/Village","Assets/Resources/Characters"};
+   string[] roots={"Assets/Resources/Props/Nature","Assets/Resources/Props/Desert","Assets/Resources/Props/Snow","Assets/Resources/Props/Village","Assets/Resources/Props/Traps","Assets/Resources/Characters"};
    foreach(var root in roots){
     if(!Directory.Exists(root))continue;
     foreach(var file in Directory.GetFiles(root)){

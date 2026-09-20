@@ -127,7 +127,8 @@ namespace LostRealms {
     Vector3 haloScale=prefab?Vector3.one*(.52f-i*.1f):Vector3.one*(1.12f-i*.22f);
     var ring=MeshObject("Floating checkpoint rune",root,Halo,glow,haloPos,haloScale).transform;ring.localRotation=Quaternion.Euler(i==0?0:72,i*32,0);visual.Halos.Add(ring);visual.GlowRenderers.Add(ring.GetComponent<Renderer>());
    }
-   var light=root.gameObject.AddComponent<Light>();light.type=LightType.Point;light.color=accent;light.range=8.0f;light.intensity=.55f;light.shadows=LightShadows.None;light.transform.localPosition=Vector3.up*1.35f;visual.Aura=light;
+   var lightObj=new GameObject("Checkpoint light");lightObj.transform.SetParent(root,false);lightObj.transform.localPosition=Vector3.up*1.35f;
+   var light=lightObj.AddComponent<Light>();light.type=LightType.Point;light.color=accent;light.range=8.0f;light.intensity=.55f;light.shadows=LightShadows.None;visual.Aura=light;
   }
  }
 

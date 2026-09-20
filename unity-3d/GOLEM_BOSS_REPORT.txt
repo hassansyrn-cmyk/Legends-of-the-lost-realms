@@ -2,15 +2,24 @@ Golem boss setup
 Heartwood_idle: 1.333s loop=true
 Heartwood_walk: 1.333s loop=true
 Heartwood_attack: 2.667s loop=false
+Heartwood_attack_2: 2.000s loop=false
+Heartwood_victory: 2.667s loop=false
+Heartwood_gethit: 1.333s loop=false
 Heartwood_death: 1.200s loop=false
 Heartwood: fbx=Assets/Resources/Characters/Heartwood.fbx tint=RGBA(0.620, 0.950, 0.580, 1.000)
 Sunscar_idle: 1.333s loop=true
 Sunscar_walk: 1.333s loop=true
 Sunscar_attack: 2.667s loop=false
+Sunscar_attack_2: 2.000s loop=false
+Sunscar_victory: 2.667s loop=false
+Sunscar_gethit: 1.333s loop=false
 Sunscar_death: 1.200s loop=false
 Sunscar: fbx=Assets/Resources/Characters/Sunscar.fbx tint=RGBA(1.000, 0.840, 0.580, 1.000)
 Whiteout_idle: 1.333s loop=true
 Whiteout_walk: 1.333s loop=true
 Whiteout_attack: 2.667s loop=false
+Whiteout_attack_2: 2.000s loop=false
+Whiteout_victory: 2.667s loop=false
+Whiteout_gethit: 1.333s loop=false
 Whiteout_death: 1.200s loop=false
 Whiteout: fbx=Assets/Resources/Characters/Whiteout.fbx tint=RGBA(0.620, 0.850, 1.050, 1.000)

@@ -21,7 +21,7 @@ namespace LostRealms {
   public static RealmTrials Build(RealmWorld world,int stage){
    if(world.IsBoss)return null;
    var trial=world.gameObject.AddComponent<RealmTrials>();trial.level=stage;trial.Kind=(TrialKind)((stage-1)%3);
-   var root=new GameObject("Optional trial shrine");root.transform.SetParent(world.transform,false);root.transform.position=world.Route[1]+new Vector3(-2.65f,.14f,0);trial.shrine=root.transform;
+   var root=new GameObject("Optional trial shrine");root.transform.SetParent(world.transform,false);root.transform.position=(world.Route.Count>1?world.Route[1]:world.Route.Count>0?world.Route[0]:Vector3.zero)+new Vector3(-2.65f,.14f,0);trial.shrine=root.transform;
    Color stone=new Color(.19f,.24f,.27f);Color accent=Color.Lerp(GameColor(),Color.white,.35f);
    Art.Shape("Trial plinth",PrimitiveType.Cylinder,Vector3.down*.04f,new Vector3(.95f,.12f,.95f),stone,root.transform);
    trial.border=CombatTelegraph.Ring(root.transform,1.45f,accent,"Invitation ring");

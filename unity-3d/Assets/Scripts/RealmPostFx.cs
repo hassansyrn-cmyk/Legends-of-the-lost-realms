@@ -6,8 +6,16 @@ namespace LostRealms {
  // reads brighter. Toggleable from the Sanctuary (Save.postFx).
  public sealed class RealmPostFx:MonoBehaviour {
   Material mat;Color tint=Color.white;float bloom=.3f,kick;
-  void OnEnable(){if(!mat){var shader=Resources.Load<Shader>("Shaders/RealmPost");if(shader)mat=new Material(shader);}}
+  float fogDensity,fogSeaY=-2f;Color fogTint=new Color(.4f,.5f,.6f);
+  void OnEnable(){
+   if(!mat){var shader=Resources.Load<Shader>("Shaders/RealmPost");if(shader)mat=new Material(shader);}
+   var cam=GetComponent<Camera>();
+   if(cam)cam.depthTextureMode|=DepthTextureMode.Depth;
+  }
   public void Configure(Color t,float bloomAmount=.55f){tint=t;bloom=bloomAmount;if(mat){mat.SetColor("_Tint",tint);mat.SetFloat("_Bloom",bloom);}}
+  // Height-fog parameters: tint follows the realm fog colour so the wash
+  // blends with the horizon; sea level sits just under the island deck.
+  public void ConfigureFog(Color fogColor,float density,float seaY){fogTint=fogColor;fogDensity=density;fogSeaY=seaY;}
   public void Kick(float amount){kick=Mathf.Max(kick,Mathf.Clamp(amount,0,.3f));}
   void OnRenderImage(RenderTexture src,RenderTexture dst){
    var g=RealmGame.I;
@@ -24,6 +32,20 @@ namespace LostRealms {
     if(frac<.3f)damage=(.3f-frac)/.3f*(.5f+.18f*Mathf.Sin(Time.unscaledTime*5.5f));
    }
    mat.SetFloat("_Damage",damage);
+   // Height fog uniforms + far-plane corner rays for the depth→world rebuild.
+   mat.SetFloat("_HeightFog",fogDensity);mat.SetFloat("_HeightFogY",fogSeaY);
+   mat.SetColor("_FogTint",fogTint);
+   var cam=GetComponent<Camera>();
+   if(cam){
+    float far=cam.farClipPlane;
+    float halfH=Mathf.Tan(cam.fieldOfView*.5f*Mathf.Deg2Rad)*far;
+    float halfW=halfH*cam.aspect;
+    var fwd=cam.transform.forward;var up=cam.transform.up;var right=cam.transform.right;
+    mat.SetVector("_RayTL",fwd*far-right*halfW+up*halfH);
+    mat.SetVector("_RayTR",fwd*far+right*halfW+up*halfH);
+    mat.SetVector("_RayBL",fwd*far-right*halfW-up*halfH);
+    mat.SetVector("_RayBR",fwd*far+right*halfW-up*halfH);
+   }
    // Quarter-resolution bloom keeps the wide blur affordable on mobile.
    int width=Mathf.Max(1,src.width/4),height=Mathf.Max(1,src.height/4);
    var bright=RenderTexture.GetTemporary(width,height,0,src.format);

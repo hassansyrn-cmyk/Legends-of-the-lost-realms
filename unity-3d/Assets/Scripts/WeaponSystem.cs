@@ -147,7 +147,7 @@ public static class WeaponCatalog {
   public WeaponId Id;GameObject model;
   Hero hero;Transform hand;float drawnUntil,draw;
   Vector3 bladeDir=Vector3.up,flatDir=Vector3.forward,center;bool measured;
-  static readonly float BackGap=.15f;
+  TrailRenderer trail;static readonly float BackGap=.15f;
   public static void Equip(Hero hero,WeaponId id){
    var old=hero.GetComponentInChildren<EquippedWeapon>();if(old)UnityEngine.Object.Destroy(old.gameObject);
    var definition=WeaponCatalog.Get(id);
@@ -157,7 +157,28 @@ public static class WeaponCatalog {
    if(!equipped.model){UnityEngine.Object.Destroy(root);return;}
    equipped.model.transform.localPosition=Vector3.zero;equipped.model.transform.localRotation=Quaternion.Euler(definition.EquipEuler);
    equipped.Measure();
+   equipped.BuildTrail(definition);
    equipped.Sheath(out var pos,out var rot);equipped.transform.SetPositionAndRotation(pos,rot);
+  }
+  // Elemental ribbon trail anchored to the blade tip: sampled while the weapon
+  // is drawn and swinging, tinted by the weapon's affinity (or Aster's current
+  // element for mundane steel), so every swing reads with its element.
+  void BuildTrail(WeaponDefinition definition){
+   var renderer=model.GetComponentInChildren<Renderer>();if(!renderer)return;
+   var size=renderer.localBounds.size;
+   Vector3 axis=size.x>=size.y&&size.x>=size.z?Vector3.right:size.y>=size.x&&size.y>=size.z?Vector3.up:Vector3.forward;
+   var tip=renderer.transform.Find("Blade tip");
+   if(!tip){tip=new GameObject("Blade tip").transform;tip.SetParent(renderer.transform,false);}
+   tip.localPosition=renderer.localBounds.center+Vector3.Scale(axis,renderer.localBounds.extents);
+   int affinity=WeaponCatalog.Affinity(definition);
+   Color color=affinity>=0?RealmGame.ElementColors[affinity]:new Color(.85f,.92f,1f);
+   trail=tip.gameObject.AddComponent<TrailRenderer>();
+   trail.time=.13f;trail.numCapVertices=2;trail.numCornerVertices=2;trail.alignment=LineAlignment.View;
+   trail.minVertexDistance=.06f;trail.emitting=false;
+   trail.widthCurve=new AnimationCurve(new Keyframe(0f,.05f),new Keyframe(1f,0f));
+   var mat=new Material(Shader.Find("Sprites/Default")){name="Weapon trail"};
+   mat.color=new Color(color.r,color.g,color.b,.85f);
+   trail.material=mat;trail.shadowCastingMode=ShadowCastingMode.Off;trail.receiveShadows=false;
   }
   // The FBX pivots are arbitrary, so measure where the blade and the visual
   // center really are: the sheathed pose then puts the actual mesh against
@@ -193,6 +214,7 @@ public static class WeaponCatalog {
    string state=hero.Visual.CurrentState;
    if(state.StartsWith("attack_")||state=="charged")drawnUntil=Time.time+1.1f;
    bool shouldDraw=Time.time<drawnUntil;
+   if(trail)trail.emitting=shouldDraw&&draw>=.9f;
    draw=Mathf.MoveTowards(draw,shouldDraw?1f:0f,Time.deltaTime*(shouldDraw?9f:3.5f));
    if(draw>=1f){transform.SetPositionAndRotation(hand.position,hand.rotation);return;}
    Sheath(out var pos,out var rot);

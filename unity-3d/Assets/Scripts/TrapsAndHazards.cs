@@ -563,15 +563,27 @@ namespace LostRealms {
  // 6. CRUMBLING FALLING PLATFORM
  // =========================================================================
  public sealed class CrumblePlatform:MonoBehaviour {
-  Vector3 origin;Quaternion originRot;float shakeTimer,respawnTimer;
-  enum State{Idle,Shaking,Falling,Respawning}State state=State.Idle;
+  public static readonly List<CrumblePlatform> All=new List<CrumblePlatform>();
+  Vector3 origin;Quaternion originRot;float shakeTimer;
+  enum State{Idle,Shaking,Falling,Fallen}State state=State.Idle;
   Renderer[] renderers;Collider[] colliders;float fallVelocity;
+  void OnEnable(){if(!All.Contains(this))All.Add(this);}
+  void OnDisable(){All.Remove(this);}
   public static CrumblePlatform Attach(GameObject island){
    var cp=island.AddComponent<CrumblePlatform>();
    cp.origin=island.transform.position;cp.originRot=island.transform.rotation;
    cp.renderers=island.GetComponentsInChildren<Renderer>();
    cp.colliders=island.GetComponentsInChildren<Collider>();
    return cp;
+  }
+
+  public void ResetPlatform(){
+   transform.position=origin;transform.rotation=originRot;
+   SetVisible(true);state=State.Idle;fallVelocity=0;shakeTimer=0;
+  }
+
+  public static void ResetAll(){
+   for(int i=All.Count-1;i>=0;i--)if(All[i])All[i].ResetPlatform();
   }
 
   void Update(){
@@ -598,19 +610,24 @@ namespace LostRealms {
      break;
     case State.Falling:
      fallVelocity+=28f*Time.deltaTime;
-     transform.position+=Vector3.down*fallVelocity*Time.deltaTime;
-     if(transform.position.y<origin.y-8f){
-      SetVisible(false);state=State.Respawning;respawnTimer=0;
+     Vector3 delta=Vector3.down*fallVelocity*Time.deltaTime;
+     transform.position+=delta;
+     if(g.Enemies!=null){
+      foreach(var foe in g.Enemies){
+       if(!foe||foe.Health<=0)continue;
+       if(Physics.Raycast(foe.transform.position+Vector3.up*.5f,Vector3.down,out var fhit,1.6f,~0,QueryTriggerInteraction.Ignore)&&fhit.transform.IsChildOf(transform)){
+        foe.transform.position+=delta;
+        foe.ShiftCenter(delta);
+        if(foe.transform.position.y<origin.y-12f)foe.Hit(999f,0,false,Vector3.down);
+       }
+      }
+     }
+     if(transform.position.y<origin.y-18f){
+      SetVisible(false);state=State.Fallen;
      }
      break;
-    case State.Respawning:
-     respawnTimer+=Time.deltaTime;
-     if(respawnTimer>=3.2f){
-      transform.position=origin;transform.rotation=originRot;
-      SetVisible(true);state=State.Idle;
-      Vfx.Play("ga_vfx_Portal_02",transform.position+Vector3.up*.5f,Quaternion.identity,.9f);
-      HitSpark.Burst(transform.position+Vector3.up*.5f,Vector3.up,g.Accent,14);
-     }
+    case State.Fallen:
+     // Permanently fallen: does not go back up while player is in stage
      break;
    }
   }
@@ -629,6 +646,7 @@ namespace LostRealms {
   public static SpeedRing Place(Transform parent,Vector3 localPos,Vector3 direction,Color accent){
    var go=new GameObject("Aether Speed Ring");go.transform.SetParent(parent,false);go.transform.localPosition=localPos;
    go.transform.rotation=Quaternion.LookRotation(direction);
+   TrapArt.Reserve(parent,localPos,3.2f);
    var ringPrefab=Resources.Load<GameObject>("Props/RunicSpeedRing");
    if(ringPrefab){
     var ring=Instantiate(ringPrefab,go.transform,false);

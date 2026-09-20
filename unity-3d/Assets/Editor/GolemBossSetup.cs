@@ -13,10 +13,13 @@ public static class GolemBossSetup {
  const string SrcTex="Assets/Art/Enemies/Golem/AlbedoGolem.png";
  static readonly string[][] Clips={
   new[]{"idle","Idle","true"},new[]{"walk","Walk","true"},
-  new[]{"attack","Attack01","false"},new[]{"death","Die","false"}};
- static readonly string[] Roles={"Heartwood","Sunscar","Whiteout"};
+  new[]{"attack","Attack01","false"},
+  // Moveset expansion (Sep 2026 boss pass): second swing, phase-transition
+  // flourish and hit stagger from the same Dungeon Mason package.
+  new[]{"attack_2","Attack02","false"},new[]{"victory","Victory","false"},new[]{"gethit","GetHit","false"},
+  new[]{"death","Die","false"}};
+ static readonly string[] Roles={"Sunscar","Whiteout"};
  static readonly Color[] Tints={
-  new Color(.62f,.95f,.58f),   // Heartwood: mossy green
   new Color(1f,.84f,.58f),     // Sunscar: sun-bleached sand
   new Color(.62f,.85f,1.05f)}; // Whiteout: glacial blue
 

@@ -4,7 +4,7 @@ using UnityEngine;
 namespace LostRealms {
  public enum GameScreen { Menu, Map, Playing, Paused, Complete, Defeated, Settings }
 [Serializable] public class Progress {
-   public int version=2;public int unlocked=1, equippedWeapon=-1, coins, gems, healthRank, powerRank, arsenalRank, aetherRank, moxieRank, tempoRank, windRank; public int[] stars=new int[15]; public float[] best=new float[15]; public bool music=true,sound=true,postFx=true,shake=true;
+   public int version=2;public int unlocked=1, equippedWeapon=-1, coins, gems, healthRank, powerRank, arsenalRank, aetherRank, moxieRank, tempoRank, windRank; public int[] stars=new int[15]; public float[] best=new float[15]; public bool music=true,sound=true,postFx=true,shake=true,haptics=true;
   }
  public class RealmGame : MonoBehaviour {
   public static RealmGame I; public static bool Testing=>Array.IndexOf(Environment.GetCommandLineArgs(),"-realmTest")>=0; public static readonly string[] Titles={"Mosslight Trail","Whispering Falls","Rootbound Ruins","The Elder Grove","Sunscorched Pass","Temple of Keys","Sandstone Colossus","Frostwind Climb","Crystal Hollow","Crown of Winter","Ember Foothills","Brimstone Rampart","Cindervein Gorge","Obsidian Ascent","Emberfall Summit"};
@@ -94,6 +94,9 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
   public void Tell(string message,float seconds=3){Notice=message;noticeUntil=Time.unscaledTime+seconds;}
    public void ComboHit(){Combo++;comboUntil=Elapsed+1.1f;}
   public void Sound(string name){if(Audio)Audio.Play(name);}
+  // Short vibration tick on key feedback moments (parry, perfect dodge).
+  // Mobile only, and gated by the Sanctuary HAPTICS toggle.
+  public void Haptic(){if(Save.haptics&&Application.isMobilePlatform)Handheld.Vibrate();}
    public void TrapSound(string name,Vector3 position,float minDistance=3f,float maxDistance=15f,float volumeMul=1f){
     if(Audio)Audio.PlaySpatial(name,position,minDistance,maxDistance,volumeMul);
    }
@@ -107,7 +110,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    var weapon=CurrentWeapon;Sound("weapon_pickup");Tell("EQUIPPED  "+weapon.Name+"  /  "+weapon.Summary,4.5f);
   }
   public void ActivateCheckpoint(Vector3 position){Checkpoint=position;CheckpointActive=true;Sound("checkpoint");Tell("Checkpoint restored. Your trail is safe.");}
-  public void Respawn(){Player.Warp(Checkpoint);Player.Health=Player.MaxHealth;Player.Energy=100;Sound("respawn");Vfx.Play("ga_vfx_Portal_01",Checkpoint,Quaternion.identity,1.1f);Tell("Returned to the checkpoint.");}
+  public void Respawn(){Player.Warp(Checkpoint);Player.Health=Player.MaxHealth;Player.Energy=100;CrumblePlatform.ResetAll();Sound("respawn");Vfx.Play("ga_vfx_Portal_01",Checkpoint,Quaternion.identity,1.1f);Tell("Returned to the checkpoint.");}
   public void Defeat(){Screen=GameScreen.Defeated;Sound("defeat");if(CameraRig)CameraRig.ZoomBias=1.6f;}
   public void Finish(){if(Screen!=GameScreen.Playing)return;if(World.IsBoss&&Enemies.Exists(x=>x&&x.Boss&&x.Health>0)){Tell("Defeat the guardian to open this gate.");return;}
 EarnedStars=1+(Gems>0?1:0)+(DamageTaken==0?1:0); Save.stars[Level-1]=Mathf.Max(Save.stars[Level-1],EarnedStars); if(Save.best[Level-1]<=0||Elapsed<Save.best[Level-1])Save.best[Level-1]=Elapsed;
@@ -266,6 +269,29 @@ Panel(390,105,500,68);
     }
 
     MiniMap();
+
+    // Off-screen danger arrows: pulsing diamonds on the screen edge point at
+    // telegraphing enemies outside the view, so nothing hits from off-screen
+    // without warning.
+    if(Camera.main){
+     foreach(var foe in Enemies){
+      if(!foe||foe.Health<=0||!foe.Telegraphing)continue;
+      if(Vector3.Distance(Player.transform.position,foe.transform.position)>34)continue;
+      Vector3 v=Camera.main.WorldToViewportPoint(foe.transform.position+Vector3.up*1.2f);
+      bool behind=v.z<0f;
+      float vx=behind?-v.x:v.x;
+      if(!behind&&v.x>.04f&&v.x<.96f&&v.y>.06f&&v.y<.94f)continue;
+      float sx=Mathf.Clamp(vx,.05f,.95f)*1280f;
+      float sy=(1f-Mathf.Clamp(v.y,.07f,.93f))*720f;
+      float ang=Mathf.Atan2(sy-360f,sx-640f)*Mathf.Rad2Deg+45f;
+      float pulse=.5f+.45f*Mathf.Sin(Time.unscaledTime*9f);
+      Color warn=new Color(1f,.28f,.2f,pulse);
+      var matrix=GUI.matrix;
+      GUIUtility.RotateAroundPivot(ang,new Vector2(sx,sy));
+      Box(new Rect(sx-11,sy-11,22,22),warn);
+      GUI.matrix=matrix;
+     }
+    }
     if(Trial){
      Panel(28,280,300,112);
      Text(42,290,270,22,Trial.Title,small);
@@ -376,7 +402,8 @@ Panel(390,105,500,68);
     }
     if(Button(240,566,385,46,"VISUAL FX: "+(Save.postFx?"ENHANCED":"OFF"))){Save.postFx=!Save.postFx;Persist();}
     if(Button(655,566,385,46,"SCREEN SHAKE: "+(Save.shake?"ENABLED":"OFF"))){Save.shake=!Save.shake;Persist();}
-    if(Button(240,624,800,48,"◄ BACK"))Screen=GameScreen.Menu;
+    if(Button(240,624,385,46,"HAPTICS: "+(Save.haptics?"ON":"OFF"))){Save.haptics=!Save.haptics;Persist();}
+    if(Button(655,624,385,46,"◄ BACK"))Screen=GameScreen.Menu;
     return;
    }
 

@@ -6,6 +6,9 @@ namespace LostRealms {
  // so the realms use real models instead of primitives. Models live in
  // Resources/Props/Nature; one shared palette texture feeds a single material.
  public static class RealmProps {
+  // World-space spawn point of the current chapter: props keep a 2.6 m clear
+  // radius around it so Aster can never be wedged in at level start.
+  public static Vector3 SpawnGuard;
    static readonly Material[] byRealm=new Material[4];
    static readonly Dictionary<string,GameObject> cache=new Dictionary<string,GameObject>();
    static Material stoneMat;
@@ -61,13 +64,12 @@ if(realm==1)return new[]{new[]{"House_01","House_02","Tower_01","Ruin_01","Gate_
   }
   public static void Scatter(Transform world,int realm,System.Random rng){
    var material=ForRealm(realm);if(!material)return;
-   var sets=Sets(realm);
-   foreach(Transform island in world){
+   var sets=Sets(realm);   foreach(Transform island in world){
     if(island.name!="Island")continue;
     var surface=island.Find("Realm surface");if(!surface)continue;
     float width=surface.localScale.x-.08f,length=surface.localScale.z-.08f;
     if(width<=7.5f)continue;
-if(realm==1){PlaceDesertBuildings(island,width,length,rng,material);}
+if(realm==1){if(!island.Find("BossArenaMarker"))PlaceDesertBuildings(island,width,length,rng,material);}
      else{
       int trees=2+rng.Next(0,2);
       for(int i=0;i<trees;i++)Place(island,realm,sets[0][rng.Next(sets[0].Length)],width,length,rng,realm==0?3.2f:2.6f,3.6f,material);
@@ -123,6 +125,13 @@ static void PlaceVillage(Transform island,int realm,float width,float length,Sys
      int side=rng.Next(0,2)==0?-1:1;
      float x=side*Mathf.Min(halfWidth,1.4f+(float)rng.NextDouble()*halfWidth);
      float z=((float)rng.NextDouble()-.5f)*Mathf.Max(.6f,length-1.8f);
+     // Keep props off trap spots (reserved circles) and away from the chapter
+     // spawn point — a rock beside Aster's landing can wedge the capsule.
+     if(!TrapArt.IsClear(island,new Vector3(x,.05f,z),.9f))return;
+     if(SpawnGuard!=Vector3.zero){
+      var surfaceY=island.parent?island.position:Vector3.zero;
+      if(Vector3.Distance(island.TransformPoint(new Vector3(x,.05f,z)),SpawnGuard)<2.6f)return;
+     }
      float localY=.02f;
      bool valid=false;
      for(int attempt=0;attempt<6;attempt++){
@@ -219,6 +228,9 @@ if(prop.name.StartsWith("Prop Tree")){
     static void PlaceBuilding(Transform island,string name,float xMag,int side,float z,System.Random rng,Material material,bool gateway){
      var source=Model("Desert",name);if(!source)return;
      float x=gateway?0f:side*xMag;
+     // Buildings honour trap reservations too — a tent on the serpent statue
+     // was possible because this path bypassed Place().
+     if(!TrapArt.IsClear(island,new Vector3(x,.08f,z),1.4f))return;
      float localY=.02f;
      bool valid=false;
      for(int attempt=0;attempt<6;attempt++){

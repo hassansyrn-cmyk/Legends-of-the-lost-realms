@@ -1,0 +1,825 @@
+================================================================================
+          LEGEND OF THE LOST REALMS - DEEP CHAPTER-BY-CHAPTER INSPECTION        
+================================================================================
+Timestamp: 2026-09-20 15:31:38 UTC
+
+--------------------------------------------------------------------------------
+CHAPTER 01 - REALM 0 (VERDANT) 
+--------------------------------------------------------------------------------
+[1. ISLANDS & ROUTE]
+  Island Count: 17 (Route Points: 12)
+  Route Span: Start=(0.0, 0.0, 0.0) -> End=(0.0, 0.0, 110.0) (Total Path Length: 110.9m)
+  - Island #09 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.30), Speed=1.20, Origin=(7.5, 1.3, 60.0)
+  - Island #15 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.30), Speed=1.20, Origin=(10.5, 1.3, 100.0)
+  Moving Islands: 2
+[2. ASTER SPAWN]
+  Spawn Pos: (0.00, 0.05, 0.00)
+  Ground Contact: Solid! Distance=0.53m, Normal=(0.00, 1.00, 0.00), Hit=Walkable stone
+  Colliders within 2.2m of spawn: Walkable stone (BoxCollider, dist=0.03m), Prop rpgpp_lt_sack_01 (BoxCollider, dist=1.94m), Prop Crystal (BoxCollider, dist=1.41m)
+[3. CHECKPOINTS]
+  Count: 2
+  - Checkpoint #1: Pos=(-0.20, 0.02, 29.50), SpawnPoint=(1.25, 0.07, 31.15), RespawnDist=2.20m, GroundOffset=0.00m, SolidCol=True, VisualOk=True
+  - Checkpoint #2: Pos=(-2.98, -0.01, 69.50), SpawnPoint=(-1.61, 0.04, 71.22), RespawnDist=2.20m, GroundOffset=0.00m, SolidCol=True, VisualOk=True
+[4. TRAPS & HAZARDS]
+  Total Traps: 2
+  - Trap 'Spike Trap': Pos=(2.00, 0.14, 30.00), BoundsSize=(2.00, 3.21, 2.00), Collider=NONE
+  - Trap 'Spike Trap': Pos=(2.00, 0.14, 90.00), BoundsSize=(2.00, 3.21, 2.00), Collider=NONE
+[5. ENEMIES]
+  Total Enemies: 9
+  - Enemy Kind=3 (Minion): Pos=(3.80, 0.77, 21.00), HP=3/3, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=4 (Minion): Pos=(3.80, 0.07, 31.00), HP=3/3, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=5 (Minion): Pos=(0.00, 0.07, 40.00), HP=3/3, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=6 (Minion): Pos=(0.80, 0.73, 51.00), HP=3/3, OverVoid=False, AnchorDist=1.25m
+  - Enemy Kind=7 (Minion): Pos=(-0.20, 0.07, 61.00), HP=3/3, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=0 (Minion): Pos=(0.80, 0.03, 71.00), HP=3/3, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=1 (Minion): Pos=(1.80, 0.77, 81.00), HP=3/3, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=2 (Minion): Pos=(3.80, 0.07, 91.00), HP=3/3, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=3 (Minion): Pos=(1.00, 0.07, 100.00), HP=3/3, OverVoid=False, AnchorDist=0.83m
+[7. PICKUPS & PROPS]
+  Pickups: 41 gems/coins, Heals: 2, Weapon Drops: 1
+  - Weapon Drop: Id=BlinkAxe (GREATAXE) at (-0.30, 1.62, 18.60)
+  Total Scenery Props: 196, Floating Props: 0
+[8. LEVEL EXIT GATE]
+  Gate Pos: (0.00, 0.00, 115.00), Trigger Col=BoxCollider, Light=YES
+[9. VISUAL CAPTURE] Saved screenshot: Chapter_01.png
+
+--------------------------------------------------------------------------------
+CHAPTER 02 - REALM 0 (VERDANT) 
+--------------------------------------------------------------------------------
+[1. ISLANDS & ROUTE]
+  Island Count: 19 (Route Points: 12)
+  Route Span: Start=(0.0, 0.0, 0.0) -> End=(0.0, 1.2, 110.0) (Total Path Length: 113.4m)
+  - Island #10 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.30), Speed=1.20, Origin=(8.5, 2.5, 60.0)
+  - Island #17 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.30), Speed=1.20, Origin=(8.5, 2.5, 100.0)
+  Moving Islands: 2
+[2. ASTER SPAWN]
+  Spawn Pos: (0.00, 0.05, 0.00)
+  Ground Contact: Solid! Distance=0.53m, Normal=(0.00, 1.00, 0.00), Hit=Walkable stone
+  Colliders within 2.2m of spawn: Walkable stone (BoxCollider, dist=0.03m), Prop rpgpp_lt_crate_02 (BoxCollider, dist=1.08m), Prop Rock_01 (BoxCollider, dist=1.94m), Prop Rock_02 (BoxCollider, dist=1.49m), Breakable crate (BoxCollider, dist=1.93m)
+[3. CHECKPOINTS]
+  Count: 2
+  - Checkpoint #1: Pos=(-1.20, 0.62, 29.50), SpawnPoint=(0.25, 0.67, 31.15), RespawnDist=2.20m, GroundOffset=0.00m, SolidCol=True, VisualOk=True
+  - Checkpoint #2: Pos=(0.02, 0.59, 69.50), SpawnPoint=(1.39, 0.64, 71.22), RespawnDist=2.20m, GroundOffset=0.82m, SolidCol=True, VisualOk=True
+    [ANOMALY] Checkpoint floating above ground by 0.82m!
+[4. TRAPS & HAZARDS]
+  Total Traps: 2
+  - Trap 'Spike Trap': Pos=(1.00, 0.74, 30.00), BoundsSize=(2.00, 3.21, 2.00), Collider=NONE
+  - Trap 'Spike Trap': Pos=(2.00, 0.74, 90.00), BoundsSize=(2.00, 3.21, 2.00), Collider=NONE
+[5. ENEMIES]
+  Total Enemies: 9
+  - Enemy Kind=4 (Minion): Pos=(5.80, 1.27, 21.00), HP=4/4, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=5 (Minion): Pos=(2.80, 0.67, 31.00), HP=4/4, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=6 (Minion): Pos=(-2.00, 0.07, 40.00), HP=4/4, OverVoid=False, AnchorDist=1.25m
+  - Enemy Kind=7 (Minion): Pos=(-4.00, 0.90, 50.00), HP=4/4, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=0 (Minion): Pos=(0.80, 1.27, 61.00), HP=4/4, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=1 (Minion): Pos=(3.80, 0.63, 71.00), HP=4/4, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=2 (Minion): Pos=(5.80, 0.07, 81.00), HP=4/4, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=3 (Minion): Pos=(3.80, 0.67, 91.00), HP=4/4, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=4 (Minion): Pos=(-1.00, 1.27, 100.00), HP=4/4, OverVoid=False, AnchorDist=0.82m
+[7. PICKUPS & PROPS]
+  Pickups: 47 gems/coins, Heals: 2, Weapon Drops: 1
+  - Weapon Drop: Id=AxeBattle (BATTLE AXE) at (-4.30, 1.02, 38.60)
+  Total Scenery Props: 149, Floating Props: 0
+[8. LEVEL EXIT GATE]
+  Gate Pos: (0.00, 1.20, 115.00), Trigger Col=BoxCollider, Light=YES
+[9. VISUAL CAPTURE] Saved screenshot: Chapter_02.png
+
+--------------------------------------------------------------------------------
+CHAPTER 03 - REALM 0 (VERDANT) 
+--------------------------------------------------------------------------------
+[1. ISLANDS & ROUTE]
+  Island Count: 20 (Route Points: 13)
+  Route Span: Start=(0.0, 0.0, 0.0) -> End=(-2.6, 2.7, 120.0) (Total Path Length: 123.9m)
+  - Island #09 (MOVER): Style=PingPongDwell, Offset=(3.80, 0.00, 0.00), Speed=1.42, Origin=(2.0, 1.7, 60.0)
+  - Island #10 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.30), Speed=1.20, Origin=(11.5, 2.9, 60.0)
+  - Island #17 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.30), Speed=1.20, Origin=(10.5, 2.9, 100.0)
+  Moving Islands: 3
+[2. ASTER SPAWN]
+  Spawn Pos: (0.00, 0.05, 0.00)
+  Ground Contact: Solid! Distance=0.53m, Normal=(0.00, 1.00, 0.00), Hit=Walkable stone
+  Colliders within 2.2m of spawn: Walkable stone (BoxCollider, dist=0.03m), Prop rpgpp_lt_tree_02 (BoxCollider, dist=1.22m), Prop Rock_01 (BoxCollider, dist=1.78m)
+[3. CHECKPOINTS]
+  Count: 2
+  - Checkpoint #1: Pos=(-4.20, 0.82, 29.50), SpawnPoint=(-2.75, 0.87, 31.15), RespawnDist=2.20m, GroundOffset=0.00m, SolidCol=True, VisualOk=True
+  - Checkpoint #2: Pos=(-2.98, 0.79, 69.50), SpawnPoint=(-1.61, 0.84, 71.22), RespawnDist=2.20m, GroundOffset=0.00m, SolidCol=True, VisualOk=True
+[4. TRAPS & HAZARDS]
+  Total Traps: 3
+  - Trap 'Floor Blade Trap': Pos=(-2.00, 0.94, 30.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+  - Trap 'Floor Blade Trap': Pos=(-2.00, 0.94, 90.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+  - Trap 'Spike Trap': Pos=(-2.80, 0.97, 91.00), BoundsSize=(2.00, 3.21, 2.00), Collider=NONE
+    [ANOMALY] Trap 'Spike Trap' overlaps another trap (dist=1.28m)!
+[5. ENEMIES]
+  Total Enemies: 10
+  - Enemy Kind=11 (Minion): Pos=(-2.20, 3.97, 21.00), HP=4/4, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=6 (Minion): Pos=(-0.20, 0.87, 31.00), HP=4/4, OverVoid=False, AnchorDist=1.25m
+  - Enemy Kind=7 (Minion): Pos=(1.00, 0.07, 40.00), HP=4/4, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=0 (Minion): Pos=(4.00, 1.10, 50.00), HP=4/4, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=1 (Minion): Pos=(3.80, 1.67, 61.00), HP=4/4, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=18 (Minion): Pos=(0.80, 0.83, 71.00), HP=4/4, OverVoid=False, AnchorDist=0.30m
+  - Enemy Kind=11 (Minion): Pos=(-2.20, 2.37, 81.00), HP=4/4, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=4 (Minion): Pos=(-0.20, 0.87, 91.00), HP=4/4, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=5 (Minion): Pos=(1.00, 1.67, 100.00), HP=4/4, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=6 (Minion): Pos=(0.00, 1.90, 110.00), HP=4/4, OverVoid=False, AnchorDist=1.25m
+[7. PICKUPS & PROPS]
+  Pickups: 50 gems/coins, Heals: 3, Weapon Drops: 1
+  - Weapon Drop: Id=RiftDagger (RIFT DAGGER) at (1.30, 1.69, 68.60)
+  Total Scenery Props: 138, Floating Props: 0
+[8. LEVEL EXIT GATE]
+  Gate Pos: (-2.60, 2.69, 125.00), Trigger Col=BoxCollider, Light=YES
+[9. VISUAL CAPTURE] Saved screenshot: Chapter_03.png
+
+--------------------------------------------------------------------------------
+CHAPTER 04 - REALM 0 (VERDANT) [BOSS CHAPTER]
+--------------------------------------------------------------------------------
+[1. ISLANDS & ROUTE]
+  Island Count: 12 (Route Points: 8)
+  Route Span: Start=(0.0, 0.0, 0.0) -> End=(0.0, 1.0, 70.0) (Total Path Length: 71.1m)
+  - Island #08 (MOVER): Style=PingPongDwell, Offset=(-3.80, 0.00, 0.00), Speed=1.46, Origin=(-2.0, 0.6, 50.0)
+  - Island #10 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.30), Speed=1.20, Origin=(8.5, 2.3, 60.0)
+  Moving Islands: 2
+[2. ASTER SPAWN]
+  Spawn Pos: (0.00, 0.05, 0.00)
+  Ground Contact: Solid! Distance=0.53m, Normal=(0.00, 1.00, 0.00), Hit=Walkable stone
+  Colliders within 2.2m of spawn: Walkable stone (BoxCollider, dist=0.03m), Prop Bush_03 (BoxCollider, dist=2.14m), Prop Rock_02 (BoxCollider, dist=1.84m), Prop Crystal (BoxCollider, dist=2.09m)
+[3. CHECKPOINTS]
+  Count: 2
+  - Checkpoint #1: Pos=(0.80, 0.52, 29.50), SpawnPoint=(2.25, 0.57, 31.15), RespawnDist=2.20m, GroundOffset=0.00m, SolidCol=True, VisualOk=True
+  - Checkpoint #2: Pos=(-3.20, 1.12, 59.50), SpawnPoint=(-1.75, 0.16, 61.15), RespawnDist=2.40m, GroundOffset=0.00m, SolidCol=True, VisualOk=True
+[4. TRAPS & HAZARDS]
+  Total Traps: 2
+  - Trap 'Floor Blade Trap': Pos=(3.00, 0.64, 30.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+  - Trap 'Crusher pillar': Pos=(-0.51, 0.64, 30.00), BoundsSize=(2.75, 3.70, 2.74), Collider=BoxCollider
+[5. ENEMIES]
+  Total Enemies: 6
+  - Enemy Kind=11 (Minion): Pos=(3.80, 3.37, 21.00), HP=4/4, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=7 (Minion): Pos=(4.80, 0.57, 31.00), HP=4/4, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=0 (Minion): Pos=(1.00, 0.30, 40.00), HP=4/4, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=14 (Minion): Pos=(-0.20, 0.57, 51.00), HP=11/11, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=15 (Minion): Pos=(-1.00, 1.07, 60.00), HP=4/4, OverVoid=False, AnchorDist=0.72m
+  - Enemy Kind=8 (BOSS): Pos=(2.20, 1.05, 70.00), HP=24/24, OverVoid=False, AnchorDist=1.80m
+[6. BOSS SPECIFICATION]
+  Boss Name: Realm guardian, Kind=8, MaxHP=24, WeakElement=0
+  Golem Boss Controller (Combo/Slam/Charge): False
+  Lava Boss Controller (Warden/Greatsword): False
+  Visual Model: Heartwood visual, UsesFallback: False, HasAnimator: True
+  Boss Distance to Arena Center: 2.20m (Arena Center: (0.0, 1.0, 70.0))
+[7. PICKUPS & PROPS]
+  Pickups: 30 gems/coins, Heals: 1, Weapon Drops: 1
+  - Weapon Drop: Id=PureScythe (REAPER'S SCYTHE) at (0.30, 1.46, 48.60)
+  Total Scenery Props: 81, Floating Props: 0
+[8. LEVEL EXIT GATE]
+  Gate Pos: (0.00, 1.00, 75.00), Trigger Col=BoxCollider, Light=YES
+[9. VISUAL CAPTURE] Saved screenshot: Chapter_04.png
+
+--------------------------------------------------------------------------------
+CHAPTER 05 - REALM 1 (SUNSCAR) 
+--------------------------------------------------------------------------------
+[1. ISLANDS & ROUTE]
+  Island Count: 22 (Route Points: 14)
+  Route Span: Start=(0.0, 0.0, 0.0) -> End=(3.6, -0.3, 130.0) (Total Path Length: 135.4m)
+  - Island #09 (MOVER): Style=PingPongDwell, Offset=(3.60, 0.00, 0.00), Speed=1.50, Origin=(-3.0, 0.8, 60.0)
+  - Island #10 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.30), Speed=1.20, Origin=(6.5, 2.0, 60.0)
+  - Island #17 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.30), Speed=1.20, Origin=(11.5, 1.3, 100.0)
+  - Island #19 (MOVER): Style=PingPongDwell, Offset=(3.60, 0.00, 0.00), Speed=1.50, Origin=(-2.6, 1.2, 120.0)
+  Moving Islands: 4
+[2. ASTER SPAWN]
+  Spawn Pos: (0.00, 0.05, 0.00)
+  Ground Contact: Solid! Distance=0.53m, Normal=(0.00, 1.00, 0.00), Hit=Walkable stone
+  Colliders within 2.2m of spawn: Walkable stone (BoxCollider, dist=0.03m), Prop Rock_03 (BoxCollider, dist=1.60m), Breakable barrel (BoxCollider, dist=1.87m), Prop rpgpp_lt_rock_02 (BoxCollider, dist=2.12m), Prop rpgpp_lt_rock_small_01 (BoxCollider, dist=1.51m), Breakable crate (BoxCollider, dist=1.87m)
+[3. CHECKPOINTS]
+  Count: 2
+  - Checkpoint #1: Pos=(2.80, 1.23, 29.50), SpawnPoint=(4.25, 1.48, 31.15), RespawnDist=2.21m, GroundOffset=0.00m, SolidCol=True, VisualOk=True
+  - Checkpoint #2: Pos=(-6.98, 1.42, 69.50), SpawnPoint=(-5.61, 1.47, 71.22), RespawnDist=2.20m, GroundOffset=0.71m, SolidCol=True, VisualOk=True
+    [ANOMALY] Checkpoint floating above ground by 0.71m!
+[4. TRAPS & HAZARDS]
+  Total Traps: 4
+  - Trap 'Floor Blade Trap': Pos=(5.00, 1.29, 30.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+  - Trap 'Wind vent': Pos=(-4.50, 0.84, 60.00), BoundsSize=(1.50, 0.23, 1.50), Collider=CapsuleCollider
+  - Trap 'Floor Blade Trap': Pos=(0.00, 0.59, 90.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+  - Trap 'Wind vent': Pos=(-3.38, 0.59, 90.00), BoundsSize=(1.50, 0.23, 1.50), Collider=CapsuleCollider
+[5. ENEMIES]
+  Total Enemies: 11
+  - Enemy Kind=11 (Minion): Pos=(4.80, 3.77, 21.00), HP=5/5, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=0 (Minion): Pos=(6.80, 1.47, 31.00), HP=5/5, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=12 (Minion): Pos=(3.00, 0.77, 40.00), HP=5/5, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=14 (Minion): Pos=(0.00, 0.30, 50.00), HP=12/12, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=15 (Minion): Pos=(-1.20, 0.77, 61.00), HP=5/5, OverVoid=False, AnchorDist=0.72m
+  - Enemy Kind=16 (Minion): Pos=(-3.20, 1.47, 71.00), HP=5/5, OverVoid=False, AnchorDist=0.68m
+  - Enemy Kind=11 (Minion): Pos=(-1.20, 3.77, 81.00), HP=5/5, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=12 (Minion): Pos=(1.80, 0.77, 91.00), HP=5/5, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=7 (Minion): Pos=(2.00, 0.07, 100.00), HP=5/5, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=14 (Minion): Pos=(0.00, 0.30, 110.00), HP=12/12, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=1 (Minion): Pos=(-0.80, 1.16, 121.00), HP=5/5, OverVoid=False, AnchorDist=0.82m
+[7. PICKUPS & PROPS]
+  Pickups: 54 gems/coins, Heals: 3, Weapon Drops: 1
+  - Weapon Drop: Id=AxeBearded (BEARDED AXE) at (7.30, 2.31, 28.60)
+  Total Scenery Props: 132, Floating Props: 0
+[8. LEVEL EXIT GATE]
+  Gate Pos: (3.60, -0.28, 135.00), Trigger Col=BoxCollider, Light=YES
+[9. VISUAL CAPTURE] Saved screenshot: Chapter_05.png
+
+--------------------------------------------------------------------------------
+CHAPTER 06 - REALM 1 (SUNSCAR) 
+--------------------------------------------------------------------------------
+[1. ISLANDS & ROUTE]
+  Island Count: 22 (Route Points: 14)
+  Route Span: Start=(0.0, 0.0, 0.0) -> End=(3.6, 1.7, 130.0) (Total Path Length: 136.0m)
+  - Island #07 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.30), Speed=1.20, Origin=(-9.5, 3.3, 40.0)
+  - Island #09 (MOVER): Style=PingPongDwell, Offset=(3.68, 0.00, 0.00), Speed=1.54, Origin=(-5.0, 0.1, 60.0)
+  - Island #10 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.30), Speed=1.20, Origin=(4.5, 1.3, 60.0)
+  - Island #14 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.30), Speed=1.20, Origin=(-9.5, 3.3, 80.0)
+  - Island #17 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.30), Speed=1.20, Origin=(10.5, 3.3, 100.0)
+  - Island #19 (MOVER): Style=PingPongDwell, Offset=(3.68, 0.00, 0.00), Speed=1.54, Origin=(-2.6, 3.2, 120.0)
+  - Island #20 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.30), Speed=1.20, Origin=(-12.1, 4.4, 120.0)
+  Moving Islands: 7
+[2. ASTER SPAWN]
+  Spawn Pos: (0.00, 0.05, 0.00)
+  Ground Contact: Solid! Distance=0.53m, Normal=(0.00, 1.00, 0.00), Hit=Walkable stone
+  Colliders within 2.2m of spawn: Walkable stone (BoxCollider, dist=0.03m), Prop Rock_03 (BoxCollider, dist=2.04m), Prop rpgpp_lt_rock_small_02 (BoxCollider, dist=2.06m)
+[3. CHECKPOINTS]
+  Count: 2
+  - Checkpoint #1: Pos=(0.80, 2.83, 29.50), SpawnPoint=(2.25, 3.08, 31.15), RespawnDist=2.21m, GroundOffset=0.00m, SolidCol=True, VisualOk=True
+  - Checkpoint #2: Pos=(-4.98, 1.02, 69.50), SpawnPoint=(-3.61, 1.07, 71.22), RespawnDist=2.20m, GroundOffset=0.58m, SolidCol=True, VisualOk=True
+[4. TRAPS & HAZARDS]
+  Total Traps: 8
+  - Trap 'Floor Blade Trap': Pos=(3.00, 2.89, 30.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+  - Trap 'Crusher pillar': Pos=(-0.51, 2.89, 30.00), BoundsSize=(2.75, 3.70, 2.74), Collider=BoxCollider
+  - Trap 'Spike Trap': Pos=(2.20, 2.92, 31.00), BoundsSize=(2.00, 3.21, 2.00), Collider=NONE
+    [ANOMALY] Trap 'Spike Trap' overlaps another trap (dist=1.28m)!
+  - Trap 'Rolling boulder': Pos=(-5.00, 0.14, 62.52), BoundsSize=(2.13, 1.75, 1.87), Collider=SphereCollider
+  - Trap 'Floor Blade Trap': Pos=(3.00, 2.89, 90.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+  - Trap 'Dart turret': Pos=(-1.59, 2.89, 93.90), BoundsSize=(0.90, 1.84, 0.84), Collider=BoxCollider
+  - Trap 'Crusher pillar': Pos=(6.51, 2.89, 90.00), BoundsSize=(2.75, 3.70, 2.74), Collider=BoxCollider
+  - Trap 'Serpent statue': Pos=(-4.28, 3.26, 121.32), BoundsSize=(1.12, 2.20, 1.09), Collider=BoxCollider
+[5. ENEMIES]
+  Total Enemies: 11
+  - Enemy Kind=11 (Minion): Pos=(6.80, 4.37, 21.00), HP=5/5, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=13 (Minion): Pos=(4.80, 3.07, 31.00), HP=5/5, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=12 (Minion): Pos=(0.00, 2.07, 40.00), HP=5/5, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=14 (Minion): Pos=(-3.00, 1.30, 50.00), HP=13/13, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=15 (Minion): Pos=(-3.20, 0.07, 61.00), HP=5/5, OverVoid=False, AnchorDist=0.72m
+  - Enemy Kind=16 (Minion): Pos=(-1.20, 1.07, 71.00), HP=5/5, OverVoid=False, AnchorDist=0.68m
+  - Enemy Kind=11 (Minion): Pos=(1.80, 4.37, 81.00), HP=5/5, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=12 (Minion): Pos=(4.80, 3.07, 91.00), HP=5/5, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=13 (Minion): Pos=(1.00, 2.07, 100.00), HP=5/5, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=14 (Minion): Pos=(0.00, 2.30, 110.00), HP=13/13, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=18 (Minion): Pos=(-0.80, 3.16, 121.00), HP=5/5, OverVoid=False, AnchorDist=0.30m
+[7. PICKUPS & PROPS]
+  Pickups: 54 gems/coins, Heals: 3, Weapon Drops: 1
+  - Weapon Drop: Id=Maul (MAUL) at (-7.30, 0.92, 58.60)
+  Total Scenery Props: 145, Floating Props: 0
+[8. LEVEL EXIT GATE]
+  Gate Pos: (3.60, 1.72, 135.00), Trigger Col=BoxCollider, Light=YES
+[9. VISUAL CAPTURE] Saved screenshot: Chapter_06.png
+
+--------------------------------------------------------------------------------
+CHAPTER 07 - REALM 1 (SUNSCAR) [BOSS CHAPTER]
+--------------------------------------------------------------------------------
+[1. ISLANDS & ROUTE]
+  Island Count: 12 (Route Points: 8)
+  Route Span: Start=(0.0, 0.0, 0.0) -> End=(0.0, 1.6, 70.0) (Total Path Length: 71.7m)
+  - Island #07 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.30), Speed=1.20, Origin=(-9.5, 1.3, 40.0)
+  - Island #08 (MOVER): Style=PingPongDwell, Offset=(-3.76, 0.00, 0.00), Speed=1.58, Origin=(-3.0, 0.9, 50.0)
+  - Island #10 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.30), Speed=1.20, Origin=(7.5, 2.9, 60.0)
+  Moving Islands: 3
+[2. ASTER SPAWN]
+  Spawn Pos: (0.00, 0.05, 0.00)
+  Ground Contact: Solid! Distance=0.53m, Normal=(0.00, 1.00, 0.00), Hit=Walkable stone
+  Colliders within 2.2m of spawn: Walkable stone (BoxCollider, dist=0.03m), Prop Rock_05 (BoxCollider, dist=2.08m), Breakable barrel (BoxCollider, dist=1.02m), Prop rpgpp_lt_rock_small_01 (BoxCollider, dist=2.06m), Prop House_02 (MeshCollider, dist=0.00m), Prop rpgpp_lt_sack_01 (BoxCollider, dist=1.45m), Breakable crate (BoxCollider, dist=1.23m)
+[3. CHECKPOINTS]
+  Count: 2
+  - Checkpoint #1: Pos=(-0.20, 0.63, 29.50), SpawnPoint=(1.25, 0.88, 31.15), RespawnDist=2.21m, GroundOffset=0.00m, SolidCol=True, VisualOk=True
+  - Checkpoint #2: Pos=(-4.20, 1.72, 59.50), SpawnPoint=(-2.75, 0.76, 61.15), RespawnDist=2.40m, GroundOffset=0.00m, SolidCol=True, VisualOk=True
+[4. TRAPS & HAZARDS]
+  Total Traps: 3
+  - Trap 'Floor Blade Trap': Pos=(2.00, 0.69, 30.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+  - Trap 'Serpent statue': Pos=(-1.78, 0.72, 32.86), BoundsSize=(1.12, 2.20, 1.09), Collider=BoxCollider
+  - Trap 'Fire Geyser': Pos=(-1.20, 0.50, 61.00), BoundsSize=(2.40, 0.90, 2.40), Collider=NONE
+[5. ENEMIES]
+  Total Enemies: 6
+  - Enemy Kind=11 (Minion): Pos=(5.80, 3.97, 21.00), HP=5/5, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=13 (Minion): Pos=(3.80, 0.87, 31.00), HP=5/5, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=12 (Minion): Pos=(0.00, 0.30, 40.00), HP=5/5, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=14 (Minion): Pos=(-1.20, 0.87, 51.00), HP=14/14, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=15 (Minion): Pos=(-2.00, 1.67, 60.00), HP=5/5, OverVoid=False, AnchorDist=0.72m
+  - Enemy Kind=9 (BOSS): Pos=(0.00, 1.67, 69.00), HP=32/32, OverVoid=False, AnchorDist=1.80m
+[6. BOSS SPECIFICATION]
+  Boss Name: Realm guardian, Kind=9, MaxHP=32, WeakElement=1
+  Golem Boss Controller (Combo/Slam/Charge): False
+  Lava Boss Controller (Warden/Greatsword): False
+  Visual Model: Sunscar visual, UsesFallback: False, HasAnimator: True
+  Boss Distance to Arena Center: 1.00m (Arena Center: (0.0, 1.6, 70.0))
+[7. PICKUPS & PROPS]
+  Pickups: 30 gems/coins, Heals: 1, Weapon Drops: 1
+  - Weapon Drop: Id=PureSpear (REAPER'S SPEAR) at (-2.30, 1.39, 38.60)
+  Total Scenery Props: 86, Floating Props: 0
+[8. LEVEL EXIT GATE]
+  Gate Pos: (0.00, 1.60, 75.00), Trigger Col=BoxCollider, Light=YES
+[9. VISUAL CAPTURE] Saved screenshot: Chapter_07.png
+
+--------------------------------------------------------------------------------
+CHAPTER 08 - REALM 2 (WHITEOUT) 
+--------------------------------------------------------------------------------
+[1. ISLANDS & ROUTE]
+  Island Count: 23 (Route Points: 15)
+  Route Span: Start=(0.0, 0.0, 0.0) -> End=(-1.6, 6.0, 140.0) (Total Path Length: 146.7m)
+  - Island #07 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.80), Speed=1.20, Origin=(-8.5, 4.1, 40.0)
+  - Island #09 (MOVER): Style=Orbit, Offset=(2.60, 0.70, 2.60), Speed=1.62, Origin=(0.0, 4.3, 60.0)
+  - Island #10 (MOVER): Style=Orbit, Offset=(1.60, 0.60, 1.60), Speed=1.20, Origin=(9.5, 5.5, 60.0)
+  - Island #14 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.80), Speed=1.20, Origin=(-8.5, 6.9, 80.0)
+  - Island #17 (MOVER): Style=Orbit, Offset=(1.60, 0.60, 1.60), Speed=1.20, Origin=(9.5, 8.3, 100.0)
+  - Island #19 (MOVER): Style=Orbit, Offset=(2.60, 0.70, 2.60), Speed=1.62, Origin=(-2.6, 8.2, 120.0)
+  - Island #20 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.80), Speed=1.20, Origin=(-12.1, 9.4, 120.0)
+  Moving Islands: 7
+[2. ASTER SPAWN]
+  Spawn Pos: (0.00, 0.05, 0.00)
+  Ground Contact: Solid! Distance=0.53m, Normal=(0.00, 1.00, 0.00), Hit=Walkable stone
+  Colliders within 2.2m of spawn: Walkable stone (BoxCollider, dist=0.03m), Prop Pine_02 (BoxCollider, dist=1.18m), Prop rpgpp_lt_rock_small_02 (BoxCollider, dist=1.36m), Prop Pine_02 (BoxCollider, dist=1.96m), Prop Rock_05 (BoxCollider, dist=1.81m)
+[3. CHECKPOINTS]
+  Count: 3
+  - Checkpoint #1: Pos=(0.80, 2.12, 29.50), SpawnPoint=(2.25, 2.17, 31.15), RespawnDist=2.20m, GroundOffset=0.46m, SolidCol=True, VisualOk=True
+  - Checkpoint #2: Pos=(1.02, 4.92, 69.50), SpawnPoint=(2.39, 4.97, 71.22), RespawnDist=2.20m, GroundOffset=0.00m, SolidCol=True, VisualOk=True
+  - Checkpoint #3: Pos=(0.00, 7.05, 110.00), SpawnPoint=(0.00, 7.89, 112.20), RespawnDist=2.36m, GroundOffset=0.29m, SolidCol=True, VisualOk=True
+[4. TRAPS & HAZARDS]
+  Total Traps: 10
+  - Trap 'Spike Trap': Pos=(-0.80, 1.57, 21.00), BoundsSize=(2.00, 3.21, 2.00), Collider=NONE
+  - Trap 'Floor Blade Trap': Pos=(3.00, 2.24, 30.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+  - Trap 'Dart turret': Pos=(-2.57, 1.67, 43.00), BoundsSize=(0.90, 1.84, 0.84), Collider=BoxCollider
+  - Trap 'Wind vent': Pos=(3.63, 1.67, 40.00), BoundsSize=(1.50, 0.23, 1.50), Collider=CapsuleCollider
+  - Trap 'Spike Trap': Pos=(-0.80, 4.37, 61.00), BoundsSize=(2.00, 3.21, 2.00), Collider=NONE
+  - Trap 'Spike Trap': Pos=(0.20, 5.77, 81.00), BoundsSize=(2.00, 3.21, 2.00), Collider=NONE
+  - Trap 'Floor Blade Trap': Pos=(-2.00, 6.44, 90.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+  - Trap 'Fire Geyser': Pos=(-0.80, 5.90, 101.00), BoundsSize=(2.40, 0.90, 2.40), Collider=NONE
+  - Trap 'Frost totem': Pos=(-2.52, 5.90, 101.80), BoundsSize=(1.05, 2.40, 1.03), Collider=BoxCollider
+  - Trap 'Frost totem': Pos=(-1.16, 8.26, 121.08), BoundsSize=(1.05, 2.40, 1.03), Collider=BoxCollider
+[5. ENEMIES]
+  Total Enemies: 14
+  - Enemy Kind=11 (Minion): Pos=(1.80, 3.77, 21.00), HP=5/5, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=13 (Minion): Pos=(4.80, 2.17, 31.00), HP=5/5, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=14 (Minion): Pos=(1.20, 2.17, 31.60), HP=15/15, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=12 (Minion): Pos=(1.00, 2.87, 40.00), HP=5/5, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=14 (Minion): Pos=(-2.00, 3.80, 50.00), HP=15/15, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=15 (Minion): Pos=(1.80, 4.27, 61.00), HP=5/5, OverVoid=False, AnchorDist=0.72m
+  - Enemy Kind=16 (Minion): Pos=(4.80, 4.98, 71.00), HP=5/5, OverVoid=False, AnchorDist=0.68m
+  - Enemy Kind=11 (Minion): Pos=(2.80, 7.97, 81.00), HP=5/5, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=12 (Minion): Pos=(-0.20, 6.37, 91.00), HP=5/5, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=13 (Minion): Pos=(-3.80, 6.37, 91.60), HP=5/5, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=13 (Minion): Pos=(0.00, 7.07, 100.00), HP=5/5, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=14 (Minion): Pos=(0.00, 7.30, 110.00), HP=15/15, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=4 (Minion): Pos=(-0.80, 8.16, 121.00), HP=5/5, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=15 (Minion): Pos=(5.40, 6.80, 131.00), HP=5/5, OverVoid=False, AnchorDist=0.72m
+[7. PICKUPS & PROPS]
+  Pickups: 57 gems/coins, Heals: 3, Weapon Drops: 1
+  - Weapon Drop: Id=SwordShort (SHORT SWORD) at (-4.90, 9.01, 118.60)
+  Total Scenery Props: 136, Floating Props: 0
+[8. LEVEL EXIT GATE]
+  Gate Pos: (-1.60, 5.98, 145.00), Trigger Col=BoxCollider, Light=YES
+[9. VISUAL CAPTURE] Saved screenshot: Chapter_08.png
+
+--------------------------------------------------------------------------------
+CHAPTER 09 - REALM 2 (WHITEOUT) 
+--------------------------------------------------------------------------------
+[1. ISLANDS & ROUTE]
+  Island Count: 25 (Route Points: 16)
+  Route Span: Start=(0.0, 0.0, 0.0) -> End=(2.6, 2.5, 150.0) (Total Path Length: 159.1m)
+  - Island #07 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.80), Speed=1.20, Origin=(-9.5, 3.3, 40.0)
+  - Island #09 (MOVER): Style=Orbit, Offset=(2.60, 0.70, 2.60), Speed=1.66, Origin=(5.0, 2.1, 60.0)
+  - Island #10 (MOVER): Style=Orbit, Offset=(1.60, 0.60, 1.60), Speed=1.20, Origin=(14.5, 3.3, 60.0)
+  - Island #14 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.80), Speed=1.20, Origin=(-10.5, 5.3, 80.0)
+  - Island #17 (MOVER): Style=Orbit, Offset=(1.60, 0.60, 1.60), Speed=1.20, Origin=(7.5, 3.3, 100.0)
+  - Island #19 (MOVER): Style=Orbit, Offset=(2.60, 0.70, 2.60), Speed=1.66, Origin=(-2.6, 3.2, 120.0)
+  - Island #20 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.80), Speed=1.20, Origin=(-12.1, 4.4, 120.0)
+  - Island #23 (MOVER): Style=Orbit, Offset=(1.60, 0.60, 1.60), Speed=1.20, Origin=(7.9, 2.3, 140.0)
+  Moving Islands: 8
+[2. ASTER SPAWN]
+  Spawn Pos: (0.00, 0.05, 0.00)
+  Ground Contact: Solid! Distance=0.53m, Normal=(0.00, 1.00, 0.00), Hit=Walkable stone
+  Colliders within 2.2m of spawn: Walkable stone (BoxCollider, dist=0.03m), Prop Rock_03 (BoxCollider, dist=1.13m), Prop Bush_02 (BoxCollider, dist=1.90m), Prop rpgpp_lt_tree_pine_01 (BoxCollider, dist=1.38m), Prop rpgpp_lt_sack_01 (BoxCollider, dist=1.68m), Prop Pine_02 (BoxCollider, dist=0.27m), Prop Pine_01 (BoxCollider, dist=1.36m), Prop rpgpp_lt_sack_01 (BoxCollider, dist=1.10m), Prop rpgpp_lt_bench_wood_01 (BoxCollider, dist=2.14m)
+[3. CHECKPOINTS]
+  Count: 3
+  - Checkpoint #1: Pos=(-5.20, 3.02, 29.50), SpawnPoint=(-3.75, 3.07, 31.15), RespawnDist=2.20m, GroundOffset=0.00m, SolidCol=True, VisualOk=True
+  - Checkpoint #2: Pos=(0.02, 3.02, 69.50), SpawnPoint=(1.39, 3.07, 71.22), RespawnDist=2.20m, GroundOffset=0.00m, SolidCol=True, VisualOk=True
+  - Checkpoint #3: Pos=(-3.92, 3.11, 119.50), SpawnPoint=(-2.89, 3.16, 121.45), RespawnDist=2.20m, GroundOffset=0.00m, SolidCol=True, VisualOk=True
+[4. TRAPS & HAZARDS]
+  Total Traps: 10
+  - Trap 'Crusher pillar': Pos=(-1.09, 2.14, 20.00), BoundsSize=(2.75, 3.70, 2.74), Collider=BoxCollider
+  - Trap 'Floor Blade Trap': Pos=(-3.00, 3.14, 30.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+  - Trap 'Dart turret': Pos=(-3.57, 0.87, 43.00), BoundsSize=(0.90, 1.84, 0.84), Collider=BoxCollider
+  - Trap 'Flame brazier': Pos=(-2.31, 0.90, 40.00), BoundsSize=(0.93, 1.04, 0.94), Collider=CapsuleCollider
+  - Trap 'Frost totem': Pos=(6.44, 2.17, 61.08), BoundsSize=(1.05, 2.40, 1.03), Collider=BoxCollider
+  - Trap 'Wind vent': Pos=(-2.05, 4.14, 80.00), BoundsSize=(1.50, 0.23, 1.50), Collider=CapsuleCollider
+  - Trap 'Floor Blade Trap': Pos=(-4.00, 3.14, 90.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+  - Trap 'Crusher pillar': Pos=(-4.73, 0.87, 100.00), BoundsSize=(2.75, 3.70, 2.74), Collider=BoxCollider
+  - Trap 'Frost totem': Pos=(-4.52, 0.90, 101.80), BoundsSize=(1.05, 2.40, 1.03), Collider=BoxCollider
+  - Trap 'Frost totem': Pos=(-0.59, 1.15, 142.52), BoundsSize=(1.05, 2.40, 1.03), Collider=BoxCollider
+[5. ENEMIES]
+  Total Enemies: 15
+  - Enemy Kind=17 (Minion): Pos=(1.80, 2.07, 21.00), HP=6/6, OverVoid=False, AnchorDist=0.93m
+  - Enemy Kind=13 (Minion): Pos=(-1.20, 3.07, 31.00), HP=6/6, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=14 (Minion): Pos=(-4.80, 3.07, 31.60), HP=15/15, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=12 (Minion): Pos=(0.00, 2.07, 40.00), HP=6/6, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=14 (Minion): Pos=(3.00, 1.30, 50.00), HP=15/15, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=15 (Minion): Pos=(6.80, 2.07, 61.00), HP=6/6, OverVoid=False, AnchorDist=0.72m
+  - Enemy Kind=16 (Minion): Pos=(3.80, 3.08, 71.00), HP=6/6, OverVoid=False, AnchorDist=0.68m
+  - Enemy Kind=17 (Minion): Pos=(0.80, 4.07, 81.00), HP=6/6, OverVoid=False, AnchorDist=0.93m
+  - Enemy Kind=12 (Minion): Pos=(-2.20, 3.07, 91.00), HP=6/6, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=13 (Minion): Pos=(-5.80, 3.07, 91.60), HP=6/6, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=13 (Minion): Pos=(-2.00, 2.07, 100.00), HP=6/6, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=14 (Minion): Pos=(0.00, 2.30, 110.00), HP=15/15, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=19 (Minion): Pos=(-0.80, 3.16, 121.00), HP=6/6, OverVoid=False, AnchorDist=0.88m
+  - Enemy Kind=15 (Minion): Pos=(5.40, 1.80, 131.00), HP=6/6, OverVoid=False, AnchorDist=0.72m
+  - Enemy Kind=17 (Minion): Pos=(0.20, 1.05, 141.00), HP=6/6, OverVoid=False, AnchorDist=0.93m
+[7. PICKUPS & PROPS]
+  Pickups: 61 gems/coins, Heals: 3, Weapon Drops: 1
+  - Weapon Drop: Id=BrassFangs (BRASS FANGS) at (5.30, 2.15, 48.60)
+  Total Scenery Props: 164, Floating Props: 0
+[8. LEVEL EXIT GATE]
+  Gate Pos: (2.60, 2.54, 155.00), Trigger Col=BoxCollider, Light=YES
+[9. VISUAL CAPTURE] Saved screenshot: Chapter_09.png
+
+--------------------------------------------------------------------------------
+CHAPTER 10 - REALM 2 (WHITEOUT) [BOSS CHAPTER]
+--------------------------------------------------------------------------------
+[1. ISLANDS & ROUTE]
+  Island Count: 14 (Route Points: 9)
+  Route Span: Start=(0.0, 0.0, 0.0) -> End=(-2.6, 5.9, 80.0) (Total Path Length: 82.2m)
+  - Island #07 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.80), Speed=1.20, Origin=(-5.5, 4.5, 40.0)
+  - Island #08 (MOVER): Style=PingPongDwell, Offset=(-4.00, 0.00, 0.00), Speed=1.70, Origin=(2.0, 4.1, 50.0)
+  - Island #10 (MOVER): Style=Orbit, Offset=(1.60, 0.60, 1.60), Speed=1.20, Origin=(9.5, 6.1, 60.0)
+  Moving Islands: 3
+[2. ASTER SPAWN]
+  Spawn Pos: (0.00, 0.05, 0.00)
+  Ground Contact: Solid! Distance=0.53m, Normal=(0.00, 1.00, 0.00), Hit=Walkable stone
+  Colliders within 2.2m of spawn: Walkable stone (BoxCollider, dist=0.03m), Prop rpgpp_lt_rock_small_01 (BoxCollider, dist=1.36m), Prop Tree_01 (CapsuleCollider, dist=2.01m), Prop Bush_01 (BoxCollider, dist=2.15m), Prop Pine_03 (BoxCollider, dist=1.74m)
+[3. CHECKPOINTS]
+  Count: 2
+  - Checkpoint #1: Pos=(-0.20, 2.42, 29.50), SpawnPoint=(1.25, 2.47, 31.15), RespawnDist=2.20m, GroundOffset=0.82m, SolidCol=True, VisualOk=True
+    [ANOMALY] Checkpoint floating above ground by 0.82m!
+  - Checkpoint #2: Pos=(-2.20, 4.92, 59.50), SpawnPoint=(-0.75, 3.96, 61.15), RespawnDist=2.40m, GroundOffset=0.00m, SolidCol=True, VisualOk=True
+[4. TRAPS & HAZARDS]
+  Total Traps: 7
+  - Trap 'Frost totem': Pos=(0.01, 1.77, 22.52), BoundsSize=(1.05, 2.40, 1.03), Collider=BoxCollider
+  - Trap 'Floor Blade Trap': Pos=(2.00, 2.54, 30.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+  - Trap 'Rolling boulder': Pos=(4.00, 3.25, 43.36), BoundsSize=(2.13, 1.75, 1.87), Collider=SphereCollider
+  - Trap 'Frost totem': Pos=(2.52, 3.70, 61.80), BoundsSize=(1.05, 2.40, 1.03), Collider=BoxCollider
+  - Trap 'Serpent statue': Pos=(2.94, 3.70, 62.20), BoundsSize=(1.12, 2.20, 1.09), Collider=BoxCollider
+    [ANOMALY] Trap 'Serpent statue' overlaps another trap (dist=0.58m)!
+  - Trap 'Crusher pillar': Pos=(-8.10, 6.03, 76.50), BoundsSize=(2.75, 3.70, 2.74), Collider=BoxCollider
+  - Trap 'Crusher pillar': Pos=(2.90, 6.03, 76.50), BoundsSize=(2.75, 3.70, 2.74), Collider=BoxCollider
+[5. ENEMIES]
+  Total Enemies: 8
+  - Enemy Kind=17 (Minion): Pos=(0.80, 1.67, 21.00), HP=6/6, OverVoid=False, AnchorDist=0.93m
+  - Enemy Kind=13 (Minion): Pos=(3.80, 2.47, 31.00), HP=6/6, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=14 (Minion): Pos=(0.20, 2.47, 31.60), HP=16/16, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=12 (Minion): Pos=(4.00, 3.50, 40.00), HP=6/6, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=14 (Minion): Pos=(3.80, 4.07, 51.00), HP=16/16, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=15 (Minion): Pos=(0.00, 4.87, 60.00), HP=6/6, OverVoid=False, AnchorDist=0.72m
+  - Enemy Kind=16 (Minion): Pos=(1.80, 4.88, 71.00), HP=6/6, OverVoid=False, AnchorDist=0.68m
+  - Enemy Kind=10 (BOSS): Pos=(-2.60, 5.96, 79.00), HP=40/40, OverVoid=False, AnchorDist=1.80m
+[6. BOSS SPECIFICATION]
+  Boss Name: Realm guardian, Kind=10, MaxHP=40, WeakElement=0
+  Golem Boss Controller (Combo/Slam/Charge): False
+  Lava Boss Controller (Warden/Greatsword): False
+  Visual Model: Whiteout visual, UsesFallback: False, HasAnimator: True
+  Boss Distance to Arena Center: 1.00m (Arena Center: (-2.6, 5.9, 80.0))
+[7. PICKUPS & PROPS]
+  Pickups: 36 gems/coins, Heals: 2, Weapon Drops: 1
+  - Weapon Drop: Id=HalberdA (HALBERD) at (1.70, 4.59, 38.60)
+  Total Scenery Props: 110, Floating Props: 0
+[8. LEVEL EXIT GATE]
+  Gate Pos: (-2.60, 5.89, 85.00), Trigger Col=BoxCollider, Light=YES
+[9. VISUAL CAPTURE] Saved screenshot: Chapter_10.png
+
+--------------------------------------------------------------------------------
+CHAPTER 11 - REALM 3 (EMBERFALL) 
+--------------------------------------------------------------------------------
+[1. ISLANDS & ROUTE]
+  Island Count: 26 (Route Points: 17)
+  Route Span: Start=(0.0, 0.0, 0.0) -> End=(-3.6, 1.3, 160.0) (Total Path Length: 168.8m)
+  - Island #07 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.80), Speed=1.20, Origin=(-10.5, 1.2, 40.0)
+  - Island #09 (MOVER): Style=VerticalElevator, Offset=(0.00, 2.20, 0.00), Speed=1.74, Origin=(-1.0, 1.1, 60.0)
+  - Island #10 (MOVER): Style=Orbit, Offset=(1.60, 0.60, 1.60), Speed=1.20, Origin=(8.5, 2.4, 60.0)
+  - Island #14 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.80), Speed=1.20, Origin=(-5.5, 1.6, 80.0)
+  - Island #17 (MOVER): Style=Orbit, Offset=(1.60, 0.60, 1.60), Speed=1.20, Origin=(8.5, 1.6, 100.0)
+  - Island #19 (MOVER): Style=VerticalElevator, Offset=(0.00, 2.20, 0.00), Speed=1.74, Origin=(-2.6, 1.4, 120.0)
+  - Island #20 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.80), Speed=1.20, Origin=(-12.1, 2.7, 120.0)
+  - Island #23 (MOVER): Style=Orbit, Offset=(1.60, 0.60, 1.60), Speed=1.20, Origin=(7.9, 0.6, 140.0)
+  Moving Islands: 8
+[2. ASTER SPAWN]
+  Spawn Pos: (0.00, 0.05, 0.00)
+  Ground Contact: Solid! Distance=0.53m, Normal=(-0.69, 0.66, -0.30), Hit=IslandMeshVisual
+  Colliders within 2.2m of spawn: Walkable stone (BoxCollider, dist=0.06m), Prop Rock_05 (BoxCollider, dist=1.92m), Prop Rock_03 (BoxCollider, dist=1.66m), Breakable barrel (BoxCollider, dist=1.23m)
+[3. CHECKPOINTS]
+  Count: 3
+  - Checkpoint #1: Pos=(-1.20, 0.52, 29.50), SpawnPoint=(0.25, 0.57, 31.15), RespawnDist=2.20m, GroundOffset=0.00m, SolidCol=True, VisualOk=True
+  - Checkpoint #2: Pos=(0.02, 0.82, 69.50), SpawnPoint=(1.39, 0.87, 71.22), RespawnDist=2.20m, GroundOffset=0.38m, SolidCol=True, VisualOk=True
+  - Checkpoint #3: Pos=(1.62, 0.14, 129.50), SpawnPoint=(2.99, 0.19, 131.22), RespawnDist=2.20m, GroundOffset=0.00m, SolidCol=True, VisualOk=True
+[4. TRAPS & HAZARDS]
+  Total Traps: 10
+  - Trap 'Fire Geyser': Pos=(2.20, 1.14, 21.00), BoundsSize=(2.40, 0.90, 2.40), Collider=NONE
+  - Trap 'Floor Blade Trap': Pos=(1.00, 0.55, 30.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+  - Trap 'Dart turret': Pos=(-4.57, -1.13, 43.00), BoundsSize=(0.90, 1.84, 0.84), Collider=BoxCollider
+  - Trap 'Rolling boulder': Pos=(-1.00, 1.15, 62.52), BoundsSize=(2.13, 1.75, 1.87), Collider=SphereCollider
+  - Trap 'Serpent statue': Pos=(2.82, 0.54, 83.08), BoundsSize=(1.12, 2.20, 1.09), Collider=BoxCollider
+  - Trap 'Floor Blade Trap': Pos=(2.00, 0.95, 90.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+  - Trap 'Rolling boulder': Pos=(-1.00, -0.73, 104.20), BoundsSize=(2.13, 1.75, 1.87), Collider=SphereCollider
+  - Trap 'Flame brazier': Pos=(-1.28, 1.47, 120.00), BoundsSize=(0.93, 1.04, 0.94), Collider=CapsuleCollider
+  - Trap 'Rolling boulder': Pos=(-1.60, -0.51, 145.88), BoundsSize=(2.13, 1.75, 1.87), Collider=SphereCollider
+  - Trap 'Floor Blade Trap': Pos=(2.60, 0.99, 150.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+[5. ENEMIES]
+  Total Enemies: 17
+  - Enemy Kind=17 (Minion): Pos=(1.80, 1.10, 20.80), HP=6/6, OverVoid=False, AnchorDist=0.93m
+  - Enemy Kind=13 (Minion): Pos=(2.80, 0.57, 31.00), HP=6/6, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=14 (Minion): Pos=(-0.80, 0.57, 31.60), HP=17/17, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=12 (Minion): Pos=(-1.00, 0.07, 40.00), HP=6/6, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=14 (Minion): Pos=(-3.00, 0.90, 50.00), HP=17/17, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=15 (Minion): Pos=(-1.00, 1.27, 60.00), HP=6/6, OverVoid=False, AnchorDist=0.72m
+  - Enemy Kind=16 (Minion): Pos=(3.80, 0.87, 71.00), HP=6/6, OverVoid=False, AnchorDist=0.68m
+  - Enemy Kind=17 (Minion): Pos=(2.80, 0.50, 80.80), HP=6/6, OverVoid=False, AnchorDist=0.93m
+  - Enemy Kind=12 (Minion): Pos=(3.80, 0.97, 91.00), HP=6/6, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=13 (Minion): Pos=(0.20, 0.97, 91.60), HP=6/6, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=13 (Minion): Pos=(-1.00, 0.47, 100.00), HP=6/6, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=14 (Minion): Pos=(0.00, 0.70, 110.00), HP=17/17, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=7 (Minion): Pos=(-2.60, 1.56, 120.00), HP=6/6, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=15 (Minion): Pos=(5.40, 0.19, 131.00), HP=6/6, OverVoid=False, AnchorDist=0.72m
+  - Enemy Kind=17 (Minion): Pos=(-2.80, -0.52, 140.80), HP=6/6, OverVoid=False, AnchorDist=0.93m
+  - Enemy Kind=18 (Minion): Pos=(4.40, 1.01, 151.00), HP=6/6, OverVoid=False, AnchorDist=0.30m
+  - Enemy Kind=19 (Minion): Pos=(0.80, 1.01, 151.60), HP=6/6, OverVoid=False, AnchorDist=0.88m
+[7. PICKUPS & PROPS]
+  Pickups: 64 gems/coins, Heals: 4, Weapon Drops: 1
+  - Weapon Drop: Id=SwordSabre (SABRE) at (-4.90, 2.29, 118.60)
+  Total Scenery Props: 150, Floating Props: 0
+[8. LEVEL EXIT GATE]
+  Gate Pos: (-3.60, 1.28, 165.00), Trigger Col=BoxCollider, Light=YES
+[9. VISUAL CAPTURE] Saved screenshot: Chapter_11.png
+
+--------------------------------------------------------------------------------
+CHAPTER 12 - REALM 3 (EMBERFALL) 
+--------------------------------------------------------------------------------
+[1. ISLANDS & ROUTE]
+  Island Count: 26 (Route Points: 17)
+  Route Span: Start=(0.0, 0.0, 0.0) -> End=(-3.6, 0.9, 160.0) (Total Path Length: 169.7m)
+  - Island #07 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.80), Speed=1.20, Origin=(-10.5, 2.6, 40.0)
+  - Island #09 (MOVER): Style=VerticalElevator, Offset=(0.00, 2.20, 0.00), Speed=1.78, Origin=(-2.0, 1.4, 60.0)
+  - Island #10 (MOVER): Style=Orbit, Offset=(1.60, 0.60, 1.60), Speed=1.20, Origin=(7.5, 2.7, 60.0)
+  - Island #14 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.80), Speed=1.20, Origin=(-6.5, 2.7, 80.0)
+  - Island #17 (MOVER): Style=Orbit, Offset=(1.60, 0.60, 1.60), Speed=1.20, Origin=(7.5, 1.2, 100.0)
+  - Island #19 (MOVER): Style=VerticalElevator, Offset=(0.00, 2.20, 0.00), Speed=1.78, Origin=(-2.6, 1.0, 120.0)
+  - Island #20 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.80), Speed=1.20, Origin=(-12.1, 2.3, 120.0)
+  - Island #23 (MOVER): Style=Orbit, Offset=(1.60, 0.60, 1.60), Speed=1.20, Origin=(7.9, 0.2, 140.0)
+  Moving Islands: 8
+[2. ASTER SPAWN]
+  Spawn Pos: (0.00, 0.05, 0.00)
+  Ground Contact: Solid! Distance=0.53m, Normal=(-0.69, 0.66, -0.30), Hit=IslandMeshVisual
+  Colliders within 2.2m of spawn: Walkable stone (BoxCollider, dist=0.06m), Prop Crystal (BoxCollider, dist=2.01m), Prop Rock_03 (BoxCollider, dist=1.78m)
+[3. CHECKPOINTS]
+  Count: 3
+  - Checkpoint #1: Pos=(-0.20, 2.12, 29.50), SpawnPoint=(1.25, 2.17, 31.15), RespawnDist=2.20m, GroundOffset=0.00m, SolidCol=True, VisualOk=True
+  - Checkpoint #2: Pos=(-0.98, 2.22, 69.50), SpawnPoint=(0.39, 2.27, 71.22), RespawnDist=2.20m, GroundOffset=0.48m, SolidCol=True, VisualOk=True
+  - Checkpoint #3: Pos=(1.62, -0.26, 129.50), SpawnPoint=(2.99, -0.21, 131.22), RespawnDist=2.20m, GroundOffset=1.68m, SolidCol=True, VisualOk=True
+    [ANOMALY] Checkpoint floating above ground by 1.68m!
+[4. TRAPS & HAZARDS]
+  Total Traps: 11
+  - Trap 'Wind vent': Pos=(2.95, 1.51, 20.00), BoundsSize=(1.50, 0.23, 1.50), Collider=CapsuleCollider
+  - Trap 'Floor Blade Trap': Pos=(2.00, 2.15, 30.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+  - Trap 'Rolling boulder': Pos=(-1.00, 0.27, 44.20), BoundsSize=(2.13, 1.75, 1.87), Collider=SphereCollider
+  - Trap 'Crusher pillar': Pos=(1.73, 0.27, 40.00), BoundsSize=(2.75, 3.70, 2.74), Collider=BoxCollider
+  - Trap 'Wind vent': Pos=(-3.50, 1.45, 60.00), BoundsSize=(1.50, 0.23, 1.50), Collider=CapsuleCollider
+  - Trap 'Crusher pillar': Pos=(1.91, 1.61, 80.00), BoundsSize=(2.75, 3.70, 2.74), Collider=BoxCollider
+  - Trap 'Floor Blade Trap': Pos=(1.00, 0.75, 90.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+  - Trap 'Spike Trap': Pos=(-2.80, -1.10, 101.00), BoundsSize=(2.00, 3.21, 2.00), Collider=NONE
+  - Trap 'Sweep hammer': Pos=(0.52, -1.10, 98.00), BoundsSize=(2.66, 1.56, 2.24), Collider=CapsuleCollider
+  - Trap 'Sweep hammer': Pos=(-4.04, 1.07, 118.80), BoundsSize=(2.66, 1.56, 2.24), Collider=CapsuleCollider
+  - Trap 'Floor Blade Trap': Pos=(2.60, 0.59, 150.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+[5. ENEMIES]
+  Total Enemies: 19
+  - Enemy Kind=17 (Minion): Pos=(2.80, 1.50, 20.80), HP=7/7, OverVoid=False, AnchorDist=0.93m
+  - Enemy Kind=13 (Minion): Pos=(3.80, 2.17, 31.00), HP=7/7, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=14 (Minion): Pos=(0.20, 2.17, 31.60), HP=18/18, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=12 (Minion): Pos=(-1.00, 1.47, 40.00), HP=7/7, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=14 (Minion): Pos=(-4.00, 1.00, 50.00), HP=18/18, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=15 (Minion): Pos=(-2.00, 1.57, 60.00), HP=7/7, OverVoid=False, AnchorDist=0.72m
+  - Enemy Kind=16 (Minion): Pos=(2.80, 2.27, 71.00), HP=7/7, OverVoid=False, AnchorDist=0.68m
+  - Enemy Kind=18 (Minion): Pos=(-0.80, 2.27, 70.00), HP=7/7, OverVoid=False, AnchorDist=0.30m
+  - Enemy Kind=17 (Minion): Pos=(1.80, 1.60, 80.80), HP=7/7, OverVoid=False, AnchorDist=0.93m
+  - Enemy Kind=12 (Minion): Pos=(2.80, 0.77, 91.00), HP=7/7, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=13 (Minion): Pos=(-0.80, 0.77, 91.60), HP=7/7, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=13 (Minion): Pos=(-2.00, 0.07, 100.00), HP=7/7, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=14 (Minion): Pos=(0.00, 0.30, 110.00), HP=18/18, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=0 (Minion): Pos=(-2.60, 1.16, 120.00), HP=7/7, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=15 (Minion): Pos=(5.40, -0.21, 131.00), HP=7/7, OverVoid=False, AnchorDist=0.72m
+  - Enemy Kind=17 (Minion): Pos=(1.80, -0.21, 130.00), HP=7/7, OverVoid=False, AnchorDist=0.93m
+  - Enemy Kind=17 (Minion): Pos=(-2.80, -0.92, 140.80), HP=7/7, OverVoid=False, AnchorDist=0.93m
+  - Enemy Kind=3 (Minion): Pos=(4.40, 0.61, 151.00), HP=7/7, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=4 (Minion): Pos=(0.80, 0.61, 151.60), HP=7/7, OverVoid=False, AnchorDist=0.82m
+[7. PICKUPS & PROPS]
+  Pickups: 64 gems/coins, Heals: 4, Weapon Drops: 1
+  - Weapon Drop: Id=SageStaff (SAGE STAFF) at (4.30, 3.02, 28.60)
+  Total Scenery Props: 126, Floating Props: 0
+[8. LEVEL EXIT GATE]
+  Gate Pos: (-3.60, 0.88, 165.00), Trigger Col=BoxCollider, Light=YES
+[9. VISUAL CAPTURE] Saved screenshot: Chapter_12.png
+
+--------------------------------------------------------------------------------
+CHAPTER 13 - REALM 3 (EMBERFALL) 
+--------------------------------------------------------------------------------
+[1. ISLANDS & ROUTE]
+  Island Count: 28 (Route Points: 18)
+  Route Span: Start=(0.0, 0.0, 0.0) -> End=(1.6, -0.8, 170.0) (Total Path Length: 180.8m)
+  - Island #07 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.80), Speed=1.20, Origin=(-7.5, 3.6, 40.0)
+  - Island #09 (MOVER): Style=VerticalElevator, Offset=(0.00, 2.20, 0.00), Speed=1.82, Origin=(2.0, 0.7, 60.0)
+  - Island #10 (MOVER): Style=Orbit, Offset=(1.60, 0.60, 1.60), Speed=1.20, Origin=(11.5, 2.0, 60.0)
+  - Island #14 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.80), Speed=1.20, Origin=(-13.5, 3.4, 80.0)
+  - Island #17 (MOVER): Style=Orbit, Offset=(1.60, 0.60, 1.60), Speed=1.20, Origin=(10.5, 1.7, 100.0)
+  - Island #19 (MOVER): Style=VerticalElevator, Offset=(0.00, 2.20, 0.00), Speed=1.82, Origin=(-2.6, 1.0, 120.0)
+  - Island #20 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.80), Speed=1.20, Origin=(-12.1, 2.3, 120.0)
+  - Island #23 (MOVER): Style=Orbit, Offset=(1.60, 0.60, 1.60), Speed=1.20, Origin=(7.9, 0.2, 140.0)
+  - Island #26 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.80), Speed=1.20, Origin=(-13.1, 2.1, 160.0)
+  Moving Islands: 9
+[2. ASTER SPAWN]
+  Spawn Pos: (0.00, 0.05, 0.00)
+  Ground Contact: Solid! Distance=0.53m, Normal=(-0.69, 0.66, -0.30), Hit=IslandMeshVisual
+  Colliders within 2.2m of spawn: Walkable stone (BoxCollider, dist=0.06m), Prop rpgpp_lt_rock_small_01 (BoxCollider, dist=1.65m)
+[3. CHECKPOINTS]
+  Count: 3
+  - Checkpoint #1: Pos=(-3.20, 1.82, 29.50), SpawnPoint=(-1.75, 1.87, 31.15), RespawnDist=2.20m, GroundOffset=0.69m, SolidCol=True, VisualOk=True
+    [ANOMALY] Checkpoint floating above ground by 0.69m!
+  - Checkpoint #2: Pos=(-2.98, 1.62, 69.50), SpawnPoint=(-1.61, 1.67, 71.22), RespawnDist=2.20m, GroundOffset=0.00m, SolidCol=True, VisualOk=True
+  - Checkpoint #3: Pos=(-2.80, -0.97, 139.50), SpawnPoint=(-1.85, -0.96, 141.48), RespawnDist=2.20m, GroundOffset=0.65m, SolidCol=True, VisualOk=True
+    [ANOMALY] Checkpoint floating above ground by 0.65m!
+[4. TRAPS & HAZARDS]
+  Total Traps: 12
+  - Trap 'Flame brazier': Pos=(-2.08, 1.34, 20.00), BoundsSize=(0.93, 1.04, 0.94), Collider=CapsuleCollider
+  - Trap 'Floor Blade Trap': Pos=(-1.00, 1.85, 30.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+  - Trap 'Rolling boulder': Pos=(2.00, 1.27, 44.20), BoundsSize=(2.13, 1.75, 1.87), Collider=SphereCollider
+  - Trap 'Sweep hammer': Pos=(4.52, 1.30, 38.00), BoundsSize=(2.66, 1.56, 2.24), Collider=CapsuleCollider
+  - Trap 'Floor Blade Trap': Pos=(-2.00, 1.35, 90.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+  - Trap 'Sweep hammer': Pos=(-1.52, -0.60, 98.00), BoundsSize=(2.66, 1.56, 2.24), Collider=CapsuleCollider
+  - Trap 'Rolling boulder': Pos=(1.00, -0.63, 104.20), BoundsSize=(2.13, 1.75, 1.87), Collider=SphereCollider
+  - Trap 'Spike Trap': Pos=(-3.40, 1.07, 121.00), BoundsSize=(2.00, 3.21, 2.00), Collider=NONE
+  - Trap 'Wind vent': Pos=(-2.65, -0.91, 140.00), BoundsSize=(1.50, 0.23, 1.50), Collider=CapsuleCollider
+  - Trap 'Floor Blade Trap': Pos=(2.60, 0.59, 150.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+  - Trap 'Fire Geyser': Pos=(-4.40, -0.22, 161.00), BoundsSize=(2.40, 0.90, 2.40), Collider=NONE
+  - Trap 'Rolling boulder': Pos=(-3.60, -0.25, 164.20), BoundsSize=(2.13, 1.75, 1.87), Collider=SphereCollider
+[5. ENEMIES]
+  Total Enemies: 20
+  - Enemy Kind=17 (Minion): Pos=(-4.20, 1.30, 20.80), HP=7/7, OverVoid=False, AnchorDist=0.93m
+  - Enemy Kind=13 (Minion): Pos=(0.80, 1.87, 31.00), HP=7/7, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=14 (Minion): Pos=(-2.80, 1.87, 31.60), HP=19/19, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=12 (Minion): Pos=(2.00, 2.47, 40.00), HP=7/7, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=14 (Minion): Pos=(4.00, 1.90, 50.00), HP=19/19, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=15 (Minion): Pos=(2.00, 0.87, 60.00), HP=7/7, OverVoid=False, AnchorDist=0.72m
+  - Enemy Kind=16 (Minion): Pos=(0.80, 1.67, 71.00), HP=7/7, OverVoid=False, AnchorDist=0.68m
+  - Enemy Kind=18 (Minion): Pos=(-2.80, 1.67, 70.00), HP=7/7, OverVoid=False, AnchorDist=0.30m
+  - Enemy Kind=17 (Minion): Pos=(-5.20, 2.30, 80.80), HP=7/7, OverVoid=False, AnchorDist=0.93m
+  - Enemy Kind=12 (Minion): Pos=(-0.20, 1.37, 91.00), HP=7/7, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=13 (Minion): Pos=(-3.80, 1.37, 91.60), HP=7/7, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=13 (Minion): Pos=(1.00, 0.57, 100.00), HP=7/7, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=14 (Minion): Pos=(0.00, 0.30, 110.00), HP=19/19, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=1 (Minion): Pos=(-2.60, 1.16, 120.00), HP=7/7, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=15 (Minion): Pos=(5.40, -0.21, 131.00), HP=7/7, OverVoid=False, AnchorDist=0.72m
+  - Enemy Kind=17 (Minion): Pos=(1.80, -0.21, 130.00), HP=7/7, OverVoid=False, AnchorDist=0.93m
+  - Enemy Kind=17 (Minion): Pos=(-2.80, -0.92, 140.80), HP=7/7, OverVoid=False, AnchorDist=0.93m
+  - Enemy Kind=4 (Minion): Pos=(4.40, 0.61, 151.00), HP=7/7, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=5 (Minion): Pos=(0.80, 0.61, 151.60), HP=7/7, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=19 (Minion): Pos=(-3.60, 0.95, 160.00), HP=7/7, OverVoid=False, AnchorDist=0.88m
+[7. PICKUPS & PROPS]
+  Pickups: 68 gems/coins, Heals: 4, Weapon Drops: 1
+  - Weapon Drop: Id=HalberdB (POLE AXE) at (1.30, 2.52, 68.60)
+  Total Scenery Props: 140, Floating Props: 0
+[8. LEVEL EXIT GATE]
+  Gate Pos: (1.60, -0.77, 175.00), Trigger Col=BoxCollider, Light=YES
+[9. VISUAL CAPTURE] Saved screenshot: Chapter_13.png
+
+--------------------------------------------------------------------------------
+CHAPTER 14 - REALM 3 (EMBERFALL) 
+--------------------------------------------------------------------------------
+[1. ISLANDS & ROUTE]
+  Island Count: 28 (Route Points: 18)
+  Route Span: Start=(0.0, 0.0, 0.0) -> End=(1.6, -0.8, 170.0) (Total Path Length: 181.0m)
+  - Island #07 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.80), Speed=1.20, Origin=(-8.5, 4.4, 40.0)
+  - Island #09 (MOVER): Style=VerticalElevator, Offset=(0.00, 2.20, 0.00), Speed=1.86, Origin=(-4.0, 3.1, 60.0)
+  - Island #10 (MOVER): Style=Orbit, Offset=(1.60, 0.60, 1.60), Speed=1.20, Origin=(5.5, 4.4, 60.0)
+  - Island #14 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.80), Speed=1.20, Origin=(-7.5, 2.8, 80.0)
+  - Island #17 (MOVER): Style=Orbit, Offset=(1.60, 0.60, 1.60), Speed=1.20, Origin=(10.5, 1.2, 100.0)
+  - Island #19 (MOVER): Style=VerticalElevator, Offset=(0.00, 2.20, 0.00), Speed=1.86, Origin=(-2.6, 1.0, 120.0)
+  - Island #20 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.80), Speed=1.20, Origin=(-12.1, 2.3, 120.0)
+  - Island #23 (MOVER): Style=Orbit, Offset=(1.60, 0.60, 1.60), Speed=1.20, Origin=(7.9, 0.2, 140.0)
+  - Island #26 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.80), Speed=1.20, Origin=(-13.1, 2.1, 160.0)
+  Moving Islands: 9
+[2. ASTER SPAWN]
+  Spawn Pos: (0.00, 0.05, 0.00)
+  Ground Contact: Solid! Distance=0.53m, Normal=(-0.69, 0.66, -0.30), Hit=IslandMeshVisual
+  Colliders within 2.2m of spawn: Walkable stone (BoxCollider, dist=0.06m), Breakable barrel (BoxCollider, dist=1.81m), Prop Rock_03 (BoxCollider, dist=2.04m), Prop Rock_03 (BoxCollider, dist=1.84m), Breakable crate (BoxCollider, dist=1.74m)
+[3. CHECKPOINTS]
+  Count: 3
+  - Checkpoint #1: Pos=(1.80, 2.42, 29.50), SpawnPoint=(3.25, 2.47, 31.15), RespawnDist=2.20m, GroundOffset=0.00m, SolidCol=True, VisualOk=True
+  - Checkpoint #2: Pos=(-2.98, 2.42, 69.50), SpawnPoint=(-1.61, 2.47, 71.22), RespawnDist=2.20m, GroundOffset=1.03m, SolidCol=True, VisualOk=True
+    [ANOMALY] Checkpoint floating above ground by 1.03m!
+  - Checkpoint #3: Pos=(-2.80, -0.97, 139.50), SpawnPoint=(-1.85, -0.96, 141.48), RespawnDist=2.20m, GroundOffset=0.00m, SolidCol=True, VisualOk=True
+[4. TRAPS & HAZARDS]
+  Total Traps: 13
+  - Trap 'Flame brazier': Pos=(2.92, 1.74, 20.00), BoundsSize=(0.93, 1.04, 0.94), Collider=CapsuleCollider
+  - Trap 'Floor Blade Trap': Pos=(4.00, 2.45, 30.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+  - Trap 'Rolling boulder': Pos=(1.00, 2.07, 44.20), BoundsSize=(2.13, 1.75, 1.87), Collider=SphereCollider
+  - Trap 'Fire Geyser': Pos=(-4.80, 3.18, 61.00), BoundsSize=(2.40, 0.90, 2.40), Collider=NONE
+  - Trap 'Dart turret': Pos=(0.57, 1.71, 84.20), BoundsSize=(0.90, 1.84, 0.84), Collider=BoxCollider
+  - Trap 'Floor Blade Trap': Pos=(4.00, 0.85, 90.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+  - Trap 'Flame brazier': Pos=(3.31, -1.10, 100.00), BoundsSize=(0.93, 1.04, 0.94), Collider=CapsuleCollider
+  - Trap 'Serpent statue': Pos=(3.94, -1.10, 102.20), BoundsSize=(1.12, 2.20, 1.09), Collider=BoxCollider
+  - Trap 'Crusher pillar': Pos=(-4.16, 1.04, 120.00), BoundsSize=(2.75, 3.70, 2.74), Collider=BoxCollider
+  - Trap 'Flame brazier': Pos=(-0.68, -0.88, 140.00), BoundsSize=(0.93, 1.04, 0.94), Collider=CapsuleCollider
+  - Trap 'Floor Blade Trap': Pos=(2.60, 0.59, 150.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+  - Trap 'Fire Geyser': Pos=(-4.40, -0.22, 161.00), BoundsSize=(2.40, 0.90, 2.40), Collider=NONE
+  - Trap 'Flame brazier': Pos=(-5.91, -0.22, 160.00), BoundsSize=(0.93, 1.04, 0.94), Collider=CapsuleCollider
+[5. ENEMIES]
+  Total Enemies: 20
+  - Enemy Kind=17 (Minion): Pos=(0.80, 1.70, 20.80), HP=7/7, OverVoid=False, AnchorDist=0.93m
+  - Enemy Kind=13 (Minion): Pos=(5.80, 2.47, 31.00), HP=7/7, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=14 (Minion): Pos=(2.20, 2.47, 31.60), HP=19/19, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=12 (Minion): Pos=(1.00, 3.27, 40.00), HP=7/7, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=14 (Minion): Pos=(-2.00, 4.20, 50.00), HP=19/19, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=15 (Minion): Pos=(-4.00, 3.27, 60.00), HP=7/7, OverVoid=False, AnchorDist=0.72m
+  - Enemy Kind=16 (Minion): Pos=(0.80, 2.47, 71.00), HP=7/7, OverVoid=False, AnchorDist=0.68m
+  - Enemy Kind=18 (Minion): Pos=(-2.80, 2.47, 70.00), HP=7/7, OverVoid=False, AnchorDist=0.30m
+  - Enemy Kind=17 (Minion): Pos=(0.80, 1.70, 80.80), HP=7/7, OverVoid=False, AnchorDist=0.93m
+  - Enemy Kind=12 (Minion): Pos=(5.80, 0.87, 91.00), HP=7/7, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=13 (Minion): Pos=(2.20, 0.87, 91.60), HP=7/7, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=13 (Minion): Pos=(1.00, 0.07, 100.00), HP=7/7, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=14 (Minion): Pos=(0.00, 0.30, 110.00), HP=19/19, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=18 (Minion): Pos=(-2.60, 1.16, 120.00), HP=7/7, OverVoid=False, AnchorDist=0.30m
+  - Enemy Kind=15 (Minion): Pos=(5.40, -0.21, 131.00), HP=7/7, OverVoid=False, AnchorDist=0.72m
+  - Enemy Kind=17 (Minion): Pos=(1.80, -0.21, 130.00), HP=7/7, OverVoid=False, AnchorDist=0.93m
+  - Enemy Kind=17 (Minion): Pos=(-2.80, -0.92, 140.80), HP=7/7, OverVoid=False, AnchorDist=0.93m
+  - Enemy Kind=19 (Minion): Pos=(4.40, 0.61, 151.00), HP=7/7, OverVoid=False, AnchorDist=0.87m
+  - Enemy Kind=20 (Minion): Pos=(0.80, 0.61, 151.60), HP=7/7, OverVoid=False, AnchorDist=0.70m
+  - Enemy Kind=20 (Minion): Pos=(-3.60, 0.95, 160.00), HP=7/7, OverVoid=False, AnchorDist=0.70m
+[7. PICKUPS & PROPS]
+  Pickups: 68 gems/coins, Heals: 4, Weapon Drops: 1
+  - Weapon Drop: Id=SwordZweihander (ZWELHANDER) at (2.30, 1.15, 108.60)
+  Total Scenery Props: 145, Floating Props: 0
+[8. LEVEL EXIT GATE]
+  Gate Pos: (1.60, -0.77, 175.00), Trigger Col=BoxCollider, Light=YES
+[9. VISUAL CAPTURE] Saved screenshot: Chapter_14.png
+
+--------------------------------------------------------------------------------
+CHAPTER 15 - REALM 3 (EMBERFALL) [BOSS CHAPTER]
+--------------------------------------------------------------------------------
+[1. ISLANDS & ROUTE]
+  Island Count: 16 (Route Points: 10)
+  Route Span: Start=(0.0, 0.0, 0.0) -> End=(3.6, -0.3, 90.0) (Total Path Length: 94.5m)
+  - Island #07 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.80), Speed=1.20, Origin=(-11.5, 3.2, 40.0)
+  - Island #08 (MOVER): Style=PingPongDwell, Offset=(-4.40, 0.00, 0.00), Speed=1.90, Origin=(-4.0, 0.9, 50.0)
+  - Island #10 (MOVER): Style=Orbit, Offset=(1.60, 0.60, 1.60), Speed=1.20, Origin=(8.5, 1.2, 60.0)
+  - Island #14 (MOVER): Style=Sinusoidal, Offset=(0.00, 0.00, 1.80), Speed=1.20, Origin=(-12.1, 2.3, 80.0)
+  Moving Islands: 4
+[2. ASTER SPAWN]
+  Spawn Pos: (0.00, 0.05, 0.00)
+  Ground Contact: Solid! Distance=0.53m, Normal=(-0.69, 0.66, -0.30), Hit=IslandMeshVisual
+  Colliders within 2.2m of spawn: Walkable stone (BoxCollider, dist=0.06m), Prop Rock_03 (BoxCollider, dist=1.30m), Breakable crate (BoxCollider, dist=1.27m)
+[3. CHECKPOINTS]
+  Count: 2
+  - Checkpoint #1: Pos=(-1.20, 3.02, 29.50), SpawnPoint=(0.25, 3.07, 31.15), RespawnDist=2.20m, GroundOffset=0.00m, SolidCol=True, VisualOk=True
+  - Checkpoint #2: Pos=(-3.20, 0.12, 59.50), SpawnPoint=(-1.75, -0.84, 61.15), RespawnDist=2.40m, GroundOffset=0.06m, SolidCol=True, VisualOk=True
+[4. TRAPS & HAZARDS]
+  Total Traps: 10
+  - Trap 'Spike Trap': Pos=(3.20, 2.14, 21.00), BoundsSize=(2.00, 3.21, 2.00), Collider=NONE
+  - Trap 'Floor Blade Trap': Pos=(1.00, 3.05, 30.00), BoundsSize=(2.40, 0.15, 2.40), Collider=NONE
+  - Trap 'Rolling boulder': Pos=(-2.00, 2.05, 43.36), BoundsSize=(2.13, 1.75, 1.87), Collider=SphereCollider
+  - Trap 'Rolling boulder': Pos=(-1.00, -1.13, 64.20), BoundsSize=(2.13, 1.75, 1.87), Collider=SphereCollider
+  - Trap 'Flame brazier': Pos=(-3.31, -1.10, 60.00), BoundsSize=(0.93, 1.04, 0.94), Collider=CapsuleCollider
+  - Trap 'Serpent statue': Pos=(-5.12, 1.23, 81.83), BoundsSize=(1.12, 2.20, 1.09), Collider=BoxCollider
+  - Trap 'Crusher pillar': Pos=(-1.90, -0.23, 86.50), BoundsSize=(2.75, 3.70, 2.74), Collider=BoxCollider
+  - Trap 'Crusher pillar': Pos=(9.10, -0.23, 86.50), BoundsSize=(2.75, 3.70, 2.74), Collider=BoxCollider
+  - Trap 'Dart turret': Pos=(-4.40, -0.23, 94.00), BoundsSize=(0.90, 1.84, 0.84), Collider=BoxCollider
+  - Trap 'Dart turret': Pos=(11.60, -0.23, 94.00), BoundsSize=(0.90, 1.84, 0.84), Collider=BoxCollider
+[5. ENEMIES]
+  Total Enemies: 11
+  - Enemy Kind=17 (Minion): Pos=(2.80, 2.10, 20.80), HP=8/8, OverVoid=False, AnchorDist=0.93m
+  - Enemy Kind=13 (Minion): Pos=(2.80, 3.07, 31.00), HP=8/8, OverVoid=False, AnchorDist=0.83m
+  - Enemy Kind=14 (Minion): Pos=(-0.80, 3.07, 31.60), HP=20/20, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=12 (Minion): Pos=(-2.00, 2.30, 40.00), HP=8/8, OverVoid=False, AnchorDist=0.82m
+  - Enemy Kind=14 (Minion): Pos=(-4.00, 1.07, 50.00), HP=20/20, OverVoid=False, AnchorDist=1.10m
+  - Enemy Kind=15 (Minion): Pos=(-1.00, 0.07, 60.00), HP=8/8, OverVoid=False, AnchorDist=0.72m
+  - Enemy Kind=16 (Minion): Pos=(1.80, 0.07, 71.00), HP=8/8, OverVoid=False, AnchorDist=0.68m
+  - Enemy Kind=18 (Minion): Pos=(-1.80, 0.07, 70.00), HP=8/8, OverVoid=False, AnchorDist=0.30m
+  - Enemy Kind=17 (Minion): Pos=(-1.70, 1.19, 81.10), HP=8/8, OverVoid=False, AnchorDist=0.93m
+  - Enemy Kind=19 (Minion): Pos=(-3.50, 1.22, 79.00), HP=8/8, OverVoid=False, AnchorDist=0.88m
+  - Enemy Kind=21 (BOSS): Pos=(3.60, -0.21, 89.00), HP=48/48, OverVoid=False, AnchorDist=1.80m
+[6. BOSS SPECIFICATION]
+  Boss Name: Realm guardian, Kind=21, MaxHP=48, WeakElement=2
+  Golem Boss Controller (Combo/Slam/Charge): False
+  Lava Boss Controller (Warden/Greatsword): True
+  Visual Model: LavaBoss visual, UsesFallback: False, HasAnimator: True
+  Boss Distance to Arena Center: 1.00m (Arena Center: (3.6, -0.3, 90.0))
+[7. PICKUPS & PROPS]
+  Pickups: 40 gems/coins, Heals: 2, Weapon Drops: 1
+  - Weapon Drop: Id=Axe (WAR AXE) at (2.30, 0.92, 68.60)
+  Total Scenery Props: 88, Floating Props: 0
+[8. LEVEL EXIT GATE]
+  Gate Pos: (3.60, -0.28, 95.00), Trigger Col=BoxCollider, Light=YES
+[9. VISUAL CAPTURE] Saved screenshot: Chapter_15.png
+
+================================================================================
+CHAPTER INSPECTION COMPLETE. Total Anomalies Flagged: 10
+================================================================================

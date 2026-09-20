@@ -36,6 +36,9 @@ namespace LostRealms {
   void Update(){
    var g=RealmGame.I;if(g&&(g.Screen!=GameScreen.Playing||g.Elapsed<holdUntil))return;
    age+=Time.deltaTime;float t=Progress;
+   // Self-destruct once the countdown finishes: callers that manage their own
+   // lifetime destroy it sooner; leaked rings used to accumulate forever.
+   if(age>=duration+.05f){Destroy(gameObject);return;}
    sweep.localScale=Vector3.one*radius*Mathf.Lerp(.08f,1f,t);
    color.a=.55f+.35f*t;properties.SetColor("_Color",color);rimRenderer.SetPropertyBlock(properties);sweepRenderer.SetPropertyBlock(properties);
   }

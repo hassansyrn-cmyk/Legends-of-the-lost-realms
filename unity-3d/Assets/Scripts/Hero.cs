@@ -9,8 +9,11 @@ namespace LostRealms {
   const float MaxMoveSpeed=4.8f,GroundResponse=18f,AirResponse=8f,StopResponse=22f;
   Vector3 velocity;Vector3 moveWish;float vertical,jumpGrace,dashUntil,dashReady,dodgeVisualUntil,hitUntil,immuneUntil,attackReady,comboUntil,chargeStart,attackBufferUntil,spellUntil;int jumps,combo,airDashes;bool charging,attackBufferCharged,spellCharging,wasGrounded,plunging;float jumpBuffer,spellChargeStart;string attackState="attack_1",hitState="hit",parryState="charged",dodgeVisualState="dodge";
   float parryUntil,parryReady,counterUntil,pullUntil,stepTimer;Vector3 pullPoint;bool dodgeRewarded;
-  Vector3 platformDisplacement;
+  Vector3 platformDisplacement;float hyperArmorUntil,ledgeLostAt;
   public void CarryByPlatform(Vector3 delta){platformDisplacement+=delta;}
+  // Heavy weapons (greataxes/hammers) grant hyper-armor during the active
+  // swing: damage still lands but the flinch and knockback are shrugged off.
+  public bool HyperArmor=>RealmGame.I!=null&&RealmGame.I.Elapsed<hyperArmorUntil;
   public bool CounterReady=>RealmGame.I!=null&&RealmGame.I.Elapsed<counterUntil;
   public float HorizontalSpeed{get{var horizontal=velocity;horizontal.y=0;return horizontal.magnitude;}}
   // Read by FollowCamera for FOV kick (dash/attack) without exposing internals.
@@ -115,12 +118,23 @@ namespace LostRealms {
    if(jumpBuffer>0&&(jumps<2||jumpGrace>0)){
     jumpBuffer=0;
     vertical=8.4f;jumps=jumpGrace>0?1:jumps+1;jumpGrace=0;
+    // Platform dismount inertia: inherit the carrying island's horizontal
+    // velocity (damped + capped) so hops off ferries/elevators carry momentum
+    // instead of braking hard in mid-air.
+    Vector3 platformVelocity=platformDisplacement/Mathf.Max(dt,1e-5f);platformVelocity.y=0;
+    if(platformVelocity.sqrMagnitude>.04f)velocity+=Vector3.ClampMagnitude(platformVelocity*.85f,4.5f);
     g.Sound(jumps==1?"jump":"double_jump");
     if(jumps==2){
      Color elemColor=Power==0?new Color(1f,.45f,.1f):Power==1?new Color(.2f,.85f,1f):new Color(.2f,1f,.55f);
      HitSpark.Burst(transform.position+Vector3.up*.2f,Vector3.down,elemColor,8);
     }
     Visual.Restart("jump");
+   }else if(jumpBuffer>0&&jumps==0&&ledgeLostAt>0f&&RealmGame.I.Elapsed-ledgeLostAt<=.15f){
+    // Ledge forgiveness hop: narrowly missed an island edge just after coyote
+    // time expired — a slightly weaker rescue jump that keeps the double jump.
+    jumpBuffer=0;jumps=1;vertical=6.9f;ledgeLostAt=0f;
+    g.Sound("jump");Visual.Restart("jump");
+    HitSpark.Burst(transform.position+Vector3.up*.2f,Vector3.down,new Color(.85f,1f,.9f),6);
    }
    // Variable jump height removed: a tap-vs-hold trim shortened jumps on
    // touch devices (JumpHeld is never true for a tap), breaking island gaps.
@@ -169,6 +183,9 @@ namespace LostRealms {
    Controller.Move((velocity+Vector3.up*vertical)*dt+platformDisplacement);
    platformDisplacement=Vector3.zero;
    bool nowGrounded=Grounded;
+   // Ledge-loss bookkeeping for the forgiveness hop (consumed by the jump
+   // block next step): stamp the moment Aster walks off an edge.
+   if(nowGrounded)ledgeLostAt=0f;else if(wasGrounded)ledgeLostAt=RealmGame.I.Elapsed;
    if(nowGrounded&&plunging){
     LandPlunge();
    }
@@ -188,14 +205,25 @@ namespace LostRealms {
   public void Push(Vector3 p){Controller.enabled=false;transform.position=p;Controller.enabled=true;}
   public void Bounce(float upwardVelocity,Vector3 horizontalImpulse=default){vertical=upwardVelocity;if(horizontalImpulse.sqrMagnitude>.01f)velocity=horizontalImpulse;jumps=1;airDashes=1+Mathf.Min(3,RealmGame.I.Save.moxieRank);jumpGrace=0;jumpBuffer=0;Visual.Restart("jump");}
   public void Boost(Vector3 impulse){velocity=Vector3.ClampMagnitude(velocity+impulse,14f);airDashes=Mathf.Max(airDashes,1);}
+  // Continuous external force (wind vents, geysers): small per-step impulses,
+  // no clamp and no air-dash refresh — Boost is for one-shot launches.
+  public void ApplyForce(Vector3 impulse){velocity+=impulse;}
   public bool Damage(int damage,Vector3 source){
    plunging=false;
    if(Health<=0)return false;
    if(RealmGame.I.Elapsed<parryUntil){ParrySuccess(source);return false;}
    if(RealmGame.I.Elapsed<immuneUntil){if(RealmGame.I.Elapsed<dashUntil)PerfectDodge(source);return false;}
-Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=RealmGame.I.Elapsed+1;hitUntil=RealmGame.I.Elapsed+.5f;
-    Vector3 knock=transform.position-source;knock.y=0;if(knock.sqrMagnitude<.01f)knock=-transform.forward;knock.y=0;velocity=knock.normalized*4.5f;RealmGame.I.Sound("hurt");RealmGame.I.CameraRig.Shake=.18f;RealmGame.I.CameraRig.Kick(knock.normalized,.4f);
-    Visual.Restart(Health<=0&&!(RealmGame.I.Save.windRank>windUsed)?"death":(hitState=HitVariant()));
+Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=RealmGame.I.Elapsed+1;
+    // Hyper-armor: heavy-weapon swings absorb the hit without flinching or
+    // losing ground — the swing commits. Lethal hits always break through.
+    bool armored=HyperArmor&&Health>0;
+    if(!armored){
+     hitUntil=RealmGame.I.Elapsed+.5f;
+     Vector3 knock=transform.position-source;knock.y=0;if(knock.sqrMagnitude<.01f)knock=-transform.forward;knock.y=0;velocity=knock.normalized*4.5f;RealmGame.I.Sound("hurt");RealmGame.I.CameraRig.Shake=.18f;RealmGame.I.CameraRig.Kick(knock.normalized,.4f);
+     Visual.Restart(Health<=0&&!(RealmGame.I.Save.windRank>windUsed)?"death":(hitState=HitVariant()));
+    }else{
+     DamageTip.Show(transform.position+Vector3.up*1.9f,"UNSTOPPABLE",new Color(1f,.82f,.35f));
+    }
     HitSpark.Burst(transform.position+Vector3.up*.8f,(transform.position-source).normalized,new Color(1f,.2f,.2f),8);
     if(Health<=0&&RealmGame.I.Save.windRank>windUsed){windUsed++;Health=Mathf.Max(3,Mathf.RoundToInt(MaxHealth*.45f));Energy=Mathf.Max(Energy,60);immuneUntil=RealmGame.I.Elapsed+2.2f;RealmGame.I.Tell("SECOND WIND — the realm spirit holds you up.",3);RealmGame.I.Sound("respawn");Vfx.Play("ga_vfx_Heal_02",transform.position+Vector3.up*.9f,Quaternion.identity,1f);}
     else if(Health<=0)RealmGame.I.Defeat();
@@ -217,6 +245,15 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
    attackState=charged?"charged":"attack_"+Mathf.Clamp(combo,1,3);
    float clipLen=Visual?Visual.ClipLength(attackState,style):0f;
    float attackDuration=clipLen>0f?clipLen/playSpeed:(charged?.84f:(combo==2?.78f:(combo==3?.64f:.66f)))/weapon.Tempo;
+   // Archetype perks by weapon family (Sep 2026 combat pass):
+   //  heavy (greataxe/hammer grips, Damage>=1.4) = hyper-armor through the swing,
+   //  pole (spear/halberd/staff) = tipper sweet-spot, flurry (fists/dagger) =
+   //  faster chains + backstab crits, chakram = returning-disc specialist.
+   bool heavy=style=="chop"&&weapon.Damage>=1.4f;
+   bool pole=style=="spear";
+   bool flurry=style=="unarmed"||weapon.Id==WeaponId.RiftDagger;
+   if(flurry)attackDuration*=.85f;
+   hyperArmorUntil=heavy?RealmGame.I.Elapsed+attackDuration*.8f:0f;
    attackReady=RealmGame.I.Elapsed+attackDuration;
    comboUntil=attackReady+.35f;
     bool isDashStrike=RealmGame.I.Elapsed<dashUntil;
@@ -274,7 +311,15 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
     if(delta.magnitude<reach+e.Radius&&Vector3.Dot(transform.forward,delta.normalized)>-.2f){
      float dmg=damage+(g.Save.powerRank*.18f);
      if(affinity>=0&&affinity==e.WeakElement)dmg*=1.15f;
-     e.Hit(dmg,Power,false,transform.forward);
+     // Spear tipper: strikes landing in the outer ~40% of reach hit harder,
+     // close-in pokes are weaker — rewards spacing.
+     if(pole)dmg*=delta.magnitude>reach*.62f?1.3f:.85f;
+     // Dagger/fist backstab: striking a foe from behind is a critical.
+     if(flurry&&Vector3.Dot(e.transform.forward,transform.forward)>.45f){
+      dmg*=1.6f;
+      DamageTip.Show(e.transform.position+Vector3.up*(e.Boss?2.4f:1.6f),"BACKSTAB!",new Color(.6f,1f,.55f));
+     }
+     e.Hit(dmg,Power,false,transform.forward,heavy);
     }
    }
    // The blade also smashes breakable crates/barrels in reach.
@@ -348,7 +393,7 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
   }
   void ParrySuccess(Vector3 source){
    var g=RealmGame.I;parryUntil=0;parryReady=g.Elapsed+.55f;
-   g.HitStop(.14f,.08f);g.CameraRig.Shake=.3f;g.Sound("impact");
+   g.HitStop(.14f,.08f);g.CameraRig.Shake=.3f;g.Sound("impact");g.Haptic();
    Energy=Mathf.Min(100,Energy+20+RealmGame.I.Save.tempoRank*5);counterUntil=g.Elapsed+1.6f;
    HitSpark.Burst(transform.position+Vector3.up*.95f,-transform.forward,new Color(1f,.96f,.72f),28);
    DamageTip.Show(transform.position+Vector3.up*1.95f,"PARRY!",new Color(1f,.94f,.6f));
@@ -360,7 +405,7 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
   // rewards the player with energy and a counter opening.
   void PerfectDodge(Vector3 source){
    if(dodgeRewarded)return;dodgeRewarded=true;
-   var g=RealmGame.I;g.HitStop(.1f,.1f);g.CameraRig.Shake=.2f;g.Sound("player_dash");
+   var g=RealmGame.I;g.HitStop(.1f,.1f);g.CameraRig.Shake=.2f;g.Sound("player_dash");g.Haptic();
    Energy=Mathf.Min(100,Energy+30);counterUntil=g.Elapsed+1.4f;
    HitSpark.Burst(transform.position+Vector3.up*.85f,-transform.forward,new Color(.7f,.96f,1f),24);
    DamageTip.Show(transform.position+Vector3.up*1.95f,"PERFECT DODGE",new Color(.65f,.95f,1f));
@@ -615,6 +660,9 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
   }
   public class CharacterVisual:MonoBehaviour {
   public Animator animator;PlayableGraph graph;AnimationMixerPlayable mixer;AnimationClipPlayable[] playable=new AnimationClipPlayable[2];AnimationClip[] clips;string current="";float blend;int slot;bool hasGraph;Transform fallbackBody;
+  // Extra per-role clips (boss movesets): attack_2/victory/gethit/dizzy loaded
+  // from Animations/<role>_<state> for rigged enemy roles with authored extras.
+  public readonly System.Collections.Generic.Dictionary<string,AnimationClip> extraClips=new System.Collections.Generic.Dictionary<string,AnimationClip>();
   public bool UsesFallback=>fallbackBody!=null;
   // Per-weapon attack style variants (chop/spear/unarmed × combo 1-3), baked by
   // AsterPhase1 alongside the base set. Entries stay null when a style file is
@@ -685,6 +733,11 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
     v.spearClips[s]=Resources.Load<AnimationClip>("Animations/Aster/spear_"+(s+1));
     v.unarmedClips[s]=Resources.Load<AnimationClip>("Animations/Aster/unarmed_"+(s+1));
    }
+   if(role!="Aster")foreach(var st in new[]{"attack_2","victory","gethit","dizzy","run_fast"}){
+    var extra=Resources.Load<AnimationClip>("Animations/"+role+"_"+st);
+    if(extra)v.extraClips[st]=extra;
+   }
+   if(role!="Aster"){var runFast=Resources.Load<AnimationClip>("Animations/"+role+"_run");if(runFast)v.extraClips["run_fast"]=runFast;}
    // Removed dynamic Animator addition. Prefabs should contain their own Animators if they are animated.
    // Normalize any FBX model to the requested role height and ground it on its
    // real bounds — pack FBX ship arbitrary scales and pivot offsets (the golem
@@ -736,6 +789,8 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
   }
 
   public void Restart(string state){current="";Play(state);}
+  // Manual playback-speed override for controller-driven movement (boss charge).
+  public void SetCurrentSpeed(float s){if(hasGraph&&playable[slot].IsValid())playable[slot].SetSpeed(s);}
   public void PlayBossAction(string state,float duration){
    var clip=Resources.Load<AnimationClip>("Animations/LavaBoss/"+state);
    current="";PlayClip(clip,state);
@@ -775,6 +830,7 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
    if(state=="attack")state="attack_1";
    if(current==state)return;
    int i=System.Array.IndexOf(Names,state);AnimationClip clip=i>=0?clips[i]:null;
+   if(clip==null&&extraClips.TryGetValue(state,out var extra))clip=extra;
    if(lavaBoss&&!clip)clip=Resources.Load<AnimationClip>("Animations/LavaBoss/"+state);
    PlayClip(clip,state);
   }
@@ -788,6 +844,8 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
    if(state=="jump")playable[slot].SetSpeed(1.9f);
    if(state=="double_jump")playable[slot].SetSpeed(3.55f);
    if(state=="dodge"||state=="roll")playable[slot].SetSpeed(3.35f);
+   if(state=="run_fast")playable[slot].SetSpeed(1.7f);
+   if(state=="victory"||state=="gethit"||state=="dizzy")playable[slot].SetSpeed(1.15f);
    if(state=="hit")playable[slot].SetSpeed(2.07f);
    playable[slot].SetTime(0);
    graph.Connect(playable[slot],0,mixer,slot);blend=0;mixer.SetInputWeight(slot,0f);mixer.SetInputWeight(1-slot,1f);

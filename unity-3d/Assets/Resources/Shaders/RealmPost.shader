@@ -9,15 +9,21 @@ Shader "LostRealms/RealmPost" {
   _Bloom ("Bloom", Range(0,2)) = 0.3
   _Threshold ("Bloom threshold", Range(0,1)) = 0.72
   _Damage ("Damage vignette", Range(0,1)) = 0
+  _HeightFog ("Height fog density", Range(0,1)) = 0
+  _HeightFogY ("Height fog sea level", Float) = -2
  }
  SubShader {
   Cull Off ZWrite Off ZTest Always
   CGINCLUDE
   #include "UnityCG.cginc"
   sampler2D _MainTex, _BloomTex;
+  // Not declared by UnityCG.cginc — must be explicit or the composite pass
+  // fails to compile and the whole screen renders magenta.
+  sampler2D _CameraDepthTexture;
   float4 _MainTex_TexelSize, _BlurDirection;
   float4 _Tint;
-  float _Sat,_Contrast,_Vignette,_Bloom,_Threshold,_Damage;
+  float _Sat,_Contrast,_Vignette,_Bloom,_Threshold,_Damage,_HeightFog,_HeightFogY;
+  fixed4 _FogTint; float4 _RayTL,_RayTR,_RayBL,_RayBR;
   ENDCG
   Pass {
    CGPROGRAM
@@ -35,6 +41,18 @@ Shader "LostRealms/RealmPost" {
     col*=1-_Vignette*smoothstep(.12,.5,dot(d,d));
     float edge=smoothstep(.04,.5,dot(d,d)*2);
     col=lerp(col,float3(col.r*1.1+.15,col.g*.5,col.b*.45),saturate(_Damage)*edge);
+    // Height fog: rebuild world height from the depth buffer (frustum-corner
+    // ray interpolation) and wash the cloud-sea level in fog tint, so the gaps
+    // between islands read as thick atmosphere while plateaus stay crisp.
+    if(_HeightFog>0.001){
+     float depth01=Linear01Depth(tex2D(_CameraDepthTexture,i.uv).r);
+     if(depth01<0.9999){
+      float3 ray=lerp(lerp(_RayBL,_RayBR,i.uv.x),lerp(_RayTL,_RayTR,i.uv.x),i.uv.y);
+      float3 wpos=_WorldSpaceCameraPos+normalize(ray)*(depth01*_ProjectionParams.z);
+      float h=max(wpos.y-_HeightFogY,0);
+      col=lerp(col,_FogTint.rgb,saturate(exp2(-h*0.22)*_HeightFog));
+     }
+    }
     return fixed4(saturate(col),1);
    }
    ENDCG
