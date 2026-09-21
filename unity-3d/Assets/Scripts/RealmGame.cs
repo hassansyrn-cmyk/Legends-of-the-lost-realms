@@ -94,6 +94,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
   public void Tell(string message,float seconds=3){Notice=message;noticeUntil=Time.unscaledTime+seconds;}
    public void ComboHit(){Combo++;comboUntil=Elapsed+1.1f;}
   public void Sound(string name){if(Audio)Audio.Play(name);}
+  public void Sound(string name,float pitchMul){if(Audio)Audio.Play(name,1f,pitchMul);}
   // Short vibration tick on key feedback moments (parry, perfect dodge).
   // Mobile only, and gated by the Sanctuary HAPTICS toggle.
   public void Haptic(){if(Save.haptics&&Application.isMobilePlatform)Handheld.Vibrate();}

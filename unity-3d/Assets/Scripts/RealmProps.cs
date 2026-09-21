@@ -13,7 +13,6 @@ namespace LostRealms {
    static readonly Dictionary<string,GameObject> cache=new Dictionary<string,GameObject>();
    static Material stoneMat;
    static readonly Dictionary<string,Material> glowMats=new Dictionary<string,Material>();
-   static Mesh shardMesh;
 
   // Realm 2 uses a snow-converted palette and the imported snow models;
   // realm 1 uses the imported desert-city models on a sandy palette so the
@@ -114,20 +113,72 @@ static void PlaceVillage(Transform island,int realm,float width,float length,Sys
     if(found){localY=bestY;return true;}
     return false;
    }
-   static float SurfaceY(Transform island,float x,float z){
-    if(TrySurfaceY(island,x,z,out float ly))return ly;
-    return .02f;
-   }
-   static void Place(Transform island,int realm,string name,float width,float length,System.Random rng,float hMin,float hMax,Material material){
+    static float SurfaceY(Transform island,float x,float z){
+     if(TrySurfaceY(island,x,z,out float ly))return ly;
+     return .02f;
+    }
+    // Strict deck query shared by the settle pass and the organization sweep
+    // (so both converge): island-owned scenery/deck only — never props,
+    // traps, enemies or pickups, and never the tested prop itself.
+    public static bool TryDeckSurface(Transform island,float x,float z,Transform ignoreRoot,out float localY){
+     localY=.02f;
+     var hits=Physics.RaycastAll(island.TransformPoint(new Vector3(x,8f,z)),Vector3.down,20f,~0,QueryTriggerInteraction.Ignore);
+     float bestY=float.NegativeInfinity;bool found=false;
+     foreach(var h in hits){
+      if(!IsDeckHit(h,island,ignoreRoot))continue;
+      if(h.normal.y<.55f)continue;
+      float ly=island.InverseTransformPoint(h.point).y;
+      if(ly<-2.5f)continue;
+      if(ly>bestY){bestY=ly;found=true;}
+     }
+     if(found){localY=bestY;return true;}
+     return false;
+    }
+    static bool IsDeckHit(RaycastHit h,Transform island,Transform ignoreRoot){
+     var t=h.transform;
+     if(!t||t==ignoreRoot||t.IsChildOf(ignoreRoot))return false;
+     while(t!=null&&t!=island){
+      var n=t.name;
+      if(n.StartsWith("Prop ")||n.StartsWith("Breakable")||n.StartsWith("Pushable"))return false;
+      if(t.GetComponent<Enemy>()||t.GetComponent<RealmHeal>()||t.GetComponent<WeaponDrop>())return false;
+      if(t.GetComponent<SawTrap>()||t.GetComponent<FloorBladeTrap>()||t.GetComponent<SpikeTrap>()||t.GetComponent<PendulumTrap>()||t.GetComponent<FireGeyser>()||t.GetComponent<CrusherPillar>()||t.GetComponent<DartTurret>()||t.GetComponent<RollingBoulder>()||t.GetComponent<WindVent>()||t.GetComponent<FlameBrazier>()||t.GetComponent<FrostTotem>()||t.GetComponent<SerpentStatue>())return false;
+      t=t.parent;
+     }
+     return t==island;
+    }
+    // Post-scatter settle: snap clear outliers straight onto the deck, either
+    // direction (floaters down, half-buried props up). Capped and deck-only —
+    // scenery under terraces/overhangs is never teleported, planted bases and
+    // deep pits are untouched.
+    public static void SettleProps(Transform world){
+     foreach(Transform island in world){
+      if(island.name!="Island")continue;
+      foreach(Transform c in island){
+       if(!c.name.StartsWith("Prop ")&&!c.name.StartsWith("Breakable")&&!c.name.StartsWith("Pushable"))continue;
+       var r=c.GetComponentInChildren<Renderer>();if(!r)continue;
+       Bounds b=r.bounds;foreach(var r2 in c.GetComponentsInChildren<Renderer>())b.Encapsulate(r2.bounds);
+       Vector3 bc=island.InverseTransformPoint(b.center);
+       if(!TryDeckSurface(island,bc.x,bc.z,c,out float ly))continue;
+       float surfY=island.TransformPoint(new Vector3(bc.x,ly,bc.z)).y;
+       float gap=b.min.y-surfY;
+       if(Mathf.Abs(gap)>.35f&&Mathf.Abs(gap)<1.6f)c.position+=Vector3.down*gap;
+      }
+     }
+    }
+    static void Place(Transform island,int realm,string name,float width,float length,System.Random rng,float hMin,float hMax,Material material){
      var source=Model(Folder(realm,name),name);if(!source)return;
      material=MaterialFor(name,realm);if(!material)return;
+     // Probe with the real footprint (at max fitted height, so no rng is
+     // consumed out of order): big models like wagons extend well past a
+     // fixed radius, and a post-place Destroy would linger in batch runs.
+     float probeR=FootprintRadius(source,hMax);
      float halfWidth=Mathf.Max(.6f,width*.5f-1.2f);
      int side=rng.Next(0,2)==0?-1:1;
      float x=side*Mathf.Min(halfWidth,1.4f+(float)rng.NextDouble()*halfWidth);
      float z=((float)rng.NextDouble()-.5f)*Mathf.Max(.6f,length-1.8f);
      // Keep props off trap spots (reserved circles) and away from the chapter
      // spawn point — a rock beside Aster's landing can wedge the capsule.
-     if(!TrapArt.IsClear(island,new Vector3(x,.05f,z),.9f))return;
+     if(!TrapArt.IsClear(island,new Vector3(x,.05f,z),probeR))return;
      if(SpawnGuard!=Vector3.zero){
       var surfaceY=island.parent?island.position:Vector3.zero;
       if(Vector3.Distance(island.TransformPoint(new Vector3(x,.05f,z)),SpawnGuard)<2.6f)return;
@@ -159,6 +210,16 @@ static void PlaceVillage(Transform island,int realm,float width,float length,Sys
     foreach(var renderer in prop.GetComponentsInChildren<Renderer>(true)){
      renderer.sharedMaterial=material;renderer.shadowCastingMode=ShadowCastingMode.On;renderer.receiveShadows=true;
     }
+   }
+   // Real footprint radius of a source model at a fitted height (square,
+   // yaw-agnostic so it stays valid after the random spin).
+   static float FootprintRadius(GameObject source,float fitH){
+    var rs=source.GetComponentsInChildren<Renderer>(true);
+    if(rs.Length==0)return .9f;
+    Bounds b=rs[0].bounds;for(int i=1;i<rs.Length;i++)b.Encapsulate(rs[i].bounds);
+    if(b.size.y<1e-4f)return .9f;
+    float s=fitH/b.size.y;
+    return Mathf.Max(.35f,Mathf.Max(b.size.x,b.size.z)*.5f*s);
    }
    static void AddCollider(GameObject prop){
     if(prop.GetComponentInChildren<Collider>())return;
@@ -225,12 +286,13 @@ if(prop.name.StartsWith("Prop Tree")){
       PlaceBuilding(island,name,halfX,side,z,rng,material,false);
      }
     }
-    static void PlaceBuilding(Transform island,string name,float xMag,int side,float z,System.Random rng,Material material,bool gateway){
-     var source=Model("Desert",name);if(!source)return;
-     float x=gateway?0f:side*xMag;
-     // Buildings honour trap reservations too — a tent on the serpent statue
-     // was possible because this path bypassed Place().
-     if(!TrapArt.IsClear(island,new Vector3(x,.08f,z),1.4f))return;
+     static void PlaceBuilding(Transform island,string name,float xMag,int side,float z,System.Random rng,Material material,bool gateway){
+      var source=Model("Desert",name);if(!source)return;
+      float x=gateway?0f:side*xMag;
+      // Buildings honour trap reservations too — a tent on the serpent statue
+      // was possible because this path bypassed Place(). Probe with the real
+      // footprint (houses are metres wide).
+      if(!TrapArt.IsClear(island,new Vector3(x,.08f,z),FootprintRadius(source,3.5f)))return;
      float localY=.02f;
      bool valid=false;
      for(int attempt=0;attempt<6;attempt++){
@@ -276,14 +338,7 @@ if(prop.name.StartsWith("Prop Tree")){
     m.SetColor("_Color",c);m.EnableKeyword("_EMISSION");m.SetColor("_EmissionColor",c*1.6f);
     m.SetFloat("_Metallic",0f);m.SetFloat("_Glossiness",.3f);glowMats[key]=m;return m;
    }
-   static Mesh ShardMesh(){
-    if(shardMesh)return shardMesh;
-    var m=new Mesh{name="Prop shard"};
-    m.vertices=new[]{new Vector3(0,.5f,0),new Vector3(0,-.5f,0),new Vector3(.3f,0,0),new Vector3(-.3f,0,0),new Vector3(0,0,.3f),new Vector3(0,0,-.3f)};
-    m.triangles=new[]{0,2,4, 0,4,3, 0,3,5, 0,5,2, 1,4,2, 1,3,4, 1,5,3, 1,2,5};
-    m.RecalculateNormals();m.RecalculateBounds();shardMesh=m;return m;
-   }
-   // Petrified guardians: fallen Flyer/Bomber/Summoner/Elite meshes in stone,
+    // Petrified guardians: fallen Flyer/Bomber/Summoner/Elite meshes in stone,
    // flanking gate arches and the boss arena. Named "Prop Statue *" so the
    // shared AddCollider gives them a plain box.
    static void PlaceStatue(Transform island,string name,float x,float z,float yaw,float height){
@@ -295,6 +350,7 @@ if(prop.name.StartsWith("Prop Tree")){
      x*=.8f;z*=.8f;
     }
     if(!valid)return;
+    if(!TrapArt.IsClear(island,new Vector3(x,localY,z),1.0f))return;
     var prop=Object.Instantiate(source,island);
     prop.name="Prop Statue "+name;
     prop.transform.localPosition=new Vector3(x,localY,z);
@@ -302,15 +358,15 @@ if(prop.name.StartsWith("Prop Tree")){
     Fit(prop,height);
     var groundRenderers=prop.GetComponentsInChildren<Renderer>(true);
     if(groundRenderers.Length>0){
-     Bounds gb=groundRenderers[0].bounds;
-     for(int i=1;i<groundRenderers.Length;i++)gb.Encapsulate(groundRenderers[i].bounds);
-     float surfaceY=island.TransformPoint(new Vector3(x,localY,z)).y;
-     prop.transform.position+=Vector3.up*(surfaceY-gb.min.y);
+      Bounds gb=groundRenderers[0].bounds;
+      for(int i=1;i<groundRenderers.Length;i++)gb.Encapsulate(groundRenderers[i].bounds);
+       float surfaceY=island.TransformPoint(new Vector3(x,localY,z)).y;
+        prop.transform.position+=Vector3.up*(surfaceY-gb.min.y);
+       }
+       AddCollider(prop);
+     foreach(var renderer in prop.GetComponentsInChildren<Renderer>(true)){renderer.sharedMaterial=Stone();renderer.shadowCastingMode=ShadowCastingMode.On;renderer.receiveShadows=true;}
     }
-    AddCollider(prop);
-    foreach(var renderer in prop.GetComponentsInChildren<Renderer>(true)){renderer.sharedMaterial=Stone();renderer.shadowCastingMode=ShadowCastingMode.On;renderer.receiveShadows=true;}
-   }
-   static void PlaceCrystal(Transform island,Color color,float x,float z,float size,System.Random rng){
+    static void PlaceBanner(Transform island,float x,float z){
     float localY=.02f;
     bool valid=false;
     for(int attempt=0;attempt<6;attempt++){
@@ -318,22 +374,7 @@ if(prop.name.StartsWith("Prop Tree")){
      x*=.8f;z*=.8f;
     }
     if(!valid)return;
-    var go=new GameObject("Prop Crystal");go.transform.SetParent(island,false);
-    go.transform.localPosition=new Vector3(x,localY,z);
-    go.transform.localRotation=Quaternion.Euler((float)rng.NextDouble()*14-7,(float)rng.NextDouble()*360f,(float)rng.NextDouble()*14-7);
-    go.transform.localScale=new Vector3(size,size*(1.6f+(float)rng.NextDouble()*.9f),size);
-    var mf=go.AddComponent<MeshFilter>();mf.sharedMesh=ShardMesh();
-    var mr=go.AddComponent<MeshRenderer>();mr.sharedMaterial=GlowMat(color);mr.shadowCastingMode=ShadowCastingMode.Off;mr.receiveShadows=false;
-    AddCollider(go);
-   }
-   static void PlaceBanner(Transform island,float x,float z){
-    float localY=.02f;
-    bool valid=false;
-    for(int attempt=0;attempt<6;attempt++){
-     if(TrySurfaceY(island,x,z,out localY)){valid=true;break;}
-     x*=.8f;z*=.8f;
-    }
-    if(!valid)return;
+    if(!TrapArt.IsClear(island,new Vector3(x,localY,z),.8f))return;
     var go=new GameObject("Prop Banner");go.transform.SetParent(island,false);
     go.transform.localPosition=new Vector3(x,localY,z);
     Art.Shape("Banner pole",PrimitiveType.Cylinder,Vector3.up*1.1f,new Vector3(.09f,2.2f,.09f),new Color(.3f,.2f,.14f),go.transform);
@@ -350,6 +391,7 @@ if(prop.name.StartsWith("Prop Tree")){
      x*=.8f;z*=.8f;
     }
     if(!valid)return;
+    if(!TrapArt.IsClear(island,new Vector3(x,localY,z),.8f))return;
     var go=new GameObject("Prop Lantern");go.transform.SetParent(island,false);
     go.transform.localPosition=new Vector3(x,localY,z);
     Art.Shape("Lantern post",PrimitiveType.Cube,new Vector3(0,.15f,0),new Vector3(.3f,.3f,.3f),new Color(.25f,.28f,.33f),go.transform);
@@ -378,31 +420,25 @@ if(prop.name.StartsWith("Prop Tree")){
       x*=.8f;z*=.8f;
      }
      if(!valid)continue;
-     BreakableCrate.Place(island,new Vector3(x,localY,z),wood,rng.NextDouble()<.4f);
+      if(!TrapArt.IsClear(island,new Vector3(x,localY,z),.9f))continue;
+      BreakableCrate.Place(island,new Vector3(x,localY,z),wood,rng.NextDouble()<.4f);
     }
     if(width>8f&&rng.NextDouble()<.3f){
      float bx=(rng.Next(0,2)==0?-1:1)*1.4f;
      float bz=((float)rng.NextDouble()-.5f)*2f;
      float localY=.02f;
      if(TrySurfaceY(island,bx,bz,out localY)){
+      if(!TrapArt.IsClear(island,new Vector3(bx,localY,bz),1f))return;
       PushableBlock.Place(island,new Vector3(bx,localY,bz),new Color(.45f,.42f,.4f));
      }
     }
    }
-   static void PlaceOrnaments(Transform island,int realm,float width,float length,System.Random rng){
-    float halfX=Mathf.Max(.6f,width*.5f-1.2f);
-    if(width>=14f){
-     PlaceStatue(island,rng.Next(0,2)==0?"Elite":"Summoner",-3.2f,length*.5f-2.6f,0f,3.1f);
-     PlaceStatue(island,rng.Next(0,2)==0?"Bomber":"Flyer",3.2f,length*.5f-2.6f,180f,3.1f);
-    }
-    if(rng.NextDouble()<.7){
-     Color crystal=realm==0?new Color(.3f,1,.5f):realm==1?new Color(1,.6f,.2f):realm==2?new Color(.5f,.85f,1f):new Color(1f,.38f,.22f);
-     int n=2+rng.Next(0,2);
-     for(int i=0;i<n;i++){
-      int side=rng.Next(0,2)==0?-1:1;
-      PlaceCrystal(island,crystal,side*Mathf.Min(halfX,1.4f+(float)rng.NextDouble()*halfX),((float)rng.NextDouble()-.5f)*Mathf.Max(.6f,length-1.8f),.5f+(float)rng.NextDouble()*.6f,rng);
+    static void PlaceOrnaments(Transform island,int realm,float width,float length,System.Random rng){
+     float halfX=Mathf.Max(.6f,width*.5f-1.2f);
+     if(width>=14f){
+      PlaceStatue(island,rng.Next(0,2)==0?"Elite":"Summoner",-3.2f,length*.5f-2.6f,0f,3.1f);
+      PlaceStatue(island,rng.Next(0,2)==0?"Bomber":"Flyer",3.2f,length*.5f-2.6f,180f,3.1f);
      }
-    }
     if(realm==1&&rng.NextDouble()<.35){
      PlaceBanner(island,-(halfX-.4f),-1.4f);PlaceBanner(island,halfX-.4f,1.4f);
     }

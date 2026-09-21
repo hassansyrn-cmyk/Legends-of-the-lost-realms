@@ -82,8 +82,9 @@ namespace LostRealms {
     }
     trap.spikeRoot=spikes.transform;trap.baseLocal=spikes.transform.localPosition;
     trap.thrustHeight=1.05f;
-   }
-   return trap;
+    }
+    TrapArt.Reserve(parent,localPos,1.2f);
+    return trap;
   }
 
   void Update(){
@@ -176,8 +177,13 @@ namespace LostRealms {
    Vector3 dir=endLocal-startLocal;
    float length=dir.magnitude;
    if(length<0.2f){length=3.2f;dir=Vector3.right;}
-   Vector3 normDir=dir.normalized;
-   go.transform.localRotation=Quaternion.FromToRotation(Vector3.right,normDir);
+    Vector3 normDir=dir.normalized;
+    go.transform.localRotation=Quaternion.FromToRotation(Vector3.right,normDir);
+    // Claim the whole rail so props never scatter onto the track and later
+    // traps steer clear of the carriage lane.
+    TrapArt.Reserve(parent,startLocal,1.2f);
+    TrapArt.Reserve(parent,mid,1.2f);
+    TrapArt.Reserve(parent,endLocal,1.2f);
 
    // 1. Runic rail/track along local X
    var trackPrefab=Resources.Load<GameObject>("Props/RunicTrack");
@@ -325,8 +331,9 @@ namespace LostRealms {
   GameObject plume;Light plumeLight;float timer,cycleOffset;
   enum Phase{Dormant,Warning,Erupting}Phase phase=Phase.Dormant;
   Color geyserCol;
-  public static FireGeyser Place(Transform parent,Vector3 localPos,Color accent){
-   var go=new GameObject("Fire Geyser");go.transform.SetParent(parent,false);go.transform.localPosition=localPos;
+   public static FireGeyser Place(Transform parent,Vector3 localPos,Color accent){
+    var go=new GameObject("Fire Geyser");go.transform.SetParent(parent,false);go.transform.localPosition=localPos;
+    TrapArt.Reserve(parent,localPos,1.4f);
     // Volcanic stone crater
     var ventPrefab=Resources.Load<GameObject>("Props/LavaVent");
     if(ventPrefab){
@@ -408,8 +415,12 @@ namespace LostRealms {
  // =========================================================================
  public sealed class PendulumTrap:MonoBehaviour {
   Transform pivot,blade;float phase,speed=2.4f,maxAngle=55f;bool wasCenter;
-  public static PendulumTrap Place(Transform parent,Vector3 localPos,float width,Color accent){
-   var go=new GameObject("Pendulum Trap");go.transform.SetParent(parent,false);go.transform.localPosition=localPos;
+   public static PendulumTrap Place(Transform parent,Vector3 localPos,float width,Color accent){
+    var go=new GameObject("Pendulum Trap");go.transform.SetParent(parent,false);go.transform.localPosition=localPos;
+    // Claim the swing corridor so crates never land in the blade's path.
+    TrapArt.Reserve(parent,localPos,1.3f);
+    TrapArt.Reserve(parent,localPos+new Vector3(2f,0,0),1.3f);
+    TrapArt.Reserve(parent,localPos+new Vector3(-2f,0,0),1.3f);
    // Overhead archway placed on Ignore Raycast layer (2) so FollowCamera is never blocked!
    var archRoot=new GameObject("Archway");archRoot.transform.SetParent(go.transform,false);
    archRoot.layer=2;
@@ -508,6 +519,17 @@ namespace LostRealms {
   Transform padVisual;Vector3 baseScale=Vector3.one;float squish;Color padColor;
   public static BouncePad Place(Transform parent,Vector3 localPos,Color accent){
    var go=new GameObject("Bounce Pad");go.transform.SetParent(parent,false);go.transform.localPosition=localPos;
+   // Pads are world-placed: reserve on the island below so props don't grow
+   // through the pad (same island lookup as SawTrap).
+   Transform risland=parent;Vector3 rlocal=localPos;
+   if(parent&&parent.GetComponent<RealmWorld>()!=null){
+    RaycastHit rh;
+    if(Physics.Raycast(parent.TransformPoint(localPos)+Vector3.up*8f,Vector3.down,out rh,16f,~0,QueryTriggerInteraction.Ignore)){
+     Transform t=rh.transform;
+     while(t!=null&&t!=parent){if(t.name=="Island"){risland=t;rlocal=t.InverseTransformPoint(parent.TransformPoint(localPos));break;}t=t.parent;}
+    }
+   }
+   TrapArt.Reserve(risland,rlocal,1.2f);
    // Ancient runic celestial dais
    var daisPrefab=Resources.Load<GameObject>("Props/CelestialDais");
    Transform padCore=null;
@@ -736,23 +758,34 @@ namespace LostRealms {
  public sealed class FloorBladeTrap:MonoBehaviour {
   Transform bladeRoot;Color trapColor;float timer;
   AudioSource audioSource;
-  public static FloorBladeTrap Place(Transform parent,Vector3 localPos,Color accent){
-   var go=new GameObject("Floor Blade Trap");go.transform.SetParent(parent,false);go.transform.localPosition=localPos;
+   public static FloorBladeTrap Place(Transform parent,Vector3 localPos,Color accent){
+    var go=new GameObject("Floor Blade Trap");go.transform.SetParent(parent,false);go.transform.localPosition=localPos;
+    // Claim the disc so props and later trap lanes steer clear of the blades.
+    TrapArt.Reserve(parent,localPos,1.6f);
    var prefab=Resources.Load<GameObject>("Props/FloorBladeTrap");
    var fb=go.AddComponent<FloorBladeTrap>();
    fb.trapColor=accent;
    if(prefab){
-    var obj=Instantiate(prefab,go.transform,false);
+    // Identity-rotation pivot spins the blades; the model child keeps its
+    // imported root rotation (GLB->FBX bakes (270,0,0) which is what lays the
+    // fan flat — resetting it to identity stands the disk on edge). Same
+    // pattern as the serpent aim pivot in RealmTraps3.
+    var pivot=new GameObject("BladePivot");pivot.transform.SetParent(go.transform,false);
+    pivot.transform.localPosition=Vector3.zero;pivot.transform.localRotation=Quaternion.identity;
+    var obj=Instantiate(prefab,pivot.transform,false);
     obj.transform.localPosition=Vector3.zero;
-    obj.transform.localRotation=Quaternion.identity;
-    obj.transform.localScale=new Vector3(1.2f,1.2f,1.2f);
-    var tex=Resources.Load<Texture2D>("Props/Textures/FloorBladeTrap_basecolor");
+    // Preserve the imported scale: the FBX stores centimeters with a x100
+    // node scale (world-correct 2.2 m). Forcing scale 1 shrinks it to 2 cm.
+    var tex=Resources.Load<Texture2D>("Props/Textures/FloorBladeTrap_0");
+    if(!tex)tex=Resources.Load<Texture2D>("Props/Textures/FloorBladeTrap_basecolor");
     if(tex){
      var mat=new Material(Shader.Find("Standard")){name="FloorBlade_Mat",color=Color.white};
      mat.mainTexture=tex;mat.SetFloat("_Metallic",.4f);mat.SetFloat("_Glossiness",.5f);
+     var nrm=Resources.Load<Texture2D>("Props/Textures/FloorBladeTrap_1");
+     if(nrm){mat.SetTexture("_BumpMap",nrm);mat.SetFloat("_BumpScale",1f);mat.EnableKeyword("_NORMALMAP");}
      foreach(var r in obj.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=mat;
     }
-    fb.bladeRoot=obj.transform;
+    fb.bladeRoot=pivot.transform;
    }
    var audio=go.AddComponent<AudioSource>();
    var clip=Resources.Load<AudioClip>("Audio/sfx_blade");

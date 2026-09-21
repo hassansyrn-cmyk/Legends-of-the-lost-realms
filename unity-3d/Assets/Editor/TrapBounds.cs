@@ -8,7 +8,7 @@ public static class TrapBounds {
  [MenuItem("Lost Realms/Debug/Trap Bounds")]
  public static void Run(){
   var sb=new System.Text.StringBuilder();
-  foreach(var name in new[]{"Trap_Crusher","Trap_Turret","Trap_Boulder","Trap_Brazier","Trap_Totem","Trap_Serpent","Trap_Hammer"}){
+  foreach(var name in new[]{"Trap_Crusher","Trap_Turret","Trap_Boulder","Trap_Brazier","Trap_Totem","Trap_Serpent"}){
    var go=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Resources/Props/Traps/"+name+".fbx");
    if(!go){sb.AppendLine(name+" MISSING");continue;}
    var renderers=go.GetComponentsInChildren<Renderer>(true);

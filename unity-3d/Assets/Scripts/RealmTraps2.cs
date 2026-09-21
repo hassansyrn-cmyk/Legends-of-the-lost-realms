@@ -80,7 +80,7 @@ namespace LostRealms {
   enum Phase{Hover,Warning,Slammed,Rising}Phase phase=Phase.Hover;
   public static CrusherPillar Place(Transform parent,Vector3 localPos,Color accent,Color stone){
    var go=new GameObject("Crusher pillar");go.transform.SetParent(parent,false);go.transform.localPosition=localPos;
-   var model=TrapArt.Load("Trap_Crusher",go.transform,accent,stone);
+   var model=TrapArt.LoadTextured("Trap_Crusher",go.transform);
    Transform head;
    if(model){
     head=model.transform;head.localPosition=new Vector3(0,3.1f,0);
@@ -90,9 +90,10 @@ namespace LostRealms {
    }
    var c=go.AddComponent<CrusherPillar>();c.head=head;c.rest=head.localPosition;c.accent=accent;
    // Physical head: blocks and crushes for real instead of passing through
-   // props and enemies. The collider rides the head transform.
+   // props and enemies. The collider rides the head transform and hugs the
+   // 2.3 m Tripo model (origin at its spiked base).
    var box=head.gameObject.AddComponent<BoxCollider>();
-   box.size=new Vector3(2.3f,1.5f,2.3f);box.center=new Vector3(0,-.2f,0);
+   box.size=new Vector3(2.3f,1.5f,2.3f);box.center=new Vector3(0,.75f,0);
    TrapArt.Reserve(parent,localPos,2.2f);
    return c;
   }
@@ -110,7 +111,7 @@ namespace LostRealms {
     case Phase.Warning:
      head.localPosition=rest+new Vector3(Mathf.Sin(timer*60f)*.05f,0,Mathf.Cos(timer*53f)*.05f);
      if(timer>=.65f){phase=Phase.Slammed;timer=0;down=true;
-      head.localPosition=new Vector3(rest.x,.8f,rest.z);
+      head.localPosition=new Vector3(rest.x,0f,rest.z);
       g.TrapSound("land_hard",transform.position,5f,20f,1f);
       g.CameraRig.Shake=.32f;g.HitStop(.05f,.35f);
       KenneyPuff.Burst(transform.position+Vector3.up*.15f,new Color(.62f,.56f,.46f),14,1.3f);

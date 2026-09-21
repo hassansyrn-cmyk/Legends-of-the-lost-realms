@@ -26,7 +26,7 @@ namespace LostRealms {
     poseState="victory";poseUntil=g.Elapsed+1.35f;Visual.Restart("victory");
     slamReady=g.Elapsed+3.5f;chargeReady=g.Elapsed+5f;
     bossAddAt=g.Elapsed+5f;
-    g.Sound("boss_roar");g.CameraRig.Shake=.3f;
+     g.Sound("boss_roar_"+Kind,RealmAudio.BossPitch(Kind));g.CameraRig.Shake=.3f;
     return;
    }
    timer-=dt;
@@ -56,9 +56,9 @@ namespace LostRealms {
      golemMove=9;state=State.Windup;timer=1.15f;golemComboPending=false;
      target=transform.position;target.y=baseY;
      Visual.Restart("attack_2");
-     warning=CombatTelegraph.Create(transform.position,3.2f,timer,g.World.transform);
-     g.Sound("boss_warning");
-     return;
+      warning=CombatTelegraph.Create(transform.position,3.2f,timer,g.World.transform);
+      g.Sound("boss_warning",RealmAudio.BossPitch(Kind));
+      return;
     }
     if(phase>=3&&distance>5f&&distance<13f&&g.Elapsed>=chargeReady){
      chargeDir=delta.normalized;chargeUntil=g.Elapsed+1.25f;chargeReady=g.Elapsed+7f;
@@ -89,17 +89,17 @@ namespace LostRealms {
      state=State.Attack;timer=.5f;
      if(golemMove==9){
       // Ground slam: radial crushing zone with dust and shockwave.
-      StrikeZone.Create(transform.position,3.2f,3,.01f);
+       StrikeZone.Create(transform.position,3.2f,3,.01f);
       Vfx.Play("ga_vfx_Shockwave_01",transform.position+Vector3.up*.15f,Quaternion.identity,1.4f);
       KenneyPuff.Burst(transform.position+Vector3.up*.25f,new Color(.62f,.56f,.46f),16,1.5f);
-      g.Sound("boss");g.CameraRig.Shake=.35f;
+       g.Sound("boss",RealmAudio.BossPitch(Kind));g.CameraRig.Shake=.35f;
       slamReady=g.Elapsed+7f;
      }else{
       Vector3 strike=Clamp(golemComboPending?g.Player.transform.position:attackOrigin+transform.forward*1.6f);
       strike.y=baseY;
       StrikeZone.Create(strike,1.9f,2,.01f);
-      HitSpark.Burst(strike+Vector3.up*.4f,Vector3.up,new Color(1f,.6f,.2f),12);
-      g.Sound("boss");
+       HitSpark.Burst(strike+Vector3.up*.4f,Vector3.up,new Color(1f,.6f,.2f),12);
+       g.Sound("boss",RealmAudio.BossPitch(Kind));
      }
     }
    }else if(state==State.Attack){

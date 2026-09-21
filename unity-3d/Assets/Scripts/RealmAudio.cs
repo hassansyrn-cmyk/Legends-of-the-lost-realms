@@ -20,10 +20,17 @@ namespace LostRealms {
   }
     AudioClip Clip(string key){
      if(!clips.TryGetValue(key,out var clip)){
-      if(key=="sfx_boss"||key=="sfx_boss_roar"){
+      if(key=="sfx_boss"||key=="sfx_boss_roar"||key.StartsWith("sfx_boss_roar_")){
        int r=game?game.Realm:0;
        string[] roars=new[]{"boss_heartwood_roar","boss_sunscar_roar","boss_whiteout_roar","boss_lavaboss_roar"};
-       if(r>=0&&r<roars.Length)clip=Resources.Load<AudioClip>("Audio/sfx_"+roars[r]);
+       // Kind-routed roars so each guardian keeps its own voice even when
+       // two bosses share a realm; unknown kinds fall back to the realm roar.
+       if(key.StartsWith("sfx_boss_roar_")&&int.TryParse(key.Substring("sfx_boss_roar_".Length),out int kind)){
+        string[] byKind=new string[22];
+        byKind[8]="boss_heartwood_roar";byKind[9]="boss_sunscar_roar";byKind[10]="boss_whiteout_roar";byKind[21]="boss_lavaboss_roar";
+        if(kind>=0&&kind<byKind.Length&&byKind[kind]!=null)clip=Resources.Load<AudioClip>("Audio/sfx_"+byKind[kind]);
+       }
+       if(!clip&&r>=0&&r<roars.Length)clip=Resources.Load<AudioClip>("Audio/sfx_"+roars[r]);
        if(!clip)clip=Resources.Load<AudioClip>("Audio/sfx_boss");
       }else{
        clip=Resources.Load<AudioClip>("Audio/"+key);
@@ -52,11 +59,11 @@ namespace LostRealms {
     if(value){front.Pause();back.Pause();foreach(var voice in voices)voice.Pause();}
     else {front.UnPause();back.UnPause();foreach(var voice in voices)voice.UnPause();}
    }
-   public void Play(string name,float volumeScale=1f){
+   public void Play(string name,float volumeScale=1f,float pitchMul=1f){
     if(!game||!game.Save.sound)return;
     float now=Time.unscaledTime;
-    bool frequent=name=="step"||name=="coin"||name=="impact"||name=="enemy_warning";
-    float spacing=name=="step"?.12f:frequent?.055f:.025f;
+    bool frequent=name=="step"||name=="step2"||name=="coin"||name=="impact"||name=="enemy_warning";
+    float spacing=name=="step"||name=="step2"?.12f:frequent?.055f:.025f;
     if(lastPlayed.TryGetValue(name,out float last)&&now-last<spacing)return;
     var clip=Clip("sfx_"+name);if(!clip)return;lastPlayed[name]=now;
     int priority=name=="hurt"||name=="defeat"||name=="complete"||name=="checkpoint"||name=="upgrade"||name.StartsWith("boss")||name=="weapon_pickup"?3:frequent?1:2;
@@ -65,8 +72,8 @@ namespace LostRealms {
     if(slot<0){for(int i=0;i<voices.Length;i++)if(priorities[i]<priority&&(slot<0||priorities[i]<priorities[slot]))slot=i;}
     if(slot<0)return;
     var voice=voices[slot];voice.Stop();voice.clip=clip;priorities[slot]=priority;
-    bool vary=frequent||name=="blade"||name=="enemy_dash"||name=="enemy_defeat"||name=="player_dash";
-    voice.pitch=vary?.94f+(float)variation.NextDouble()*.12f:1f;
+    bool vary=frequent||name=="blade"||name=="sword_slash"||name=="punch"||name=="enemy_dash"||name=="enemy_defeat"||name=="player_dash";
+    voice.pitch=(vary?.94f+(float)variation.NextDouble()*.12f:1f)*pitchMul;
     float baseVol=(name.StartsWith("boss")?.85f:name=="step"?.32f:name=="enemy_warning"?.42f:priority==3?.78f:.62f)*(vary?.92f+(float)variation.NextDouble()*.08f:1f);
     voice.volume=baseVol*volumeScale;
     voice.priority=priority==3?48:priority==2?96:160;voice.Play();
@@ -83,6 +90,9 @@ namespace LostRealms {
     Play(name,vol);
    }
    public AudioClip GetClip(string key)=>Clip(key);
+  // Per-boss voice pitch so guardians never sound alike: deep colossus,
+  // titan mid, crystalline whiteout higher, emberfall dread low.
+  public static float BossPitch(int kind)=>kind==8?.85f:kind==9?.95f:kind==10?1.1f:kind==21?.8f:1f;
   public void ClearRunSounds(){foreach(var voice in voices)voice.Stop();lastPlayed.Clear();}
   void Update(){
    if(!game)return;

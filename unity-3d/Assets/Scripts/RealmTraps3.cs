@@ -52,7 +52,7 @@ namespace LostRealms {
     }
     Impact(true);return;
    }
-   // Player-only: stray bolts never kill enemies the player never fought —
+   // Player-only: stray bolts never kill enemies the player never fought â€”
    // that read as creatures "dying by themselves" when you walked past.
    if(Physics.Raycast(transform.position,vel.normalized,vel.magnitude*Time.deltaTime+.25f,~0,QueryTriggerInteraction.Ignore))Impact(true);
   }
@@ -158,7 +158,7 @@ namespace LostRealms {
    var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
    timer+=Time.deltaTime;
    // Aim the whole statue (translation-only islands: rotating in world space
-   // rides along fine — the statue never leaves its island-local spot).
+   // rides along fine â€” the statue never leaves its island-local spot).
    Vector3 to=g.Player.transform.position+Vector3.up*1.1f-transform.position;to.y=0;
    if(to.sqrMagnitude>.01f)transform.rotation=Quaternion.Slerp(transform.rotation,Quaternion.LookRotation(to.normalized,Vector3.up),Time.deltaTime*2.2f);
    if(timer<2.4f)return;
@@ -173,59 +173,4 @@ namespace LostRealms {
   }
  }
 
- public sealed class SweepHammer:MonoBehaviour {
-  Transform arm;float timer;bool hitThisSweep;Color accent;
-  public static SweepHammer Place(Transform parent,Vector3 localPos,Color accent,Color stone){
-   var go=new GameObject("Sweep hammer");go.transform.SetParent(parent,false);go.transform.localPosition=localPos;
-   var model=TrapArt.LoadTextured("Trap_Hammer",go.transform);
-   Transform arm;
-   if(model){
-    arm=model.transform.Find("Arm");
-    if(!arm)arm=model.transform;
-   }else{
-    Art.Shape("HammerBase",PrimitiveType.Cylinder,new Vector3(0,.2f,0),new Vector3(2f,.4f,2f),stone,go.transform);
-    arm=Art.Shape("HammerArm",PrimitiveType.Cube,new Vector3(1f,.9f,0),new Vector3(1.6f,.35f,.35f),stone,go.transform).transform;
-   }
-   var h=go.AddComponent<SweepHammer>();h.arm=arm;h.accent=accent;h.timer=Random.value*2f;
-   var baseCol=go.AddComponent<CapsuleCollider>();
-   baseCol.radius=1.05f;baseCol.height=.7f;baseCol.center=new Vector3(0,.35f,0);
-   TrapArt.Reserve(parent,localPos,2.4f);
-   return h;
-  }
-  void Update(){
-   var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player||!arm)return;
-   timer+=Time.deltaTime;
-   switch(phase){
-    case Phase.Dormant:
-     arm.localRotation=Quaternion.identity;
-     if(timer>=2.3f){phase=Phase.Charge;timer=0;
-      g.TrapSound("boss_warning",transform.position,3f,16f,.7f);
-      CombatTelegraph.Create(transform.position+Vector3.up*.4f,2.4f,.7f,g.World.transform);
-     }
-     break;
-    case Phase.Charge:
-     arm.localRotation=Quaternion.Euler(0,0,-14f*Mathf.Sin(timer/.7f*Mathf.PI));
-     if(timer>=.7f){phase=Phase.Sweep;timer=0;hitThisSweep=false;
-      g.TrapSound("player_dash",transform.position,4f,18f,.9f);
-     }
-     break;
-    case Phase.Sweep:
-     arm.localRotation=Quaternion.AngleAxis(timer/1.15f*360f,Vector3.up);
-     Vector3 pd=g.Player.transform.position-transform.position;pd.y=0;
-     float pr=pd.magnitude;
-     if(!hitThisSweep&&pr>1f&&pr<2.4f&&Mathf.Abs(g.Player.transform.position.y-transform.position.y)<2.2f){
-      hitThisSweep=true;
-      if(g.Player.Damage(1,transform.position))g.Player.ApplyForce(pd.normalized*7f+Vector3.up*2f);
-     }
-     if(g.Enemies!=null)foreach(var foe in g.Enemies){
-      if(!foe||foe.Health<=0||foe.Boss)continue;
-      Vector3 fd=foe.transform.position-transform.position;fd.y=0;
-      if(fd.magnitude>1.1f&&fd.magnitude<2.6f)foe.Hit(4f,0,false,fd.normalized);
-     }
-     if(timer>=1.15f){phase=Phase.Dormant;timer=0;}
-     break;
-   }
-  }
-  enum Phase{Dormant,Charge,Sweep}Phase phase=Phase.Dormant;
- }
 }

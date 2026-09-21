@@ -8,7 +8,7 @@ namespace LostRealms {
   public int windUsed;
   const float MaxMoveSpeed=4.8f,GroundResponse=18f,AirResponse=8f,StopResponse=22f;
   Vector3 velocity;Vector3 moveWish;float vertical,jumpGrace,dashUntil,dashReady,dodgeVisualUntil,hitUntil,immuneUntil,attackReady,comboUntil,chargeStart,attackBufferUntil,spellUntil;int jumps,combo,airDashes;bool charging,attackBufferCharged,spellCharging,wasGrounded,plunging;float jumpBuffer,spellChargeStart;string attackState="attack_1",hitState="hit",parryState="charged",dodgeVisualState="dodge";
-  float parryUntil,parryReady,counterUntil,pullUntil,stepTimer;Vector3 pullPoint;bool dodgeRewarded;
+  float parryUntil,parryReady,counterUntil,pullUntil,stepTimer;Vector3 pullPoint;bool dodgeRewarded,stepAlt;
   Vector3 platformDisplacement;float hyperArmorUntil,ledgeLostAt;
   public void CarryByPlatform(Vector3 delta){platformDisplacement+=delta;}
   // Heavy weapons (greataxes/hammers) grant hyper-armor during the active
@@ -195,7 +195,7 @@ namespace LostRealms {
    }
    if(nowGrounded&&HorizontalSpeed>1.2f){
     stepTimer-=dt;
-    if(stepTimer<=0f){stepTimer=HorizontalSpeed>3.5f?.32f:.42f;g.Sound("step");}
+     if(stepTimer<=0f){stepTimer=HorizontalSpeed>3.5f?.32f:.42f;stepAlt=!stepAlt;g.Sound(stepAlt?"step":"step2");}
    }else{stepTimer=.15f;}
    wasGrounded=nowGrounded;
    Energy=Mathf.Min(100,Energy+dt*(12f+4f*RealmGame.I.Save.aetherRank));
@@ -271,8 +271,9 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
     float lungeStep=(isDashStrike?4.2f:charged?3f:2f)*(Grounded?1f:.5f);
     velocity=Vector3.ClampMagnitude(velocity*.55f+lungeDir*lungeStep*.45f,MaxMoveSpeed);velocity.y=0;
 
-    Visual.PlayAttack(combo,charged,weapon.Tempo,style);
-    g.Sound("blade");
+     Visual.PlayAttack(combo,charged,weapon.Tempo,style);
+     // Armed swings ring steel; bare fists thud — never swords unarmed.
+     g.Sound(style=="unarmed"?"punch":"sword_slash");
     if(isDashStrike){
      Vfx.Play("ga_vfx_Hyperdrive_01",transform.position+Vector3.up*.9f,Quaternion.LookRotation(transform.forward),.8f);
      DamageTip.Show(transform.position+Vector3.up*1.6f,"DASH STRIKE!",new Color(1f,.95f,.4f));
@@ -337,7 +338,7 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
    velocity=Vector3.ClampMagnitude(velocity*.2f,1.5f);
    attackState="charged";
    attackReady=g.Elapsed+1.5f;
-   g.Sound("blade");
+   g.Sound(WeaponCatalog.AttackStyle(g.CurrentWeapon)=="unarmed"?"punch":"sword_slash");
    Vfx.Play(Vfx.Slash(Power),transform.position+Vector3.up*.9f,Quaternion.Euler(90,0,0),1.1f);
    DamageTip.Show(transform.position+Vector3.up*1.7f,"AIR PLUNGE!",new Color(1f,.85f,.3f));
   }

@@ -139,7 +139,7 @@ namespace LostRealms {
       // 4. TRAPS & HAZARDS
       sb.AppendLine($"[4. TRAPS & HAZARDS]");
       var trapNames = new[] {
-       "Flame brazier", "Frost totem", "Serpent statue", "Sweep hammer",
+       "Flame brazier", "Frost totem", "Serpent statue",
        "Crusher pillar", "Dart turret", "Rolling boulder", "Wind vent", "Saw blade", "Fire geyser", "Spike trap", "Floor blade"
       };
       var allTransforms = world.GetComponentsInChildren<Transform>(true);

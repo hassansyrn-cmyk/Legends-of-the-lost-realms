@@ -208,14 +208,16 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
      // Difficulty ramp: chapter 1 stays trap-free; from chapter 2 the cadence
      // tightens (every 4th island → every 2nd) and big islands take a second
      // trap from chapter 6 on.
-     int cadence=stage>=8?2:stage>=3?3:4;
-      if(stage>=2&&i%cadence==0){
+      int cadence=stage>=8?2:stage>=3?3:4;
+       if(stage>=2&&i%cadence==0&&arch!=IslandArchetype.NarrowBridge){
        int traps=stage>=6&&(arch==IslandArchetype.Arena||width>=10.5f)?2:1;
        // Two slots never roll the same trap type — no triple-brazier ring storms.
        var usedTypes=new List<string>();
        bool hasRing=stage>=2&&!last&&(i==5||i==9||(stage>=10&&i==12));
-       if(hasRing&&islandObj)TrapArt.Reserve(islandObj.transform,new Vector3(0,.05f,length*.42f),3.2f);
        for(int t=0;t<traps;t++)PlaceTrap(islandObj?islandObj.transform:transform,width,length,usedTypes,hasRing);
+       // Ring takeoff reserved after trap lanes are set: rings fly above, so
+       // ground traps may sit underneath, but props still keep the takeoff clear.
+       if(hasRing&&islandObj)TrapArt.Reserve(islandObj.transform,new Vector3(0,.05f,length*.42f),3.2f);
       }
     }
     if(last){EndZ=p.z+4;Gate(p+new Vector3(0,0,5));
@@ -246,9 +248,15 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
      if(propRoot.name.StartsWith("Prop ")||propRoot.name.StartsWith("Breakable")){
       Object.Destroy(propRoot);continue;                           // remove the whole prop
      }
-     col.enabled=false;                                            // stray collider: just defuse it
-    }
-  }
+      col.enabled=false;                                            // stray collider: just defuse it
+     }
+      // Settle pass: snap clear outlier props straight onto the deck, either
+      // direction within tolerance. Planted bases and deep pits are untouched.
+      RealmProps.SettleProps(transform);
+      // Final arbiter: remove anything deeply overlapping a trap footprint, by
+      // real positions (not reservations) — backstop for every placement path.
+      ResolveOverlaps();
+     }
    GameObject FindIsland(Vector3 p){foreach(Transform t in transform)if(t.name=="Island"&&Vector3.Distance(t.position,p)<.1f)return t.gameObject;return null;}
   // Route point for island i: the authored arrays cover the original chapter
   // length; longer chapters (difficulty pass) continue with a gentle serpentine
@@ -276,8 +284,6 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
      if(level>=7)pool.Add("brazier");
      if(realm==2||(level>=8&&realm==0))pool.Add("totem");
      if(level>=9)pool.Add("serpent");
-     if(level>=10)pool.Add("hammer");
-     if(level>=12)pool.Add("hammer");
      if(realm==2)pool.Add("totem");
      if(realm==1){pool.Add("serpent");pool.Add("brazier");}
      if(realm==3)pool.Add("brazier");
@@ -287,24 +293,169 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
      var candidate=pool[(random.Next(pool.Count)+attempt)%pool.Count];
      if(!usedTypes.Contains(candidate))pick=candidate;
     }
-    if(pick==null)pick=pool[random.Next(pool.Count)];
-    usedTypes.Add(pick);
-    Vector3 lane=new Vector3(-.8f,.08f,1f);
-    switch(pick){
-     case "crusher":CrusherPillar.Place(island,new Vector3((usedTypes.Count>1?1f:-1f)*width*.26f,.05f,0),accent,stone);break;
-     case "turret":DartTurret.Place(island,new Vector3((usedTypes.Count>1?1f:-1f)*width*.34f,.05f,length*.3f),accent,stone);break;
-     case "boulder":RollingBoulder.Place(island,new Vector3(0,.05f,length*.42f),new Vector3(0,0,-1),accent,stone);break;
-     case "brazier":FlameBrazier.Place(island,new Vector3((usedTypes.Count>1?-1f:1f)*width*.22f,.08f,0),accent,stone);break;
-     case "totem":FrostTotem.Place(island,new Vector3((usedTypes.Count>1?-1f:1f)*width*.24f,.08f,length*.18f),accent,stone);break;
-     case "serpent":SerpentStatue.Place(island,new Vector3((usedTypes.Count>1?1f:-1f)*width*.28f,.08f,length*.22f),accent,stone);break;
-     case "hammer":SweepHammer.Place(island,new Vector3((usedTypes.Count>1?1f:-1f)*width*.24f,.08f,-length*.2f),accent,stone);break;
-     case "wind":WindVent.Place(island,new Vector3((usedTypes.Count>1?1f:-1f)*width*.25f,.05f,0),new Vector3(usedTypes.Count>1?1f:-1f,0,0),accent);break;
-     case "geyser":FireGeyser.Place(island,new Vector3(usedTypes.Count>1?.8f:-.8f,.08f,1f),accent);break;
-     case "saw":SawTrap.Place(island,lane-new Vector3(2.6f,0,0),lane+new Vector3(2.6f,0,0),accent);break;
-     case "spike":SpikeTrap.Place(island,lane,accent);break;
-     default:Hazard(island,lane,0);break;
+     if(pick==null)pick=pool[random.Next(pool.Count)];
+     // "thorn" is the realm-flavored extra hazard: route it through the vetted
+     // pool cases (saw/geyser/spike all steer clear of other traps) instead of
+     // the unvetted Hazard lane. Realm 0 keeps procedural thorn spikes.
+     if(pick=="thorn")pick=realm==3?"geyser":realm==1?"saw":realm==2?"spike":"thorn";
+     usedTypes.Add(pick);
+     Vector3 lane=new Vector3(-.8f,.08f,1f);
+     switch(pick){
+      case "crusher":{Vector3 spot=NudgeSpot(island,new Vector3((usedTypes.Count>1?1f:-1f)*width*.26f,.05f,0),2.2f,width,length);CrusherPillar.Place(island,spot,accent,stone);break;}
+      case "turret":{Vector3 spot=NudgeSpot(island,new Vector3((usedTypes.Count>1?1f:-1f)*width*.34f,.05f,length*.3f),1.3f,width,length);DartTurret.Place(island,spot,accent,stone);break;}
+     case "boulder":{
+      Vector3 bp=new Vector3(0,.05f,length*.42f);
+      // The boulder rolls down the middle; sidestep it when the lane is
+      // reserved (arena blade disc) so it doesn't grind through another trap.
+      if(!TrapArt.IsClear(island,new Vector3(bp.x,.05f,0),2.4f))
+       bp.x=Mathf.Min(2.6f,width*.5f-1.2f);
+      // Walk the whole roll lane: sidestep once when it crosses a reserved
+      // rail, else skip the boulder — a roll through a saw track reads broken.
+      if(!RollLaneClear(island,bp,new Vector3(0,0,-1))){
+       float altX=Mathf.Min(2.6f,width*.5f-1.2f);
+       Vector3 bp2=new Vector3(bp.x>=0f?-altX:altX,bp.y,bp.z);
+       if(RollLaneClear(island,bp2,new Vector3(0,0,-1)))bp=bp2;
+       else break;
+      }
+      RollingBoulder.Place(island,bp,new Vector3(0,0,-1),accent,stone);break;}
+     case "brazier":{Vector3 spot=NudgeSpot(island,new Vector3((usedTypes.Count>1?-1f:1f)*width*.22f,.08f,0),1.6f,width,length);FlameBrazier.Place(island,spot,accent,stone);break;}
+     case "totem":{Vector3 spot=NudgeSpot(island,new Vector3((usedTypes.Count>1?-1f:1f)*width*.24f,.08f,length*.18f),1.5f,width,length);FrostTotem.Place(island,spot,accent,stone);break;}
+     case "serpent":{Vector3 spot=NudgeSpot(island,new Vector3((usedTypes.Count>1?1f:-1f)*width*.28f,.08f,length*.22f),1.4f,width,length);SerpentStatue.Place(island,spot,accent,stone);break;}
+     case "wind":{Vector3 spot=NudgeSpot(island,new Vector3((usedTypes.Count>1?1f:-1f)*width*.25f,.05f,0),1.6f,width,length);WindVent.Place(island,spot,new Vector3(usedTypes.Count>1?1f:-1f,0,0),accent);break;}
+     case "geyser":{
+      Vector3 gp=new Vector3(usedTypes.Count>1?.8f:-.8f,.08f,1f);float maxZ=length*.5f-1.2f;
+      for(int n=0;n<3&&!TrapArt.IsClear(island,gp,1.5f);n++){
+       float nz=Mathf.Clamp(gp.z+(gp.z>=0f?2f:-2f),-maxZ,maxZ);
+       if(Mathf.Abs(nz-gp.z)<.01f)break;
+       gp.z=nz;
+      }
+      FireGeyser.Place(island,gp,accent);break;}
+     case "saw":{
+      // Try candidate lanes both directions (the greedy +z walk can climb
+      // straight into another trap); skip rather than overlap when none fit.
+      float maxZ=length*.5f-.9f;
+      float[] candZ={1f,-.7f,2.7f,-2.4f,4.4f,-4.1f};
+      foreach(float cz in candZ){
+       float z=Mathf.Clamp(cz,-maxZ,maxZ);
+       Vector3 ca=new Vector3(lane.x-2.6f,lane.y,z),cb=new Vector3(lane.x+2.6f,lane.y,z);
+       if(RailClear(island,ca,cb)){SawTrap.Place(island,ca,cb,accent);break;}
+      }
+      break;}
+     case "spike":{
+      Vector3 sp=lane;float maxZ=length*.5f-1.2f;
+      for(int n=0;n<3&&!TrapArt.IsClear(island,sp,1.6f);n++){
+       float nz=Mathf.Clamp(sp.z+(sp.z>=0f?2f:-2f),-maxZ,maxZ);
+       if(Mathf.Abs(nz-sp.z)<.01f)break;
+       sp.z=nz;
+      }
+      SpikeTrap.Place(island,sp,accent);break;}
+     default:{Vector3 tp=NudgeSpot(island,lane,1f,width,length);Hazard(island,tp,0);break;}
     }
-  }
+   }
+   // Whole-segment clearance for the saw rail: sample along its length so no
+   // part of the track crosses a reserved trap footprint.
+   bool RailClear(Transform island,Vector3 a,Vector3 b){
+    for(int k=0;k<=4;k++)if(!TrapArt.IsClear(island,Vector3.Lerp(a,b,k/4f),1f))return false;
+    return true;
+   }
+   // Roll-lane clearance for the boulder's 10 m downhill run.
+   bool RollLaneClear(Transform island,Vector3 start,Vector3 dir){
+    for(int k=0;k<=5;k++)if(!TrapArt.IsClear(island,start+dir*(k*2f),1.2f))return false;
+    return true;
+   }
+   // Nudge a trap spot until it clears reserved footprints, clamped to deck.
+   // Candidates spiral out so a crowded island still finds a flank.
+   static readonly Vector2[] NudgeCand={new Vector2(1.6f,0),new Vector2(-1.6f,0),new Vector2(2.6f,1.8f),new Vector2(-2.6f,-1.8f),new Vector2(3.4f,0),new Vector2(-3.4f,0),new Vector2(0,2.6f),new Vector2(0,-2.6f)};
+   Vector3 NudgeSpot(Transform island,Vector3 spot,float radius,float width,float length){
+    if(TrapArt.IsClear(island,spot,radius))return spot;
+    foreach(var o in NudgeCand){
+     Vector3 cand=spot+new Vector3(o.x,0,o.y);
+     cand.x=Mathf.Clamp(cand.x,-width*.5f+1.2f,width*.5f-1.2f);
+     cand.z=Mathf.Clamp(cand.z,-length*.5f+1.2f,length*.5f-1.2f);
+     if(TrapArt.IsClear(island,cand,radius))return cand;
+    }
+    return spot;
+   }
+   struct TrapFoot{public GameObject go;public Transform island;public Vector3 pos;public float r;public bool seg;public Vector3 a,b;public float hw;}
+   static Transform IslandOf(Transform t){while(t!=null){if(t.name=="Island")return t;t=t.parent;}return null;}
+   static float D2(Vector3 x,Vector3 z){x.y=0;z.y=0;return Vector3.Distance(x,z);}
+   static float SegD(Vector3 a,Vector3 b,Vector3 p){
+    Vector3 ab=b-a;float t=ab.sqrMagnitude>1e-6f?Mathf.Clamp01(Vector3.Dot(p-a,ab)/ab.sqrMagnitude):0f;
+    return D2(a+ab*t,p);
+   }
+   static float FootGap(TrapFoot A,TrapFoot B){
+    if(A.seg&&B.seg){float best=float.MaxValue;for(int k=0;k<=6;k++){Vector3 p=A.a+(A.b-A.a)*(k/6f);float d=SegD(B.a,B.b,p);if(d<best)best=d;}return best-A.hw-B.hw;}
+    if(A.seg)return SegD(A.a,A.b,B.pos)-A.hw-B.r;
+    if(B.seg)return SegD(B.a,B.b,A.pos)-B.hw-A.r;
+    return D2(A.pos,B.pos)-A.r-B.r;
+   }
+   void CollectTrap<T>(System.Collections.Generic.List<TrapFoot> o,bool seg,float r) where T:Component{
+    foreach(var c in FindObjectsByType<T>(FindObjectsInactive.Include,FindObjectsSortMode.None)){
+     var f=new TrapFoot{go=c.gameObject,island=IslandOf(c.transform),pos=c.transform.position,r=r,seg=false};
+     if(seg){
+      if(typeof(T)==typeof(RollingBoulder)){f.a=f.pos;f.b=f.pos+new Vector3(0,0,-11f);f.hw=1.1f;}
+      else{
+       var col=c.GetComponent<BoxCollider>();
+       float half=col?col.size.x*.5f:2.6f;
+       f.a=f.pos-c.transform.right*half;f.b=f.pos+c.transform.right*half;f.hw=typeof(T)==typeof(SawTrap)?.7f:.9f;
+      }
+      f.seg=true;
+     }
+     o.Add(f);
+    }
+   }
+   // Final arbiter: destroy the smaller side of any deeply-overlapping pair
+   // (traps) and any prop buried inside a trap footprint. Build-time only, so
+   // DestroyImmediate is safe in live game and headless batch alike.
+   void ResolveOverlaps(){
+    var traps=new System.Collections.Generic.List<TrapFoot>();
+    CollectTrap<SawTrap>(traps,true,0f);
+    CollectTrap<FloorBladeTrap>(traps,false,1.15f);
+    CollectTrap<SpikeTrap>(traps,false,1.05f);
+    CollectTrap<PendulumTrap>(traps,true,0f);
+    CollectTrap<FireGeyser>(traps,false,1f);
+    CollectTrap<CrusherPillar>(traps,false,1.3f);
+    CollectTrap<DartTurret>(traps,false,.8f);
+    CollectTrap<RollingBoulder>(traps,true,0f);
+    CollectTrap<WindVent>(traps,false,1f);
+    CollectTrap<FlameBrazier>(traps,false,.9f);
+    CollectTrap<FrostTotem>(traps,false,.9f);
+    CollectTrap<SerpentStatue>(traps,false,1f);
+    for(int i=0;i<traps.Count;i++)for(int j=i+1;j<traps.Count;j++){
+     var A=traps[i];var B=traps[j];
+     if(!A.go||!B.go||!A.island||!B.island||A.island!=B.island)continue;
+     if(FootGap(A,B)<-.8f){
+      float sa=A.seg?A.hw:A.r,sb=B.seg?B.hw:B.r;
+      var victim=sa<=sb?A:B;var other=sa<=sb?B:A;
+      Debug.Log("ResolveOverlaps: removing "+victim.go.name+" overlapping "+other.go.name+" on island "+victim.island.GetSiblingIndex());
+      // Drop its reserve circles too so later checks don't see a ghost.
+      Vector3 vlocal=victim.island.InverseTransformPoint(victim.pos);
+      Transform visl=victim.island;
+      TrapArt.Reserved.RemoveAll(s=>s.island&&s.island==visl&&Vector3.Distance(s.local,vlocal)<.6f);
+      Object.DestroyImmediate(victim.go);
+      if(sa<=sb)traps[i]=new TrapFoot{go=null};else traps[j]=new TrapFoot{go=null};
+     }
+    }
+    foreach(Transform island in transform){
+     if(island.name!="Island")continue;
+     var victims=new System.Collections.Generic.List<GameObject>();
+     foreach(Transform c in island){
+      if(!c.name.StartsWith("Prop ")&&!c.name.StartsWith("Breakable")&&!c.name.StartsWith("Pushable"))continue;
+      var r=c.GetComponentInChildren<Renderer>();if(!r)continue;
+      Bounds b=r.bounds;foreach(var r2 in c.GetComponentsInChildren<Renderer>())b.Encapsulate(r2.bounds);
+      float pr=Mathf.Max(.3f,Mathf.Max(b.size.x,b.size.z)*.5f);
+      foreach(var t in traps){
+       if(!t.go||t.island!=island)continue;
+       float gap=t.seg?SegD(t.a,t.b,b.center)-t.hw-pr:D2(t.pos,b.center)-t.r-pr;
+       if(gap<-.5f){victims.Add(c.gameObject);break;}
+      }
+     }
+     foreach(var v in victims){
+      Debug.Log("ResolveOverlaps: removing "+v.name+" inside a trap footprint on island "+island.GetSiblingIndex());
+      Object.DestroyImmediate(v);
+     }
+    }
+   }
      GameObject DressIslandVisual(Transform root,IslandArchetype archetype,float width,float length,int index,bool isBoss){
       if(realm>3)return null;
       string prefix=realm==3?"R3_":realm==2?"R2_":realm==1?"R1_":"";
@@ -650,8 +801,9 @@ void WeaponDrop(Vector3 p,WeaponId id){
      SawTrap.Place(island,localPos-new Vector3(2.6f,0,0),localPos+new Vector3(2.6f,0,0),accent);
     }else if(kind==2||realm==2){
      SpikeTrap.Place(island,localPos,accent);
-    }else{
-     var go=new GameObject("Realm hazard");go.transform.SetParent(island,false);go.transform.localPosition=localPos;
+     }else{
+      var go=new GameObject("Realm hazard");go.transform.SetParent(island,false);go.transform.localPosition=localPos;
+      TrapArt.Reserve(island,localPos,1f);
      for(int i=0;i<5;i++){
       var spike=Art.Shape("Thorn",PrimitiveType.Cube,new Vector3((i%3)*.37f-.4f,.28f,(i/3)*.4f),new Vector3(.18f,.65f,.18f),kind==1?new Color(1,.35f,.12f):accent,go.transform);
       spike.transform.localRotation=Quaternion.Euler(0,30,15);
