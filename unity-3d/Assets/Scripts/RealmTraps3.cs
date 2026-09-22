@@ -36,16 +36,21 @@ namespace LostRealms {
   }
   void Update(){
    var g=RealmGame.I;
-   if(!g||g.Screen!=GameScreen.Playing){Destroy(gameObject);return;}
+   if(!g){Destroy(gameObject);return;}if(g.Screen!=GameScreen.Playing)return;
    age+=Time.deltaTime;
    if(age>life){Impact(false);return;}
    vel.y-=4f*Time.deltaTime;                       // slight droop, keeps lobs arcing
-   transform.position+=vel*Time.deltaTime;
+   Vector3 previous=transform.position,next=previous+vel*Time.deltaTime;
+   Vector3 travel=next-previous;
+   bool wall=Physics.Raycast(previous,travel.normalized,out RaycastHit obstacle,travel.magnitude,~0,QueryTriggerInteraction.Ignore);
+   if(wall)next=obstacle.point;
+   transform.position=next;
    transform.rotation=Quaternion.Euler(age*320f,age*410f,0);
    if(flare&&Camera.main)flare.rotation=Camera.main.transform.rotation;
    if(Random.value<.35f)KenneyPuff.Burst(transform.position,trail,1,.4f);
    var p=g.Player;
-   if(p&&Vector3.Distance(transform.position,p.transform.position+Vector3.up*.9f)<.6f){
+   if(p&&ProjectileSweep.Hits(previous,next,p.transform.position+Vector3.up*.9f,.6f,out float contact)){
+    transform.position=Vector3.Lerp(previous,next,contact);
     if(p.Damage(Mathf.Max(1,Mathf.RoundToInt(damage)),transform.position)){
      HitSpark.Burst(transform.position,-vel.normalized,new Color(1f,.3f,.2f),8);
      if(power==1)p.ApplyForce(vel.normalized*-2f);  // frost shards stagger slightly
@@ -54,14 +59,14 @@ namespace LostRealms {
    }
    // Player-only: stray bolts never kill enemies the player never fought â€”
    // that read as creatures "dying by themselves" when you walked past.
-   if(Physics.Raycast(transform.position,vel.normalized,vel.magnitude*Time.deltaTime+.25f,~0,QueryTriggerInteraction.Ignore))Impact(true);
+   if(wall)Impact(true);
   }
   void Impact(bool hit){
    if(hit){Vfx.Play(impactKey,transform.position,Quaternion.identity,.7f);g_Sound();}
    KenneyPuff.Burst(transform.position,trail,7,.8f);
    Destroy(gameObject);
   }
-  void g_Sound(){var g=RealmGame.I;if(g)g.Sound("impact");}
+  void g_Sound(){var g=RealmGame.I;if(g)g.TrapSound(power==0?"trap_fire":power==1?"trap_frost":"trap_poison",transform.position,3f,14f,.55f);}
  }
 
  public sealed class FlameBrazier:MonoBehaviour {
@@ -96,7 +101,7 @@ namespace LostRealms {
    float T=.9f,g0=4f;
    Vector3 vel=(target-mouth)/T+Vector3.up*(.5f*g0*T);
    TrapBolt.Fire(mouth,vel,1,0,new Color(1f,.5f,.15f),"ga_vfx_Explosion_02",1.1f,2.5f);
-   g.TrapSound("ember_cast",transform.position,4f,18f,1f);
+   g.TrapSound("trap_fire",transform.position,4f,18f,1f);
    KenneyPuff.Burst(mouth,new Color(1f,.5f,.12f),6,.9f);
   }
  }
@@ -134,7 +139,7 @@ namespace LostRealms {
     Vector3 spread=Quaternion.Euler(0,(i-1)*7f,0)*aim;
     TrapBolt.Fire(mouth+spread*.3f,spread*11f,1,1,new Color(.6f,.9f,1.2f),"ga_vfx_Electricity_01",.85f,2.2f);
    }
-   g.TrapSound("frost_cast",transform.position,4f,18f,1f);
+   g.TrapSound("trap_frost",transform.position,4f,18f,1f);
    KenneyPuff.Burst(mouth,new Color(.85f,.95f,1f),8,.9f);
   }
  }
@@ -167,7 +172,7 @@ namespace LostRealms {
    Vector3 mouth=transform.position+transform.forward*.55f+Vector3.up*1.7f;
    Vector3 aim=(g.Player.transform.position+Vector3.up*.85f-mouth).normalized;
    TrapBolt.Fire(mouth+aim*.3f,aim*12f,1,-1,poison,"ga_vfx_Heal_01",1f,2.4f);
-   g.TrapSound("gale_cast",transform.position,4f,16f,.9f);
+   g.TrapSound("trap_poison",transform.position,4f,16f,.9f);
    HitSpark.Burst(mouth,aim,poison,10);
    CombatTelegraph.Create(g.Player.transform.position,1f,.5f,g.World.transform);
   }

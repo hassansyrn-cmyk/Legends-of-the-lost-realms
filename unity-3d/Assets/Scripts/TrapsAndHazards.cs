@@ -99,9 +99,9 @@ namespace LostRealms {
      // Rattle spikes and warn with sound/sparks
      float shake=Mathf.Sin(timer*45f)*.02f;
      spikeRoot.localPosition=baseLocal+Vector3.up*(thrustHeight*.18f+shake);
-     if(timer<.05f)g.TrapSound("step",transform.position,2.5f,13f,0.6f);
+     if(timer<.05f)g.TrapSound("trap_warning",transform.position,2.5f,13f,0.6f);
      if(timer>=.65f){
-      state=State.Active;timer=0;g.TrapSound("blade",transform.position,3f,15f,1.0f);
+      state=State.Active;timer=0;g.TrapSound("trap_spikes",transform.position,3f,15f,1.0f);
       HitSpark.Burst(transform.position+Vector3.up*.2f,Vector3.up,trapColor,10);
      }
      break;
@@ -255,7 +255,7 @@ namespace LostRealms {
    st.curX=-halfLen;
 
    var audio=go.AddComponent<AudioSource>();
-   var clip=Resources.Load<AudioClip>("Audio/sfx_blade");
+   var clip=Resources.Load<AudioClip>("Audio/sfx_trap_saw_loop");
    if(clip){
     audio.clip=clip;audio.loop=true;audio.playOnAwake=false;
     audio.spatialBlend=1f;audio.minDistance=2.5f;audio.maxDistance=14f;
@@ -266,7 +266,7 @@ namespace LostRealms {
   }
 
   void Update(){
-   var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
+   var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player){if(audioSource&&audioSource.isPlaying)audioSource.Pause();return;}
    // Spin around local Z (the circular blade's axle)
    float spinDir=forward?-1f:1f;
    if(bladeSpinRoot)bladeSpinRoot.Rotate(0,0,spinDir*840f*Time.deltaTime,Space.Self);
@@ -379,7 +379,7 @@ namespace LostRealms {
      if(timer>=.8f){
       phase=Phase.Erupting;timer=0;
       plume.SetActive(true);plumeLight.intensity=1.8f;
-      g.TrapSound("ember_cast",transform.position,3.5f,16f,1.0f);
+      g.TrapSound("trap_fire",transform.position,3.5f,16f,1.0f);
       Vfx.Play("ga_vfx_FireBall_01",transform.position+Vector3.up*1.5f,Quaternion.Euler(-90,0,0),1.1f);
      }
      break;
@@ -479,7 +479,7 @@ namespace LostRealms {
    if(pivot)pivot.localRotation=Quaternion.Euler(0,0,angle);
    bool center=Mathf.Abs(angle)<14f;
    if(center&&!wasCenter){
-    g.TrapSound("blade",blade?blade.position:transform.position,3f,14f,0.65f);
+    g.TrapSound("trap_blade",blade?blade.position:transform.position,3f,14f,0.65f);
    }
    wasCenter=center;
    // Hazardous at lowest point of swing
@@ -616,7 +616,7 @@ namespace LostRealms {
      bool onIt=g.Player.Grounded&&Physics.Raycast(g.Player.transform.position+Vector3.up*.2f,Vector3.down,out var hit,.65f,~0,QueryTriggerInteraction.Ignore)&&hit.transform.IsChildOf(transform);
      if(onIt){
       state=State.Shaking;shakeTimer=0;
-      g.TrapSound("step",transform.position,3f,13f,0.7f);
+      g.TrapSound("trap_warning",transform.position,3f,13f,0.7f);
       HitSpark.Burst(transform.position+Vector3.up*.2f,Vector3.up,new Color(.8f,.7f,.5f),8);
      }
      break;
@@ -788,7 +788,7 @@ namespace LostRealms {
     fb.bladeRoot=pivot.transform;
    }
    var audio=go.AddComponent<AudioSource>();
-   var clip=Resources.Load<AudioClip>("Audio/sfx_blade");
+   var clip=Resources.Load<AudioClip>("Audio/sfx_trap_fan_loop");
    if(clip){
     audio.clip=clip;audio.loop=true;audio.playOnAwake=false;
     audio.spatialBlend=1f;audio.minDistance=2.5f;audio.maxDistance=13f;
@@ -798,7 +798,7 @@ namespace LostRealms {
    return fb;
   }
   void Update(){
-   var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
+   var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player){if(audioSource&&audioSource.isPlaying)audioSource.Pause();return;}
    timer+=Time.deltaTime;
    if(bladeRoot)bladeRoot.Rotate(0,360f*Time.deltaTime,0,Space.Self);
    if(audioSource&&audioSource.clip){

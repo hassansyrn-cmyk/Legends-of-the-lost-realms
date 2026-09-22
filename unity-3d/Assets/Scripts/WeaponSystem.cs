@@ -149,7 +149,11 @@ public static class WeaponCatalog {
   Vector3 bladeDir=Vector3.up,flatDir=Vector3.forward,center;bool measured;
   TrailRenderer trail;static readonly float BackGap=.15f;
   public static void Equip(Hero hero,WeaponId id){
-   var old=hero.GetComponentInChildren<EquippedWeapon>();if(old)UnityEngine.Object.Destroy(old.gameObject);
+   // Destroy is deferred: detach immediately so another pickup this frame
+   // cannot find the same pending-destruction model and leave its replacement.
+   foreach(var old in hero.GetComponentsInChildren<EquippedWeapon>(true)){
+    old.gameObject.SetActive(false);old.transform.SetParent(null);UnityEngine.Object.Destroy(old.gameObject);
+   }
    var definition=WeaponCatalog.Get(id);
    var hand=FindHand(hero.Visual);if(!hand){Debug.LogError("WEAPON_EQUIP_FAILED: no Aster right hand");return;}
    var root=new GameObject("Equipped "+definition.Name);root.transform.SetParent(hero.Visual.transform,false);var equipped=root.AddComponent<EquippedWeapon>();equipped.Id=id;equipped.hero=hero;equipped.hand=hand;

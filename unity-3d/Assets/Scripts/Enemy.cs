@@ -110,10 +110,13 @@ namespace LostRealms {
        // Aggro sharing: nearby patrolling kin join the fight.
        foreach(var other in game.Enemies){if(!other||other==this||other.Boss||other.Health<=0)continue;if(other.state==State.Patrol&&Vector3.Distance(other.transform.position,transform.position)<8f){other.state=State.Notice;other.timer=.55f;}}}break;
     case State.Notice:
-      Visual.Play("walk");Face(game.Player.transform.position,dt);
+      Face(game.Player.transform.position,dt);
       float chase=Boss?1.8f+phase*.2f:ChaseSpeed[Mathf.Clamp(Kind,0,21)]*speedMul;
       // Token gate: only token-holding melee enemies close in and swing.
       bool tokened=Boss||Ranged||TryAcquireToken();
+      bool advancing=Ranged?(distance<3.4f||distance>3.6f):!tokened||distance>(Boss?4:2.1f);
+      Visual.Play(advancing?(chase>2.25f?"run":"walk"):"idle");
+      if(advancing)Visual.SetCurrentSpeed(Mathf.Clamp(chase/2.4f,.7f,1.25f));
       if(Ranged){
        // Ranged families keep their distance instead of closing in.
        if(distance<3.4f){Vector3 away=transform.position-game.Player.transform.position;away.y=0;if(away.sqrMagnitude<.01f)away=-transform.forward;transform.position=Vector3.MoveTowards(transform.position,Clamp(transform.position+away.normalized*2f),chase*dt);}
@@ -127,7 +130,7 @@ namespace LostRealms {
        MoveTo(Clamp(game.Player.transform.position+toE.normalized*3.1f+tangent*1.2f),chase*.8f,dt);
       }else if(distance>(Boss?4:2.1f))MoveTo(game.Player.transform.position,chase,dt);
       if(tokened&&timer<=0&&(distance<(Boss?8:(Kind==7||Kind==13)?10:2.8f))){state=State.Windup;timer=Boss?1.05f-.1f*phase:(Kind==13?.9f:.7f);target=game.Player.transform.position;target.y=baseY;attackOrigin=transform.position;attackCount++;
-      warning=CombatTelegraph.Create(Boss?target:transform.position+transform.forward*1.2f,Boss?2.2f+.3f*phase:1.15f,timer,game.World.transform);Visual.Restart("attack");}
+      warning=CombatTelegraph.Create(Boss?target:transform.position+transform.forward*1.2f,Boss?2.2f+.3f*phase:1.15f,timer,game.World.transform);Visual.PlayTimed("attack",timer+(Boss?.45f:.25f));}
      if(distance>22){ReleaseToken();state=State.Patrol;timer=0;}break;
     case State.Windup:
      Visual.Play("attack");Glow(new Color(1,.2f,.13f),.51f);if(timer<=0){ClearGlow();if(warning)Destroy(warning);state=State.Attack;timer=Boss?.45f:.25f;CommitAttack();}break;
@@ -585,9 +588,9 @@ visual.localPosition=new Vector3(0,Mathf.Sin(t*1.1f)*.02f,0);
    void LateUpdate(){
     if(db==null||visual==null)return;var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing)return;
     if(enemy&&enemy.Health<=0)return;
-    float dt=Mathf.Max(Time.deltaTime,0.016f),t=g.Elapsed;
+    float dt=Time.deltaTime,t=g.Elapsed;
     string st=visual.CurrentState;
-    float amp=st=="walk"?1f:0.12f;
+    float amp=st=="walk"||st=="run"?1f:0.12f;
     float w=t*7f;
     Vector3 lat=transform.right;
     bool attacking=st=="attack_1";
@@ -672,7 +675,7 @@ visual.localPosition=new Vector3(0,Mathf.Sin(t*1.1f)*.02f,0);
     float t=g.Elapsed;
     string st=visual.CurrentState;
     bool attacking=st=="attack_1";
-    float amp=st=="walk"||attacking?1f:0.22f;
+    float amp=st=="walk"||st=="run"||attacking?1f:0.22f;
     // Rear-to-front metachronal wave: each successive leg lags the one behind,
     // and mirrored sides alternate so it reads as a true scuttle.
     float wave=(attacking?5.2f:6.4f)*t;

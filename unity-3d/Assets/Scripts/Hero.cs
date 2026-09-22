@@ -91,7 +91,7 @@ namespace LostRealms {
     Visual.Play(attackState);
    }else if(!Grounded){
     Visual.Play("jump");
-   }else if(moveWish.sqrMagnitude>.01f){
+   }else if(moveWish.sqrMagnitude>.01f||HorizontalSpeed>.2f){
     float speedRatio=Mathf.Clamp01(HorizontalSpeed/MaxMoveSpeed);
     Visual.PlayWalk(speedRatio);
    }else{
@@ -180,7 +180,8 @@ namespace LostRealms {
    float grav=Mathf.Abs(vertical)<2.5f?11f:23f;
    vertical-=grav*dt;
    vertical=Mathf.Max(vertical,-20f);
-   Controller.Move((velocity+Vector3.up*vertical)*dt+platformDisplacement);
+   CollisionFlags contacts=Controller.Move((velocity+Vector3.up*vertical)*dt+platformDisplacement);
+   if((contacts&CollisionFlags.Above)!=0&&vertical>0f)vertical=0f;
    platformDisplacement=Vector3.zero;
    bool nowGrounded=Grounded;
    // Ledge-loss bookkeeping for the forgiveness hop (consumed by the jump
@@ -271,9 +272,9 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
     float lungeStep=(isDashStrike?4.2f:charged?3f:2f)*(Grounded?1f:.5f);
     velocity=Vector3.ClampMagnitude(velocity*.55f+lungeDir*lungeStep*.45f,MaxMoveSpeed);velocity.y=0;
 
-     Visual.PlayAttack(combo,charged,weapon.Tempo,style);
+     Visual.PlayAttack(combo,charged,weapon.Tempo/(flurry?.85f:1f),style);
      // Armed swings ring steel; bare fists thud — never swords unarmed.
-     g.Sound(style=="unarmed"?"punch":"sword_slash");
+     g.Sound("attack_"+(charged?"charged":style)+"_"+((combo-1)%3+1));
     if(isDashStrike){
      Vfx.Play("ga_vfx_Hyperdrive_01",transform.position+Vector3.up*.9f,Quaternion.LookRotation(transform.forward),.8f);
      DamageTip.Show(transform.position+Vector3.up*1.6f,"DASH STRIKE!",new Color(1f,.95f,.4f));
@@ -792,6 +793,10 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
   public void Restart(string state){current="";Play(state);}
   // Manual playback-speed override for controller-driven movement (boss charge).
   public void SetCurrentSpeed(float s){if(hasGraph&&playable[slot].IsValid())playable[slot].SetSpeed(s);}
+  public void PlayTimed(string state,float duration){
+   Restart(state);
+   if(hasGraph&&playable[slot].IsValid())playable[slot].SetSpeed(playable[slot].GetAnimationClip().length/Mathf.Max(.1f,duration));
+  }
   public void PlayBossAction(string state,float duration){
    var clip=Resources.Load<AnimationClip>("Animations/LavaBoss/"+state);
    current="";PlayClip(clip,state);
@@ -831,11 +836,14 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
    if(state=="attack")state="attack_1";
    if(current==state)return;
    int i=System.Array.IndexOf(Names,state);AnimationClip clip=i>=0?clips[i]:null;
-   if(clip==null&&extraClips.TryGetValue(state,out var extra))clip=extra;
+   if(extraClips.TryGetValue(state,out var extra))clip=extra;
    if(lavaBoss&&!clip)clip=Resources.Load<AnimationClip>("Animations/LavaBoss/"+state);
    PlayClip(clip,state);
   }
   void PlayClip(AnimationClip clip,string state){
+   bool stride=(current=="walk"||current=="run")&&(state=="walk"||state=="run");
+   double phase=0;
+   if(stride&&hasGraph&&playable[slot].IsValid()){var oldClip=playable[slot].GetAnimationClip();if(oldClip&&oldClip.length>0)phase=(playable[slot].GetTime()/oldClip.length)%1.0;}
    current=state;if(!hasGraph)return;
    if(!clip)clip=clips[0]?clips[0]:clips[1];if(!clip)return;
    slot=1-slot;
@@ -847,8 +855,8 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
    if(state=="dodge"||state=="roll")playable[slot].SetSpeed(3.35f);
    if(state=="run_fast")playable[slot].SetSpeed(1.7f);
    if(state=="victory"||state=="gethit"||state=="dizzy")playable[slot].SetSpeed(1.15f);
-   if(state=="hit")playable[slot].SetSpeed(2.07f);
-   playable[slot].SetTime(0);
+   if(state=="hit"||state.StartsWith("hit_"))playable[slot].SetSpeed(clip.length/.5f);
+   playable[slot].SetTime(stride?phase*clip.length:0);
    graph.Connect(playable[slot],0,mixer,slot);blend=0;mixer.SetInputWeight(slot,0f);mixer.SetInputWeight(1-slot,1f);
   }
 

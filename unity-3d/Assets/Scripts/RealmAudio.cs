@@ -63,7 +63,7 @@ namespace LostRealms {
     if(!game||!game.Save.sound)return;
     float now=Time.unscaledTime;
     bool frequent=name=="step"||name=="step2"||name=="coin"||name=="impact"||name=="enemy_warning";
-    float spacing=name=="step"||name=="step2"?.12f:frequent?.055f:.025f;
+    float spacing=name.StartsWith("trap_")?.18f:name=="step"||name=="step2"?.12f:frequent?.055f:.025f;
     if(lastPlayed.TryGetValue(name,out float last)&&now-last<spacing)return;
     var clip=Clip("sfx_"+name);if(!clip)return;lastPlayed[name]=now;
     int priority=name=="hurt"||name=="defeat"||name=="complete"||name=="checkpoint"||name=="upgrade"||name.StartsWith("boss")||name=="weapon_pickup"?3:frequent?1:2;
@@ -72,9 +72,9 @@ namespace LostRealms {
     if(slot<0){for(int i=0;i<voices.Length;i++)if(priorities[i]<priority&&(slot<0||priorities[i]<priorities[slot]))slot=i;}
     if(slot<0)return;
     var voice=voices[slot];voice.Stop();voice.clip=clip;priorities[slot]=priority;
-    bool vary=frequent||name=="blade"||name=="sword_slash"||name=="punch"||name=="enemy_dash"||name=="enemy_defeat"||name=="player_dash";
+    bool vary=name.StartsWith("attack_")||name.StartsWith("trap_")||frequent||name=="blade"||name=="sword_slash"||name=="punch"||name=="enemy_dash"||name=="enemy_defeat"||name=="player_dash";
     voice.pitch=(vary?.94f+(float)variation.NextDouble()*.12f:1f)*pitchMul;
-    float baseVol=(name.StartsWith("boss")?.85f:name=="step"?.32f:name=="enemy_warning"?.42f:priority==3?.78f:.62f)*(vary?.92f+(float)variation.NextDouble()*.08f:1f);
+    float baseVol=(name.StartsWith("boss")?.85f:(name=="step"||name=="step2")?.32f:name=="enemy_warning"?.42f:priority==3?.78f:.62f)*(vary?.92f+(float)variation.NextDouble()*.08f:1f);
     voice.volume=baseVol*volumeScale;
     voice.priority=priority==3?48:priority==2?96:160;voice.Play();
    }

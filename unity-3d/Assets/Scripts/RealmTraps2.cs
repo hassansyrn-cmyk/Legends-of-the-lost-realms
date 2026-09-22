@@ -104,7 +104,7 @@ namespace LostRealms {
     case Phase.Hover:
      head.localPosition=rest+Vector3.up*Mathf.Sin(timer*2.1f)*.14f;
      if(timer>=2.3f){phase=Phase.Warning;timer=0;
-      g.TrapSound("enemy_warning",transform.position,4f,16f,.8f);
+      g.TrapSound("trap_warning",transform.position,4f,16f,.8f);
       CombatTelegraph.Create(transform.position,1.7f,.65f,g.World.transform);
      }
      break;
@@ -112,7 +112,7 @@ namespace LostRealms {
      head.localPosition=rest+new Vector3(Mathf.Sin(timer*60f)*.05f,0,Mathf.Cos(timer*53f)*.05f);
      if(timer>=.65f){phase=Phase.Slammed;timer=0;down=true;
       head.localPosition=new Vector3(rest.x,0f,rest.z);
-      g.TrapSound("land_hard",transform.position,5f,20f,1f);
+      g.TrapSound("trap_crush",transform.position,5f,20f,1f);
       g.CameraRig.Shake=.32f;g.HitStop(.05f,.35f);
       KenneyPuff.Burst(transform.position+Vector3.up*.15f,new Color(.62f,.56f,.46f),14,1.3f);
       Vfx.Play("ga_vfx_Impact_01",transform.position+Vector3.up*.4f,Quaternion.identity,1.1f);
@@ -176,7 +176,7 @@ namespace LostRealms {
     dir.y*=.4f;dir.Normalize();
     if(aim){Vector3 flat=dir;flat.y=0;if(flat.sqrMagnitude>.01f)aim.rotation=Quaternion.LookRotation(flat.normalized,Vector3.up);}
     Fire(origin,dir);
-    g.TrapSound("impact",transform.position,3f,14f,.5f);
+    g.TrapSound("trap_dart",transform.position,3f,14f,.5f);
     HitSpark.Burst(origin,dir,accent,6);
    }else if(timer>1.6f&&aim){
     // track the player during the glow window so a dodge must be timed late
@@ -186,6 +186,7 @@ namespace LostRealms {
   }
   void Fire(Vector3 origin,Vector3 dir){
    var dart=Art.Shape("Dart",PrimitiveType.Cube,origin,new Vector3(.09f,.09f,.62f),accent,null);
+   dart.transform.SetParent(RealmGame.I.World.transform,true);
    dart.transform.rotation=Quaternion.LookRotation(dir,Vector3.up);
    var r=dart.GetComponent<Renderer>();var m=new Material(Shader.Find("Standard")){name="Dart"};
    m.color=accent;m.EnableKeyword("_EMISSION");m.SetColor("_EmissionColor",accent*1.4f);
@@ -194,15 +195,20 @@ namespace LostRealms {
   }
   class Dart{public Transform go;public Vector3 dir;public float age;}
   readonly System.Collections.Generic.List<Dart> darts=new System.Collections.Generic.List<Dart>();
+  void OnDestroy(){foreach(var dart in darts)if(dart.go)Destroy(dart.go.gameObject);darts.Clear();}
   void LateUpdate(){
    var g=RealmGame.I;
+   if(!g||g.Screen!=GameScreen.Playing)return;
    for(int i=darts.Count-1;i>=0;i--){
     var d=darts[i];bool dead=d.age>1.8f;
     if(!dead){
      d.age+=Time.deltaTime;
-     d.go.position+=d.dir*13f*Time.deltaTime;
+     Vector3 previous=d.go.position,next=previous+d.dir*13f*Time.deltaTime;
+     bool wall=Physics.Raycast(previous,d.dir,out RaycastHit obstacle,Vector3.Distance(previous,next),~0,QueryTriggerInteraction.Ignore);
+     if(wall)next=obstacle.point;
+     d.go.position=next;
      if(g&&g.Screen==GameScreen.Playing&&g.Player){
-      if(Vector3.Distance(d.go.position,g.Player.transform.position+Vector3.up*.9f)<.55f){
+      if(ProjectileSweep.Hits(previous,next,g.Player.transform.position+Vector3.up*.9f,.55f,out float contact)){
        if(g.Player.Damage(1,transform.position))HitSpark.Burst(d.go.position,-d.dir,new Color(1f,.3f,.2f),10);
        dead=true;
       }else if(g.Enemies!=null)foreach(var foe in g.Enemies){
@@ -210,7 +216,7 @@ namespace LostRealms {
        if(!foe.Boss&&Vector3.Distance(d.go.position,foe.transform.position+Vector3.up*.9f)<.7f){foe.Hit(2f,0,false,d.dir);dead=true;break;}
       }
      }
-     if(d.go.position.y<transform.position.y-2f)dead=true;
+     if(wall||d.go.position.y<transform.position.y-2f)dead=true;
     }
     if(dead){if(d.go)Destroy(d.go.gameObject);darts.RemoveAt(i);}
    }
@@ -246,11 +252,11 @@ namespace LostRealms {
    if(!rolling){
     if(rock.localPosition!=start)rock.localPosition=Vector3.MoveTowards(rock.localPosition,start,Time.deltaTime*4f);
     if(timer>=5f){
-     Vector3 to=g.Player.transform.position-transform.position;to.y=0;
+     Vector3 to=g.Player.transform.position-transform.position;float height=Mathf.Abs(to.y);to.y=0;
      float along=Vector3.Dot(to,dir);
      if(along>.5f&&along<Range&&Mathf.Abs(Vector3.Dot(to,Vector3.Cross(dir,Vector3.up)))<3.6f){
       rolling=true;traveled=0;timer=0;
-      g.TrapSound("boss_warning",transform.position,4f,18f,.7f);
+      g.TrapSound("trap_boulder",transform.position,4f,18f,.7f);
       KenneyPuff.Burst(transform.position+Vector3.up*.3f,new Color(.62f,.56f,.46f),10,1.1f);
      }
     }
@@ -289,9 +295,9 @@ namespace LostRealms {
    bool blowing=timer%3.4f>1.2f&&timer%3.4f<2.4f;
    if(rune)rune.GetComponent<Renderer>().material.color=blowing?Color.Lerp(gustColor,Color.white,.3f):gustColor;
    if(blowing){
-    if(timer%3.4f<1.28f)g.TrapSound("gale_cast",transform.position,3f,14f,.6f);
-    Vector3 to=g.Player.transform.position-transform.position;to.y=0;
-    if(to.magnitude<2.6f&&Mathf.Abs(to.y)<2.2f)g.Player.ApplyForce(gust*10f*Time.deltaTime);
+    if(timer%3.4f<1.28f)g.TrapSound("trap_wind",transform.position,3f,14f,.6f);
+    Vector3 to=g.Player.transform.position-transform.position;float height=Mathf.Abs(to.y);to.y=0;
+    if(to.magnitude<2.6f&&height<2.2f)g.Player.ApplyForce(gust*10f*Time.deltaTime);
     if(Random.value<.5f)KenneyPuff.Burst(transform.position+Vector3.up*.2f+gust*Random.Range(0f,1.6f),new Color(.85f,.95f,1f,.5f),1,.5f);
    }
   }
