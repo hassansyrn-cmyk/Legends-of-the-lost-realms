@@ -52,7 +52,6 @@ namespace LostRealms {
    if(p&&ProjectileSweep.Hits(previous,next,p.transform.position+Vector3.up*.9f,.6f,out float contact)){
     transform.position=Vector3.Lerp(previous,next,contact);
     if(p.Damage(Mathf.Max(1,Mathf.RoundToInt(damage)),transform.position)){
-     HitSpark.Burst(transform.position,-vel.normalized,new Color(1f,.3f,.2f),8);
      if(power==1)p.ApplyForce(vel.normalized*-2f);  // frost shards stagger slightly
     }
     Impact(true);return;
@@ -173,7 +172,6 @@ namespace LostRealms {
    Vector3 aim=(g.Player.transform.position+Vector3.up*.85f-mouth).normalized;
    TrapBolt.Fire(mouth+aim*.3f,aim*12f,1,-1,poison,"ga_vfx_Heal_01",1f,2.4f);
    g.TrapSound("trap_poison",transform.position,4f,16f,.9f);
-   HitSpark.Burst(mouth,aim,poison,10);
    CombatTelegraph.Create(g.Player.transform.position,1f,.5f,g.World.transform);
   }
  }

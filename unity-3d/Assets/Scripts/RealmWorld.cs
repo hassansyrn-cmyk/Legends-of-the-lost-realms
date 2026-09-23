@@ -12,7 +12,7 @@ namespace LostRealms {
    var go=GameObject.CreatePrimitive(type);go.name=name;go.transform.SetParent(parent,false);
    go.transform.localPosition=pos;go.transform.localScale=scale;
    go.GetComponent<Renderer>().sharedMaterial=Material(color);
-   if(!solid){var c=go.GetComponent<Collider>();if(c){c.enabled=false;Object.Destroy(c);}}
+   if(!solid){var c=go.GetComponent<Collider>();if(c){c.enabled=false;if(Application.isPlaying)Object.Destroy(c);else Object.DestroyImmediate(c);}}
    return go;
   }
   public static GameObject Crystal(Vector3 pos,float size,Color color,Transform parent){
@@ -214,7 +214,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
        // Two slots never roll the same trap type — no triple-brazier ring storms.
        var usedTypes=new List<string>();
        bool hasRing=stage>=2&&!last&&(i==5||i==9||(stage>=10&&i==12));
-       for(int t=0;t<traps;t++)PlaceTrap(islandObj?islandObj.transform:transform,width,length,usedTypes,hasRing);
+       for(int t=0;t<traps;t++)PlaceTrap(islandObj?islandObj.transform:transform,width,length,usedTypes,hasRing,arch);
        // Ring takeoff reserved after trap lanes are set: rings fly above, so
        // ground traps may sit underneath, but props still keep the takeoff clear.
        if(hasRing&&islandObj)TrapArt.Reserve(islandObj.transform,new Vector3(0,.05f,length*.42f),3.2f);
@@ -222,7 +222,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     }
     if(last){EndZ=p.z+4;Gate(p+new Vector3(0,0,5));
      // Late-game guardian arenas are trapped too.
-     if(IsBoss&&islandObj&&stage>=8){
+     if(IsBoss&&islandObj&&stage>=7){
       CrusherPillar.Place(islandObj.transform,new Vector3(-5.5f,.05f,-3.5f),accent,stone);
       CrusherPillar.Place(islandObj.transform,new Vector3(5.5f,.05f,-3.5f),accent,stone);
       if(stage>=12){
@@ -253,9 +253,11 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
       // Settle pass: snap clear outlier props straight onto the deck, either
       // direction within tolerance. Planted bases and deep pits are untouched.
       RealmProps.SettleProps(transform);
+      ChapterLayout.GroundTraps(transform);
       // Final arbiter: remove anything deeply overlapping a trap footprint, by
       // real positions (not reservations) — backstop for every placement path.
       ResolveOverlaps();
+      ChapterLayout.Clean(transform);
      }
    GameObject FindIsland(Vector3 p){foreach(Transform t in transform)if(t.name=="Island"&&Vector3.Distance(t.position,p)<.1f)return t.gameObject;return null;}
   // Route point for island i: the authored arrays cover the original chapter
@@ -272,11 +274,10 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
   // Stage-gated trap picker: new traps join the pool as chapters progress
   // (wind 3+, crusher 4+, turret 5+, boulder 6+), with realm flavour — geysers
   // dominate Emberfall, saws the Dunes, spikes the Frozen Peaks.
-   void PlaceTrap(Transform island,float width,float length,List<string> usedTypes,bool hasSpeedRing=false){
-    var pool=new List<string>{"thorn","spike","saw"};
+   void PlaceTrap(Transform island,float width,float length,List<string> usedTypes,bool hasSpeedRing=false,IslandArchetype arch=IslandArchetype.Standard){
+    var pool=new List<string>{"spike","saw"};
     if(realm==3)pool.Insert(0,"geyser");else if(level>=5)pool.Add("geyser");
     if(realm==1)pool.Add("saw");
-    if(level>=3)pool.Add("wind");
     if(level>=4)pool.Add("crusher");
     if(level>=5)pool.Add("turret");
     if(level>=6)pool.Add("boulder");
@@ -299,7 +300,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
      // the unvetted Hazard lane. Realm 0 keeps procedural thorn spikes.
      if(pick=="thorn")pick=realm==3?"geyser":realm==1?"saw":realm==2?"spike":"thorn";
      usedTypes.Add(pick);
-     Vector3 lane=new Vector3(-.8f,.08f,1f);
+     Vector3 lane=arch==IslandArchetype.TieredPlatform?new Vector3(0f,.08f,length*.3f):new Vector3(-.8f,.08f,1f);
      switch(pick){
       case "crusher":{Vector3 spot=NudgeSpot(island,new Vector3((usedTypes.Count>1?1f:-1f)*width*.26f,.05f,0),2.2f,width,length);CrusherPillar.Place(island,spot,accent,stone);break;}
       case "turret":{Vector3 spot=NudgeSpot(island,new Vector3((usedTypes.Count>1?1f:-1f)*width*.34f,.05f,length*.3f),1.3f,width,length);DartTurret.Place(island,spot,accent,stone);break;}
@@ -318,10 +319,10 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
        else break;
       }
       RollingBoulder.Place(island,bp,new Vector3(0,0,-1),accent,stone);break;}
-     case "brazier":{Vector3 spot=NudgeSpot(island,new Vector3((usedTypes.Count>1?-1f:1f)*width*.22f,.08f,0),1.6f,width,length);FlameBrazier.Place(island,spot,accent,stone);break;}
-     case "totem":{Vector3 spot=NudgeSpot(island,new Vector3((usedTypes.Count>1?-1f:1f)*width*.24f,.08f,length*.18f),1.5f,width,length);FrostTotem.Place(island,spot,accent,stone);break;}
-     case "serpent":{Vector3 spot=NudgeSpot(island,new Vector3((usedTypes.Count>1?1f:-1f)*width*.28f,.08f,length*.22f),1.4f,width,length);SerpentStatue.Place(island,spot,accent,stone);break;}
-     case "wind":{Vector3 spot=NudgeSpot(island,new Vector3((usedTypes.Count>1?1f:-1f)*width*.25f,.05f,0),1.6f,width,length);WindVent.Place(island,spot,new Vector3(usedTypes.Count>1?1f:-1f,0,0),accent);break;}
+      case "brazier":{Vector3 spot=NudgeSpot(island,new Vector3((usedTypes.Count>1?-1f:1f)*width*.20f,.12f,0),1.6f,width,length);FlameBrazier.Place(island,spot,accent,stone);break;}
+      case "totem":{Vector3 spot=NudgeSpot(island,new Vector3((usedTypes.Count>1?-1f:1f)*width*.22f,.12f,length*.16f),1.5f,width,length);FrostTotem.Place(island,spot,accent,stone);break;}
+      case "serpent":{Vector3 spot=NudgeSpot(island,new Vector3((usedTypes.Count>1?1f:-1f)*width*.24f,.12f,length*.20f),1.4f,width,length);SerpentStatue.Place(island,spot,accent,stone);break;}
+      case "wind":{Vector3 spot=NudgeSpot(island,new Vector3((usedTypes.Count>1?1f:-1f)*width*.22f,.08f,0),1.6f,width,length);WindVent.Place(island,spot,new Vector3(usedTypes.Count>1?1f:-1f,0,0),accent);break;}
      case "geyser":{
       Vector3 gp=new Vector3(usedTypes.Count>1?.8f:-.8f,.08f,1f);float maxZ=length*.5f-1.2f;
       for(int n=0;n<3&&!TrapArt.IsClear(island,gp,1.5f);n++){
@@ -370,8 +371,8 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     if(TrapArt.IsClear(island,spot,radius))return spot;
     foreach(var o in NudgeCand){
      Vector3 cand=spot+new Vector3(o.x,0,o.y);
-     cand.x=Mathf.Clamp(cand.x,-width*.5f+1.2f,width*.5f-1.2f);
-     cand.z=Mathf.Clamp(cand.z,-length*.5f+1.2f,length*.5f-1.2f);
+     cand.x=Mathf.Clamp(cand.x,-width*.5f+1.8f,width*.5f-1.8f);
+     cand.z=Mathf.Clamp(cand.z,-length*.5f+1.8f,length*.5f-1.8f);
      if(TrapArt.IsClear(island,cand,radius))return cand;
     }
     return spot;
@@ -424,7 +425,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     for(int i=0;i<traps.Count;i++)for(int j=i+1;j<traps.Count;j++){
      var A=traps[i];var B=traps[j];
      if(!A.go||!B.go||!A.island||!B.island||A.island!=B.island)continue;
-     if(FootGap(A,B)<-.8f){
+     if(FootGap(A,B)<0f){
       float sa=A.seg?A.hw:A.r,sb=B.seg?B.hw:B.r;
       var victim=sa<=sb?A:B;var other=sa<=sb?B:A;
       Debug.Log("ResolveOverlaps: removing "+victim.go.name+" overlapping "+other.go.name+" on island "+victim.island.GetSiblingIndex());
@@ -447,7 +448,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
       foreach(var t in traps){
        if(!t.go||t.island!=island)continue;
        float gap=t.seg?SegD(t.a,t.b,b.center)-t.hw-pr:D2(t.pos,b.center)-t.r-pr;
-       if(gap<-.5f){victims.Add(c.gameObject);break;}
+       if(gap<0f){victims.Add(c.gameObject);break;}
       }
      }
      foreach(var v in victims){
@@ -555,7 +556,6 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
           }
          }
         }
-        Art.Ring(stepOffsets[k]+new Vector3(0,.1f,0),1f,accent*.7f,root.transform);
        }
        return root;
       }
@@ -599,7 +599,6 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
       }
       BreakableCrate.Place(root.transform,new Vector3(-4.2f,.05f,4f),stone*1.3f);
       BreakableCrate.Place(root.transform,new Vector3(4.2f,.05f,4f),stone*1.3f,true);
-      ExplosiveBarrel.Place(root.transform,new Vector3(-4.2f,.05f,-4f),accent);
       if(level>=3&&index%2==1)FloorBladeTrap.Place(root.transform,new Vector3(0,.05f,0),accent);
       else SpikeTrap.Place(root.transform,new Vector3(0,.05f,0),accent);
      }else if(archetype==IslandArchetype.NarrowBridge){
@@ -665,7 +664,6 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
        }
       }
      }
-     Art.Ring(new Vector3(0,.11f,0),.55f,accent*.7f,root.transform);
     }
     Physics.SyncTransforms();
     // Deck normalization: the FBX island meshes carry their own terrain
@@ -702,6 +700,9 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
    }
   }
   void Pickup(Vector3 position,bool gem){
+    // Route pickups count toward the chapter totals (enemy loot drops are a
+    // bonus on top and stay out of the denominator).
+    if(RealmGame.I!=null){if(gem)RealmGame.I.GemsTotal++;else RealmGame.I.CoinsTotal++;}
     Physics.SyncTransforms();
    var hits=Physics.RaycastAll(position+Vector3.up*5f,Vector3.down,10f,~0,QueryTriggerInteraction.Ignore);
    float bestY=float.NegativeInfinity;
@@ -817,6 +818,9 @@ void WeaponDrop(Vector3 p,WeaponId id){
     else Hazard(transform,p,kind);
    }
   void SpawnEnemy(Vector3 p,int kind,bool boss,Vector3 center,float width,float length){
+   // Every initial spawn counts toward the chapter's foe total (mid-fight
+   // heralds/minions spawn via Configure directly and stay bonus kills).
+   if(RealmGame.I!=null)RealmGame.I.KillsTotal++;
    // Spawn validation: irregular island meshes (volcanic calderas, serpentine
    // extensions) can leave an offset point over a hole — probe candidates and
    // snap to the first solid surface so no enemy is born over the void.
@@ -865,8 +869,7 @@ transform.Rotate(0,(Gem?12f:45f)*Time.deltaTime,0,Space.World);
      if(Vector3.Distance(Origin,target)<(Gem?1.85f:2.1f))Origin=Vector3.MoveTowards(Origin,target,Time.deltaTime*(Gem?5.4f:4.5f));
      transform.position=Origin+Vector3.up*Mathf.Sin(RealmGame.I.Elapsed*1.4f)*.09f;
     if(Vector3.Distance(g.Player.transform.position+Vector3.up*.8f,transform.position)<1.15f){
-     HitSpark.Burst(transform.position,Vector3.up,Gem?g.Accent:new Color(1f,.85f,.2f),Gem?18:12);
-     Vfx.Play(Gem?"ga_vfx_LootDrop_02":"ga_vfx_Sparks_01",transform.position,Quaternion.identity,Gem?.8f:.55f);
+     if(Gem)Vfx.Play("ga_vfx_LootDrop_02",transform.position,Quaternion.identity,.8f);
      g.Collect(Gem);Destroy(gameObject);
     }
    }
@@ -903,7 +906,7 @@ transform.Rotate(0,(Gem?12f:45f)*Time.deltaTime,0,Space.World);
     transform.position=Origin+Vector3.up*Mathf.Sin(RealmGame.I.Elapsed*1.4f)*.09f;
     if(Vector3.Distance(g.Player.transform.position+Vector3.up*.8f,transform.position)<1.15f){
      int before=g.Player.Health;g.Player.Health=Mathf.Min(g.Player.MaxHealth,before+Amount);
-     if(g.Player.Health>before){HitSpark.Burst(transform.position,Vector3.up,new Color(1f,.38f,.48f),22);Vfx.Play("ga_vfx_Heal_01",transform.position,Quaternion.identity,.9f);g.Sound("heal");}
+     if(g.Player.Health>before){Vfx.Play("ga_vfx_Heal_01",transform.position,Quaternion.identity,.9f);g.Sound("heal");}
      else{g.Sound("gem");}
      Destroy(gameObject);
     }
@@ -922,7 +925,7 @@ transform.Rotate(0,(Gem?12f:45f)*Time.deltaTime,0,Space.World);
     float dz=pPos.z-cpPos.z;
     float hDistSq=dx*dx+dz*dz;
     if(!active&&hDistSq<2.85f*2.85f&&Mathf.Abs(pPos.y-cpPos.y)<3.5f){
-     active=true;if(visual)visual.Activate();HitSpark.Burst(transform.position+Vector3.up*1.35f,Vector3.up,g.Accent,28);Vfx.Play("ga_vfx_Portal_01",transform.position+Vector3.up*1.3f,Quaternion.identity,.9f);
+     active=true;if(visual)visual.Activate();Vfx.Play("ga_vfx_Portal_01",transform.position+Vector3.up*1.3f,Quaternion.identity,.9f);
      Vector3 spawn=SpawnPoint!=Vector3.zero?SpawnPoint:(transform.position+transform.forward*2.2f+Vector3.up*.05f);
      g.ActivateCheckpoint(spawn);
     }
@@ -945,7 +948,7 @@ transform.Rotate(0,(Gem?12f:45f)*Time.deltaTime,0,Space.World);
     for(int i=0;i<spin.Count;i++)if(spin[i])spin[i].localRotation*=Quaternion.Euler(0,(speeds.Count>i?speeds[i]:30)*Time.deltaTime,0);
     if(GetComponent<TeleportGateController>()!=null)return;
     if(g.Elapsed>next&&Vector3.Distance(g.Player.transform.position,transform.position)<1.6f){
-     next=RealmGame.I.Elapsed+2;HitSpark.Burst(transform.position+Vector3.up*2f,Vector3.up,g.Accent,24);Vfx.Play("ga_vfx_Portal_02",transform.position+Vector3.up*2f,Quaternion.identity,1.25f);
+     next=RealmGame.I.Elapsed+2;Vfx.Play("ga_vfx_Portal_02",transform.position+Vector3.up*2f,Quaternion.identity,1.25f);
      g.Finish();
     }
    }

@@ -177,7 +177,6 @@ namespace LostRealms {
     if(aim){Vector3 flat=dir;flat.y=0;if(flat.sqrMagnitude>.01f)aim.rotation=Quaternion.LookRotation(flat.normalized,Vector3.up);}
     Fire(origin,dir);
     g.TrapSound("trap_dart",transform.position,3f,14f,.5f);
-    HitSpark.Burst(origin,dir,accent,6);
    }else if(timer>1.6f&&aim){
     // track the player during the glow window so a dodge must be timed late
     Vector3 to=g.Player.transform.position+Vector3.up*.9f-aim.position;to.y=0;
@@ -209,7 +208,7 @@ namespace LostRealms {
      d.go.position=next;
      if(g&&g.Screen==GameScreen.Playing&&g.Player){
       if(ProjectileSweep.Hits(previous,next,g.Player.transform.position+Vector3.up*.9f,.55f,out float contact)){
-       if(g.Player.Damage(1,transform.position))HitSpark.Burst(d.go.position,-d.dir,new Color(1f,.3f,.2f),10);
+       g.Player.Damage(1,transform.position);
        dead=true;
       }else if(g.Enemies!=null)foreach(var foe in g.Enemies){
        if(!foe||foe.Health<=0||foe.transform.IsChildOf(transform))continue;

@@ -138,7 +138,7 @@ public static class WeaponCatalog {
    float time=game.Elapsed+phase;transform.position=Origin+Vector3.up*(.75f+Mathf.Sin(time*1.4f)*.09f);transform.Rotate(0,Time.deltaTime*24f,0,Space.World);
    if(model)model.localRotation=Quaternion.Euler(0,0,Mathf.Sin(time*1.8f)*7f);
    if(Vector3.Distance(game.Player.transform.position+Vector3.up*.8f,transform.position)<1.3f){
-    game.EquipWeapon(Id);HitSpark.Burst(transform.position,Vector3.up,game.Accent,22);Destroy(gameObject);
+    game.EquipWeapon(Id);Destroy(gameObject);
    }
   }
  }

@@ -17,7 +17,7 @@ namespace LostRealms {
 public static readonly string[] Realms={"VERDANT KINGDOM","BURNING DUNES","FROZEN PEAKS","EMBERFALL"};
    public static readonly Color[] Accents={new Color(.38f,.95f,.7f),new Color(1,.67f,.28f),new Color(.4f,.83f,1),new Color(1f,.35f,.28f)};
   public GameScreen Screen=GameScreen.Menu; public Progress Save=new Progress(); public Hero Player; public RealmWorld World; public FollowCamera CameraRig;
-  public int Level=1, Realm, Coins, Gems, DamageTaken, EarnedStars, Combo; public float Elapsed; public Vector3 Checkpoint; public bool CheckpointActive; public string Notice=""; float noticeUntil,comboUntil; public Color Accent=>Accents[Realm];
+  public int Level=1, Realm, Coins, Gems, DamageTaken, EarnedStars, Combo, Kills, CoinsTotal, GemsTotal, KillsTotal; public float Elapsed; public Vector3 Checkpoint; public bool CheckpointActive; public string Notice=""; float noticeUntil,comboUntil; public Color Accent=>Accents[Realm];
   public WeaponDefinition CurrentWeapon=>WeaponCatalog.Get(Save.equippedWeapon);
   public Vector2 MoveInput; public bool JumpPressed,DashPressed,AttackPressed,AttackReleased,CastPressed,ParryPressed,SpellPressed,SpellReleased,GrapplePressed; public bool AttackHeld,SpellHeld,JumpHeld;
   public readonly List<Enemy> Enemies=new List<Enemy>(); public AudioSource Music,Sfx;
@@ -56,9 +56,8 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
   public void LoadLevel(int id){
    showArsenal=false;arsenalPage=0;
    if(Audio)Audio.ClearRunSounds();
-   Time.timeScale=1; touch.Reset(); if(worldRoot){worldRoot.gameObject.SetActive(false);Destroy(worldRoot.gameObject);} Enemies.Clear(); Level=Mathf.Clamp(id,1,15); Realm=Level<=4?0:Level<=7?1:Level<=10?2:3; Coins=Gems=DamageTaken=EarnedStars=0; Elapsed=0; CheckpointActive=false;Combo=0;comboUntil=0;
-   worldRoot=new GameObject("Realm "+Level+" - "+Titles[Level-1]).transform; World=worldRoot.gameObject.AddComponent<RealmWorld>();
-   try{World.Build(Level,Realm);}catch(System.Exception e){Debug.LogError("LEVEL_BUILD_FAILED "+Level+": "+e);}
+   Time.timeScale=1; touch.Reset(); if(worldRoot){worldRoot.gameObject.SetActive(false);Destroy(worldRoot.gameObject);} Enemies.Clear(); Level=Mathf.Clamp(id,1,15); Realm=Level<=4?0:Level<=7?1:Level<=10?2:3; Coins=Gems=DamageTaken=EarnedStars=0; Kills=CoinsTotal=GemsTotal=KillsTotal=0; Elapsed=0; CheckpointActive=false;Combo=0;comboUntil=0;
+   worldRoot=new GameObject("Realm "+Level+" - "+Titles[Level-1]).transform; World=worldRoot.gameObject.AddComponent<RealmWorld>();   try{World.Build(Level,Realm);}catch(System.Exception e){Debug.LogError("LEVEL_BUILD_FAILED "+Level+": "+e);}
    Trial=RealmTrials.Build(World,Level);
    GUI.enabled=true;
    var hero=new GameObject("Aster"); hero.transform.SetParent(worldRoot); hero.transform.position=World.Spawn; Player=hero.AddComponent<Hero>(); Checkpoint=World.Spawn;
@@ -114,13 +113,29 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
   // A very short screen-wide time dip for perfect defense and counters. Physics
   // runs on the constant fixed step, so this slows the pacing, never the step.
   public void HitStop(float seconds,float scale=.12f){if(seconds<=0f)return;Time.timeScale=Mathf.Min(Time.timeScale,scale);float until=Time.unscaledTime+seconds;if(until>hitStopUntil)hitStopUntil=until;}
-  public void Collect(bool gem){if(gem)Gems++;else Coins++;Sound(gem?"gem":"coin");}
+   public void Collect(bool gem){if(gem)Gems++;else Coins++;Sound(gem?"gem":"coin");}
+   // Chapter completion: average of coins/gems/foes percentages (each
+   // clamped; empty categories count as complete). Stars: 60/80/95%.
+   public static float CompletionFor(int coins,int coinsTotal,int gems,int gemsTotal,int kills,int killsTotal){
+    float c=coinsTotal>0?Mathf.Clamp01((float)coins/coinsTotal):1f;
+    float g=gemsTotal>0?Mathf.Clamp01((float)gems/gemsTotal):1f;
+    float k=killsTotal>0?Mathf.Clamp01((float)kills/killsTotal):1f;
+    return (c+g+k)/3f;
+   }
+   public static int StarsFor(float completion)=>completion>=.95f?3:completion>=.8f?2:completion>=.6f?1:0;
+   public float Completion()=>CompletionFor(Coins,CoinsTotal,Gems,GemsTotal,Kills,KillsTotal);
+   public int GateStars()=>StarsFor(Completion());
+   public bool GateOpen()=>Completion()>=.6f;
+   public string GateSealedText(){
+    float c=CoinsTotal>0?(float)Coins/CoinsTotal:1f,g=GemsTotal>0?(float)Gems/GemsTotal:1f,k=KillsTotal>0?(float)Kills/KillsTotal:1f;
+    return $"Realm gate sealed — completion {(int)(Completion()*100f)}% (need 60%): coins {(int)(Mathf.Clamp01(c)*100f)}% • gems {(int)(Mathf.Clamp01(g)*100f)}% • foes {(int)(Mathf.Clamp01(k)*100f)}%";
+   }
    public void EquipWeapon(WeaponId id){
     if((int)id<0||(int)id>40)return;
     if(Save.weapons==null)Save.weapons=new List<int>();
     if((int)id>=0&&!Save.weapons.Contains((int)id))Save.weapons.Add((int)id);
     Save.equippedWeapon=(int)id;Persist();
-    if(Player){EquippedWeapon.Equip(Player,id);Vfx.Play("ga_vfx_Sparks_01",Player.transform.position+Vector3.up*1.2f,Quaternion.identity,.9f);}
+    if(Player){EquippedWeapon.Equip(Player,id);}
     var weapon=CurrentWeapon;Sound("weapon_pickup");Tell("EQUIPPED  "+weapon.Name+"  /  "+weapon.Summary,4.5f);
    }
    public void UnequipWeapon(){
@@ -131,8 +146,10 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
   public void ActivateCheckpoint(Vector3 position){Checkpoint=position;CheckpointActive=true;Sound("checkpoint");Tell("Checkpoint restored. Your trail is safe.");}
   public void Respawn(){Player.Warp(Checkpoint);Player.Health=Player.MaxHealth;Player.Energy=100;CrumblePlatform.ResetAll();Sound("respawn");Vfx.Play("ga_vfx_Portal_01",Checkpoint,Quaternion.identity,1.1f);Tell("Returned to the checkpoint.");}
   public void Defeat(){Screen=GameScreen.Defeated;Sound("defeat");if(CameraRig)CameraRig.ZoomBias=1.6f;}
-  public void Finish(){if(Screen!=GameScreen.Playing)return;if(World.IsBoss&&Enemies.Exists(x=>x&&x.Boss&&x.Health>0)){Tell("Defeat the guardian to open this gate.");return;}
-EarnedStars=1+(Gems>0?1:0)+(DamageTaken==0?1:0); Save.stars[Level-1]=Mathf.Max(Save.stars[Level-1],EarnedStars); if(Save.best[Level-1]<=0||Elapsed<Save.best[Level-1])Save.best[Level-1]=Elapsed;
+   public void Finish(){if(Screen!=GameScreen.Playing)return;if(World.IsBoss&&Enemies.Exists(x=>x&&x.Boss&&x.Health>0)){Tell("Defeat the guardian to open this gate.");return;}
+    // Anti-skip: the gate only opens at 60%+ completion (coins/gems/foes).
+    if(!GateOpen()){Tell(GateSealedText(),4f);Sound("power_fail");return;}
+    EarnedStars=GateStars(); Save.stars[Level-1]=Mathf.Max(Save.stars[Level-1],EarnedStars); if(Save.best[Level-1]<=0||Elapsed<Save.best[Level-1])Save.best[Level-1]=Elapsed;
     Save.coins+=Coins+EarnedStars*10;Save.gems+=Gems;Save.unlocked=Mathf.Max(Save.unlocked,Mathf.Min(15,Level+1));Persist();Screen=GameScreen.Complete;Sound("complete");
   }
   public static string Clock(float seconds)=>$"{(int)seconds/60:00}:{(int)seconds%60:00}";
@@ -222,10 +239,11 @@ EarnedStars=1+(Gems>0?1:0)+(DamageTaken==0?1:0); Save.stars[Level-1]=Mathf.Max(S
     if(Player&&Player.CounterReady)Text(42,138,330,20,"COUNTER READY  /  STRIKE NOW",small);
     if(Combo>=3){BoxOutline(new Rect(42,160,140,24),new Color(.05f,.09f,.12f,.85f),new Color(1f,.78f,.3f),1f);Text(52,163,122,18,$"COMBO  x{Combo}",small);}
 
-    // Collectibles Panel
-    Panel(404,20,240,68);
+    // Collectibles + gate progress panel
+    Panel(404,20,240,94);
     Text(422,31,215,18,"TRAIL FINDINGS",small);
     Text(422,48,215,30,$"◉ {Coins:00}    ◆ {Gems}");
+    Text(422,74,215,20,GateOpen()?"GATE OPEN  "+new string('★',GateStars()):"GATE "+(int)(Completion()*100f)+"%  -  need 60%",small);
 
     // Power Selector & Energy Bar
     string[] powerNames={"EMBER [FIRE]","FROST [ICE]","GALE [WIND]"};

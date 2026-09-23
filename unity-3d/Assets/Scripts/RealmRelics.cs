@@ -169,7 +169,6 @@ float t=Clock;float pulse=.72f+Mathf.Sin(t*3.2f)*.28f;
    if(activated)return;
    activated=true;
    activationTime=Clock;
-   Vfx.Play("ga_vfx_Sparks_01",transform.position+Vector3.up*1.2f,Quaternion.identity,1.2f);
   }
   void Update(){
    float t=Clock;float beat=.5f+Mathf.Sin(t*3.2f)*.18f;float activation=activated?1.8f:.35f;

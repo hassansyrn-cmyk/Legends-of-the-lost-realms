@@ -50,6 +50,16 @@ namespace LostRealms {
    w.Build(stage,WorldFor(stage));
    Flush("STAGE "+stage+" built islands="+w.Route.Count);
    Physics.SyncTransforms();
+   var props=new List<Bounds>();
+   foreach(var t in w.GetComponentsInChildren<Transform>()){
+    if(t.name=="Thorn"||t.name=="Explosive barrel"||t.name=="Prop Lantern"||t.name.StartsWith("Prop Statue")||t.name=="VentGrate"||(t.name=="Rune ring"&&t.parent&&t.parent.name=="Island"))
+     Flush("WARN stage="+stage+" UNWANTED_SHAPE "+t.name);
+    if(!ChapterLayout.IsProp(t)||!ChapterLayout.BoundsOf(t,out var bounds))continue;
+    foreach(var other in props)if(ChapterLayout.Overlap(bounds,other))Flush("WARN stage="+stage+" PROP_ON_PROP "+t.name);
+    props.Add(bounds);
+    var parent=t.parent;
+    if(parent&&parent.name=="Island"&&!ChapterLayout.Supported(parent,t,bounds,out _))Flush("WARN stage="+stage+" PROP_UNSUPPORTED "+t.name);
+   }
    // Collect islands.
    var islands=new List<Transform>();
    foreach(Transform t in w.transform)if(t.name=="Island")islands.Add(t);

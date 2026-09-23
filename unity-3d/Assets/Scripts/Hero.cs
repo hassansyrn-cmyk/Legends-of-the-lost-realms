@@ -126,7 +126,6 @@ namespace LostRealms {
     g.Sound(jumps==1?"jump":"double_jump");
     if(jumps==2){
      Color elemColor=Power==0?new Color(1f,.45f,.1f):Power==1?new Color(.2f,.85f,1f):new Color(.2f,1f,.55f);
-     HitSpark.Burst(transform.position+Vector3.up*.2f,Vector3.down,elemColor,8);
     }
     Visual.Restart("jump");
    }else if(jumpBuffer>0&&jumps==0&&ledgeLostAt>0f&&RealmGame.I.Elapsed-ledgeLostAt<=.15f){
@@ -134,7 +133,6 @@ namespace LostRealms {
     // time expired — a slightly weaker rescue jump that keeps the double jump.
     jumpBuffer=0;jumps=1;vertical=6.9f;ledgeLostAt=0f;
     g.Sound("jump");Visual.Restart("jump");
-    HitSpark.Burst(transform.position+Vector3.up*.2f,Vector3.down,new Color(.85f,1f,.9f),6);
    }
    // Variable jump height removed: a tap-vs-hold trim shortened jumps on
    // touch devices (JumpHeld is never true for a tap), breaking island gaps.
@@ -153,8 +151,6 @@ namespace LostRealms {
     velocity=wish*9.5f;velocity.y=0;g.Sound("player_dash");
     dodgeVisualState=Grounded?"roll":"dodge";
     Visual.Restart(dodgeVisualState);
-   Vfx.Play("ga_vfx_Hyperdrive_01",transform.position+Vector3.up*.9f,Quaternion.LookRotation(transform.forward),.7f);
-    HitSpark.Burst(transform.position+Vector3.up*.8f,-wish,new Color(1f,.9f,.7f),8);
    }
 
    float fall=vertical;
@@ -225,7 +221,6 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
     }else{
      DamageTip.Show(transform.position+Vector3.up*1.9f,"UNSTOPPABLE",new Color(1f,.82f,.35f));
     }
-    HitSpark.Burst(transform.position+Vector3.up*.8f,(transform.position-source).normalized,new Color(1f,.2f,.2f),8);
     if(Health<=0&&RealmGame.I.Save.windRank>windUsed){windUsed++;Health=Mathf.Max(3,Mathf.RoundToInt(MaxHealth*.45f));Energy=Mathf.Max(Energy,60);immuneUntil=RealmGame.I.Elapsed+2.2f;RealmGame.I.Tell("SECOND WIND — the realm spirit holds you up.",3);RealmGame.I.Sound("respawn");Vfx.Play("ga_vfx_Heal_02",transform.position+Vector3.up*.9f,Quaternion.identity,1f);}
     else if(Health<=0)RealmGame.I.Defeat();
     return true;
@@ -281,7 +276,6 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
     }
     if(combo==3&&!charged){
      g.CameraRig.Shake=.2f;
-     HitSpark.Burst(transform.position+Vector3.up*1f,transform.forward,new Color(1f,.85f,.3f),16);
      DamageTip.Show(transform.position+Vector3.up*1.8f,"FINISHER!",new Color(1f,.85f,.2f));
     }
 
@@ -296,7 +290,6 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
      g.CameraRig.Shake=.35f;
      g.CameraRig.Kick(transform.forward,.5f);
      g.Sound("impact");
-     HitSpark.Burst(transform.position+Vector3.up*1.2f,transform.forward,new Color(1f,.92f,.25f),32);
      Vfx.Play("ga_vfx_Hyperdrive_01",transform.position+Vector3.up*.9f,Quaternion.LookRotation(transform.forward),1.2f);
      DamageTip.Show(transform.position+Vector3.up*2.2f,"CRITICAL RIPOSTE!",new Color(1f,.92f,.25f));
     }
@@ -353,7 +346,6 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
    Color elemColor=Power==0?new Color(1f,.45f,.1f):Power==1?new Color(.2f,.85f,1f):new Color(.2f,1f,.55f);
    Vfx.Play("ga_vfx_Shockwave_01",transform.position+Vector3.up*.15f,Quaternion.identity,1.6f);
    Vfx.Play("ga_vfx_Explosion_01",transform.position+Vector3.up*.25f,Quaternion.identity,1.1f);
-   HitSpark.Burst(transform.position+Vector3.up*.2f,Vector3.up,elemColor,28);
    ImpactMarks.Place(transform.position,1.3f,elemColor);
    DamageTip.Show(transform.position+Vector3.up*1.8f,"EARTH SHATTER!",elemColor);
    var weapon=g.CurrentWeapon;
@@ -391,7 +383,6 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
    parryUntil=now+.2f;parryReady=now+.55f;
    RealmGame.I.Sound("player_dash");
    Visual.Restart(ParryState());
-   HitSpark.Burst(transform.position+Vector3.up*.9f+transform.forward*.4f,transform.forward,new Color(.8f,.92f,1f),6);
   }
   void ParrySuccess(Vector3 source){
    var g=RealmGame.I;parryUntil=0;parryReady=g.Elapsed+.55f;
@@ -409,7 +400,6 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
    if(dodgeRewarded)return;dodgeRewarded=true;
    var g=RealmGame.I;g.HitStop(.1f,.1f);g.CameraRig.Shake=.2f;g.Sound("player_dash");g.Haptic();
    Energy=Mathf.Min(100,Energy+30);counterUntil=g.Elapsed+1.4f;
-   HitSpark.Burst(transform.position+Vector3.up*.85f,-transform.forward,new Color(.7f,.96f,1f),24);
    DamageTip.Show(transform.position+Vector3.up*1.95f,"PERFECT DODGE",new Color(.65f,.95f,1f));
   }
   Enemy NearestEnemy(Vector3 source,float range){
@@ -462,7 +452,6 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
    velocity=Vector3.zero;vertical=Mathf.Max(vertical,4f);
    g.Sound("player_dash");
    Vfx.Play("ga_vfx_Lightning_02",transform.position+Vector3.up*1f,Quaternion.identity,.7f);
-   HitSpark.Burst(pullPoint,p-pullPoint,new Color(.7f,.95f,1f),10);
   }
   void Cast(){
    var g=RealmGame.I;float cost=28-g.Save.powerRank*2;
@@ -473,7 +462,6 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
    // Cast elemental burst
    Color elemColor=Power==0?new Color(1f,.38f,.1f):Power==1?new Color(.22f,.85f,1f):new Color(.3f,1f,.62f);
    SlashArc.Create(transform.position+Vector3.up*.5f,transform.forward,0,true,Power);
-   HitSpark.Burst(transform.position+Vector3.up*.8f,Vector3.up,elemColor,16);
    Vfx.Play(Power==0?"ga_vfx_Flames_01":Power==1?"ga_vfx_Explosion_02":"ga_vfx_Tornado_01",transform.position+Vector3.up*.9f,Quaternion.identity,Power==2?1.3f:.9f);
 
    foreach(var e in g.Enemies.ToArray())
@@ -596,7 +584,6 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
       if(!e||e.Health<=0)continue;Vector3 d=e.transform.position-transform.position;
       if(new Vector2(d.x,d.z).magnitude<e.Radius+.38f&&Mathf.Abs(d.y)<1.6f){
        e.Hit(damage,power,true,direction);
-       HitSpark.Burst(transform.position,direction,new Color(1f,.9f,.6f),8);
        KenneyPuff.Burst(transform.position,ElemColor(power,rank),10+4*rank,.8f+.35f*rank);
        ImpactMarks.Place(transform.position,1f,ElemColor(power,rank));
        Destroy(gameObject);return;
@@ -609,7 +596,6 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
    void Detonate(){
     var g=RealmGame.I;
     for(int i=0;i<g.Enemies.Count;i++){var e=g.Enemies[i];if(!e||e.Health<=0)continue;if(Vector3.Distance(e.transform.position,transform.position)<2.8f)e.Hit(damage,power,true,(e.transform.position-transform.position).normalized);}
-    HitSpark.Burst(transform.position,Vector3.up,new Color(1f,.9f,.6f),18);
     Vfx.Play("ga_vfx_Explosion_01",transform.position,Quaternion.identity,1.1f);
     KenneyPuff.Burst(transform.position,ElemColor(power,rank),18,1.4f);
     ImpactMarks.Place(transform.position,2f,ElemColor(power,rank));
@@ -982,7 +968,6 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
    go.transform.localScale=Vector3.one*.85f;
    arc.initialScale=Vector3.one*.85f;
 
-   HitSpark.Burst(origin+forward*1.4f,forward,elem,charged?10:5);
   }
 
   void Update(){

@@ -77,7 +77,7 @@ namespace LostRealms {
    transform.position=Origin+Vector3.up*Mathf.Sin(g.Elapsed*1.5f+Origin.z)*.1f;
    Core.Rotate(0,24f*Time.deltaTime,0,Space.World);
    if(Vector3.Distance(g.Player.transform.position+Vector3.up*.8f,transform.position)>1.25f)return;
-   collected=true;Owner.CollectEcho();g.Sound("gem");HitSpark.Burst(transform.position,Vector3.up,g.Accent,6);Destroy(gameObject);
+   collected=true;Owner.CollectEcho();g.Sound("gem");Destroy(gameObject);
   }
  }
 }

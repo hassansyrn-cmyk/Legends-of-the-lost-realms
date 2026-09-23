@@ -35,7 +35,7 @@ namespace LostRealms {
     if(timer>0)return;
     Visual.transform.localPosition=Vector3.zero;ClearGlow();if(warning)Destroy(warning);
     state=State.Attack;timer=.65f;
-    StrikeZone.Create(target,lavaMove==2?2.7f:2.1f,lavaMove==2?3:2,.01f);
+     StrikeZone.Create(target,lavaMove==2?2.7f:2.1f,lavaMove==2?3:2+(g.Realm>=3?1:0),.01f);
     Vfx.Play("ga_vfx_Shockwave_01",target+Vector3.up*.08f,Quaternion.identity,lavaMove==2?1.3f:.65f);
      ImpactMarks.Place(target,lavaMove==2?1.2f:.6f,new Color(.33f,.17f,.1f));g.Sound("boss",RealmAudio.BossPitch(Kind));
     if(phase>=2&&lavaMove==1){for(int i=-1;i<=1;i++){Vector3 direction=Quaternion.Euler(0,i*20,0)*transform.forward;EnemyBolt.Create(transform.position+Vector3.up*1.4f,direction,5.5f,2,true,17);}}

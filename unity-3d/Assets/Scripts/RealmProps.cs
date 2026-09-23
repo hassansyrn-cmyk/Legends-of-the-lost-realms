@@ -135,6 +135,8 @@ static void PlaceVillage(Transform island,int realm,float width,float length,Sys
      return false;
     }
     static bool IsDeckHit(RaycastHit h,Transform island,Transform ignoreRoot){
+     var renderer=h.collider.GetComponent<Renderer>();
+     if(!(h.collider is MeshCollider)&&renderer&&!renderer.enabled)return false;
      var t=h.transform;
      if(!t||t==ignoreRoot||t.IsChildOf(ignoreRoot))return false;
      while(t!=null&&t!=island){
@@ -274,10 +276,6 @@ if(prop.name.StartsWith("Prop Tree")){
      float zf=Mathf.Max(.9f,length*.22f);
      bool gateway=rng.NextDouble()<0.35f;
      if(gateway)PlaceBuilding(island,"Gate_01",halfX,0,0f,rng,material,gateway:true);
-     if(gateway){
-      PlaceStatue(island,rng.Next(0,2)==0?"Elite":"Bomber",-3.6f,0f,0f,2.9f);
-      PlaceStatue(island,rng.Next(0,2)==0?"Summoner":"Flyer",3.6f,0f,180f,2.9f);
-     }
      for(int i=0;i<n;i++){
       int side=(i%2==0)?1:-1;
       float z=(i==0)?-zf*1.15f:(i==1)?(n==3?0f:zf*1.15f):zf*1.15f;
@@ -435,20 +433,11 @@ if(prop.name.StartsWith("Prop Tree")){
    }
     static void PlaceOrnaments(Transform island,int realm,float width,float length,System.Random rng){
      float halfX=Mathf.Max(.6f,width*.5f-1.2f);
-     if(width>=14f){
-      PlaceStatue(island,rng.Next(0,2)==0?"Elite":"Summoner",-3.2f,length*.5f-2.6f,0f,3.1f);
-      PlaceStatue(island,rng.Next(0,2)==0?"Bomber":"Flyer",3.2f,length*.5f-2.6f,180f,3.1f);
-     }
     if(realm==1&&rng.NextDouble()<.35){
      PlaceBanner(island,-(halfX-.4f),-1.4f);PlaceBanner(island,halfX-.4f,1.4f);
     }
     if(realm==3&&rng.NextDouble()<.4){
      PlaceBanner(island,-(halfX-.4f),-1.4f);PlaceBanner(island,halfX-.4f,1.4f);
-    }
-    if(realm==2&&rng.NextDouble()<.4){
-     int side=rng.Next(0,2)==0?-1:1;
-     PlaceLantern(island,side*2f,((float)rng.NextDouble()-.5f)*2f);
-     PlaceLantern(island,-side*2.4f,((float)rng.NextDouble()-.5f)*2f);
     }
     PlaceBreakables(island,realm,width,length,rng);
    }

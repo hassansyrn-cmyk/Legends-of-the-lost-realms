@@ -23,8 +23,8 @@ namespace LostRealms {
     // summon cooldown keeps phase 2/3 busy.
     golemSeenPhase=phase;ClearGlow();if(warning){Destroy(warning);warning=null;}
     state=State.Recover;timer=1.5f;
-    poseState="victory";poseUntil=g.Elapsed+1.35f;Visual.Restart("victory");
-    slamReady=g.Elapsed+3.5f;chargeReady=g.Elapsed+5f;
+     poseState="victory";poseUntil=g.Elapsed+1.35f;Visual.Restart("victory");
+     slamReady=g.Elapsed+(3.5f-g.Realm*.5f);chargeReady=g.Elapsed+(5f-g.Realm*.5f);
     bossAddAt=g.Elapsed+5f;
      g.Sound("boss_roar_"+Kind,RealmAudio.BossPitch(Kind));g.CameraRig.Shake=.3f;
     return;
@@ -37,8 +37,8 @@ namespace LostRealms {
     Visual.Play("run_fast");
     transform.position=Clamp(transform.position+chargeDir*6.4f*dt);
     if(distance<1.9f&&!golemHitThisCharge){
-     golemHitThisCharge=true;
-     if(g.Player.Damage(2,transform.position))g.Player.ApplyForce(delta.normalized*8f+Vector3.up*2.5f);
+      golemHitThisCharge=true;
+      if(g.Player.Damage(2+(g.Realm>=2?1:0),transform.position))g.Player.ApplyForce(delta.normalized*8f+Vector3.up*2.5f);
      chargeUntil=0;state=State.Recover;timer=1f;
     }
     return;
@@ -60,8 +60,8 @@ namespace LostRealms {
       g.Sound("boss_warning",RealmAudio.BossPitch(Kind));
       return;
     }
-    if(phase>=3&&distance>5f&&distance<13f&&g.Elapsed>=chargeReady){
-     chargeDir=delta.normalized;chargeUntil=g.Elapsed+1.25f;chargeReady=g.Elapsed+7f;
+     if(phase>=3&&distance>5f&&distance<13f&&g.Elapsed>=chargeReady){
+      chargeDir=delta.normalized;chargeUntil=g.Elapsed+1.25f;chargeReady=g.Elapsed+(7f-g.Realm);
      golemHitThisCharge=false;state=State.Attack;timer=1.3f;
      Visual.Restart("run_fast");
      g.Sound("enemy_dash");
@@ -97,8 +97,7 @@ namespace LostRealms {
      }else{
       Vector3 strike=Clamp(golemComboPending?g.Player.transform.position:attackOrigin+transform.forward*1.6f);
       strike.y=baseY;
-      StrikeZone.Create(strike,1.9f,2,.01f);
-       HitSpark.Burst(strike+Vector3.up*.4f,Vector3.up,new Color(1f,.6f,.2f),12);
+      StrikeZone.Create(strike,1.9f,2+(g.Realm>=2?1:0),.01f);
        g.Sound("boss",RealmAudio.BossPitch(Kind));
      }
     }

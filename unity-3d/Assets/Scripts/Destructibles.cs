@@ -35,7 +35,6 @@ namespace LostRealms {
    }
    if(Random.value<.55f)g.Collect(false);
    g.Sound("impact");
-   HitSpark.Burst(transform.position+Vector3.up*.4f,Vector3.up,new Color(1f,.82f,.42f),10);
    KenneyPuff.Burst(transform.position+Vector3.up*.3f,shardColor,8,.8f);
    ImpactMarks.Place(transform.position,.7f,new Color(.4f,.34f,.26f));
    Destroy(gameObject);
@@ -44,12 +43,42 @@ namespace LostRealms {
  // Pushable block: a real rigidbody the CharacterController shoves via
  // Hero.OnControllerColliderHit. Rotation is frozen so it slides like a crate.
  public sealed class PushableBlock:MonoBehaviour {
+  Rigidbody body;Collider shape;
+  void Start(){
+   body=GetComponent<Rigidbody>();shape=GetComponent<Collider>();
+   body.useGravity=true;body.linearDamping=0f;
+   // Hidden traversal slabs are intentionally forgiving for Aster. Loose
+   // physics props must land on the visible mesh instead of those rectangles.
+   var world=GetComponentInParent<RealmWorld>();
+   if(world)foreach(var c in world.GetComponentsInChildren<Collider>()){
+    if(c is MeshCollider||c.isTrigger||c.attachedRigidbody)continue;
+    var r=c.GetComponent<Renderer>();
+    if(r&&!r.enabled)Physics.IgnoreCollision(shape,c);
+   }
+  }
+  void FixedUpdate(){
+   var g=RealmGame.I;if(!body||body.isKinematic||(g&&g.Screen!=GameScreen.Playing))return;
+   // Sliding resistance belongs to the deck; vertical gravity stays undamped.
+   var velocity=body.linearVelocity;
+   float drag=Mathf.Exp(-5f*Time.fixedDeltaTime);
+   velocity.x*=drag;velocity.z*=drag;body.linearVelocity=velocity;
+   bool supported=false;
+   foreach(var hit in Physics.RaycastAll(body.position+Vector3.up*.08f,Vector3.down,.2f,~0,QueryTriggerInteraction.Ignore)){
+    if(hit.collider==shape||Physics.GetIgnoreCollision(shape,hit.collider)||hit.normal.y<.5f)continue;
+    supported=true;break;
+   }
+   if(!supported){
+    body.WakeUp();
+    // Once airborne it must not be carried sideways by its former ferry.
+    if(g&&g.World&&transform.parent!=g.World.transform)transform.SetParent(g.World.transform,true);
+   }
+  }
   public static void Place(Transform island,Vector3 localPos,Color color){
    var go=new GameObject("Pushable block");go.transform.SetParent(island,false);go.transform.localPosition=localPos;
    Art.Shape("Block body",PrimitiveType.Cube,Vector3.up*.4f,new Vector3(.85f,.8f,.85f),color,go.transform);
    Art.Shape("Block rune",PrimitiveType.Cube,Vector3.up*.4f,new Vector3(.9f,.14f,.9f),new Color(.85f,.8f,.55f),go.transform);
    var col=go.AddComponent<BoxCollider>();col.center=Vector3.up*.4f;col.size=new Vector3(.85f,.8f,.85f);
-   var rb=go.AddComponent<Rigidbody>();rb.mass=9f;rb.linearDamping=5f;rb.angularDamping=8f;
+   var rb=go.AddComponent<Rigidbody>();rb.mass=9f;rb.useGravity=true;rb.linearDamping=0f;rb.angularDamping=8f;
    rb.constraints=RigidbodyConstraints.FreezeRotation;
    rb.interpolation=RigidbodyInterpolation.Interpolate;rb.collisionDetectionMode=CollisionDetectionMode.ContinuousDynamic;
    go.AddComponent<RealmPhysicsProp>();

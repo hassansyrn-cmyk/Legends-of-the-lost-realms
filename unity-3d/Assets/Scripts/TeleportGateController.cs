@@ -317,7 +317,6 @@ namespace LostRealms {
      if (PortalAudio) {
       if (TeleportClip) PortalAudio.PlayOneShot(TeleportClip, 1.0f);
      }
-     HitSpark.Burst(transform.position + Vector3.up * 2.2f, Vector3.up, RealmColor, 30);
      Vfx.Play("ga_vfx_Portal_02", transform.position + Vector3.up * 2.2f, Quaternion.identity, 1.3f);
      StartCoroutine(CompleteTeleportRoutine());
      break;
@@ -376,13 +375,17 @@ namespace LostRealms {
    SetState(GateState.Teleporting);
   }
 
-  IEnumerator CompleteTeleportRoutine() {
-   yield return new WaitForSeconds(0.45f);
-   if (RealmGame.I != null) {
-    RealmGame.I.Finish();
+   IEnumerator CompleteTeleportRoutine() {
+    yield return new WaitForSeconds(0.45f);
+    if (RealmGame.I != null) {
+     RealmGame.I.Finish();
+    }
+    // A sealed gate (or live guardian) refuses Finish: snap back to Active
+    // so the player can retry after meeting the requirement instead of
+    // wedging the gate in Completed forever.
+    if (RealmGame.I == null || RealmGame.I.Screen != GameScreen.Complete) { SetState(GateState.Active); yield break; }
+    yield return new WaitForSeconds(0.8f);
+    SetState(GateState.Completed);
    }
-   yield return new WaitForSeconds(0.8f);
-   SetState(GateState.Completed);
-  }
  }
 }

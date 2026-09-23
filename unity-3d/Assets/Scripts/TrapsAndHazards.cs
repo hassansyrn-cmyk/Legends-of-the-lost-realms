@@ -102,7 +102,6 @@ namespace LostRealms {
      if(timer<.05f)g.TrapSound("trap_warning",transform.position,2.5f,13f,0.6f);
      if(timer>=.65f){
       state=State.Active;timer=0;g.TrapSound("trap_spikes",transform.position,3f,15f,1.0f);
-      HitSpark.Burst(transform.position+Vector3.up*.2f,Vector3.up,trapColor,10);
      }
      break;
     case State.Active:
@@ -112,8 +111,7 @@ namespace LostRealms {
      Vector3 pPos=g.Player.transform.position;
      Vector3 delta=pPos-transform.position;
      if(Mathf.Abs(delta.x)<1.05f&&Mathf.Abs(delta.z)<1.05f&&delta.y>-.2f&&delta.y<1.3f){
-      if(g.Player.Damage(1,transform.position))
-       HitSpark.Burst(pPos+Vector3.up*.8f,Vector3.up,Color.red,12);
+      g.Player.Damage(1,transform.position);
      }
      // Damage enemies walking into the trap
      if(g.Enemies!=null){
@@ -375,7 +373,6 @@ namespace LostRealms {
     case Phase.Warning:
      // Smoke/rumble telegraph
      if(timer<.05f){g.TrapSound("impact",transform.position,3f,14f,0.7f);}
-     HitSpark.Burst(transform.position+Vector3.up*.2f,Vector3.up,new Color(1f,.6f,.1f),3);
      if(timer>=.8f){
       phase=Phase.Erupting;timer=0;
       plume.SetActive(true);plumeLight.intensity=1.8f;
@@ -392,7 +389,6 @@ namespace LostRealms {
      if(Mathf.Abs(d.x)<1.1f&&Mathf.Abs(d.z)<1.1f&&d.y>-0.2f&&d.y<3.8f){
       if(g.Player.Damage(1,transform.position)){
        g.Player.Bounce(9.2f);
-       HitSpark.Burst(pPos+Vector3.up*.9f,Vector3.up,new Color(1f,.4f,.1f),14);
       }
      }
      if(g.Enemies!=null){
@@ -575,7 +571,6 @@ namespace LostRealms {
     g.Player.Bounce(15.2f);
     g.TrapSound("double_jump",transform.position,3.5f,16f);
     Vfx.Play("ga_vfx_Portal_01",transform.position+Vector3.up*.5f,Quaternion.identity,1.2f);
-    HitSpark.Burst(transform.position+Vector3.up*.4f,Vector3.up,padColor,18);
     KenneyPuff.Burst(transform.position+Vector3.up*.2f,padColor,12,1.2f);
    }
   }
@@ -617,7 +612,6 @@ namespace LostRealms {
      if(onIt){
       state=State.Shaking;shakeTimer=0;
       g.TrapSound("trap_warning",transform.position,3f,13f,0.7f);
-      HitSpark.Burst(transform.position+Vector3.up*.2f,Vector3.up,new Color(.8f,.7f,.5f),8);
      }
      break;
     case State.Shaking:
@@ -698,7 +692,6 @@ namespace LostRealms {
     g.Player.Energy=Mathf.Min(100,g.Player.Energy+35f);
     g.Sound("player_dash");
     Vfx.Play("ga_vfx_Hyperdrive_01",transform.position,Quaternion.LookRotation(boostDir),1.1f);
-    HitSpark.Burst(transform.position,boostDir,new Color(.3f,.9f,1f),16);
    }
   }
  }
@@ -731,7 +724,6 @@ namespace LostRealms {
    var g=RealmGame.I;
    g.TrapSound("impact",transform.position,4f,20f,1.0f);
    Vfx.Play("ga_vfx_FireBall_01",transform.position+Vector3.up*.5f,Quaternion.identity,1.4f);
-   HitSpark.Burst(transform.position+Vector3.up*.5f,Vector3.up,new Color(1f,.5f,.1f),24);
    ImpactMarks.Place(transform.position,1.4f,new Color(.15f,.1f,.08f));
    // AoE blast to enemies
    if(g&&g.Enemies!=null){

@@ -31,13 +31,16 @@ if(skyShader){var sky=new Material(skyShader);lifetime.Keep(sky);sky.SetColor("_
     if(width>7){
      for(int side=-1;side<=1;side+=2){
       Vector3 p=new Vector3(side*(width*.5f-.6f),.1f,(seed%2==0?1:-1)*(length*.5f-1.3f));
-      if(realm==0)Tree(p,island,seed+side);else if(realm==2)Pine(p,island,seed+side);else if(realm==3){var snag=Art.Shape("Charred snag",PrimitiveType.Cylinder,p+Vector3.up*1.1f,new Vector3(.3f,1.1f,.3f),new Color(.12f,.1f,.11f),island);snag.transform.localRotation=Quaternion.Euler(0,0,9*Mathf.Sin(seed+side));var cap=Art.Shape("Charred crown",PrimitiveType.Sphere,p+Vector3.up*1.95f,Vector3.one*.5f,new Color(.2f,.14f,.15f),island);cap.transform.localScale=new Vector3(.4f,.85f,.4f);}
-      for(int n=0;n<5;n++){float z=(float)(rng.NextDouble()-.5)*(length-1);Vector3 r=new Vector3(side*(width*.5f-.25f),.22f,z);var b=Art.Shape("Weathered edge rock",PrimitiveType.Sphere,r,new Vector3(.45f,.35f,.65f),Color.white,island);b.GetComponent<Renderer>().sharedMaterial=rock;b.AddComponent<SphereCollider>().radius=.5f;}
+      // Skip corner trees/scenery that would overlap a trap reservation.
+      if(TrapArt.IsClear(island,p,1.0f)){
+       if(realm==0)Tree(p,island,seed+side);else if(realm==2)Pine(p,island,seed+side);else if(realm==3){var snag=Art.Shape("Charred snag",PrimitiveType.Cylinder,p+Vector3.up*1.1f,new Vector3(.3f,1.1f,.3f),new Color(.12f,.1f,.11f),island);snag.transform.localRotation=Quaternion.Euler(0,0,9*Mathf.Sin(seed+side));var cap=Art.Shape("Charred crown",PrimitiveType.Sphere,p+Vector3.up*1.95f,Vector3.one*.5f,new Color(.2f,.14f,.15f),island);cap.transform.localScale=new Vector3(.4f,.85f,.4f);}
+      }
+      for(int n=0;n<5;n++){float z=(float)(rng.NextDouble()-.5)*(length-1);Vector3 r=new Vector3(side*(width*.5f-.25f),.22f,z);if(!TrapArt.IsClear(island,r,0.6f))continue;var b=Art.Shape("Weathered edge rock",PrimitiveType.Sphere,r,new Vector3(.45f,.35f,.65f),Color.white,island);b.GetComponent<Renderer>().sharedMaterial=rock;b.AddComponent<SphereCollider>().radius=.5f;}
      }
     }
     Tufts(island,width,length,realm,rng);
     // A readable worn trail leaves the centre clear for movement and combat.
-    for(int n=0;n<3;n++){var slab=Art.Shape("Ancient stepping stone",PrimitiveType.Cube,new Vector3((n%2==0?.24f:-.24f),.12f,(n-1)*2),new Vector3(1.1f,.06f,.85f),Color.white,island);slab.transform.localRotation=Quaternion.Euler(0,(n-1)*11,0);slab.GetComponent<Renderer>().sharedMaterial=rock;}
+    for(int n=0;n<3;n++){Vector3 stonePos=new Vector3((n%2==0?.24f:-.24f),.12f,(n-1)*2);if(!TrapArt.IsClear(island,stonePos,0.8f))continue;var slab=Art.Shape("Ancient stepping stone",PrimitiveType.Cube,stonePos,new Vector3(1.1f,.06f,.85f),Color.white,island);slab.transform.localRotation=Quaternion.Euler(0,(n-1)*11,0);slab.GetComponent<Renderer>().sharedMaterial=rock;}
    }
    // Distant silhouettes frame the route without obstructing the playable camera corridor.
    foreach(Transform t in world.transform)if(t.name=="Distant canopy"||t.name=="Distant realm spire"){t.gameObject.SetActive(false);if(Application.isPlaying)Object.Destroy(t.gameObject);else Object.DestroyImmediate(t.gameObject);}
