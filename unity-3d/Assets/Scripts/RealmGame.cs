@@ -17,12 +17,12 @@ namespace LostRealms {
 public static readonly string[] Realms={"VERDANT KINGDOM","BURNING DUNES","FROZEN PEAKS","EMBERFALL"};
    public static readonly Color[] Accents={new Color(.38f,.95f,.7f),new Color(1,.67f,.28f),new Color(.4f,.83f,1),new Color(1f,.35f,.28f)};
   public GameScreen Screen=GameScreen.Menu; public Progress Save=new Progress(); public Hero Player; public RealmWorld World; public FollowCamera CameraRig;
-  public int Level=1, Realm, Coins, Gems, DamageTaken, EarnedStars, Combo, Kills, CoinsTotal, GemsTotal, KillsTotal; public float Elapsed; public Vector3 Checkpoint; public bool CheckpointActive; public string Notice=""; float noticeUntil,comboUntil; public Color Accent=>Accents[Realm];
+  public int Level=1, Realm, Coins, Gems, DamageTaken, EarnedStars, Combo, Kills, CoinsTotal, GemsTotal, KillsTotal; public float Elapsed; public Vector3 Checkpoint; public bool CheckpointActive; public string Notice=""; float noticeUntil,comboUntil; public Color Accent=>Accents[0];
   public WeaponDefinition CurrentWeapon=>WeaponCatalog.Get(Save.equippedWeapon);
   public Vector2 MoveInput; public bool JumpPressed,DashPressed,AttackPressed,AttackReleased,CastPressed,ParryPressed,SpellPressed,SpellReleased,GrapplePressed; public bool AttackHeld,SpellHeld,JumpHeld;
   public readonly List<Enemy> Enemies=new List<Enemy>(); public AudioSource Music,Sfx;
   public RealmAudio Audio {get;private set;} public RealmTrials Trial {get;private set;}
-   Transform worldRoot; GUIStyle title,titleC,label,small,button,center,big,smallC,tinyC; Texture2D pixel,circleFill,circleRing,btnBlade,btnJump,btnDodge,btnPower,btnParry,btnSpell,btnPause,joyBase,joyKnob; readonly TouchRouter touch=new TouchRouter(); float yawInput,hitStopUntil,bossIntroUntil;bool showArsenal;int arsenalPage;GameScreen arsenalReturn=GameScreen.Settings;readonly System.Collections.Generic.Dictionary<string,Texture2D> iconCache=new System.Collections.Generic.Dictionary<string,Texture2D>();
+   Transform worldRoot; GUIStyle title,titleC,label,small,button,center,big,smallC,tinyC,btnText; Texture2D pixel,circleFill,circleRing,btnBlade,btnJump,btnDodge,btnPower,btnParry,btnSpell,btnPause,joyBase,joyKnob; Texture2D bgMainMenu,avatarAster,btnPrimaryNorm,btnPrimaryHigh,btnStdNorm,btnStdHigh,btnSecNorm,btnSecHigh,panelLarge,panelMedium,cardUnlocked,cardSelected,cardLocked,cardCompleted,headerOrnament,dividerLine,barFrame,barFill,resourceCapsule,iconArsenal,iconAtlas,iconBack,iconClose,iconCoin,iconGem,iconLock,iconMainMenu,iconNewJourney,iconContinue,iconResume,iconRestart,iconSanctuary,iconStar; readonly TouchRouter touch=new TouchRouter(); float yawInput,hitStopUntil,bossIntroUntil;bool showArsenal;int arsenalPage;GameScreen arsenalReturn=GameScreen.Settings;readonly System.Collections.Generic.Dictionary<string,Texture2D> iconCache=new System.Collections.Generic.Dictionary<string,Texture2D>();
   public static readonly Color[] ElementColors={new Color(1f,.45f,.1f),new Color(.2f,.85f,1f),new Color(.2f,1f,.55f)};
   [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Boot(){
    var existing=FindObjectsByType<RealmGame>(FindObjectsSortMode.None);
@@ -178,25 +178,27 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    Box(new Rect(r.x-1,r.yMax-cw+1,cw,cw),border*1.3f);
    Box(new Rect(r.xMax-cw+1,r.yMax-cw+1,cw,cw),border*1.3f);
   }
-  Texture2D LoadButtonTex(string name){
-   var tex=Resources.Load<Texture2D>("UI/Buttons/"+name);
-   if(!tex){
-    var sp=Resources.Load<Sprite>("UI/Buttons/"+name);
-    if(sp)tex=sp.texture;
+  Texture2D LoadUITex(string subfolder, string name){
+   string path = string.IsNullOrEmpty(subfolder) ? "UI/" + name : "UI/" + subfolder + "/" + name;
+   var tex = Resources.Load<Texture2D>(path);
+   if (!tex){
+    var sp = Resources.Load<Sprite>(path);
+    if (sp) tex = sp.texture;
    }
 #if UNITY_EDITOR
-   if(!tex){
-    string diskPath=System.IO.Path.Combine(Application.dataPath,"Resources/UI/Buttons/"+name+".png");
-    if(System.IO.File.Exists(diskPath)){
-     byte[] bytes=System.IO.File.ReadAllBytes(diskPath);
-     tex=new Texture2D(2,2,TextureFormat.RGBA32,false);
+   if (!tex){
+    string diskPath = System.IO.Path.Combine(Application.dataPath, "Resources/" + path + ".png");
+    if (System.IO.File.Exists(diskPath)){
+     byte[] bytes = System.IO.File.ReadAllBytes(diskPath);
+     tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
      tex.LoadImage(bytes);
     }
    }
 #endif
    return tex;
   }
-  void LoadButtonTextures(){
+  Texture2D LoadButtonTex(string name) => LoadUITex("Buttons", name);
+  void LoadUITextures(){
    if(!btnBlade)btnBlade=LoadButtonTex("UI_Action_Blade_Attack_HoldToCharge");
    if(!btnJump)btnJump=LoadButtonTex("UI_Action_Jump_DoubleJump_x2");
    if(!btnDodge)btnDodge=LoadButtonTex("UI_Action_Dodge_Evade");
@@ -206,21 +208,57 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    if(!btnPause)btnPause=LoadButtonTex("UI_Menu_Pause");
    if(!joyBase)joyBase=LoadButtonTex("UI_Move_Joystick_OuterBase");
    if(!joyKnob)joyKnob=LoadButtonTex("UI_Move_Joystick_InnerAnalog");
+   if(!bgMainMenu)bgMainMenu=LoadUITex("Backgrounds","BG_MainMenu_Fullscreen_Landscape_Primary");
+   if(!avatarAster)avatarAster=LoadUITex("Portraits","UI_Avatar_Aster_HP_Headshot");
+   if(!btnPrimaryNorm)btnPrimaryNorm=LoadUITex("Buttons","UI_Button_Primary_Normal");
+   if(!btnPrimaryHigh)btnPrimaryHigh=LoadUITex("Buttons","UI_Button_Primary_Highlighted");
+   if(!btnStdNorm)btnStdNorm=LoadUITex("Buttons","UI_Button_Standard_Normal");
+   if(!btnStdHigh)btnStdHigh=LoadUITex("Buttons","UI_Button_Standard_Highlighted");
+   if(!btnSecNorm)btnSecNorm=LoadUITex("Buttons","UI_Button_Secondary_Small_Normal");
+   if(!btnSecHigh)btnSecHigh=LoadUITex("Buttons","UI_Button_Secondary_Small_Highlighted");
+   if(!panelLarge)panelLarge=LoadUITex("Frames","UI_Panel_Large_MenuFrame");
+   if(!panelMedium)panelMedium=LoadUITex("Frames","UI_Panel_Medium_DialogFrame");
+   if(!cardUnlocked)cardUnlocked=LoadUITex("Frames","UI_ChapterCard_Unlocked");
+   if(!cardSelected)cardSelected=LoadUITex("Frames","UI_ChapterCard_Selected");
+   if(!cardLocked)cardLocked=LoadUITex("Frames","UI_ChapterCard_Locked");
+   if(!cardCompleted)cardCompleted=LoadUITex("Frames","UI_ChapterCard_Completed");
+   if(!headerOrnament)headerOrnament=LoadUITex("Frames","UI_Header_Ornament");
+   if(!dividerLine)dividerLine=LoadUITex("Frames","UI_Divider_Line");
+   if(!barFrame)barFrame=LoadUITex("Frames","UI_ProgressBar_Frame");
+   if(!barFill)barFill=LoadUITex("Frames","UI_ProgressBar_Fill");
+   if(!resourceCapsule)resourceCapsule=LoadUITex("Frames","UI_Resource_Capsule");
+   if(!iconArsenal)iconArsenal=LoadUITex("Icons","UI_Icon_Arsenal");
+   if(!iconAtlas)iconAtlas=LoadUITex("Icons","UI_Icon_Atlas");
+   if(!iconBack)iconBack=LoadUITex("Icons","UI_Icon_Back");
+   if(!iconClose)iconClose=LoadUITex("Icons","UI_Icon_Close");
+   if(!iconCoin)iconCoin=LoadUITex("Icons","UI_Icon_Coin");
+   if(!iconGem)iconGem=LoadUITex("Icons","UI_Icon_Gem");
+   if(!iconLock)iconLock=LoadUITex("Icons","UI_Icon_Lock");
+   if(!iconMainMenu)iconMainMenu=LoadUITex("Icons","UI_Icon_MainMenu");
+   if(!iconNewJourney)iconNewJourney=LoadUITex("Icons","UI_Icon_NewJourney");
+   if(!iconContinue)iconContinue=LoadUITex("Icons","UI_Icon_Play_Continue");
+   if(!iconResume)iconResume=LoadUITex("Icons","UI_Icon_Play_Resume");
+   if(!iconRestart)iconRestart=LoadUITex("Icons","UI_Icon_Restart");
+   if(!iconSanctuary)iconSanctuary=LoadUITex("Icons","UI_Icon_Sanctuary");
+   if(!iconStar)iconStar=LoadUITex("Icons","UI_Icon_Star");
   }
+  void LoadButtonTextures() => LoadUITextures();
   void Styles(){
-   LoadButtonTextures();
+   LoadUITextures();
    if(title!=null)return;pixel=Texture2D.whiteTexture;
    title=new GUIStyle(GUI.skin.label){fontSize=44,fontStyle=FontStyle.Bold,wordWrap=true,alignment=TextAnchor.UpperLeft};
    title.normal.textColor=new Color(1f,.94f,.82f);
-   titleC=new GUIStyle(title){alignment=TextAnchor.MiddleCenter,fontSize=52,wordWrap=false};
+   titleC=new GUIStyle(title){alignment=TextAnchor.MiddleCenter,fontSize=50,wordWrap=false};
    label=new GUIStyle(GUI.skin.label){fontSize=22,wordWrap=true};label.normal.textColor=new Color(.88f,.95f,.96f);
    small=new GUIStyle(label){fontSize=16};
-   button=new GUIStyle(GUI.skin.button){fontSize=20,fontStyle=FontStyle.Bold,alignment=TextAnchor.MiddleCenter};
+   button=new GUIStyle(GUI.skin.button){fontSize=20,fontStyle=FontStyle.Bold,alignment=TextAnchor.MiddleCenter,wordWrap=true};
    button.normal.textColor=new Color(1f,.96f,.88f);button.padding=new RectOffset(12,12,10,10);
    // Strip the skin's button chrome so the hand-drawn frames below show through.
    button.normal.background=button.hover.background=button.active.background=button.focused.background=null;
-   center=new GUIStyle(GUI.skin.label){fontSize=17,fontStyle=FontStyle.Bold,alignment=TextAnchor.MiddleCenter};
+   center=new GUIStyle(GUI.skin.label){fontSize=17,fontStyle=FontStyle.Bold,alignment=TextAnchor.MiddleCenter,wordWrap=true};
    center.normal.textColor=new Color(.94f,.98f,1f);
+   btnText=new GUIStyle(center){fontSize=19};
+   btnText.normal.textColor=new Color(1f,.96f,.88f);
    big=new GUIStyle(center){fontSize=24};
    smallC=new GUIStyle(small){alignment=TextAnchor.MiddleCenter};
    tinyC=new GUIStyle(smallC){fontSize=13};tinyC.normal.textColor=new Color(.72f,.82f,.88f);
@@ -238,15 +276,43 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    t.SetPixels(c);t.Apply();t.wrapMode=TextureWrapMode.Clamp;return t;
   }
   void Box(Rect r,Color color){GUI.color=color;GUI.DrawTexture(r,pixel);GUI.color=Color.white;}
-  void Text(float x,float y,float w,float h,string s,GUIStyle st=null){GUI.Label(new Rect(x,y,w,h),s,st??label);}
-  bool Button(float x,float y,float w,float h,string s){
-   Rect r=new Rect(x,y,w,h);
+  void Text(float x,float y,float w,float h,string s,GUIStyle st=null){GUI.Label(new Rect(x,y,w,h),s,st??label);
+  }
+  bool MenuButton(Rect r,string text,Texture2D icon=null,bool primary=false,bool smallBtn=false,GUIStyle st=null){
    Vector2 mpos=Event.current.mousePosition;
    bool hover=r.Contains(mpos);
-   Color bg=hover?new Color(.12f,.22f,.28f,.98f):new Color(.05f,.11f,.16f,.94f);
-   Color border=hover?Color.Lerp(Accent,Color.white,.4f):Accent*.85f;
-   BoxOutline(r,bg,border,hover?2.5f:1.8f);
-   return GUI.Button(r,s,button);
+   Texture2D normTex=primary?btnPrimaryNorm:(smallBtn?btnSecNorm:btnStdNorm);
+   Texture2D highTex=primary?btnPrimaryHigh:(smallBtn?btnSecHigh:btnStdHigh);
+   Texture2D tex=hover?(highTex??normTex):normTex;
+   GUIStyle style=st??(primary?big:(smallBtn?smallC:btnText));
+
+   if(tex!=null){
+    GUI.color=hover?new Color(1.15f,1.15f,1.15f,1f):Color.white;
+    GUI.DrawTexture(r,tex,ScaleMode.StretchToFill);
+    GUI.color=Color.white;
+    if(icon!=null){
+     float isz=Mathf.Min(r.height-14,30);
+     float iy=r.y+(r.height-isz)*0.5f;
+     GUI.DrawTexture(new Rect(r.x+14,iy,isz,isz),icon,ScaleMode.ScaleToFit);
+    }
+    Rect textRect=icon!=null?new Rect(r.x+36,r.y,r.width-48,r.height):r;
+    GUI.Label(textRect,text,style);
+    return GUI.Button(r,GUIContent.none,GUIStyle.none);
+   }else{
+    Color bg=hover?new Color(.12f,.22f,.28f,.98f):new Color(.05f,.11f,.16f,.94f);
+    Color border=hover?Color.Lerp(Accent,Color.white,.4f):Accent*.85f;
+    BoxOutline(r,bg,border,hover?2.5f:1.8f);
+    if(icon!=null){
+     float isz=Mathf.Min(r.height-14,28);
+     GUI.DrawTexture(new Rect(r.x+14,r.y+(r.height-isz)*0.5f,isz,isz),icon,ScaleMode.ScaleToFit);
+    }
+    Rect textRect=icon!=null?new Rect(r.x+36,r.y,r.width-48,r.height):r;
+    GUI.Label(textRect,text,style);
+    return GUI.Button(r,GUIContent.none,GUIStyle.none);
+   }
+  }
+  bool Button(float x,float y,float w,float h,string s){
+   return MenuButton(new Rect(x,y,w,h),s);
   }
   void Panel(float x,float y,float w,float h){
    Rect r=new Rect(x,y,w,h);
@@ -267,33 +333,69 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    if(showArsenal&&(Screen==GameScreen.Settings||Screen==GameScreen.Paused)){ArsenalView();return;}
    if(Screen==GameScreen.Playing){
     // Health & Realm Banner
-    Panel(24,20,370,142);
-    Text(42,28,320,24,$"REALM {Realm+1}  /  {Realms[Realm]}",small);
-    Text(42,54,320,32,Titles[Level-1]);
+    Panel(24,20,380,146);
+    if(avatarAster){
+     Box(new Rect(32,28,74,74),new Color(.02f,.06f,.09f,.92f));
+     GUI.DrawTexture(new Rect(33,29,72,72),avatarAster,ScaleMode.ScaleToFit);
+     BoxOutline(new Rect(32,28,74,74),Color.clear,Accent*.85f,1.5f);
+    }
+    float textX=avatarAster?114:42;
+    Text(textX,28,320,22,$"REALM {Realm+1}  /  {Realms[Realm]}",small);
+    Text(textX,50,320,30,Titles[Level-1]);
 
     float targetH=Player?Mathf.Clamp01((float)Player.Health/Player.MaxHealth):1f;
     healthLag=Mathf.Lerp(healthLag,targetH,Time.unscaledDeltaTime*3.5f);
-    BoxOutline(new Rect(42,98,230,14),new Color(.12f,.18f,.22f),new Color(.28f,.38f,.45f),1f);
-    if(healthLag>targetH)Box(new Rect(43,99,228*healthLag,12),new Color(1f,.65f,.35f,.75f));
-    Box(new Rect(43,99,228*targetH,12),new Color(.95f,.28f,.28f));
-    Text(282,91,100,26,$"HP {Player.Health}/{Player.MaxHealth}",small);
-    Text(42,116,330,20,$"WEAPON  {CurrentWeapon.Name}",small);
-    if(Player&&Player.CounterReady)Text(42,138,330,20,"COUNTER READY  /  STRIKE NOW",small);
-    if(Combo>=3){BoxOutline(new Rect(42,160,140,24),new Color(.05f,.09f,.12f,.85f),new Color(1f,.78f,.3f),1f);Text(52,163,122,18,$"COMBO  x{Combo}",small);}
+    if(barFrame&&barFill){
+     Rect fr=new Rect(textX,78,200,24);
+     GUI.DrawTexture(fr,barFrame,ScaleMode.StretchToFill);
+     float fx=textX+16f,fy=81f,fw=168f,fh=18f;
+     if(healthLag>targetH){
+      GUI.color=new Color(1f,.7f,.3f,.8f);
+      GUI.DrawTexture(new Rect(fx,fy,fw*healthLag,fh),barFill,ScaleMode.StretchToFill);
+     }
+     GUI.color=new Color(.95f,.18f,.18f);
+     GUI.DrawTexture(new Rect(fx,fy,fw*targetH,fh),barFill,ScaleMode.StretchToFill);
+     GUI.color=Color.white;
+    }else{
+     BoxOutline(new Rect(textX,80,200,20),new Color(.12f,.18f,.22f),new Color(.28f,.38f,.45f),1f);
+     if(healthLag>targetH)Box(new Rect(textX+1,81,198*healthLag,18),new Color(1f,.65f,.35f,.75f));
+     Box(new Rect(textX+1,81,198*targetH,18),new Color(.95f,.2f,.2f));
+    }
+    Text(textX+208,78,80,24,$"HP {(Player?Player.Health:8)}/{(Player?Player.MaxHealth:8)}",tinyC);
+    Text(textX,106,280,20,$"WEAPON  {CurrentWeapon.Name}",small);
+    if(Player&&Player.CounterReady)Text(textX,124,280,18,"COUNTER READY  /  STRIKE NOW",tinyC);
+    if(Combo>=3){BoxOutline(new Rect(textX,146,140,24),new Color(.05f,.09f,.12f,.85f),new Color(1f,.78f,.3f),1f);Text(textX+10,149,122,18,$"COMBO  x{Combo}",small);}
 
     // Collectibles + gate progress panel
-    Panel(404,20,240,94);
-    Text(422,31,215,18,"TRAIL FINDINGS",small);
-    Text(422,48,215,30,$"◉ {Coins:00}    ◆ {Gems}");
-    Text(422,74,215,20,GateOpen()?"GATE OPEN  "+new string('★',GateStars()):"GATE "+(int)(Completion()*100f)+"%  -  need 60%",small);
+    Panel(418,20,230,94);
+    Text(432,28,205,18,"TRAIL FINDINGS",small);
+    if(iconCoin&&iconGem){
+     GUI.DrawTexture(new Rect(432,48,22,22),iconCoin,ScaleMode.ScaleToFit);
+     Text(458,47,55,26,$"{Coins:00}",label);
+     GUI.DrawTexture(new Rect(520,48,20,22),iconGem,ScaleMode.ScaleToFit);
+     Text(544,47,55,26,$"{Gems}",label);
+    }else{
+     Text(432,48,205,30,$"◉ {Coins:00}    ◆ {Gems}");
+    }
+    Text(432,74,205,20,GateOpen()?"GATE OPEN  "+new string('★',GateStars()):"GATE "+(int)(Completion()*100f)+"%  -  need 60%",small);
 
     // Power Selector & Energy Bar
     string[] powerNames={"EMBER [FIRE]","FROST [ICE]","GALE [WIND]"};
-    Color[] powerCols={new Color(1f,.45f,.1f),new Color(.2f,.85f,1f),new Color(.2f,1f,.55f)};
-    if(Button(660,20,205,50,powerNames[Player.Power])){Player.Power=(Player.Power+1)%3;Sound("power_select");}
-    Text(660,72,205,15,"AETHER",small);
-    BoxOutline(new Rect(660,88,205,8),new Color(.1f,.15f,.2f),powerCols[Player.Power]*.5f,1f);
-    Box(new Rect(661,89,203*Mathf.Clamp01(Player.Energy/100f),6),powerCols[Player.Power]);
+    Color[] powerCols={new Color(1f,.22f,.18f),new Color(.2f,.85f,1f),new Color(.2f,1f,.55f)};
+    if(MenuButton(new Rect(660,20,205,48),powerNames[Player.Power],iconArsenal,smallBtn:true)){Player.Power=(Player.Power+1)%3;Sound("power_select");}
+    Text(660,70,205,16,"AETHER",tinyC);
+    float enFrac=Mathf.Clamp01(Player.Energy/100f);
+    if(barFrame&&barFill){
+     Rect afr=new Rect(660,86,205,18);
+     GUI.DrawTexture(afr,barFrame,ScaleMode.StretchToFill);
+     float afx=660+16f,afy=88f,afw=173f,afh=14f;
+     GUI.color=powerCols[Player.Power];
+     GUI.DrawTexture(new Rect(afx,afy,afw*enFrac,afh),barFill,ScaleMode.StretchToFill);
+     GUI.color=Color.white;
+    }else{
+     BoxOutline(new Rect(660,86,205,8),new Color(.1f,.15f,.2f),powerCols[Player.Power]*.5f,1f);
+     Box(new Rect(661,87,203*enFrac,6),powerCols[Player.Power]);
+    }
 
     // Timer and Pause Button
     Panel(882,20,135,50);Text(898,32,105,28,$"TIME {Clock(Elapsed)}",small);
@@ -355,8 +457,6 @@ Panel(390,105,500,68);
      Text(282,204,716,48,Notice,small);
     }
 
-    MiniMap();
-
     // Off-screen danger arrows: pulsing diamonds on the screen edge point at
     // telegraphing enemies outside the view, so nothing hits from off-screen
     // without warning.
@@ -379,12 +479,7 @@ Panel(390,105,500,68);
       GUI.matrix=matrix;
      }
     }
-    if(Trial){
-     Panel(28,280,300,112);
-     Text(42,290,270,22,Trial.Title,small);
-     Text(42,317,270,52,Trial.Status,small);
-     if(!Trial.Completed){float fraction=Trial.Active?(float)Trial.Count/Trial.Goal:0f;Box(new Rect(42,378,270,4),new Color(.15f,.23f,.26f));Box(new Rect(42,378,270*fraction,4),Accent);}
-    }
+    // Trial box removed per user request for uncluttered playfield.
 
     bool showTouchUI=Application.isMobilePlatform||Application.isEditor;
     if(showTouchUI){
@@ -417,97 +512,167 @@ Panel(390,105,500,68);
     return;
    }
 
-   // Backdrop Dimmer
-   Box(new Rect(0,0,1280,720),new Color(.015f,.03f,.045f,.75f));
+   // Backdrop Dimmer & Menu Background
+   if(bgMainMenu){
+    GUI.DrawTexture(new Rect(0,0,1280,720),bgMainMenu,ScaleMode.ScaleAndCrop);
+    Box(new Rect(0,0,1280,720),new Color(.015f,.03f,.045f,Screen==GameScreen.Menu?.32f:.78f));
+   }else{
+    Box(new Rect(0,0,1280,720),new Color(.015f,.03f,.045f,.75f));
+   }
 
    if(Screen==GameScreen.Menu){
-    // Centered hero composition: eyebrow, big title, divider, tagline,
-    // journey status, then a single stacked column of actions.
-    Text(240,84,800,26,"✦  A  3 D  A D V E N T U R E  ✦",tinyC);
-    GUI.Label(new Rect(140,118,1000,120),"LEGENDS OF THE LOST REALMS",titleC);
-    Box(new Rect(440,252,400,2),new Color(Accent.r,Accent.g,Accent.b,.55f));
-    Box(new Rect(628,249,24,8),Accent);
-    Text(290,270,700,56,"Four realms. One lost heart.\nCross the floating isles, master elemental blades, restore the ancient portals.",smallC);
-    Text(290,340,700,22,$"JOURNEY  {Save.unlocked}/15 CHAPTERS      ✦      {TotalStars()}/45 STARS      ✦      {Save.coins} GOLD      ✦      {Save.gems} GEMS",tinyC);
-    if(Button(410,382,460,64,"►   CONTINUE JOURNEY"))LoadLevel(Save.unlocked);
-    if(Button(450,458,380,54,"REALM ATLAS"))Screen=GameScreen.Map;
-    if(Button(450,522,380,54,"SANCTUARY"))Screen=GameScreen.Settings;
-    if(Button(450,586,380,54,"✦ NEW JOURNEY")){Save=new Progress();Save.equippedWeapon=-1;Persist();Sound("upgrade");LoadLevel(1);}
+    Text(240,48,800,24,"✦  A  3 D  A D V E N T U R E  ✦",tinyC);
+    GUI.Label(new Rect(140,74,1000,68),"LEGENDS OF THE LOST REALMS",titleC);
+    if(headerOrnament)GUI.DrawTexture(new Rect(440,144,400,26),headerOrnament,ScaleMode.ScaleToFit);
+    else{Box(new Rect(440,154,400,2),new Color(Accent.r,Accent.g,Accent.b,.55f));Box(new Rect(628,151,24,8),Accent);}
+    Text(240,174,800,44,"Four realms. One lost heart.\nCross the floating isles, master elemental blades, restore the ancient portals.",smallC);
+
+    if(resourceCapsule)GUI.DrawTexture(new Rect(310,224,660,38),resourceCapsule,ScaleMode.StretchToFill);
+    Text(310,232,660,22,$"JOURNEY  {Save.unlocked}/15 CHAPTERS    ✦    {TotalStars()}/45 STARS    ✦    {Save.coins} GOLD    ✦    {Save.gems} GEMS",tinyC);
+
+    if(MenuButton(new Rect(410,278,460,66),"CONTINUE JOURNEY",iconContinue,primary:true))LoadLevel(Save.unlocked);
+    if(MenuButton(new Rect(440,356,400,56),"REALM ATLAS",iconAtlas))Screen=GameScreen.Map;
+    if(MenuButton(new Rect(440,424,400,56),"SANCTUARY",iconSanctuary))Screen=GameScreen.Settings;
+    if(MenuButton(new Rect(440,492,400,56),"NEW JOURNEY",iconNewJourney)){Save=new Progress();Save.equippedWeapon=-1;Persist();Sound("upgrade");LoadLevel(1);}
+
     Text(240,672,800,22,"UNITY 3D EDITION   *   TOUCH + KEYBOARD   *   JOURNEY AUTOSAVES",tinyC);
     return;
    }
 
    if(Screen==GameScreen.Map){
-    Panel(50,45,1180,630);
-    Text(80,65,1080,56,"Realm Atlas",title);
-    Text(80,130,1050,34,$"Treasury: {Save.coins} Gold   *   {Save.gems} Gems   *   {TotalStars()}/45 Stars");
-    Box(new Rect(80,170,1120,2),new Color(Accent.r,Accent.g,Accent.b,.35f));
+    Panel(45,35,1190,650);
+
+    Text(80,52,600,48,"Realm Atlas",title);
+    if(headerOrnament)GUI.DrawTexture(new Rect(80,100,320,20),headerOrnament,ScaleMode.ScaleToFit);
+
+    if(resourceCapsule)GUI.DrawTexture(new Rect(720,52,480,42),resourceCapsule,ScaleMode.StretchToFill);
+    if(iconCoin&&iconGem&&iconStar){
+     GUI.DrawTexture(new Rect(740,61,24,24),iconCoin,ScaleMode.ScaleToFit);
+     Text(768,62,80,24,$"{Save.coins}",small);
+     GUI.DrawTexture(new Rect(860,61,22,24),iconGem,ScaleMode.ScaleToFit);
+     Text(886,62,80,24,$"{Save.gems}",small);
+     GUI.DrawTexture(new Rect(980,61,24,24),iconStar,ScaleMode.ScaleToFit);
+     Text(1008,62,120,24,$"{TotalStars()}/45 Stars",small);
+    }else{
+     Text(740,62,440,24,$"Treasury: {Save.coins} Gold  •  {Save.gems} Gems  •  {TotalStars()}/45 Stars",small);
+    }
+
+    if(dividerLine)GUI.DrawTexture(new Rect(80,128,1120,16),dividerLine,ScaleMode.StretchToFill);
+    else Box(new Rect(80,135,1120,2),new Color(Accent.r,Accent.g,Accent.b,.35f));
+
     bool prevEnabled=GUI.enabled;
     for(int i=0;i<15;i++){
-     float x=80+(i%5)*228,y=180+(i/5)*140;
+     float x=80+(i%5)*228,y=150+(i/5)*150;
      bool unlocked=i+1<=Save.unlocked;
-     GUI.enabled=unlocked;
-     string starStr=unlocked?(Save.stars[i]>0?new string('★',Save.stars[i]):"---"):"LOCKED";
-     bool go=Button(x,y,212,132,$"CHAPTER {i+1:00}\n\n{Titles[i]}\n\n{starStr}");
-     GUI.enabled=prevEnabled;
-     if(go)LoadLevel(i+1);
+     bool completed=unlocked&&Save.stars[i]>=3;
+     bool selected=unlocked&&i+1==Save.unlocked&&!completed;
+
+     Rect cardRect=new Rect(x,y,216,140);
+     Vector2 mpos=Event.current.mousePosition;
+     bool hover=unlocked&&cardRect.Contains(mpos);
+
+     Texture2D ctex=completed?(cardCompleted??cardUnlocked):selected?(cardSelected??cardUnlocked):unlocked?cardUnlocked:cardLocked;
+     if(ctex){
+      GUI.color=hover?new Color(1.15f,1.15f,1.15f,1f):unlocked?Color.white:new Color(.75f,.75f,.75f,.85f);
+      GUI.DrawTexture(cardRect,ctex,ScaleMode.StretchToFill);
+      GUI.color=Color.white;
+     }else{
+      BoxOutline(cardRect,hover?new Color(.12f,.22f,.28f,.95f):new Color(.04f,.09f,.13f,.85f),unlocked?Accent:new Color(.3f,.35f,.4f),hover?2f:1f);
+     }
+
+     if(!unlocked){
+      if(iconLock)GUI.DrawTexture(new Rect(x+92,y+32,32,32),iconLock,ScaleMode.ScaleToFit);
+      Text(x+10,y+70,196,20,$"CHAPTER {i+1:00}",tinyC);
+      Text(x+10,y+94,196,20,"LOCKED",tinyC);
+     }else{
+      Text(x+10,y+16,196,22,$"CHAPTER {i+1:00}",tinyC);
+      Text(x+10,y+42,196,44,Titles[i],center);
+      int stars=Save.stars[i];
+      if(stars>0&&iconStar){
+       float sw=20f,sp=6f;
+       float sx=x+(216-(stars*sw+(stars-1)*sp))*0.5f;
+       for(int s=0;s<stars;s++)GUI.DrawTexture(new Rect(sx+s*(sw+sp),y+96,sw,sw),iconStar,ScaleMode.ScaleToFit);
+      }else{
+       Text(x+10,y+96,196,22,stars>0?new string('★',stars):"—",tinyC);
+      }
+     }
+
+     if(unlocked&&GUI.Button(cardRect,GUIContent.none,GUIStyle.none)){
+      LoadLevel(i+1);
+     }
     }
     GUI.enabled=prevEnabled;
-    if(Button(80,610,200,56,"◄ BACK"))Screen=GameScreen.Menu;
+    if(MenuButton(new Rect(80,615,190,50),"BACK",iconBack))Screen=GameScreen.Menu;
     return;
    }
 
-   if(Screen==GameScreen.Settings){
-    Panel(200,55,880,620);
-    Text(240,78,800,58,"Sanctuary & Blessings",title);
-    Box(new Rect(240,145,800,2),new Color(Accent.r,Accent.g,Accent.b,.35f));
-    if(Button(240,165,385,58,"MUSIC: "+(Save.music?"ENABLED":"MUTED"))){
-     Save.music=!Save.music;Persist();
-    }
-    if(Button(655,165,385,58,"SOUND EFFECTS: "+(Save.sound?"ENABLED":"MUTED"))){
-     Save.sound=!Save.sound;Persist();
-    }
-    Text(240,233,800,28,$"Available Resources:  {Save.coins} Gold   *   {Save.gems} Gems");
-    if(Button(240,266,800,52,$"VITALITY RANK {Save.healthRank}/3  (Max HP +{Save.healthRank})   -   Cost: {(Save.healthRank<3?(50+Save.healthRank*40).ToString()+" Gold":"MAXED")}")){
+      if(Screen==GameScreen.Settings){
+    Panel(200,45,880,630);
+
+    Text(240,56,800,40,"Sanctuary & Blessings",titleC);
+    if(headerOrnament)GUI.DrawTexture(new Rect(440,96,400,24),headerOrnament,ScaleMode.ScaleToFit);
+    if(dividerLine)GUI.DrawTexture(new Rect(240,122,800,12),dividerLine,ScaleMode.StretchToFill);
+    else Box(new Rect(240,126,800,2),new Color(Accent.r,Accent.g,Accent.b,.35f));
+
+    Text(240,138,800,24,$"Available Resources:  {Save.coins} Gold   •   {Save.gems} Gems",smallC);
+
+    // Primary Upgrades (Gold)
+    string vitCost=Save.healthRank<3?(50+Save.healthRank*40)+" Gold":"MAXED";
+    if(MenuButton(new Rect(240,170,800,44),$"VITALITY RANK {Save.healthRank}/3  (+{Save.healthRank} Max HP)   —   Cost: {vitCost}",smallBtn:true,st:smallC)){
      int cost=50+Save.healthRank*40;
      if(Save.healthRank<3){if(Save.coins>=cost){Save.coins-=cost;Save.healthRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
-    if(Button(240,326,520,52,$"ARSENAL RANK {Save.arsenalRank}/3  •  DAMAGE +{Save.arsenalRank*8}%\n{(Save.arsenalRank<3?(80+Save.arsenalRank*60).ToString()+" Gold":"MAXED")}")){
+    string arsCost=Save.arsenalRank<3?(80+Save.arsenalRank*60)+" Gold":"MAXED";
+    if(MenuButton(new Rect(240,222,520,44),$"ARSENAL RANK {Save.arsenalRank}/3  (+{Save.arsenalRank*8}% DMG)   —   {arsCost}",smallBtn:true,st:smallC)){
      int cost=80+Save.arsenalRank*60;
      if(Save.arsenalRank<3){if(Save.coins>=cost){Save.coins-=cost;Save.arsenalRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
-    if(Button(770,326,270,52,$"⚔ ARSENAL ({Save.weapons.Count})")){showArsenal=true;arsenalPage=0;arsenalReturn=GameScreen.Settings;Sound("power_select");}
+    if(MenuButton(new Rect(770,222,270,44),$"ARSENAL ({Save.weapons.Count})",iconArsenal,smallBtn:true,st:smallC)){showArsenal=true;arsenalPage=0;arsenalReturn=GameScreen.Settings;Sound("power_select");}
     if(showArsenal){ArsenalView();return;}
-    if(Button(240,386,800,52,$"ELEMENTAL POWER RANK {Save.powerRank}/3  (Spell/Power +{Save.powerRank*20}%)   -   Cost: {(Save.powerRank<3?(3+Save.powerRank*2).ToString()+" Gems":"MAXED")}")){
+
+    // Divine Blessings (Gems)
+    string powCost=Save.powerRank<3?(3+Save.powerRank*2)+" Gems":"MAXED";
+    if(MenuButton(new Rect(240,274,800,44),$"ELEMENTAL POWER RANK {Save.powerRank}/3  (+{Save.powerRank*20}% Power)   —   Cost: {powCost}",smallBtn:true,st:smallC)){
      int cost=3+Save.powerRank*2;
      if(Save.powerRank<3){if(Save.gems>=cost){Save.gems-=cost;Save.powerRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
-    if(Button(240,446,385,52,$"AETHER RANK {Save.aetherRank}/3\nENERGY REGEN +{Save.aetherRank*25}%   •   Cost: {(Save.aetherRank<3?(4+Save.aetherRank*2).ToString()+" Gems":"MAXED")}")){
+
+    string aethCost=Save.aetherRank<3?(4+Save.aetherRank*2)+" Gems":"MAXED";
+    if(MenuButton(new Rect(240,326,395,44),$"AETHER {Save.aetherRank}/3 (+{Save.aetherRank*25}% Regen)  —  {aethCost}",smallBtn:true,st:smallC)){
      int cost=4+Save.aetherRank*2;
      if(Save.aetherRank<3){if(Save.gems>=cost){Save.gems-=cost;Save.aetherRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
-    if(Button(655,446,385,52,$"MOXIE RANK {Save.moxieRank}/3\n+{Save.moxieRank} AIR DASH CHARGE   •   Cost: {(Save.moxieRank<3?(5+Save.moxieRank*2).ToString()+" Gems":"MAXED")}")){
+    string moxCost=Save.moxieRank<3?(5+Save.moxieRank*2)+" Gems":"MAXED";
+    if(MenuButton(new Rect(645,326,395,44),$"MOXIE {Save.moxieRank}/3 (+{Save.moxieRank} Dash)  —  {moxCost}",smallBtn:true,st:smallC)){
      int cost=5+Save.moxieRank*2;
      if(Save.moxieRank<3){if(Save.gems>=cost){Save.gems-=cost;Save.moxieRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
-    if(Button(240,506,385,52,$"TEMPO RANK {Save.tempoRank}/3\nCOUNTER +{Save.tempoRank*15}%  PARRY +{Save.tempoRank*5} EN   •   Cost: {(Save.tempoRank<3?(5+Save.tempoRank*2).ToString()+" Gems":"MAXED")}")){
+
+    string tempoCost=Save.tempoRank<3?(5+Save.tempoRank*2)+" Gems":"MAXED";
+    if(MenuButton(new Rect(240,378,395,44),$"TEMPO {Save.tempoRank}/3 (+{Save.tempoRank*15}% Ctr)  —  {tempoCost}",smallBtn:true,st:smallC)){
      int cost=5+Save.tempoRank*2;
      if(Save.tempoRank<3){if(Save.gems>=cost){Save.gems-=cost;Save.tempoRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
-    if(Button(655,506,385,52,$"SECOND WIND RANK {Save.windRank}/3\n{Save.windRank} FREE REVIVE/LEVEL   •   Cost: {(Save.windRank<3?(7+Save.windRank*3).ToString()+" Gems":"MAXED")}")){
+    string windCost=Save.windRank<3?(7+Save.windRank*3)+" Gems":"MAXED";
+    if(MenuButton(new Rect(645,378,395,44),$"SECOND WIND {Save.windRank}/3 ({Save.windRank} Revive)  —  {windCost}",smallBtn:true,st:smallC)){
      int cost=7+Save.windRank*3;
      if(Save.windRank<3){if(Save.gems>=cost){Save.gems-=cost;Save.windRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
-    if(Button(240,566,385,46,"VISUAL FX: "+(Save.postFx?"ENHANCED":"OFF"))){Save.postFx=!Save.postFx;Persist();}
-    if(Button(655,566,385,46,"SCREEN SHAKE: "+(Save.shake?"ENABLED":"OFF"))){Save.shake=!Save.shake;Persist();}
-     if(Button(240,624,385,46,"HAPTICS: "+(Save.haptics?"ON":"OFF"))){Save.haptics=!Save.haptics;Persist();}
-     if(Button(655,624,385,46,"◄ BACK"))Screen=GameScreen.Menu;
-     return;
-    }
-   // Arsenal: every collected weapon, persisted. Equip with a tap, unequip
-   // back to bare fists. Pickup drops auto-equip; this is where you switch.
-   // Opened from Sanctuary (returns to tracks) or the pause menu (returns
-   // to pause) so loadouts can change mid-run while safely frozen.
+
+    // Audio & Preferences
+    if(MenuButton(new Rect(240,436,260,42),"MUSIC: "+(Save.music?"ENABLED":"MUTED"),smallBtn:true,st:smallC)){Save.music=!Save.music;Persist();}
+    if(MenuButton(new Rect(510,436,260,42),"SOUND: "+(Save.sound?"ENABLED":"MUTED"),smallBtn:true,st:smallC)){Save.sound=!Save.sound;Persist();}
+    if(MenuButton(new Rect(780,436,260,42),"HAPTICS: "+(Save.haptics?"ON":"OFF"),smallBtn:true,st:smallC)){Save.haptics=!Save.haptics;Persist();}
+
+    if(MenuButton(new Rect(240,486,395,42),"VISUAL FX: "+(Save.postFx?"ENHANCED":"OFF"),smallBtn:true,st:smallC)){Save.postFx=!Save.postFx;Persist();}
+    if(MenuButton(new Rect(645,486,395,42),"SCREEN SHAKE: "+(Save.shake?"ENABLED":"OFF"),smallBtn:true,st:smallC)){Save.shake=!Save.shake;Persist();}
+
+    if(dividerLine)GUI.DrawTexture(new Rect(240,540,800,10),dividerLine,ScaleMode.StretchToFill);
+
+    if(MenuButton(new Rect(480,562,320,48),"BACK",iconBack,smallBtn:true,st:smallC))Screen=GameScreen.Menu;
+    return;
+   }
+
    Texture2D WeaponIcon(WeaponDefinition def){
     if(string.IsNullOrEmpty(def.Resource))return null;
     string key=def.Resource.Substring(def.Resource.LastIndexOf('/')+1);
@@ -516,68 +681,96 @@ Panel(390,105,500,68);
     iconCache[key]=tex;return tex;
    }
    void ArsenalView(){
-    Panel(200,55,880,620);
-    Text(240,78,800,58,$"Arsenal  —  {Save.weapons.Count} Collected",title);
-    Box(new Rect(240,145,800,2),new Color(Accent.r,Accent.g,Accent.b,.35f));
+    Panel(200,50,880,625);
+    Text(240,60,800,48,$"Arsenal  —  {Save.weapons.Count} Collected",titleC);
+    if(headerOrnament)GUI.DrawTexture(new Rect(440,110,400,24),headerOrnament,ScaleMode.ScaleToFit);
+    if(dividerLine)GUI.DrawTexture(new Rect(240,136,800,12),dividerLine,ScaleMode.StretchToFill);
+    else Box(new Rect(240,145,800,2),new Color(Accent.r,Accent.g,Accent.b,.35f));
     bool fists=Save.equippedWeapon<0;
-    if(Button(240,156,800,44,fists?"✓ BARE FISTS EQUIPPED":"◄ UNEQUIP  —  fight bare-fisted")){
+    if(MenuButton(new Rect(240,154,800,44),fists?"✓ BARE FISTS EQUIPPED":"◄ UNEQUIP  —  fight bare-fisted",smallBtn:true,st:smallC)){
      if(!fists)UnequipWeapon();else Sound("power_select");
     }
     var list=Save.weapons;
     int pages=Mathf.Max(1,(list.Count+6)/7);
     arsenalPage=Mathf.Clamp(arsenalPage,0,pages-1);
-    if(list.Count==0)Text(240,260,800,60,"No weapons collected yet.\nBlades you find in the chapters will wait for you here.",small);
+    if(list.Count==0)Text(240,260,800,60,"No weapons collected yet.\nBlades you find in the chapters will wait for you here.",smallC);
     for(int k=0;k<7;k++){
      int idx=arsenalPage*7+k;if(idx>=list.Count)break;
      var def=WeaponCatalog.Get(list[idx]);
      bool eq=Save.equippedWeapon==list[idx];
-     if(Button(240,212+k*56,800,48,"")){
+     float ry=208+k*56;
+     if(MenuButton(new Rect(240,ry,800,50),"")){
       if(eq)UnequipWeapon();else EquipWeapon((WeaponId)list[idx]);
      }
-     Text(302,214+k*56,550,23,def.Name,small);
-     Text(302,237+k*56,565,20,$"Damage ×{def.Damage:0.00}   Reach ×{def.Reach:0.00}   Speed ×{def.Tempo:0.00}",small);
-     Text(865,222+k*56,164,24,eq?"✓ EQUIPPED":"EQUIP",smallC);
+     // Dedicated illuminated weapon icon slot
+     Rect slot=new Rect(246,ry+4,42,42);
+     BoxOutline(slot,new Color(.02f,.06f,.10f,.92f),eq?new Color(1f,.85f,.35f):new Color(.38f,.95f,.7f,.6f),1.5f);
      var icon=WeaponIcon(def);
-     if(icon)GUI.DrawTexture(new Rect(248,214+k*56,44,44),icon,ScaleMode.ScaleToFit);else Text(248,222+k*56,44,24,"⚔",smallC);
+     if(icon)GUI.DrawTexture(new Rect(slot.x+2,slot.y+2,38,38),icon,ScaleMode.ScaleToFit);
+     else Text(slot.x,slot.y+8,42,24,"⚔",smallC);
+
+     // Name & Stats
+     Text(302,ry+6,530,20,def.Name.ToUpper(),small);
+     Text(302,ry+26,530,18,$"Damage ×{def.Damage:0.00}   •   Reach ×{def.Reach:0.00}   •   Speed ×{def.Tempo:0.00}",tinyC);
+
+     // Equip status badge on right
+     if(eq){
+      GUI.color=new Color(1f,.9f,.35f);
+      Text(850,ry+14,175,22,"✓ EQUIPPED",smallC);
+      GUI.color=Color.white;
+     }else{
+      Text(850,ry+14,175,22,"EQUIP",tinyC);
+     }
     }
     if(pages>1){
-     if(arsenalPage>0&&Button(240,610,180,46,"◄ PREV")){arsenalPage--;Sound("power_select");}
+     if(arsenalPage>0&&MenuButton(new Rect(240,610,180,46),"PREV",iconBack,smallBtn:true,st:smallC)){arsenalPage--;Sound("power_select");}
      Text(430,610,220,46,$"PAGE {arsenalPage+1}/{pages}",smallC);
-     if(arsenalPage<pages-1&&Button(660,610,180,46,"NEXT ►")){arsenalPage++;Sound("power_select");}
+     if(arsenalPage<pages-1&&MenuButton(new Rect(660,610,180,46),"NEXT",iconContinue,smallBtn:true,st:smallC)){arsenalPage++;Sound("power_select");}
     }
     if(arsenalReturn==GameScreen.Paused){
-     if(Button(860,610,180,46,"◄ PAUSE")){showArsenal=false;Sound("power_select");}
-    }else if(Button(860,610,180,46,"◄ TRACKS")){showArsenal=false;Sound("power_select");}
+     if(MenuButton(new Rect(860,610,180,46),"PAUSE",iconBack,smallBtn:true,st:smallC)){showArsenal=false;Sound("power_select");}
+    }else if(MenuButton(new Rect(860,610,180,46),"BACK",iconBack,smallBtn:true,st:smallC)){showArsenal=false;Sound("power_select");}
    }
 
    // Pause / Complete / Defeat Screens
-   Panel(320,120,640,485);
+   Panel(320,90,640,535);
+
    string heading=Screen==GameScreen.Paused?"A Moment of Rest":Screen==GameScreen.Complete?(Level==15?"The Lost Realms Restored!":"Chapter Cleared!"):"The Light Remains";
-   Text(355,150,570,95,heading,title);
-   Box(new Rect(355,255,570,2),new Color(Accent.r,Accent.g,Accent.b,.4f));
+   Text(340,115,600,50,heading,titleC);
+   if(headerOrnament)GUI.DrawTexture(new Rect(440,166,400,26),headerOrnament,ScaleMode.ScaleToFit);
+   if(dividerLine)GUI.DrawTexture(new Rect(355,196,570,14),dividerLine,ScaleMode.StretchToFill);
+   else Box(new Rect(355,200,570,2),new Color(Accent.r,Accent.g,Accent.b,.4f));
+
    if(Screen==GameScreen.Complete){
-    string starDisplay=new string('★',EarnedStars);
-    Text(355,275,570,80,$"TRIUMPH!  {starDisplay}   Elapsed: {Clock(Elapsed)}\nRewards: +{Coins+EarnedStars*10} Gold   +{Gems} Gems");
-    if(Button(355,385,570,60,Level==15?"RETURN TO REALM ATLAS":"NEXT CHAPTER")){
+    if(iconStar!=null&&EarnedStars>0){
+     float sw=40f,sp=14f;
+     float sx=640f-(EarnedStars*sw+(EarnedStars-1)*sp)*0.5f;
+     for(int s=0;s<EarnedStars;s++)GUI.DrawTexture(new Rect(sx+s*(sw+sp),220,sw,sw),iconStar,ScaleMode.ScaleToFit);
+    }else{
+     Text(355,220,570,36,new string('★',EarnedStars),titleC);
+    }
+    Text(355,270,570,44,$"TRIUMPH!   Elapsed: {Clock(Elapsed)}\nRewards: +{Coins+EarnedStars*10} Gold   +{Gems} Gems",smallC);
+    if(MenuButton(new Rect(355,340,570,58),Level==15?"RETURN TO REALM ATLAS":"NEXT CHAPTER",iconContinue,primary:true)){
      if(Level==15)Screen=GameScreen.Map;else LoadLevel(Level+1);
     }
-    }else if(Screen==GameScreen.Paused){
-     Text(355,270,570,40,"Your journey is paused. All progress is safe.");
-     if(Button(355,320,570,50,"RESUME JOURNEY"))Resume();
-     if(Button(355,378,570,44,"⚔ ARSENAL  —  change weapon")){showArsenal=true;arsenalPage=0;arsenalReturn=GameScreen.Paused;Sound("power_select");}
-     if(Button(355,430,270,48,"🗺 ATLAS"))Screen=GameScreen.Map;
-     if(Button(645,430,280,48,"↺ RESTART"))LoadLevel(Level);
-     if(Button(355,486,570,46,"🏠 MAIN MENU")){showArsenal=false;Audio.Suspend(false);Time.timeScale=1;Screen=GameScreen.Menu;}
-     if(showArsenal){ArsenalView();return;}
-     return;
-    }else{
-     Text(355,280,570,65,"Rise again at your last shrine checkpoint.");
-     if(Button(355,365,570,55,"TRY AGAIN")){Respawn();Resume();}
-     if(Button(355,430,270,48,"🗺 ATLAS"))Screen=GameScreen.Map;
-     if(Button(645,430,280,48,"↺ RESTART"))LoadLevel(Level);
-     if(Button(355,486,570,46,"🏠 MAIN MENU")){Screen=GameScreen.Menu;}
-    }
+    if(MenuButton(new Rect(355,412,570,52),"MAIN MENU",iconMainMenu)){showArsenal=false;Audio.Suspend(false);Time.timeScale=1;Screen=GameScreen.Menu;}
+   }else if(Screen==GameScreen.Paused){
+    Text(355,222,570,36,"Your journey is paused. All progress is safe.",smallC);
+    if(MenuButton(new Rect(355,270,570,56),"RESUME JOURNEY",iconResume,primary:true))Resume();
+    if(MenuButton(new Rect(355,338,570,50),"ARSENAL  —  change weapon",iconArsenal)){showArsenal=true;arsenalPage=0;arsenalReturn=GameScreen.Paused;Sound("power_select");}
+    if(MenuButton(new Rect(355,400,275,50),"ATLAS",iconAtlas))Screen=GameScreen.Map;
+    if(MenuButton(new Rect(650,400,275,50),"RESTART",iconRestart))LoadLevel(Level);
+    if(MenuButton(new Rect(355,462,570,50),"MAIN MENU",iconMainMenu)){showArsenal=false;Audio.Suspend(false);Time.timeScale=1;Screen=GameScreen.Menu;}
+    if(showArsenal){ArsenalView();return;}
+    return;
+   }else{
+    Text(355,222,570,36,"Rise again at your last shrine checkpoint.",smallC);
+    if(MenuButton(new Rect(355,280,570,56),"TRY AGAIN",iconResume,primary:true)){Respawn();Resume();}
+    if(MenuButton(new Rect(355,348,275,50),"ATLAS",iconAtlas))Screen=GameScreen.Map;
+    if(MenuButton(new Rect(650,348,275,50),"RESTART",iconRestart))LoadLevel(Level);
+    if(MenuButton(new Rect(355,410,570,50),"MAIN MENU",iconMainMenu))Screen=GameScreen.Menu;
    }
+  }
   // Top-down realm map: route trail, gate, enemies and the heading player.
    // Cheap IMGUI squares only, so it stays in-sync with the touch layout (the
    // panel never overlaps the action buttons or the compass).
