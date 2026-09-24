@@ -22,7 +22,7 @@ public static readonly string[] Realms={"VERDANT KINGDOM","BURNING DUNES","FROZE
   public Vector2 MoveInput; public bool JumpPressed,DashPressed,AttackPressed,AttackReleased,CastPressed,ParryPressed,SpellPressed,SpellReleased,GrapplePressed; public bool AttackHeld,SpellHeld,JumpHeld;
   public readonly List<Enemy> Enemies=new List<Enemy>(); public AudioSource Music,Sfx;
   public RealmAudio Audio {get;private set;} public RealmTrials Trial {get;private set;}
-   Transform worldRoot; GUIStyle title,titleC,label,small,button,center,big,smallC,tinyC; Texture2D pixel,circleFill,circleRing; readonly TouchRouter touch=new TouchRouter(); float yawInput,hitStopUntil,bossIntroUntil;bool showArsenal;int arsenalPage;GameScreen arsenalReturn=GameScreen.Settings;readonly System.Collections.Generic.Dictionary<string,Texture2D> iconCache=new System.Collections.Generic.Dictionary<string,Texture2D>();
+   Transform worldRoot; GUIStyle title,titleC,label,small,button,center,big,smallC,tinyC; Texture2D pixel,circleFill,circleRing,btnBlade,btnJump,btnDodge,btnPower,btnParry,btnSpell,btnPause,joyBase,joyKnob; readonly TouchRouter touch=new TouchRouter(); float yawInput,hitStopUntil,bossIntroUntil;bool showArsenal;int arsenalPage;GameScreen arsenalReturn=GameScreen.Settings;readonly System.Collections.Generic.Dictionary<string,Texture2D> iconCache=new System.Collections.Generic.Dictionary<string,Texture2D>();
   public static readonly Color[] ElementColors={new Color(1f,.45f,.1f),new Color(.2f,.85f,1f),new Color(.2f,1f,.55f)};
   [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Boot(){
    var existing=FindObjectsByType<RealmGame>(FindObjectsSortMode.None);
@@ -87,8 +87,19 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    if(Input.touchCount==0&&Input.GetMouseButton(1))yawInput=Input.GetAxis("Mouse X")*3;
    float sx=1280f/UnityEngine.Screen.width,sy=720f/UnityEngine.Screen.height;
    touch.BeginFrame();
-   foreach(var t in Input.touches)touch.Sample(t.fingerId,new Vector2(t.position.x*sx,(UnityEngine.Screen.height-t.position.y)*sy),t.deltaPosition*sx,t.phase);
-   if(Input.touchCount==0)touch.Reset();
+   if(Input.touchCount>0){
+    foreach(var t in Input.touches)touch.Sample(t.fingerId,new Vector2(t.position.x*sx,(UnityEngine.Screen.height-t.position.y)*sy),t.deltaPosition*sx,t.phase);
+   }else if(Application.isEditor){
+    Vector2 mp=new Vector2(Input.mousePosition.x*sx,(UnityEngine.Screen.height-Input.mousePosition.y)*sy);
+    bool inControl=mp.x<420&&mp.y>380;
+    if(!inControl){for(int i=0;i<6;i++)if(TouchRouter.ActionRect(i).Contains(mp)){inControl=true;break;}}
+    if(inControl){
+     if(Input.GetMouseButtonDown(0))touch.Sample(-1,mp,Vector2.zero,TouchPhase.Began);
+     else if(Input.GetMouseButton(0))touch.Sample(-1,mp,Vector2.zero,TouchPhase.Moved);
+     else if(Input.GetMouseButtonUp(0))touch.Sample(-1,mp,Vector2.zero,TouchPhase.Ended);
+     else touch.Reset();
+    }else touch.Reset();
+   }else touch.Reset();
    MoveInput+=touch.Move;JumpPressed|=touch.Jump;DashPressed|=touch.Dodge;CastPressed|=touch.Power;
    AttackPressed|=touch.BladePressed;AttackReleased|=touch.BladeReleased;AttackHeld|=touch.BladeHeld;ParryPressed|=touch.Parry;SpellPressed|=touch.Spell;SpellReleased|=touch.SpellReleased;SpellHeld|=touch.SpellHeld;yawInput+=touch.Yaw;
    MoveInput=Vector2.ClampMagnitude(MoveInput,1); CameraRig.Yaw+=yawInput;
@@ -184,6 +195,17 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    smallC=new GUIStyle(small){alignment=TextAnchor.MiddleCenter};
    tinyC=new GUIStyle(smallC){fontSize=13};tinyC.normal.textColor=new Color(.72f,.82f,.88f);
    circleFill=CircleTexture(false);circleRing=CircleTexture(true);
+   if(!btnBlade){
+    btnBlade=Resources.Load<Texture2D>("UI/Buttons/UI_Action_Blade_Attack_HoldToCharge");
+    btnJump=Resources.Load<Texture2D>("UI/Buttons/UI_Action_Jump_DoubleJump_x2");
+    btnDodge=Resources.Load<Texture2D>("UI/Buttons/UI_Action_Dodge_Evade");
+    btnPower=Resources.Load<Texture2D>("UI/Buttons/UI_Action_ElementalPower");
+    btnParry=Resources.Load<Texture2D>("UI/Buttons/UI_Action_Parry_Defense");
+    btnSpell=Resources.Load<Texture2D>("UI/Buttons/UI_Action_Spell_LockOn_HoldToLock");
+    btnPause=Resources.Load<Texture2D>("UI/Buttons/UI_Menu_Pause");
+    joyBase=Resources.Load<Texture2D>("UI/Buttons/UI_Move_Joystick_OuterBase");
+    joyKnob=Resources.Load<Texture2D>("UI/Buttons/UI_Move_Joystick_InnerAnalog");
+   }
   }
   // Anti-aliased filled circle / ring, tinted at draw time via GUI.color.
   Texture2D CircleTexture(bool ring){
@@ -255,7 +277,14 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
 
     // Timer and Pause Button
     Panel(882,20,135,50);Text(898,32,105,28,$"TIME {Clock(Elapsed)}",small);
-    if(Button(1035,20,120,50,"PAUSE"))Pause();
+    if(btnPause){
+     Rect pr=new Rect(1035,19,120,52);
+     bool hover=pr.Contains(Event.current.mousePosition);
+     GUI.color=hover?new Color(1.15f,1.15f,1.15f,1f):Color.white;
+     GUI.DrawTexture(pr,btnPause,ScaleMode.ScaleToFit);
+     GUI.color=Color.white;
+     if(GUI.Button(pr,GUIContent.none,GUIStyle.none))Pause();
+    }else if(Button(1035,20,120,50,"PAUSE"))Pause();
 
     // Route compass: points at the next island, or the gate once past the last.
     {
@@ -337,25 +366,34 @@ Panel(390,105,500,68);
      if(!Trial.Completed){float fraction=Trial.Active?(float)Trial.Count/Trial.Goal:0f;Box(new Rect(42,378,270,4),new Color(.15f,.23f,.26f));Box(new Rect(42,378,270*fraction,4),Accent);}
     }
 
-    if(Application.isMobilePlatform){
+    bool showTouchUI=Application.isMobilePlatform||Application.isEditor;
+    if(showTouchUI){
      // Virtual joystick: fixed base ring plus a knob tracking live input.
      float jx=150,jy=612,jr=86;
-     GUI.color=new Color(.02f,.05f,.09f,.42f);GUI.DrawTexture(new Rect(jx-jr,jy-jr,jr*2,jr*2),circleFill);
-     GUI.color=new Color(Accent.r,Accent.g,Accent.b,.5f);GUI.DrawTexture(new Rect(jx-jr,jy-jr,jr*2,jr*2),circleRing);
-     GUI.color=new Color(.06f,.13f,.18f,.9f);GUI.DrawTexture(new Rect(jx-25,jy-25,50,50),circleFill);
-     GUI.color=new Color(Accent.r,Accent.g,Accent.b,.95f);
-     GUI.DrawTexture(new Rect(jx+touch.Move.x*50-19,jy-touch.Move.y*50-19,38,38),circleFill);
-     GUI.color=Color.white;
-     Text(jx-60,jy+jr+6,120,18,"MOVE",tinyC);
+     if(joyBase){
+      GUI.color=Color.white;
+      GUI.DrawTexture(new Rect(jx-jr,jy-jr,jr*2,jr*2),joyBase);
+      float kw=58f;
+      if(joyKnob)GUI.DrawTexture(new Rect(jx+touch.Move.x*50-kw*.5f,jy-touch.Move.y*50-kw*.5f,kw,kw),joyKnob);
+     }else{
+      GUI.color=new Color(.02f,.05f,.09f,.42f);GUI.DrawTexture(new Rect(jx-jr,jy-jr,jr*2,jr*2),circleFill);
+      GUI.color=new Color(Accent.r,Accent.g,Accent.b,.5f);GUI.DrawTexture(new Rect(jx-jr,jy-jr,jr*2,jr*2),circleRing);
+      GUI.color=new Color(.06f,.13f,.18f,.9f);GUI.DrawTexture(new Rect(jx-25,jy-25,50,50),circleFill);
+      GUI.color=new Color(Accent.r,Accent.g,Accent.b,.95f);
+      GUI.DrawTexture(new Rect(jx+touch.Move.x*50-19,jy-touch.Move.y*50-19,38,38),circleFill);
+      GUI.color=Color.white;
+      Text(jx-60,jy+jr+6,120,18,"MOVE",tinyC);
+     }
      // Action cluster: big attack button, movement row along the bottom,
      // cast/defend actions above it (rects owned by TouchRouter.ActionRect).
-     RoundButton(TouchRouter.ActionRect(2),"BLADE","HOLD TO CHARGE",true);
-     RoundButton(TouchRouter.ActionRect(3),"JUMP","×2");
-     RoundButton(TouchRouter.ActionRect(0),"DODGE","");
-     RoundButton(TouchRouter.ActionRect(1),"POWER","ELEMENT");
-     RoundButton(TouchRouter.ActionRect(4),"PARRY","");
-     RoundButton(TouchRouter.ActionRect(5),"SPELL","HOLD TO LOB");
-    }else Text(28,675,1200,28,"WASD Move   SPACE Double jump   SHIFT Dash / air-dash   G Grapple   J Blade (hold charge)   K Power   L Parry   F Spell (hold=lob)   Q Element",small);
+     RoundButton(TouchRouter.ActionRect(2),btnBlade,"BLADE","HOLD TO CHARGE",true,touch.BladeHeld||(Application.isEditor&&Input.GetKey(KeyCode.J)));
+     RoundButton(TouchRouter.ActionRect(3),btnJump,"JUMP","×2",false,touch.Jump||(Application.isEditor&&Input.GetKey(KeyCode.Space)));
+     RoundButton(TouchRouter.ActionRect(0),btnDodge,"DODGE","",false,touch.Dodge||(Application.isEditor&&Input.GetKey(KeyCode.LeftShift)));
+     RoundButton(TouchRouter.ActionRect(1),btnPower,"POWER","ELEMENT",false,touch.Power||(Application.isEditor&&Input.GetKey(KeyCode.K)));
+     RoundButton(TouchRouter.ActionRect(4),btnParry,"PARRY","",false,touch.Parry||(Application.isEditor&&Input.GetKey(KeyCode.L)));
+     RoundButton(TouchRouter.ActionRect(5),btnSpell,"SPELL","HOLD TO LOB",false,touch.SpellHeld||(Application.isEditor&&Input.GetKey(KeyCode.F)));
+    }
+    if(!Application.isMobilePlatform)Text(300,685,680,24,"WASD Move   •   SPACE Jump   •   SHIFT Dash   •   J Attack   •   K Power   •   L Parry   •   F Spell",tinyC);
     return;
    }
 
@@ -544,7 +582,20 @@ Panel(390,105,500,68);
     Vector3 fwd=Player.transform.forward;fwd.y=0;if(fwd.sqrMagnitude>.01f){Vector3 tip=Player.transform.position+fwd.normalized*2.2f;Vector2 tp=ToPad(tip);Box(new Rect(tp.x-1.5f,tp.y-1.5f,3,3),Color.white);}
    }
    // Circular action button drawn over the TouchRouter.ActionRect hitbox.
-   void RoundButton(Rect r,string name,string sub,bool primary=false){
+   void RoundButton(Rect r,Texture2D tex,string name,string sub,bool primary=false,bool pressed=false){
+    if(tex){
+     Rect drawRect=r;
+     if(pressed){
+      float pad=r.width*0.035f;
+      drawRect=new Rect(r.x+pad,r.y+pad,r.width-pad*2,r.height-pad*2);
+      GUI.color=new Color(1.15f,1.15f,1.15f,1f);
+     }else{
+      GUI.color=Color.white;
+     }
+     GUI.DrawTexture(drawRect,tex);
+     GUI.color=Color.white;
+     return;
+    }
     GUI.color=new Color(Accent.r,Accent.g,Accent.b,primary?.95f:.7f);
     GUI.DrawTexture(r,circleRing);
     GUI.color=new Color(.02f,.05f,.09f,primary?.62f:.5f);
