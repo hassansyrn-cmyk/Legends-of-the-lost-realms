@@ -280,14 +280,22 @@ public static class FantasyUIAssets
         {
             Prepare();
 
-            if (!File.Exists(TmpSettingsPath)
-                || AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontsFolder + "/Heading SDF.asset") == null
-                || AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontsFolder + "/Body SDF.asset") == null
-                || AssetDatabase.LoadAssetAtPath<SpriteAtlas>(AtlasPath) == null)
+            // Generated TMP atlases and the sprite atlas are editor conveniences. In a
+            // clean batch-mode checkout TMP Essentials may still be importing when this
+            // callback runs; FantasyUI.LoadFont has a runtime source-font fallback and
+            // the individual Resources sprites are already included in the player.
+            string headingSource = FontsFolder + "/Heading.ttf";
+            string bodySource = FontsFolder + "/Body.ttf";
+            if (AssetDatabase.LoadAssetAtPath<Font>(headingSource) == null
+                || AssetDatabase.LoadAssetAtPath<Font>(bodySource) == null)
             {
                 throw new BuildFailedException(
-                    "Fantasy UI assets are not prepared. Run Tools > Fantasy UI > Prepare Assets after TMP Essentials finish importing.");
+                    "Fantasy UI source fonts are missing: " + headingSource + " and " + bodySource);
             }
+
+            if (AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontsFolder + "/Heading SDF.asset") == null
+                || AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontsFolder + "/Body SDF.asset") == null)
+                Debug.LogWarning("Fantasy UI TMP SDF assets are not available yet; runtime source-font fallback will be used.");
         }
     }
 }
