@@ -178,7 +178,37 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    Box(new Rect(r.x-1,r.yMax-cw+1,cw,cw),border*1.3f);
    Box(new Rect(r.xMax-cw+1,r.yMax-cw+1,cw,cw),border*1.3f);
   }
+  Texture2D LoadButtonTex(string name){
+   var tex=Resources.Load<Texture2D>("UI/Buttons/"+name);
+   if(!tex){
+    var sp=Resources.Load<Sprite>("UI/Buttons/"+name);
+    if(sp)tex=sp.texture;
+   }
+#if UNITY_EDITOR
+   if(!tex){
+    string diskPath=System.IO.Path.Combine(Application.dataPath,"Resources/UI/Buttons/"+name+".png");
+    if(System.IO.File.Exists(diskPath)){
+     byte[] bytes=System.IO.File.ReadAllBytes(diskPath);
+     tex=new Texture2D(2,2,TextureFormat.RGBA32,false);
+     tex.LoadImage(bytes);
+    }
+   }
+#endif
+   return tex;
+  }
+  void LoadButtonTextures(){
+   if(!btnBlade)btnBlade=LoadButtonTex("UI_Action_Blade_Attack_HoldToCharge");
+   if(!btnJump)btnJump=LoadButtonTex("UI_Action_Jump_DoubleJump_x2");
+   if(!btnDodge)btnDodge=LoadButtonTex("UI_Action_Dodge_Evade");
+   if(!btnPower)btnPower=LoadButtonTex("UI_Action_ElementalPower");
+   if(!btnParry)btnParry=LoadButtonTex("UI_Action_Parry_Defense");
+   if(!btnSpell)btnSpell=LoadButtonTex("UI_Action_Spell_LockOn_HoldToLock");
+   if(!btnPause)btnPause=LoadButtonTex("UI_Menu_Pause");
+   if(!joyBase)joyBase=LoadButtonTex("UI_Move_Joystick_OuterBase");
+   if(!joyKnob)joyKnob=LoadButtonTex("UI_Move_Joystick_InnerAnalog");
+  }
   void Styles(){
+   LoadButtonTextures();
    if(title!=null)return;pixel=Texture2D.whiteTexture;
    title=new GUIStyle(GUI.skin.label){fontSize=44,fontStyle=FontStyle.Bold,wordWrap=true,alignment=TextAnchor.UpperLeft};
    title.normal.textColor=new Color(1f,.94f,.82f);
@@ -195,17 +225,6 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    smallC=new GUIStyle(small){alignment=TextAnchor.MiddleCenter};
    tinyC=new GUIStyle(smallC){fontSize=13};tinyC.normal.textColor=new Color(.72f,.82f,.88f);
    circleFill=CircleTexture(false);circleRing=CircleTexture(true);
-   if(!btnBlade){
-    btnBlade=Resources.Load<Texture2D>("UI/Buttons/UI_Action_Blade_Attack_HoldToCharge");
-    btnJump=Resources.Load<Texture2D>("UI/Buttons/UI_Action_Jump_DoubleJump_x2");
-    btnDodge=Resources.Load<Texture2D>("UI/Buttons/UI_Action_Dodge_Evade");
-    btnPower=Resources.Load<Texture2D>("UI/Buttons/UI_Action_ElementalPower");
-    btnParry=Resources.Load<Texture2D>("UI/Buttons/UI_Action_Parry_Defense");
-    btnSpell=Resources.Load<Texture2D>("UI/Buttons/UI_Action_Spell_LockOn_HoldToLock");
-    btnPause=Resources.Load<Texture2D>("UI/Buttons/UI_Menu_Pause");
-    joyBase=Resources.Load<Texture2D>("UI/Buttons/UI_Move_Joystick_OuterBase");
-    joyKnob=Resources.Load<Texture2D>("UI/Buttons/UI_Move_Joystick_InnerAnalog");
-   }
   }
   // Anti-aliased filled circle / ring, tinted at draw time via GUI.color.
   Texture2D CircleTexture(bool ring){
@@ -239,6 +258,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    Box(new Rect(x+8,y+h-8,w-16,1),new Color(Accent.r,Accent.g,Accent.b,.15f));
   }
   void OnGUI(){
+   LoadButtonTextures();
    // Only the in-game HUD needs a live Player; menus must draw and respond even
    // if startup level construction ever fails.
    if(Screen==GameScreen.Playing&&!Player)return;
