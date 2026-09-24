@@ -86,7 +86,7 @@ namespace LostRealms {
   }
   TMP_Text Text(string name,Transform parent,string value,float size,Vector2 anchor,Vector2 position,Vector2 bounds,bool title=false){
    var r=Node(name,parent);Place(r,anchor,position,bounds);var t=r.gameObject.AddComponent<TextMeshProUGUI>();
-   t.font=title?heading:body;t.fontSize=size;t.color=Ivory;t.alignment=TextAlignmentOptions.Center;t.text=value;t.raycastTarget=false;t.enableWordWrapping=true;
+   t.font=title?heading:body;t.fontSize=size;t.color=Ivory;t.alignment=TextAlignmentOptions.Center;t.text=value;t.raycastTarget=false;t.textWrappingMode=TextWrappingModes.Normal;
    return t;
   }
   static void Set(TMP_Text text,string value){if(text.text!=value)text.text=value;}
@@ -166,7 +166,7 @@ namespace LostRealms {
    portraitFallback=Text("Portrait fallback",portraitRoot,"ASTER",10,new Vector2(.5f,.5f),new Vector2(0,6),new Vector2(74,45));
    chapter=Text("Chapter badge",portraitRoot,"",13,new Vector2(.5f,0),new Vector2(0,14),new Vector2(80,24),true);
    weapon=Text("Equipped weapon",vitals,"",17,new Vector2(0,1),new Vector2(221,-27),new Vector2(214,26),true);
-   weapon.enableAutoSizing=true;weapon.fontSizeMin=11;weapon.fontSizeMax=17;weapon.enableWordWrapping=false;
+   weapon.enableAutoSizing=true;weapon.fontSizeMin=11;weapon.fontSizeMax=17;weapon.textWrappingMode=TextWrappingModes.NoWrap;
    hpFill=Bar(vitals,"Vitality",new Vector2(223,9),new Color(.69f,.16f,.20f));
    energyFill=Bar(vitals,"Aether",new Vector2(223,-25),new Color(.20f,.58f,.85f));
    hpText=Text("Health amount",vitals,"",13,new Vector2(0,.5f),new Vector2(223,10),new Vector2(194,23));
