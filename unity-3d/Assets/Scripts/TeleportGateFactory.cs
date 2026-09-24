@@ -58,6 +58,19 @@ namespace LostRealms {
    colLintel.center = new Vector3(0f, 4.3f, 0f);
    colLintel.size = new Vector3(4.4f, 0.9f, 1.6f);
 
+   float baseH = realm == 1 ? 0.43f : realm == 2 ? 0.40f : realm == 3 ? 0.50f : 0.52f;
+   var colBase = modelRoot.AddComponent<BoxCollider>();
+   colBase.center = new Vector3(0f, baseH * 0.5f, 0f);
+   colBase.size = new Vector3(2.9f, baseH, 2.4f);
+
+   var colStepFront = modelRoot.AddComponent<BoxCollider>();
+   colStepFront.center = new Vector3(0f, baseH * 0.25f, -1.65f);
+   colStepFront.size = new Vector3(2.7f, baseH * 0.5f, 0.9f);
+
+   var colStepBack = modelRoot.AddComponent<BoxCollider>();
+   colStepBack.center = new Vector3(0f, baseH * 0.25f, 1.65f);
+   colStepBack.size = new Vector3(2.7f, baseH * 0.5f, 0.9f);
+
    // 2. PortalSurface
    var surfObj = GameObject.CreatePrimitive(PrimitiveType.Quad);
    surfObj.name = "PortalSurface";

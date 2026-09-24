@@ -124,6 +124,7 @@ namespace LostRealms {
    void Awake() {
     InitializeHierarchy();
     EnsureMaterials();
+    EnsureBaseColliders();
    }
 
    void OnEnable() {
@@ -139,6 +140,7 @@ namespace LostRealms {
    void Start() {
     if (!initialized) InitializeHierarchy();
     EnsureMaterials();
+    EnsureBaseColliders();
     ApplyRealmColors();
 
     // Boss stages start locked until the guardian is defeated
@@ -147,6 +149,34 @@ namespace LostRealms {
     } else {
      SetState(GateState.Active);
     }
+   }
+
+   public void EnsureBaseColliders() {
+    if (!GateModel) GateModel = transform.Find("GateModel");
+    if (!GateModel) return;
+
+    // Avoid duplicate colliders if already created
+    var colliders = GateModel.GetComponents<BoxCollider>();
+    foreach (var c in colliders) {
+     if (Mathf.Abs(c.center.x) < 0.1f && c.center.y < 1.0f) return;
+    }
+
+    float baseH = RealmIndex == 1 ? 0.43f : RealmIndex == 2 ? 0.40f : RealmIndex == 3 ? 0.50f : 0.52f;
+
+    // 1. Central platform floor collider (Aster stands on the stone base)
+    var colBase = GateModel.gameObject.AddComponent<BoxCollider>();
+    colBase.center = new Vector3(0f, baseH * 0.5f, 0f);
+    colBase.size = new Vector3(2.9f, baseH, 2.4f);
+
+    // 2. Front step collider (rise is ~0.26m <= Aster's stepOffset 0.35m)
+    var colStepFront = GateModel.gameObject.AddComponent<BoxCollider>();
+    colStepFront.center = new Vector3(0f, baseH * 0.25f, -1.65f);
+    colStepFront.size = new Vector3(2.7f, baseH * 0.5f, 0.9f);
+
+    // 3. Back step collider
+    var colStepBack = GateModel.gameObject.AddComponent<BoxCollider>();
+    colStepBack.center = new Vector3(0f, baseH * 0.25f, 1.65f);
+    colStepBack.size = new Vector3(2.7f, baseH * 0.5f, 0.9f);
    }
 
    public void EnsureMaterials() {

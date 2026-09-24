@@ -504,17 +504,22 @@ Panel(390,105,500,68);
      if(Level==15)Screen=GameScreen.Map;else LoadLevel(Level+1);
     }
     }else if(Screen==GameScreen.Paused){
-     Text(355,280,570,60,"Your journey is paused. All progress is safe.");
-     if(Button(355,360,570,56,"RESUME JOURNEY"))Resume();
-     if(Button(355,424,570,44,"⚔ ARSENAL  —  change weapon")){showArsenal=true;arsenalPage=0;arsenalReturn=GameScreen.Paused;Sound("power_select");}
+     Text(355,270,570,40,"Your journey is paused. All progress is safe.");
+     if(Button(355,320,570,50,"RESUME JOURNEY"))Resume();
+     if(Button(355,378,570,44,"⚔ ARSENAL  —  change weapon")){showArsenal=true;arsenalPage=0;arsenalReturn=GameScreen.Paused;Sound("power_select");}
+     if(Button(355,430,270,48,"🗺 ATLAS"))Screen=GameScreen.Map;
+     if(Button(645,430,280,48,"↺ RESTART"))LoadLevel(Level);
+     if(Button(355,486,570,46,"🏠 MAIN MENU")){showArsenal=false;Audio.Suspend(false);Time.timeScale=1;Screen=GameScreen.Menu;}
+     if(showArsenal){ArsenalView();return;}
+     return;
     }else{
-    Text(355,280,570,65,"Rise again at your last shrine checkpoint.");
-    if(Button(355,375,570,60,"TRY AGAIN")){Respawn();Resume();}
+     Text(355,280,570,65,"Rise again at your last shrine checkpoint.");
+     if(Button(355,365,570,55,"TRY AGAIN")){Respawn();Resume();}
+     if(Button(355,430,270,48,"🗺 ATLAS"))Screen=GameScreen.Map;
+     if(Button(645,430,280,48,"↺ RESTART"))LoadLevel(Level);
+     if(Button(355,486,570,46,"🏠 MAIN MENU")){Screen=GameScreen.Menu;}
+    }
    }
-    if(showArsenal&&Screen==GameScreen.Paused){ArsenalView();return;}
-    if(Button(355,475,270,58,"🗺 ATLAS"))Screen=GameScreen.Map;
-   if(Button(645,475,280,58,"↺ RESTART"))LoadLevel(Level);
-  }
   // Top-down realm map: route trail, gate, enemies and the heading player.
    // Cheap IMGUI squares only, so it stays in-sync with the touch layout (the
    // panel never overlaps the action buttons or the compass).

@@ -770,17 +770,34 @@ void WeaponDrop(Vector3 p,WeaponId id){
     for(int i=0;i<hits.Length;i++){if(hits[i].normal.y>=.5f&&!hits[i].transform.name.StartsWith("Prop ")&&hits[i].point.y>bestY)bestY=hits[i].point.y;}
     if(bestY>float.NegativeInfinity)p=new Vector3(p.x,bestY+.75f,p.z);
     var go=new GameObject("Heal pickup");go.transform.SetParent(transform,false);go.transform.position=p;
-    Color heart=new Color(.92f,.12f,.16f);
-    if(!Art.PickupModel("Heart",go.transform,heart,.55f,null)){
-     Art.Shape("HeartLobeL",PrimitiveType.Sphere,new Vector3(-.1f,.1f,0),new Vector3(.36f,.4f,.34f),heart,go.transform);
-     Art.Shape("HeartLobeR",PrimitiveType.Sphere,new Vector3(.1f,.1f,0),new Vector3(.36f,.4f,.34f),heart,go.transform);
-     var point=Art.Shape("HeartPoint",PrimitiveType.Cube,new Vector3(0,-.06f,0),new Vector3(.32f,.34f,.3f),new Color(.82f,.1f,.14f),go.transform);
-     point.transform.localRotation=Quaternion.Euler(0,0,45);
-     Art.Shape("HeartGlint",PrimitiveType.Cube,new Vector3(-.11f,.2f,0),Vector3.one*.06f,new Color(1f,.86f,.88f),go.transform);
+    Color potionRed=new Color(.92f,.12f,.16f);
+    var palTex=Resources.Load<Texture2D>("Pickups/Gradient Pallete");
+    Material potionMat=null;
+    if(palTex){
+     potionMat=new Material(Shader.Find("Standard")){name="Potion_Mat",color=Color.white,mainTexture=palTex};
+     potionMat.SetFloat("_Glossiness",.65f);
+     potionMat.SetFloat("_Metallic",.15f);
+     potionMat.EnableKeyword("_EMISSION");
+     potionMat.SetColor("_EmissionColor",potionRed*.35f);
+    }
+    if(!Art.PickupModel("RedPotion",go.transform,potionRed,.55f,potionMat)){
+     Art.Shape("PotionBulb",PrimitiveType.Sphere,new Vector3(0,.08f,0),new Vector3(.38f,.38f,.38f),potionRed,go.transform);
+     Art.Shape("PotionNeck",PrimitiveType.Cylinder,new Vector3(0,.28f,0),new Vector3(.18f,.12f,.18f),new Color(.95f,.25f,.3f),go.transform);
+     Art.Shape("PotionCork",PrimitiveType.Cylinder,new Vector3(0,.37f,0),new Vector3(.16f,.06f,.16f),new Color(.55f,.35f,.2f),go.transform);
     }
     go.AddComponent<RealmHeal>().Origin=p;
    }
    void Gate(Vector3 p){
+    Physics.SyncTransforms();
+    var hits=Physics.RaycastAll(p+Vector3.up*6f,Vector3.down,14f,~0,QueryTriggerInteraction.Ignore);
+    float bestY=float.NegativeInfinity;
+    for(int i=0;i<hits.Length;i++){
+     if(hits[i].normal.y>=.45f&&!hits[i].transform.name.StartsWith("Prop ")&&hits[i].point.y>bestY){
+      bestY=hits[i].point.y;
+     }
+    }
+    if(bestY>float.NegativeInfinity)p.y=bestY;
+
     string[] gateNames={"Verdant","Desert","Snow","Lava"};
     string realmName=realm<gateNames.Length?gateNames[realm]:"Verdant";
     var prefab=Resources.Load<GameObject>("Gates/TeleportGate_"+realmName);
@@ -793,6 +810,8 @@ void WeaponDrop(Vector3 p,WeaponId id){
     }else{
      root=TeleportGateFactory.Create(transform,realm,p,IsBoss);
     }
+    var controller=root.GetComponent<TeleportGateController>();
+    if(controller)controller.EnsureBaseColliders();
     Vfx.Play("ga_vfx_Heal_02",p+Vector3.up*2f,Quaternion.identity,1.1f);
    }
    void Hazard(Transform island,Vector3 localPos,int kind){
