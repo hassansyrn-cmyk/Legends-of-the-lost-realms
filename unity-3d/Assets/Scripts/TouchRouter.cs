@@ -6,12 +6,17 @@ namespace LostRealms {
   public enum Role { Ignored, Move, Camera, Dodge, Power, Blade, Jump, Parry, Spell }
   readonly Dictionary<int,Role> owners=new Dictionary<int,Role>();
   Vector2 origin;
+  static Rect[] overrideActions;
+  static Rect? overrideMove,overrideCamera;
+  public static void SetLayout(Rect[] actions,Rect move,Rect camera){overrideActions=actions;overrideMove=move;overrideCamera=camera;}
+  public static void ClearLayout(){overrideActions=null;overrideMove=null;overrideCamera=null;}
   public Vector2 Move; public float Yaw; public bool Jump,Dodge,Power,BladePressed,BladeReleased,BladeHeld,Parry,Spell,SpellReleased,SpellHeld,Grapple;
   // Action cluster layout (1280x720 virtual): big BLADE button bottom-right with
   // the other actions arced around it — movement row (POWER/DODGE/JUMP) along the
   // bottom, cast/defend row (PARRY/SPELL) above the attack button. Keep these
   // rects in sync with the drawn circles in RealmGame.Control.
-  public static Rect ActionRect(int index)=>index==2?new Rect(1082,530,160,160)  // Blade (primary)
+  public static Rect ActionRect(int index)=>overrideActions!=null&&index>=0&&index<overrideActions.Length?overrideActions[index]:DefaultActionRect(index);
+  public static Rect DefaultActionRect(int index)=>index==2?new Rect(1082,530,160,160)  // Blade (primary)
    :index==3?new Rect(964,605,100,100)   // Jump
    :index==0?new Rect(856,608,88,88)     // Dodge
    :index==1?new Rect(758,614,80,80)     // Power
@@ -23,8 +28,8 @@ namespace LostRealms {
    if(phase==TouchPhase.Began){
     Role role=Role.Ignored;
     for(int i=0;i<6;i++)if(ActionRect(i).Contains(p))role=(Role)((int)Role.Dodge+i);
-    if(role==Role.Ignored&&p.x<420&&p.y>380&&!owners.ContainsValue(Role.Move)){role=Role.Move;origin=p;}
-    if(role==Role.Ignored&&p.x>440&&p.y>180&&p.y<530&&!owners.ContainsValue(Role.Camera))role=Role.Camera;
+    if(role==Role.Ignored&&(overrideMove.HasValue?overrideMove.Value.Contains(p):p.x<420&&p.y>380)&&!owners.ContainsValue(Role.Move)){role=Role.Move;origin=p;}
+    if(role==Role.Ignored&&(overrideCamera.HasValue?overrideCamera.Value.Contains(p):p.x>440&&p.y>180&&p.y<530)&&!owners.ContainsValue(Role.Camera))role=Role.Camera;
     owners[id]=role;
    }
    if(!owners.TryGetValue(id,out var owned))return;

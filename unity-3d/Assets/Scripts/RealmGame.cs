@@ -19,6 +19,13 @@ public static readonly string[] Realms={"VERDANT KINGDOM","BURNING DUNES","FROZE
   public GameScreen Screen=GameScreen.Menu; public Progress Save=new Progress(); public Hero Player; public RealmWorld World; public FollowCamera CameraRig;
   public int Level=1, Realm, Coins, Gems, DamageTaken, EarnedStars, Combo, Kills, CoinsTotal, GemsTotal, KillsTotal; public float Elapsed; public Vector3 Checkpoint; public bool CheckpointActive; public string Notice=""; float noticeUntil,comboUntil; public Color Accent=>Accents[Realm];
   public WeaponDefinition CurrentWeapon=>WeaponCatalog.Get(Save.equippedWeapon);
+  FantasyUI fantasyUI;
+  bool legacyResetConfirmation;
+  public bool ArsenalVisible=>showArsenal;
+  public Vector2 TouchMove=>touch.Move;
+  public void OpenArsenal(){showArsenal=true;arsenalPage=0;arsenalReturn=Screen;Sound("power_select");}
+  public void CycleElement(){if(Player){Player.Power=(Player.Power+1)%3;Sound("power_select");}}
+  public void ResetJourney(){Save=new Progress();Save.equippedWeapon=-1;Persist();Sound("upgrade");LoadLevel(1);}
   public Vector2 MoveInput; public bool JumpPressed,DashPressed,AttackPressed,AttackReleased,CastPressed,ParryPressed,SpellPressed,SpellReleased,GrapplePressed; public bool AttackHeld,SpellHeld,JumpHeld;
   public readonly List<Enemy> Enemies=new List<Enemy>(); public AudioSource Music,Sfx;
   public RealmAudio Audio {get;private set;} public RealmTrials Trial {get;private set;}
@@ -51,6 +58,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    // log it and still show a working main menu.
    try{LoadLevel(1);}catch(System.Exception e){Debug.LogError("STARTUP_LOAD_FAILED "+e);}
    Screen=GameScreen.Menu; Tell("The Heart of Realms is waiting.",4);
+   fantasyUI=gameObject.AddComponent<FantasyUI>();fantasyUI.Initialize(this);
   }
   public void Persist(){if(Testing)return;PlayerPrefs.SetString("LostRealms3D.v2",JsonUtility.ToJson(Save));PlayerPrefs.Save();}
   public void LoadLevel(int id){
@@ -72,8 +80,8 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
   void Update(){
    JumpPressed=DashPressed=AttackPressed=AttackReleased=CastPressed=ParryPressed=SpellPressed=SpellReleased=GrapplePressed=false; MoveInput=Vector2.zero; yawInput=0;
    if(hitStopUntil>0f&&Time.unscaledTime>=hitStopUntil){hitStopUntil=0f;Time.timeScale=1f;}
+   if(Input.GetKeyDown(KeyCode.Escape)){if(legacyResetConfirmation)legacyResetConfirmation=false;else if(fantasyUI&&fantasyUI.DismissConfirmation()){}else if(showArsenal)showArsenal=false;else if(Screen==GameScreen.Playing)Pause();else if(Screen==GameScreen.Paused)Resume();else Screen=GameScreen.Menu;}
    if(!I||!Player)return;
-   if(Input.GetKeyDown(KeyCode.Escape)){if(showArsenal)showArsenal=false;else if(Screen==GameScreen.Playing)Pause();else if(Screen==GameScreen.Paused)Resume();else Screen=GameScreen.Menu;}
     if(Screen==GameScreen.Menu||Screen==GameScreen.Map)SetMusic("verdant_theme");
     else if(Screen==GameScreen.Settings)SetMusic("frozen_exploration_theme");
     else if(Screen==GameScreen.Playing){
@@ -86,8 +94,12 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     if(Input.GetKeyDown(KeyCode.Q)){Player.Power=(Player.Power+1)%3;Sound("power_select");}
    if(Input.touchCount==0&&Input.GetMouseButton(1))yawInput=Input.GetAxis("Mouse X")*3;
    float sx=1280f/UnityEngine.Screen.width,sy=720f/UnityEngine.Screen.height;
+   if(fantasyUI)fantasyUI.PrepareInputLayout();
    touch.BeginFrame();
-   foreach(var t in Input.touches)touch.Sample(t.fingerId,new Vector2(t.position.x*sx,(UnityEngine.Screen.height-t.position.y)*sy),t.deltaPosition*sx,t.phase);
+   foreach(var t in Input.touches){
+    if(t.phase==TouchPhase.Began&&fantasyUI&&fantasyUI.BlocksGameplayTouch(t.position))continue;
+    touch.Sample(t.fingerId,new Vector2(t.position.x*sx,(UnityEngine.Screen.height-t.position.y)*sy),t.deltaPosition*sx,t.phase);
+   }
    if(Input.touchCount==0)touch.Reset();
    MoveInput+=touch.Move;JumpPressed|=touch.Jump;DashPressed|=touch.Dodge;CastPressed|=touch.Power;
    AttackPressed|=touch.BladePressed;AttackReleased|=touch.BladeReleased;AttackHeld|=touch.BladeHeld;ParryPressed|=touch.Parry;SpellPressed|=touch.Spell;SpellReleased|=touch.SpellReleased;SpellHeld|=touch.SpellHeld;yawInput+=touch.Yaw;
@@ -244,8 +256,17 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    if(Screen==GameScreen.Playing&&!Player)return;
    Styles();
    GUI.matrix=Matrix4x4.TRS(Vector3.zero,Quaternion.identity,new Vector3(UnityEngine.Screen.width/1280f,UnityEngine.Screen.height/720f,1));
+   if(legacyResetConfirmation){
+    Panel(350,200,580,320);Text(380,228,520,65,"Begin a new journey?",title);
+    Text(380,300,520,70,"This permanently erases saved chapters, weapons, treasury and upgrades.",small);
+    if(Button(380,390,520,48,"KEEP MY JOURNEY"))legacyResetConfirmation=false;
+    if(Button(380,450,520,48,"ERASE & BEGIN")){legacyResetConfirmation=false;ResetJourney();}
+    return;
+   }
    if(showArsenal&&(Screen==GameScreen.Settings||Screen==GameScreen.Paused)){ArsenalView();return;}
+   if(fantasyUI&&fantasyUI.CoversMenu)return;
    if(Screen==GameScreen.Playing){
+    if(!fantasyUI||!fantasyUI.CoversHud){
      // Framed chapter crest, vitals and equipped weapon.
      Panel(24,20,370,142);
      Text(42,27,330,24,$"✦  REALM {Realm+1}  /  {Realms[Realm].ToUpperInvariant()}",small);
@@ -295,6 +316,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
      Text(cx+8,512,cw,20,$"{(int)cd}m to {(found?"next isle":"realm gate")}",small);
     }
 
+    }
      foreach(var foe in Enemies){if(!foe||foe.Boss||foe.Health<=0||Vector3.Distance(Player.transform.position,foe.transform.position)>12)continue;Vector3 v=Camera.main.WorldToViewportPoint(foe.transform.position+Vector3.up*(foe.Kind==6?2.9f:2.1f));float x=v.x*1280,y=(1-v.y)*720;if(v.z<=0||y<175||y>540||x<45||x>1235)continue;Box(new Rect(x-34,y,68,7),new Color(.03f,.07f,.08f,.85f));Box(new Rect(x-40,y,5,7),ElementColors[foe.WeakElement]);Box(new Rect(x-33,y+1,66*Mathf.Clamp01(foe.Health/foe.MaxHealth),5),ElementColors[foe.WeakElement]);}
     // Boss Bar
     var boss=Enemies.Find(x=>x&&x.Boss&&x.Health>0);
@@ -323,11 +345,12 @@ Panel(390,105,500,68);
     }
 
     if(Time.unscaledTime<noticeUntil){
-     Panel(260,192,760,62);
-     Text(282,204,716,48,Notice,small);
+     Rect notice= fantasyUI&&fantasyUI.CoversHud?fantasyUI.LegacyNoticeRect:new Rect(260,192,760,62);
+     Panel(notice.x,notice.y,notice.width,notice.height);
+     Text(notice.x+16,notice.y+10,notice.width-32,notice.height-16,Notice,small);
     }
 
-    MiniMap();
+    if(!fantasyUI||!fantasyUI.CoversHud)MiniMap();
 
     // Off-screen danger arrows: pulsing diamonds on the screen edge point at
     // telegraphing enemies outside the view, so nothing hits from off-screen
@@ -352,12 +375,14 @@ Panel(390,105,500,68);
      }
     }
     if(Trial){
-     Panel(28,280,300,112);
-     Text(42,290,270,22,Trial.Title,small);
-     Text(42,317,270,52,Trial.Status,small);
-     if(!Trial.Completed){float fraction=Trial.Active?(float)Trial.Count/Trial.Goal:0f;Box(new Rect(42,378,270,4),new Color(.15f,.23f,.26f));Box(new Rect(42,378,270*fraction,4),Accent);}
+     Rect trial=fantasyUI&&fantasyUI.CoversHud?fantasyUI.LegacyTrialRect:new Rect(28,280,300,112);
+     Panel(trial.x,trial.y,trial.width,trial.height);
+     Text(trial.x+14,trial.y+10,trial.width-28,22,Trial.Title,small);
+     Text(trial.x+14,trial.y+37,trial.width-28,52,Trial.Status,small);
+     if(!Trial.Completed){float fraction=Trial.Active?(float)Trial.Count/Trial.Goal:0f;Box(new Rect(trial.x+14,trial.y+98,trial.width-28,4),new Color(.15f,.23f,.26f));Box(new Rect(trial.x+14,trial.y+98,(trial.width-28)*fraction,4),Accent);}
     }
 
+    if(fantasyUI&&fantasyUI.CoversHud)return;
     if(Application.isMobilePlatform){
      // Virtual joystick: fixed base ring plus a knob tracking live input.
      float jx=150,jy=612,jr=86;
@@ -394,7 +419,7 @@ Panel(390,105,500,68);
      if(Button(386,392,508,62,"✦   CONTINUE JOURNEY   ✦",true))LoadLevel(Save.unlocked);
      if(Button(411,468,458,52,"REALM ATLAS"))Screen=GameScreen.Map;
      if(Button(411,530,458,52,"SANCTUARY  /  UPGRADES"))Screen=GameScreen.Settings;
-     if(Button(411,594,458,52,"NEW JOURNEY")){Save=new Progress();Save.equippedWeapon=-1;Persist();Sound("upgrade");LoadLevel(1);}
+     if(Button(411,594,458,52,"NEW JOURNEY"))legacyResetConfirmation=true;
      Text(315,678,650,22,"TOUCH + KEYBOARD   ✦   JOURNEY AUTOSAVES",tinyC);
     return;
    }

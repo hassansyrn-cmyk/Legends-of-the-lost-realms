@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: bc184bb9d583dea2bb7e08773a40699f
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 12
+  mipmaps: {enableMipMap: 0}
+  isReadable: 0
+  sRGBTexture: 1
+  textureType: 8
+  spriteMode: 1
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 64, y: 64, z: 64, w: 64}
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  wrapU: 1
+  wrapV: 1
+  filterMode: 1
