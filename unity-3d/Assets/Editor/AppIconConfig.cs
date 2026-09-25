@@ -1,42 +1,62 @@
-using System;
-using System.IO;
 using UnityEditor;
+using UnityEditor.Android;
 using UnityEngine;
 
-namespace LostRealms {
-    public static class AppIconConfig {
+namespace LostRealms
+{
+    public static class AppIconConfig
+    {
+        private const string IconPath = "Assets/Art/AppIcon/AppIcon.png";
+        private const string AdaptiveForegroundPath = "Assets/Art/AppIcon/AppIcon_AdaptiveForeground.png";
+
         [MenuItem("Lost Realms/Android/Configure App Icons")]
-        public static void Apply() {
-            const string iconPath = "Assets/Art/AppIcon/AppIcon.png";
-            
-            // Ensure texture importer is configured as a proper GUI/Sprite or default readable texture
-            var importer = AssetImporter.GetAtPath(iconPath) as TextureImporter;
-            if (importer != null) {
-                importer.textureType = TextureImporterType.Default;
-                importer.alphaIsTransparency = true;
-                importer.mipmapEnabled = false;
-                importer.isReadable = true;
-                importer.maxTextureSize = 512;
-                importer.textureCompression = TextureImporterCompression.Uncompressed;
-                importer.SaveAndReimport();
-            }
-
-            AssetDatabase.Refresh();
-
-            var icon = AssetDatabase.LoadAssetAtPath<Texture2D>(iconPath);
-            if (icon == null) {
-                Debug.LogError("APP_ICON_FAILED: Could not load " + iconPath);
+        public static void Apply()
+        {
+            var icon = AssetDatabase.LoadAssetAtPath<Texture2D>(IconPath);
+            var transparentForeground = AssetDatabase.LoadAssetAtPath<Texture2D>(AdaptiveForegroundPath);
+            if (icon == null)
+            {
+                Debug.LogError("APP_ICON_FAILED: Could not load " + IconPath);
                 return;
             }
 
-            // Set default icon for all platforms
-            PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Unknown, new Texture2D[] { icon });
+            ConfigureImporter(IconPath);
+            ConfigureImporter(AdaptiveForegroundPath);
 
-            // Set Android icons
-            PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Android, new Texture2D[] { icon });
+            PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Unknown, new[] { icon });
+            PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Android, new[] { icon });
+
+            if (transparentForeground != null)
+            {
+                var adaptive = PlayerSettings.GetPlatformIcons(BuildTargetGroup.Android, AndroidPlatformIconKind.Adaptive);
+                for (var i = 0; i < adaptive.Length; i++)
+                    adaptive[i].SetTextures(new[] { icon, transparentForeground });
+                PlayerSettings.SetPlatformIcons(BuildTargetGroup.Android, AndroidPlatformIconKind.Adaptive, adaptive);
+            }
+
+            var round = PlayerSettings.GetPlatformIcons(BuildTargetGroup.Android, AndroidPlatformIconKind.Round);
+            for (var i = 0; i < round.Length; i++)
+                round[i].SetTexture(icon);
+            PlayerSettings.SetPlatformIcons(BuildTargetGroup.Android, AndroidPlatformIconKind.Round, round);
 
             AssetDatabase.SaveAssets();
-            Debug.Log("APP_ICON_SUCCESS: Configured default and Android app icon to " + iconPath);
+            AssetDatabase.Refresh();
+            Debug.Log("APP_ICON_SUCCESS: Configured legacy, round, and adaptive Android icons from " + IconPath);
+        }
+
+        private static void ConfigureImporter(string path)
+        {
+            var importer = AssetImporter.GetAtPath(path) as TextureImporter;
+            if (importer == null)
+                return;
+
+            importer.textureType = TextureImporterType.Default;
+            importer.alphaIsTransparency = true;
+            importer.mipmapEnabled = false;
+            importer.isReadable = true;
+            importer.maxTextureSize = 512;
+            importer.textureCompression = TextureImporterCompression.Uncompressed;
+            importer.SaveAndReimport();
         }
     }
 }
