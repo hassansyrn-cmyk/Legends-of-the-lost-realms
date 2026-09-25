@@ -34,11 +34,6 @@ namespace LostRealms
                 PlayerSettings.SetPlatformIcons(BuildTargetGroup.Android, AndroidPlatformIconKind.Adaptive, adaptive);
             }
 
-            var round = PlayerSettings.GetPlatformIcons(BuildTargetGroup.Android, AndroidPlatformIconKind.Round);
-            for (var i = 0; i < round.Length; i++)
-                round[i].SetTexture(icon);
-            PlayerSettings.SetPlatformIcons(BuildTargetGroup.Android, AndroidPlatformIconKind.Round, round);
-
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Debug.Log("APP_ICON_SUCCESS: Configured legacy, round, and adaptive Android icons from " + IconPath);
