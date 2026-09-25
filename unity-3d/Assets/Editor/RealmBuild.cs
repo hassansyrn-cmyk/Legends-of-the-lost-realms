@@ -17,7 +17,7 @@ public static class RealmBuild {
   PlayerSettings.colorSpace=ColorSpace.Linear;PlayerSettings.runInBackground=false;
   var settings=new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/ProjectSettings.asset")[0]);var input=settings.FindProperty("activeInputHandler");if(input!=null){input.intValue=0;settings.ApplyModifiedPropertiesWithoutUndo();}
   QualitySettings.shadows=ShadowQuality.All;QualitySettings.shadowResolution=ShadowResolution.Medium;QualitySettings.shadowDistance=35;QualitySettings.antiAliasing=2;
-  AssetDatabase.SaveAssets();Debug.Log("REALM_PROJECT_READY");
+  AppIconConfig.Apply();AssetDatabase.SaveAssets();Debug.Log("REALM_PROJECT_READY");
  }
  [MenuItem("Lost Realms/Build Windows")]
  public static void Windows(){AsterPhase1.Prepare();Prepare();Directory.CreateDirectory("Builds/Windows");var result=BuildPipeline.BuildPlayer(new BuildPlayerOptions{scenes=new[]{"Assets/Scenes/Main.unity"},locationPathName="Builds/Windows/LostRealms3D.exe",target=BuildTarget.StandaloneWindows64,options=BuildOptions.Development});if(result.summary.result!=BuildResult.Succeeded)throw new System.Exception("Build failed: "+result.summary.result);Debug.Log("REALM_WINDOWS_BUILD_PASSED");}
