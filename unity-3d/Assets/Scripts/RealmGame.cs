@@ -117,7 +117,11 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
   public void Sound(string name,float pitchMul){if(Audio)Audio.Play(name,1f,pitchMul);}
   // Short vibration tick on key feedback moments (parry, perfect dodge).
   // Mobile only, and gated by the Sanctuary HAPTICS toggle.
-  public void Haptic(){if(Save.haptics&&Application.isMobilePlatform)Handheld.Vibrate();}
+  public void Haptic(){if(Save.haptics&&Application.isMobilePlatform){
+#if UNITY_ANDROID || UNITY_IOS
+    Handheld.Vibrate();
+#endif
+  }}
    public void TrapSound(string name,Vector3 position,float minDistance=3f,float maxDistance=15f,float volumeMul=1f){
     if(Audio)Audio.PlaySpatial(name,position,minDistance,maxDistance,volumeMul);
    }
