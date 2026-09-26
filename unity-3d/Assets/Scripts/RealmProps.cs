@@ -234,11 +234,16 @@ static void PlaceVillage(Transform island,int realm,float width,float length,Sys
     Vector3[] world={new Vector3(b.min.x,b.min.y,b.min.z),new Vector3(b.max.x,b.min.y,b.min.z),new Vector3(b.min.x,b.max.y,b.min.z),new Vector3(b.min.x,b.min.y,b.max.z),new Vector3(b.max.x,b.max.y,b.min.z),new Vector3(b.max.x,b.min.y,b.max.z),new Vector3(b.min.x,b.max.y,b.max.z),new Vector3(b.max.x,b.max.y,b.max.z)};
     for(int i=0;i<world.Length;i++){var c=prop.transform.InverseTransformPoint(world[i]);min=Vector3.Min(min,c);max=Vector3.Max(max,c);}
     Vector3 center=(min+max)*.5f,size=max-min;
-if(prop.name.StartsWith("Prop Tree")){
+    bool isTree=prop.name.StartsWith("Prop Tree")||prop.name.StartsWith("Prop rpgpp_lt_tree")||prop.name.StartsWith("Prop DeadTree")||prop.name.StartsWith("Prop Pine")||prop.name.StartsWith("Prop Palm");
+    bool isClutter=prop.name.StartsWith("Prop Bush")||prop.name.StartsWith("Prop Grass")||prop.name.StartsWith("Prop Flower")||prop.name.StartsWith("Prop Skull")||prop.name.StartsWith("Prop Pebbles")||prop.name.StartsWith("Prop rpgpp_lt_flower")||prop.name.StartsWith("Prop rpgpp_lt_grass")||prop.name.StartsWith("Prop rpgpp_lt_bush");
+    if(isClutter){
+      // No collision for purely visual clutter
+    }else if(isTree){
       var col=prop.AddComponent<CapsuleCollider>();
-      if(size.y>=size.x&&size.y>=size.z)col.direction=1;else if(size.z>=size.x&&size.z>=size.y)col.direction=2;else col.direction=0;
-      float longest=size.x;if(size.y>longest)longest=size.y;if(size.z>longest)longest=size.z;
-      col.center=center;col.height=Mathf.Max(.5f,longest*.9f);col.radius=.3f;
+      col.direction=1;
+      col.center=new Vector3(0,size.y*0.35f,0);
+      col.height=size.y*0.7f;
+      col.radius=Mathf.Min(0.45f,Mathf.Min(size.x,size.z)*0.25f);
      }else if(IsBuilding(prop.name)){
       // Buildings keep their real mesh for collision: the concave MeshCollider
       // follows the model, so doorway/gate openings stay passable while the
