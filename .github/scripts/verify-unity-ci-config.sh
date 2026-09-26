@@ -40,8 +40,8 @@ if grep -Eq '^[[:space:]]*restore-keys:' "$workflow"; then
 fi
 grep -Fq "'unity-3d/Assets/**'" "$workflow" \
   || fail "Unity cache key must include the supplied Aster assets"
-grep -Eq '^[[:space:]]*dockerCpuLimit:[[:space:]]*2[[:space:]]*$' "$workflow" \
-  || fail "Unity builder must use two CPUs to bound peak build memory"
+grep -Eq '^[[:space:]]*dockerCpuLimit:[[:space:]]*1[[:space:]]*$' "$workflow" \
+  || fail "Unity builder must use one CPU to bound peak build memory"
 
 # Phase 1 is reproducibly generated from the user's curated FBX sources.
 [[ -s "$model" ]] || fail "missing supplied Mixamo Aster base FBX"
