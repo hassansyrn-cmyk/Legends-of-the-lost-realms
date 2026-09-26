@@ -54,7 +54,7 @@ namespace LostRealms {
      island=null;float best=float.MaxValue;
      foreach(Transform candidate in world){
       if(candidate.name!="Island")continue;
-      float d=(candidate.position-t.position).sqrMagntiude;
+      float d=(candidate.position-t.position).sqrMagnitude;
       if(d<best){best=d;island=candidate;}
      }
     }
