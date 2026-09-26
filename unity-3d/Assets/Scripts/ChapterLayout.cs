@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 namespace LostRealms {
  // One final pass for every decoration path, including props on secret islands.
@@ -67,6 +67,5 @@ namespace LostRealms {
    Physics.SyncTransforms();
   }
 
-  }
  }
 }
