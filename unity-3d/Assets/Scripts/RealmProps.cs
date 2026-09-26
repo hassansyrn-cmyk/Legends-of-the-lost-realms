@@ -160,10 +160,15 @@ static void PlaceVillage(Transform island,int realm,float width,float length,Sys
        var r=c.GetComponentInChildren<Renderer>();if(!r)continue;
        Bounds b=r.bounds;foreach(var r2 in c.GetComponentsInChildren<Renderer>())b.Encapsulate(r2.bounds);
        Vector3 bc=island.InverseTransformPoint(b.center);
-       if(!TryDeckSurface(island,bc.x,bc.z,c,out float ly))continue;
+       if(!TryDeckSurface(island,bc.x,bc.z,c,out float ly)){
+        Object.Destroy(c.gameObject);continue;
+       }
        float surfY=island.TransformPoint(new Vector3(bc.x,ly,bc.z)).y;
        float gap=b.min.y-surfY;
-       if(Mathf.Abs(gap)>.35f&&Mathf.Abs(gap)<1.6f)c.position+=Vector3.down*gap;
+       if(gap>0.2f || gap<-1.6f){
+        if(gap>3.5f)Object.Destroy(c.gameObject);
+        else c.position+=Vector3.down*gap;
+       }
       }
      }
     }
@@ -234,11 +239,18 @@ static void PlaceVillage(Transform island,int realm,float width,float length,Sys
     Vector3[] world={new Vector3(b.min.x,b.min.y,b.min.z),new Vector3(b.max.x,b.min.y,b.min.z),new Vector3(b.min.x,b.max.y,b.min.z),new Vector3(b.min.x,b.min.y,b.max.z),new Vector3(b.max.x,b.max.y,b.min.z),new Vector3(b.max.x,b.min.y,b.max.z),new Vector3(b.min.x,b.max.y,b.max.z),new Vector3(b.max.x,b.max.y,b.max.z)};
     for(int i=0;i<world.Length;i++){var c=prop.transform.InverseTransformPoint(world[i]);min=Vector3.Min(min,c);max=Vector3.Max(max,c);}
     Vector3 center=(min+max)*.5f,size=max-min;
-if(prop.name.StartsWith("Prop Tree")){
+    string pName=prop.name.ToLower();
+    bool isTree=pName.Contains("tree")||pName.Contains("palm")||pName.Contains("pine");
+    bool isClutter=pName.Contains("bush")||pName.Contains("grass")||pName.Contains("flower")||pName.Contains("skull")||pName.Contains("pebble")||pName.Contains("bucket")||pName.Contains("mushroom")||pName.Contains("stump")||pName.Contains("sign");
+    if(isClutter){
+      // No collision for purely visual clutter
+    }else if(isTree){
+      // Solid collision for trunk only, canopy can be passed through
       var col=prop.AddComponent<CapsuleCollider>();
-      if(size.y>=size.x&&size.y>=size.z)col.direction=1;else if(size.z>=size.x&&size.z>=size.y)col.direction=2;else col.direction=0;
-      float longest=size.x;if(size.y>longest)longest=size.y;if(size.z>longest)longest=size.z;
-      col.center=center;col.height=Mathf.Max(.5f,longest*.9f);col.radius=.3f;
+      col.direction=1;
+      col.center=new Vector3(0,size.y*0.35f,0);
+      col.height=size.y*0.7f;
+      col.radius=Mathf.Min(0.45f,Mathf.Min(size.x,size.z)*0.25f);
      }else if(IsBuilding(prop.name)){
       // Buildings keep their real mesh for collision: the concave MeshCollider
       // follows the model, so doorway/gate openings stay passable while the

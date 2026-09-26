@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 namespace LostRealms {
  public static class Art {
@@ -54,7 +54,7 @@ namespace LostRealms {
      if(!prefab)return null;
      // worldPositionStays=false: the model must start exactly on the pickup
      // root. The 2-arg Instantiate keeps the prefab's world pose, which parks
-     // the mesh near the world origin with a giant local offset — the offset
+     // the mesh near the world origin with a giant local offset â€” the offset
      // child then whips around the spinning pickup root ("flying pickups").
      var go=Object.Instantiate(prefab,parent,false);
      go.name=name;
@@ -78,7 +78,7 @@ namespace LostRealms {
       go.transform.localScale=Vector3.one*s;
       // Re-measure AFTER scaling, then shift in WORLD space so the mesh sits
       // grounded and centered on the pickup root. Renderer.bounds is world
-      // space — never mix it into localPosition: far down-route that parks
+      // space â€” never mix it into localPosition: far down-route that parks
       // the visible mesh back near the world origin ("flying pickups").
       bounds=renderers[0].bounds;
       for(int i=1;i<renderers.Length;i++)bounds.Encapsulate(renderers[i].bounds);
@@ -90,7 +90,7 @@ namespace LostRealms {
   }
  }
  public enum IslandArchetype { Standard, Arena, NarrowBridge, SteppingStones, TieredPlatform, MovingFerry }
- public enum IslandMotionStyle { Sinusoidal, PingPongDwell, VerticalElevator, Orbit }
+ public enum IslandMotionStyle { Sinusoidal, PingPongDwell, VerticalElevator, Orbit, DiagonalWave, PendulumSway, FigureEight }
  public class RealmWorld:MonoBehaviour {
   public Vector3 Spawn;public bool IsBoss;public float EndZ; public readonly List<Vector3> Route=new List<Vector3>();
 static readonly float[][] RouteX={
@@ -135,9 +135,12 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     Camera.main.backgroundColor=RenderSettings.fogColor;Camera.main.clearFlags=CameraClearFlags.SolidColor;
     var sun=new GameObject("Realm sunlight").AddComponent<Light>();sun.transform.SetParent(transform);sun.type=LightType.Directional;sun.transform.rotation=Quaternion.Euler(48,-35,0);
     sun.color=world==1?new Color(1,.83f,.62f):world==3?new Color(1,.55f,.38f):new Color(.88f,.95f,1);sun.intensity=world==3?.95f:1.25f;sun.shadows=LightShadows.Soft;
-   // Difficulty pass: chapters grow with progress (12 → 19 islands; boss
-   // arenas 8 → 10) so late chapters read as long expeditions.
+   // Difficulty pass: chapters grow with progress (12 â†’ 19 islands; boss
+   // arenas 8 â†’ 10) so late chapters read as long expeditions.
    int count=IsBoss?8+(stage>=8?1:0)+(stage>=12?1:0):Mathf.Min(19,12+(stage-1)/2);int weaponIsland=random.Next(2,count-2);WeaponId weaponId=(WeaponId)(stage==1?4:random.Next(1,41));
+   int deferredEnemyKind=-1;
+   var checkpoints=new System.Collections.Generic.HashSet<int>{3, IsBoss?6:7};
+   if(count>=15&&!IsBoss)checkpoints.Add(count-4);
    for(int i=0;i<count;i++){
     Vector3 p=RoutePoint(stage,i);Route.Add(p);bool last=i==count-1;
     IslandArchetype arch=IslandArchetype.Standard;
@@ -157,6 +160,9 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
       else if(cycle==0&&i>=6)arch=stage>=3?IslandArchetype.MovingFerry:IslandArchetype.Standard;
      }
     }
+    if(checkpoints.Contains(i) && (arch==IslandArchetype.MovingFerry || arch==IslandArchetype.SteppingStones)){
+     checkpoints.Remove(i);checkpoints.Add(i+1);
+    }
     float width=last&&IsBoss?19:last?11:arch==IslandArchetype.Arena?13.5f:arch==IslandArchetype.NarrowBridge?4.2f:arch==IslandArchetype.TieredPlatform?10.5f:arch==IslandArchetype.MovingFerry?6f:arch==IslandArchetype.SteppingStones?7.5f:9;
     float length=last?15:arch==IslandArchetype.Arena?13f:arch==IslandArchetype.NarrowBridge?14f:arch==IslandArchetype.TieredPlatform?10f:arch==IslandArchetype.MovingFerry?6f:arch==IslandArchetype.SteppingStones?8f:8.3f;
     var islandObj=Island(p,width,length,i,arch,last&&IsBoss);if(i==0)Spawn=p+Vector3.up*.05f;
@@ -164,10 +170,27 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     if(arch==IslandArchetype.MovingFerry&&islandObj){
      var motion=islandObj.GetComponent<MovingIsland>();
      if(motion){
-      if(stage>=10&&i%2==0){motion.Style=IslandMotionStyle.VerticalElevator;motion.Offset=new Vector3(0,2.2f,0);}
-      else if(stage>=8&&i%3==0){motion.Style=IslandMotionStyle.Orbit;motion.Offset=new Vector3(2.6f,.7f,2.6f);}
-      else if(stage>=5){motion.Offset=new Vector3((i%2==0?1:-1)*(3.2f+stage*.08f),0,0);}
-      motion.Speed=Mathf.Min(1.9f,1.3f+stage*.04f);
+      motion.Speed=0.68f;
+      motion.TravelTime=3.0f;
+      motion.DwellTime=2.0f;
+      motion.PhaseOffset=i*2.2f+stage*1.1f;
+      int pick=(i+stage)%5;
+      if(pick==0){
+       motion.Style=IslandMotionStyle.PingPongDwell;
+       motion.Offset=new Vector3((i%2==0?1:-1)*3.2f,0,0);
+      }else if(pick==1){
+       motion.Style=IslandMotionStyle.VerticalElevator;
+       motion.Offset=new Vector3(0,2.1f,0);
+      }else if(pick==2){
+       motion.Style=IslandMotionStyle.DiagonalWave;
+       motion.Offset=new Vector3((i%2==0?1:-1)*2.6f,1.4f,0);
+      }else if(pick==3){
+       motion.Style=IslandMotionStyle.PendulumSway;
+       motion.Offset=new Vector3((i%2==0?1:-1)*2.8f,1.3f,0);
+      }else{
+       motion.Style=IslandMotionStyle.FigureEight;
+       motion.Offset=new Vector3((i%2==0?1:-1)*2.4f,1.1f,0);
+      }
      }
     }
     for(int j=-1;j<=1;j++){float py=(arch==IslandArchetype.TieredPlatform&&j<0)?2.1f:.8f;Pickup(p+new Vector3(0,py,j*2.2f),false);}
@@ -175,11 +198,14 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
      // Side islands become moving ferries as chapters progress: the gem detour
      // is a moving target from chapter 6 on.
      if(i==6||i==10||i==14||(stage>=6&&i>=4)||(stage>=9&&i==13&&count>=15)){var move=FindIsland(side);if(move){var motion=move.AddComponent<MovingIsland>();motion.Origin=move.transform.position;
-      if(stage>=8&&i%4==2){motion.Style=IslandMotionStyle.Orbit;motion.Offset=new Vector3(1.6f,.6f,1.6f);}
-      else motion.Offset=new Vector3(0,0,stage>=8?1.8f:1.3f);
+      motion.Style=IslandMotionStyle.VerticalElevator;
+      motion.Offset=new Vector3(0,1.8f,0);
+      motion.TravelTime=3.0f;
+      motion.DwellTime=2.0f;
+      motion.PhaseOffset=i*3.1f+stage*1.4f;
+      motion.Speed=0.65f;
       motion.AddThrusters(accent);}}}
-     int mid1=IsBoss?3:3,mid2=IsBoss?6:7;
-     if(i==mid1||i==mid2||(count>=15&&!IsBoss&&i==count-4)){
+     if(checkpoints.Contains(i)){
       Checkpoint(islandObj?islandObj.transform:null,p,width,length);
      }
     if(i>=2&&i%4==0){float hx=(i%2==0?-1:1)*(1.2f+(float)random.NextDouble()*.9f);HealPickup(p+new Vector3(hx,.6f,-1.2f+(float)random.NextDouble()*2.4f));}
@@ -200,18 +226,26 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     if(i>=2&&!last){int kind=(stage+i)%8;
      if(stage>=9&&i%6==2)kind=17;else if(stage>=3&&i%6==2)kind=11;else if(stage>=5&&i%5==4)kind=12;else if(stage>=6&&i%7==3)kind=13;else if(stage>=4&&i%6==5)kind=14;else if(stage>=4&&i%7==6)kind=15;else if(stage>=5&&i==7)kind=16;else if(stage>=3&&((stage+i)%8)==2)kind=18;else if(stage>=4&&((stage+i)%8)==5)kind=19;else if(stage>=4&&((stage+i)%8)==6)kind=20;
      float ez=arch==IslandArchetype.TieredPlatform?-2.2f:1f;float ey=arch==IslandArchetype.TieredPlatform?1.28f:.03f;
-     SpawnEnemy(p+new Vector3(1.8f,ey,ez),kind,false,p,width,length);
+     if(arch==IslandArchetype.SteppingStones){
+      deferredEnemyKind=kind;
+     }else{
+      SpawnEnemy(p+new Vector3(1.8f,ey,ez),kind,false,p,width,length);
+      if(deferredEnemyKind>=0){
+       SpawnEnemy(p+new Vector3(-1.8f,ey,ez-1.2f),deferredEnemyKind,false,p,width,length);
+       deferredEnemyKind=-1;
+      }
+     }
      // Arena pressure: a second patroller joins from chapter 8, pair patrols
      // on wide standard islands from chapter 12.
      if(stage>=8&&arch==IslandArchetype.Arena)SpawnEnemy(p+new Vector3(-1.8f,ey,ez+.6f),(kind+1)%21,false,p,width,length);
      else if(stage>=12&&arch==IslandArchetype.Standard)SpawnEnemy(p+new Vector3(-1.8f,ey,ez-1f),(kind+2)%21,false,p,width,length);
      // Difficulty ramp: chapter 1 stays trap-free; from chapter 2 the cadence
-     // tightens (every 4th island → every 2nd) and big islands take a second
+     // tightens (every 4th island â†’ every 2nd) and big islands take a second
      // trap from chapter 6 on.
       int cadence=stage>=8?2:stage>=3?3:4;
        if(stage>=2&&i%cadence==0&&arch!=IslandArchetype.NarrowBridge){
        int traps=stage>=6&&(arch==IslandArchetype.Arena||width>=10.5f)?2:1;
-       // Two slots never roll the same trap type — no triple-brazier ring storms.
+       // Two slots never roll the same trap type â€” no triple-brazier ring storms.
        var usedTypes=new List<string>();
        bool hasRing=stage>=2&&!last&&(i==5||i==9||(stage>=10&&i==12));
        for(int t=0;t<traps;t++)PlaceTrap(islandObj?islandObj.transform:transform,width,length,usedTypes,hasRing,arch);
@@ -236,7 +270,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     RealmProps.SpawnGuard=Spawn;
     RealmProps.Scatter(transform,realm,random);
     // Spawn plaza: after all dressing, guarantee the first metres of the
-    // chapter are physically clear — oversized prop colliders, crates and any
+    // chapter are physically clear â€” oversized prop colliders, crates and any
     // stray box near the spawn get removed so Aster can never be wedged in.
     Physics.SyncTransforms();
     foreach(var col in Physics.OverlapSphere(Spawn+Vector3.up*.4f,2.1f,~0,QueryTriggerInteraction.Collide)){
@@ -255,11 +289,24 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
       RealmProps.SettleProps(transform);
       ChapterLayout.GroundTraps(transform);
       // Final arbiter: remove anything deeply overlapping a trap footprint, by
-      // real positions (not reservations) — backstop for every placement path.
+      // real positions (not reservations) â€” backstop for every placement path.
       ResolveOverlaps();
       ChapterLayout.Clean(transform);
      }
-   GameObject FindIsland(Vector3 p){foreach(Transform t in transform)if(t.name=="Island"&&Vector3.Distance(t.position,p)<.1f)return t.gameObject;return null;}
+   GameObject FindIsland(Vector3 p){
+    if(Physics.Raycast(p+Vector3.up*6f,Vector3.down,out var rh,14f,~0,QueryTriggerInteraction.Ignore)){
+     Transform t=rh.transform;
+     while(t!=null&&t.parent!=transform)t=t.parent;
+     if(t!=null&&t.name=="Island")return t.gameObject;
+    }
+    float best=float.MaxValue;GameObject found=null;
+    foreach(Transform t in transform){
+     if(t.name!="Island")continue;
+     float d=(new Vector2(t.position.x-p.x,t.position.z-p.z)).sqrMagnitude;
+     if(d<best&&d<100f){best=d;found=t.gameObject;}
+    }
+    return found;
+   }
   // Route point for island i: the authored arrays cover the original chapter
   // length; longer chapters (difficulty pass) continue with a gentle serpentine
   // that keeps the weave feel and a low-glide elevation into the gate.
@@ -272,7 +319,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
    return new Vector3(x,y,i*10f);
   }
   // Stage-gated trap picker: new traps join the pool as chapters progress
-  // (wind 3+, crusher 4+, turret 5+, boulder 6+), with realm flavour — geysers
+  // (wind 3+, crusher 4+, turret 5+, boulder 6+), with realm flavour â€” geysers
   // dominate Emberfall, saws the Dunes, spikes the Frozen Peaks.
    void PlaceTrap(Transform island,float width,float length,List<string> usedTypes,bool hasSpeedRing=false,IslandArchetype arch=IslandArchetype.Standard){
     var pool=new List<string>{"spike","saw"};
@@ -311,7 +358,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
       if(!TrapArt.IsClear(island,new Vector3(bp.x,.05f,0),2.4f))
        bp.x=Mathf.Min(2.6f,width*.5f-1.2f);
       // Walk the whole roll lane: sidestep once when it crosses a reserved
-      // rail, else skip the boulder — a roll through a saw track reads broken.
+      // rail, else skip the boulder â€” a roll through a saw track reads broken.
       if(!RollLaneClear(island,bp,new Vector3(0,0,-1))){
        float altX=Mathf.Min(2.6f,width*.5f-1.2f);
        Vector3 bp2=new Vector3(bp.x>=0f?-altX:altX,bp.y,bp.z);
@@ -500,7 +547,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
       var root=new GameObject("Island");root.transform.SetParent(transform);root.transform.position=pos;
       if(isBoss)new GameObject("BossArenaMarker").transform.SetParent(root.transform,false);
        if(archetype==IslandArchetype.SteppingStones){
-        Vector3[] stepOffsets=new[]{new Vector3(-1.6f,0,-2.5f),new Vector3(1.6f,.25f,0),new Vector3(-1f,.1f,2.5f)};
+        Vector3[] stepOffsets=new[]{new Vector3(-2.2f,0,-3.4f),new Vector3(2.1f,.3f,0),new Vector3(-1.8f,.15f,3.4f)};
          string stepModel=realm==3?"Islands/R3_Island_SteppingStone":realm==2?"Islands/R2_Island_SteppingStone":realm==1?"Islands/R1_Island_SteppingStone":realm==0?"Islands/Island_SteppingStone":null;
          var stepPrefab=stepModel!=null?Resources.Load<GameObject>(stepModel):null;
          string stepTexPath=realm==3?"Islands/Textures/R3_Island_SteppingStone_basecolor":realm==2?"Islands/Textures/R2_Island_SteppingStone_basecolor":realm==1?"Islands/Textures/R1_Island_SteppingStone_basecolor":realm==0?"Islands/Textures/Island_SteppingStone_basecolor":null;
@@ -508,10 +555,11 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
        Material stepMat=null;
        if(stepTex){stepMat=new Material(Shader.Find("Standard")){name="StepStone_Mat"};stepMat.mainTexture=stepTex;stepMat.SetFloat("_Glossiness",.25f);}
        for(int k=0;k<stepOffsets.Length;k++){
+        Vector3 stoneWorldPos=pos+stepOffsets[k];
         if(k==1){
          var crumbleRoot=new GameObject("CrumblingPlatform");
          crumbleRoot.transform.SetParent(root.transform,false);
-         crumbleRoot.transform.localPosition=stepOffsets[k];
+         crumbleRoot.transform.position=stoneWorldPos;
          var magmaPrefab=Resources.Load<GameObject>("Props/MagmaPlatform");
          if(magmaPrefab){
           var mp=Instantiate(magmaPrefab,crumbleRoot.transform,false);
@@ -537,16 +585,26 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
          solidBase.size=new Vector3(4.5f,.4f,4.5f);
          solidBase.center=new Vector3(0,-.2f,0);
          CrumblePlatform.Attach(crumbleRoot);
+         var motion=crumbleRoot.AddComponent<MovingIsland>();
+         motion.Origin=stoneWorldPos;
+         motion.Style=IslandMotionStyle.VerticalElevator;
+         motion.Offset=new Vector3(0,1.1f,0);
+         motion.PhaseOffset=k*2.5f+index*1.1f;
+         motion.Speed=0.8f;
          continue;
         }
-        var sp=Art.Shape("StepPillar",PrimitiveType.Cylinder,stepOffsets[k]+new Vector3(0,-.6f,0),new Vector3(3.4f,1.2f,3.4f),stone,root.transform,true);
-        var ss=Art.Shape("StepSurface",PrimitiveType.Cylinder,stepOffsets[k]+new Vector3(0,.02f,0),new Vector3(3.5f,.12f,3.5f),top,root.transform);
+        var stepRoot=new GameObject("StepRoot_"+k);
+        stepRoot.transform.SetParent(root.transform,false);
+        stepRoot.transform.position=stoneWorldPos;
+
+        var sp=Art.Shape("StepPillar",PrimitiveType.Cylinder,new Vector3(0,-.6f,0),new Vector3(3.4f,1.2f,3.4f),stone,stepRoot.transform,false);
+        var ss=Art.Shape("StepSurface",PrimitiveType.Cylinder,new Vector3(0,.02f,0),new Vector3(3.5f,.12f,3.5f),top,stepRoot.transform,false);
         if(stepPrefab){
          var spr=sp.GetComponent<Renderer>();if(spr)spr.enabled=false;
          var ssr=ss.GetComponent<Renderer>();if(ssr)ssr.enabled=false;
-         var stepObj=Instantiate(stepPrefab,root.transform,false);
+         var stepObj=Instantiate(stepPrefab,stepRoot.transform,false);
          stepObj.name="StepVisual_"+k;
-         stepObj.transform.localPosition=stepOffsets[k]+new Vector3(0,.02f,0);
+         stepObj.transform.localPosition=new Vector3(0,.02f,0);
          stepObj.transform.localScale=Vector3.one;
          if(stepMat)foreach(var r in stepObj.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=stepMat;
          foreach(var mf in stepObj.GetComponentsInChildren<MeshFilter>()){
@@ -555,7 +613,17 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
            mc.sharedMesh=mf.sharedMesh;
           }
          }
+        }else{
+         var solidBase=stepRoot.AddComponent<BoxCollider>();
+         solidBase.size=new Vector3(3.4f,.4f,3.4f);
+         solidBase.center=new Vector3(0,-.2f,0);
         }
+        var motion2=stepRoot.AddComponent<MovingIsland>();
+        motion2.Origin=stoneWorldPos;
+        motion2.Style=k==0?IslandMotionStyle.PingPongDwell:IslandMotionStyle.PendulumSway;
+        motion2.Offset=k==0?new Vector3(1.3f,0,0):new Vector3(-1.3f,0.7f,0);
+        motion2.PhaseOffset=k*2.5f+index*1.1f;
+        motion2.Speed=0.8f;
        }
        return root;
       }
@@ -668,7 +736,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     Physics.SyncTransforms();
     // Deck normalization: the FBX island meshes carry their own terrain
     // relief, so the walkable surface can sit metres away from the route
-    // anchor — shift the whole island so the surface under its center matches
+    // anchor â€” shift the whole island so the surface under its center matches
     // the route deck. Everything route-anchored (spawn, pickups, checkpoints,
     // enemies, shrines) then lands correctly on every island.
     if(Physics.Raycast(root.transform.position+Vector3.up*18f,Vector3.down,out var deckHit,40f,~0,QueryTriggerInteraction.Ignore)&&deckHit.normal.y>.55f){
@@ -708,8 +776,11 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
    float bestY=float.NegativeInfinity;
    for(int i=0;i<hits.Length;i++){if(hits[i].normal.y>=.5f&&!hits[i].transform.name.StartsWith("Prop ")&&hits[i].point.y>bestY)bestY=hits[i].point.y;}
    if(bestY>float.NegativeInfinity)position=new Vector3(position.x,bestY+(gem?.65f:.48f),position.z);
+   Transform parent=transform;
+   GameObject island=FindIsland(position);
+   if(island!=null)parent=island.transform;
    var go=new GameObject(gem?"GemPickup":"CoinPickup");
-   go.transform.SetParent(transform,false);go.transform.position=position;
+   go.transform.SetParent(parent,false);go.transform.position=position;
    if(gem)RelicArt.Gem(go.transform,accent);
    else Art.CoinMesh(go.transform);
    var pickup=go.AddComponent<RealmPickup>();pickup.Gem=gem;pickup.Origin=position;
@@ -769,7 +840,12 @@ void WeaponDrop(Vector3 p,WeaponId id){
     float bestY=float.NegativeInfinity;
     for(int i=0;i<hits.Length;i++){if(hits[i].normal.y>=.5f&&!hits[i].transform.name.StartsWith("Prop ")&&hits[i].point.y>bestY)bestY=hits[i].point.y;}
     if(bestY>float.NegativeInfinity)p=new Vector3(p.x,bestY+.75f,p.z);
-    var go=new GameObject("Heal pickup");go.transform.SetParent(transform,false);go.transform.position=p;
+
+    Transform parent=transform;
+    GameObject island = FindIsland(p);
+    if(island!=null) parent=island.transform;
+
+    var go=new GameObject("Heal pickup");go.transform.SetParent(parent,false);go.transform.position=p;
     Color potionRed=new Color(.92f,.12f,.16f);
     var palTex=Resources.Load<Texture2D>("Pickups/Gradient Pallete");
     Material potionMat=null;
@@ -841,17 +917,17 @@ void WeaponDrop(Vector3 p,WeaponId id){
    // heralds/minions spawn via Configure directly and stay bonus kills).
    if(RealmGame.I!=null)RealmGame.I.KillsTotal++;
    // Spawn validation: irregular island meshes (volcanic calderas, serpentine
-   // extensions) can leave an offset point over a hole — probe candidates and
+   // extensions) can leave an offset point over a hole â€” probe candidates and
    // snap to the first solid surface so no enemy is born over the void.
    Vector3 spawnP=p;float bestDeckDelta=float.MaxValue;
-   // Island colliders are created this same frame — without a sync the
+   // Island colliders are created this same frame â€” without a sync the
    // probes below see an empty physics world and every enemy spawns falling.
    Physics.SyncTransforms();
    var probes=new Vector3[]{p,center+new Vector3(0,.05f,0),center+new Vector3(-1.2f,.05f,.8f),center+new Vector3(1.2f,.05f,-.8f),center+new Vector3(-.9f,.05f,-1f),center+new Vector3(.9f,.05f,1.1f),center+new Vector3(-2.2f,.05f,0),center+new Vector3(2.2f,.05f,0)};
    foreach(var c in probes){
     // Take the topmost upward-facing surface within 12 m below the route deck
     // (tall cliff meshes put their deck far below the anchor), then prefer the
-    // candidate whose surface sits closest to the deck — crater floors lose to
+    // candidate whose surface sits closest to the deck â€” crater floors lose to
     // the main deck, so nobody spawns in a pit or over a mesh hole.
     var hits=Physics.RaycastAll(c+Vector3.up*6f,Vector3.down,20f,~0,QueryTriggerInteraction.Ignore);
     float bestY=float.NegativeInfinity;
@@ -872,21 +948,34 @@ void WeaponDrop(Vector3 p,WeaponId id){
  }
 public class RealmPickup:MonoBehaviour {
    public bool Gem;public Vector3 Origin;
+   Vector3 localOrigin;bool hasLocal;
    void Start(){
     var hits=Physics.RaycastAll(Origin+Vector3.up*5f,Vector3.down,10f,~0,QueryTriggerInteraction.Ignore);
     float bestY=float.NegativeInfinity;
     for(int i=0;i<hits.Length;i++){if(hits[i].normal.y>=.5f&&hits[i].point.y>bestY)bestY=hits[i].point.y;}
     if(bestY>float.NegativeInfinity){float minSafe=bestY+(Gem?.65f:.48f);if(Origin.y<minSafe)Origin.y=minSafe;}
     transform.position=Origin;
+    if(transform.parent!=null&&transform.parent!=RealmGame.I.World.transform){
+     localOrigin=transform.localPosition;hasLocal=true;
+    }
    }
    void Update(){
     var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
     // GemVisual supplies the main faceted motion. Keep the pickup root slow so
     // its orbiting shards read clearly instead of turning into a spinning cube.
-transform.Rotate(0,(Gem?12f:45f)*Time.deltaTime,0,Space.World);
+    transform.Rotate(0,(Gem?12f:45f)*Time.deltaTime,0,Space.World);
+    if(hasLocal){
+     Vector3 target=g.Player.transform.position+Vector3.up*.8f;
+     if(Vector3.Distance(transform.position,target)<(Gem?1.85f:2.1f)){
+      Vector3 localTarget=transform.parent.InverseTransformPoint(target);
+      localOrigin=Vector3.MoveTowards(localOrigin,localTarget,Time.deltaTime*(Gem?5.4f:4.5f));
+     }
+     transform.localPosition=localOrigin+Vector3.up*Mathf.Sin(RealmGame.I.Elapsed*1.4f)*.09f;
+    }else{
      Vector3 target=g.Player.transform.position+Vector3.up*.8f;
      if(Vector3.Distance(Origin,target)<(Gem?1.85f:2.1f))Origin=Vector3.MoveTowards(Origin,target,Time.deltaTime*(Gem?5.4f:4.5f));
      transform.position=Origin+Vector3.up*Mathf.Sin(RealmGame.I.Elapsed*1.4f)*.09f;
+    }
     if(Vector3.Distance(g.Player.transform.position+Vector3.up*.8f,transform.position)<1.15f){
      if(Gem)Vfx.Play("ga_vfx_LootDrop_02",transform.position,Quaternion.identity,.8f);
      g.Collect(Gem);Destroy(gameObject);
@@ -912,17 +1001,25 @@ transform.Rotate(0,(Gem?12f:45f)*Time.deltaTime,0,Space.World);
   }
   public class RealmHeal:MonoBehaviour {
    public Vector3 Origin;public int Amount=3;
+   Vector3 localOrigin;bool hasLocal;
    void Start(){
     var hits=Physics.RaycastAll(Origin+Vector3.up*6f,Vector3.down,12f,~0,QueryTriggerInteraction.Ignore);
     float bestY=float.NegativeInfinity;
     for(int i=0;i<hits.Length;i++){if(hits[i].normal.y>=.5f&&hits[i].point.y>bestY)bestY=hits[i].point.y;}
     if(bestY>float.NegativeInfinity){float minSafe=bestY+.75f;if(Origin.y<minSafe)Origin.y=minSafe;}
     transform.position=Origin;
+    if(transform.parent!=null&&transform.parent!=RealmGame.I.World.transform){
+     localOrigin=transform.localPosition;hasLocal=true;
+    }
    }
    void Update(){
     var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
     transform.Rotate(0,28f*Time.deltaTime,0,Space.World);
-    transform.position=Origin+Vector3.up*Mathf.Sin(RealmGame.I.Elapsed*1.4f)*.09f;
+    if(hasLocal){
+     transform.localPosition=localOrigin+Vector3.up*Mathf.Sin(RealmGame.I.Elapsed*1.4f)*.09f;
+    }else{
+     transform.position=Origin+Vector3.up*Mathf.Sin(RealmGame.I.Elapsed*1.4f)*.09f;
+    }
     if(Vector3.Distance(g.Player.transform.position+Vector3.up*.8f,transform.position)<1.15f){
      int before=g.Player.Health;g.Player.Health=Mathf.Min(g.Player.MaxHealth,before+Amount);
      if(g.Player.Health>before){Vfx.Play("ga_vfx_Heal_01",transform.position,Quaternion.identity,.9f);g.Sound("heal");}
@@ -981,9 +1078,16 @@ transform.Rotate(0,(Gem?12f:45f)*Time.deltaTime,0,Space.World);
   }
  }
  [DefaultExecutionOrder(-10)] public class MovingIsland:MonoBehaviour {
-  public Vector3 Origin,Offset;public IslandMotionStyle Style=IslandMotionStyle.Sinusoidal;
-  public float Speed=1.2f,DwellTime=1.1f;
-  float motionTime,dwellTimer;int direction=1;float progress=0.5f;
+  public Vector3 Origin,Offset;public IslandMotionStyle Style=IslandMotionStyle.PingPongDwell;
+  public float Speed=0.72f,DwellTime=2.0f,TravelTime=2.8f,PhaseOffset;
+  float cycleTimer;bool initialized;
+  void Start(){
+   if(!initialized){
+    initialized=true;
+    float totalCycle=Mathf.Max(1f,TravelTime*2f+DwellTime*2f);
+    cycleTimer=Mathf.Repeat(PhaseOffset,totalCycle);
+   }
+  }
   public void AddThrusters(Color accent){
    var thruster=new GameObject("LevitationThruster");thruster.transform.SetParent(transform,false);
    thruster.transform.localPosition=new Vector3(0,-2.4f,0);
@@ -992,27 +1096,56 @@ transform.Rotate(0,(Gem?12f:45f)*Time.deltaTime,0,Space.World);
   }
   void FixedUpdate(){
    var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
-   bool riding=g.Player.Grounded&&Physics.Raycast(g.Player.transform.position+Vector3.up*.2f,Vector3.down,out var hit,.65f,~0,QueryTriggerInteraction.Ignore)&&hit.transform.IsChildOf(transform);
+   bool riding=IsPlayerRiding(g.Player);
    Vector3 prior=transform.position;
-   if(Style==IslandMotionStyle.PingPongDwell||Style==IslandMotionStyle.VerticalElevator){
-    if(dwellTimer>0){
-     dwellTimer-=Time.fixedDeltaTime;
-    }else{
-     progress+=direction*(Speed*.35f)*Time.fixedDeltaTime;
-     if(progress>=1f){progress=1f;direction=-1;dwellTimer=DwellTime;}
-     else if(progress<=0f){progress=0f;direction=1;dwellTimer=DwellTime;}
-    }
-    float eased=(1f-Mathf.Cos(progress*Mathf.PI))*.5f;
-    transform.position=Origin+Offset*(eased*2f-1f);
-   }else if(Style==IslandMotionStyle.Orbit){
-    motionTime+=Time.fixedDeltaTime*Speed;
-    transform.position=Origin+new Vector3(Mathf.Cos(motionTime)*Offset.x,Offset.y*Mathf.Sin(motionTime*.8f),Mathf.Sin(motionTime)*Offset.z);
+   float priorTimer=cycleTimer;
+   float totalCycle=Mathf.Max(1f,TravelTime*2f+DwellTime*2f);
+   cycleTimer=(cycleTimer+Time.fixedDeltaTime*Speed)%totalCycle;
+
+   float s=0f;
+   if(cycleTimer<TravelTime){
+    float u=cycleTimer/TravelTime;
+    s=(1f-Mathf.Cos(u*Mathf.PI))-1f;
+   }else if(cycleTimer<TravelTime+DwellTime){
+    s=1f;
+   }else if(cycleTimer<TravelTime*2f+DwellTime){
+    float u=(cycleTimer-TravelTime-DwellTime)/TravelTime;
+    s=1f-(1f-Mathf.Cos(u*Mathf.PI));
    }else{
-    motionTime+=Time.fixedDeltaTime*Speed;
-    transform.position=Origin+Offset*Mathf.Sin(motionTime*.8f);
+    s=-1f;
    }
+
+   Vector3 candidate=Origin;
+   if(Style==IslandMotionStyle.PingPongDwell){
+    candidate=Origin+new Vector3(s*Offset.x,0,0);
+   }else if(Style==IslandMotionStyle.VerticalElevator){
+    candidate=Origin+new Vector3(0,s*Offset.y,0);
+   }else if(Style==IslandMotionStyle.DiagonalWave){
+    candidate=Origin+new Vector3(s*Offset.x,s*Offset.y,0);
+   }else if(Style==IslandMotionStyle.PendulumSway){
+    float dip=-(1f-s*s)*Mathf.Abs(Offset.y);
+    candidate=Origin+new Vector3(s*Offset.x,dip,0);
+   }else if(Style==IslandMotionStyle.FigureEight){
+    float t=(cycleTimer/totalCycle)*Mathf.PI*2f;
+    candidate=Origin+new Vector3(Mathf.Sin(t)*Offset.x,Mathf.Sin(t*2f)*Offset.y*.75f,0);
+   }else if(Style==IslandMotionStyle.Orbit){
+    float t=(cycleTimer/totalCycle)*Mathf.PI*2f;
+    candidate=Origin+new Vector3(Mathf.Cos(t)*Offset.x,Mathf.Sin(t)*Offset.y,0);
+   }else{
+    candidate=Origin+new Vector3(s*Offset.x,0,0);
+   }
+
+   transform.position=candidate;
+   Physics.SyncTransforms();
    Vector3 delta=transform.position-prior;
-   if(riding)g.Player.CarryByPlatform(delta);
+   if(riding){
+    if(delta.y>0f){
+     g.Player.Push(g.Player.transform.position+new Vector3(0,delta.y,0));
+     g.Player.CarryByPlatform(new Vector3(delta.x,0,delta.z));
+    }else{
+     g.Player.CarryByPlatform(delta);
+    }
+   }
    if(g.Enemies!=null){
     foreach(var foe in g.Enemies){
      if(!foe||foe.Health<=0)continue;
@@ -1022,6 +1155,20 @@ transform.Rotate(0,(Gem?12f:45f)*Time.deltaTime,0,Space.World);
      }
     }
    }
+  }
+  bool IsPlayerRiding(Hero player){
+   if(!player||!player.Controller)return false;
+   if(!player.Grounded&&player.VerticalVelocity>1.2f)return false;
+   Vector3 foot=player.transform.position;
+   var hits=Physics.SphereCastAll(foot+Vector3.up*.45f,.28f,Vector3.down,.9f,~0,QueryTriggerInteraction.Ignore);
+   for(int i=0;i<hits.Length;i++){
+    var h=hits[i];
+    if(h.collider==player.Controller||h.transform==player.transform||h.transform.IsChildOf(player.transform))continue;
+    if(h.transform==transform||h.transform.IsChildOf(transform)){
+     if(foot.y>=h.point.y-.35f&&foot.y<=h.point.y+.85f)return true;
+    }
+   }
+   return false;
   }
  }
 }

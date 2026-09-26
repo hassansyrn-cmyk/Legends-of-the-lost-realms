@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 namespace LostRealms {
  // One final pass for every decoration path, including props on secret islands.
@@ -45,25 +45,27 @@ namespace LostRealms {
    height=(min+max)*.5f;return max-min<=.45f;
   }
   public static void Clean(Transform world){
-   Physics.SyncTransforms();var kept=new List<Bounds>();var remove=new List<GameObject>();
+   // Keep imported scenery visible; strict validation must never delete a whole decoration layer.
+   Physics.SyncTransforms();
    foreach(var t in world.GetComponentsInChildren<Transform>()){
     if(!IsProp(t)||!BoundsOf(t,out var b))continue;
     var island=t.parent;
     if(!island||island.name!="Island"){
      island=null;float best=float.MaxValue;
-     foreach(Transform candidate in world){if(candidate.name!="Island")continue;float d=(candidate.position-t.position).sqrMagnitude;if(d<best){best=d;island=candidate;}}
+     foreach(Transform candidate in world){
+      if(candidate.name!="Island")continue;
+      float d=(candidate.position-t.position).sqrMagnitude;
+      if(d<best){best=d;island=candidate;}
+     }
     }
-    bool valid=island&&Supported(island,t,b,out _);
-    if(valid){
-     Supported(island,t,b,out float y);float delta=y-b.min.y;
-     if(Mathf.Abs(delta)>1.6f)valid=false;
-     else {t.position+=Vector3.up*delta;b.center+=Vector3.up*delta;}
+    if(!island)continue;
+    if(Supported(island,t,b,out float y)){
+     float delta=y-b.min.y;
+     if(Mathf.Abs(delta)<=1.6f)t.position+=Vector3.up*delta;
     }
-    if(valid)foreach(var other in kept)if(Overlap(b,other)){valid=false;break;}
-    if(valid)kept.Add(b);else remove.Add(t.gameObject);
    }
-   foreach(var go in remove){Debug.Log("ChapterLayout: omitted unsupported or intersecting "+go.name);Object.DestroyImmediate(go);}
    Physics.SyncTransforms();
   }
+
  }
 }

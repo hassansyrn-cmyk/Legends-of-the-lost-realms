@@ -10,7 +10,7 @@ namespace LostRealms {
     if(equippedWeapon>=0&&!weapons.Contains(equippedWeapon))weapons.Add(equippedWeapon);
     for(int i=weapons.Count-1;i>=0;i--)if(weapons[i]<0||weapons[i]>40||weapons.IndexOf(weapons[i])!=i)weapons.RemoveAt(i);
    }
-   public int version=2;public int unlocked=1, equippedWeapon=-1, coins, gems, healthRank, powerRank, arsenalRank, aetherRank, moxieRank, tempoRank, windRank; public int[] stars=new int[15]; public float[] best=new float[15]; public bool music=true,sound=true,postFx=true,shake=true,haptics=true; public List<int> weapons=new List<int>();
+   public int version=2;public int unlocked=1, equippedWeapon=-1, coins, gems, healthRank, powerRank, arsenalRank, aetherRank, moxieRank, tempoRank, windRank, tipsSeen; public int[] stars=new int[15]; public float[] best=new float[15]; public bool music=true,sound=true,postFx=true,shake=true,haptics=true; public List<int> weapons=new List<int>();
   }
  public class RealmGame : MonoBehaviour {
   public static RealmGame I; public static bool Testing=>Array.IndexOf(Environment.GetCommandLineArgs(),"-realmTest")>=0; public static readonly string[] Titles={"Mosslight Trail","Whispering Falls","Rootbound Ruins","The Elder Grove","Sunscorched Pass","Temple of Keys","Sandstone Colossus","Frostwind Climb","Crystal Hollow","Crown of Winter","Ember Foothills","Brimstone Rampart","Cindervein Gorge","Obsidian Ascent","Emberfall Summit"};
@@ -22,7 +22,7 @@ public static readonly string[] Realms={"VERDANT KINGDOM","BURNING DUNES","FROZE
   public Vector2 MoveInput; public bool JumpPressed,DashPressed,AttackPressed,AttackReleased,CastPressed,ParryPressed,SpellPressed,SpellReleased,GrapplePressed; public bool AttackHeld,SpellHeld,JumpHeld;
   public readonly List<Enemy> Enemies=new List<Enemy>(); public AudioSource Music,Sfx;
   public RealmAudio Audio {get;private set;} public RealmTrials Trial {get;private set;}
-   Transform worldRoot; GUIStyle title,titleC,label,small,button,center,big,smallC,tinyC,btnText; Texture2D pixel,circleFill,circleRing,btnBlade,btnJump,btnDodge,btnPower,btnParry,btnSpell,btnPause,joyBase,joyKnob; Texture2D bgMainMenu,avatarAster,btnPrimaryNorm,btnPrimaryHigh,btnStdNorm,btnStdHigh,btnSecNorm,btnSecHigh,panelLarge,panelMedium,cardUnlocked,cardSelected,cardLocked,cardCompleted,headerOrnament,dividerLine,barFrame,barFill,resourceCapsule,iconArsenal,iconAtlas,iconBack,iconClose,iconCoin,iconGem,iconLock,iconMainMenu,iconNewJourney,iconContinue,iconResume,iconRestart,iconSanctuary,iconStar; readonly TouchRouter touch=new TouchRouter(); float yawInput,hitStopUntil,bossIntroUntil;bool showArsenal;int arsenalPage;GameScreen arsenalReturn=GameScreen.Settings;readonly System.Collections.Generic.Dictionary<string,Texture2D> iconCache=new System.Collections.Generic.Dictionary<string,Texture2D>();
+   Transform worldRoot; GUIStyle title,titleC,label,small,button,center,big,smallC,tinyC,btnText; Texture2D pixel,circleFill,circleRing,btnBlade,btnJump,btnDodge,btnPower,btnParry,btnSpell,btnPause,joyBase,joyKnob; Texture2D bgMainMenu,avatarAster,btnPrimaryNorm,btnPrimaryHigh,btnStdNorm,btnStdHigh,btnSecNorm,btnSecHigh,panelLarge,panelMedium,cardUnlocked,cardSelected,cardLocked,cardCompleted,headerOrnament,dividerLine,barFrame,barFill,resourceCapsule,iconArsenal,iconAtlas,iconBack,iconClose,iconCoin,iconGem,iconLock,iconMainMenu,iconNewJourney,iconContinue,iconResume,iconRestart,iconSanctuary,iconStar; readonly TouchRouter touch=new TouchRouter(); float yawInput,hitStopUntil,bossIntroUntil,heartbeatNext;bool showArsenal;int arsenalPage;GameScreen arsenalReturn=GameScreen.Settings;readonly System.Collections.Generic.Dictionary<string,Texture2D> iconCache=new System.Collections.Generic.Dictionary<string,Texture2D>();
   public static readonly Color[] ElementColors={new Color(1f,.45f,.1f),new Color(.2f,.85f,1f),new Color(.2f,1f,.55f)};
   [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Boot(){
    var existing=FindObjectsByType<RealmGame>(FindObjectsSortMode.None);
@@ -81,6 +81,10 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
      SetMusic(stageTrack);
     }
     if(Screen!=GameScreen.Playing){AttackHeld=false;touch.Reset();return;} Elapsed+=Time.deltaTime; if(comboUntil>0f&&Elapsed>=comboUntil){Combo=0;comboUntil=0;}
+     if(World&&World.IsBoss&&Player&&Player.Health>0){
+      float hpFrac=(float)Player.Health/Player.MaxHealth;
+      if(hpFrac<.25f&&Time.unscaledTime>=heartbeatNext){heartbeatNext=Time.unscaledTime+1.14f;Sound("land_soft",.65f);}
+     }
     MoveInput=new Vector2((Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow)?1:0)-(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow)?1:0),(Input.GetKey(KeyCode.W)||Input.GetKey(KeyCode.UpArrow)?1:0)-(Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.DownArrow)?1:0));
     JumpPressed=Input.GetKeyDown(KeyCode.Space);DashPressed=Input.GetKeyDown(KeyCode.LeftShift);AttackPressed=Input.GetKeyDown(KeyCode.J);AttackReleased=Input.GetKeyUp(KeyCode.J);AttackHeld=Input.GetKey(KeyCode.J);CastPressed=Input.GetKeyDown(KeyCode.K);ParryPressed=Input.GetKeyDown(KeyCode.L);SpellPressed=Input.GetKeyDown(KeyCode.F);SpellReleased=Input.GetKeyUp(KeyCode.F);SpellHeld=Input.GetKey(KeyCode.F);GrapplePressed=Input.GetKeyDown(KeyCode.G);JumpHeld=Input.GetKey(KeyCode.Space);
     if(Input.GetKeyDown(KeyCode.Q)){Player.Power=(Player.Power+1)%3;Sound("power_select");}
@@ -107,7 +111,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
   public void Pause(){Screen=GameScreen.Paused;Audio.Suspend(true);touch.Reset();}
   public void Resume(){showArsenal=false;Screen=GameScreen.Playing;Audio.Suspend(false);}
   void SetMusic(string key){
-   Audio.SetTrack(key);
+   if(Audio)Audio.SetTrack(key);
   }
   void OnApplicationPause(bool paused){if(paused&&Screen==GameScreen.Playing)Pause();Persist();}
   void OnApplicationFocus(bool focused){if(!focused&&Screen==GameScreen.Playing)Pause();}
@@ -123,7 +127,8 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    }
   // A very short screen-wide time dip for perfect defense and counters. Physics
   // runs on the constant fixed step, so this slows the pacing, never the step.
-  public void HitStop(float seconds,float scale=.12f){if(seconds<=0f)return;Time.timeScale=Mathf.Min(Time.timeScale,scale);float until=Time.unscaledTime+seconds;if(until>hitStopUntil)hitStopUntil=until;}
+  public void HitStop(float seconds,float scale=.12f){seconds=Mathf.Min(seconds,.05f);if(seconds<=0f)return;Time.timeScale=Mathf.Min(Time.timeScale,scale);float until=Time.unscaledTime+seconds;if(until>hitStopUntil)hitStopUntil=until;}
+  public void TriggerTip(int bitMask,string message,float duration=4.5f){if(Save==null||(Save.tipsSeen&bitMask)!=0)return;Save.tipsSeen|=bitMask;Persist();Tell(message,duration);}
    public void Collect(bool gem){if(gem)Gems++;else Coins++;Sound(gem?"gem":"coin");}
    // Chapter completion: average of coins/gems/foes percentages (each
    // clamped; empty categories count as complete). Stars: 60/80/95%.
@@ -478,6 +483,25 @@ Panel(390,105,500,68);
       Box(new Rect(sx-11,sy-11,22,22),warn);
       GUI.matrix=matrix;
      }
+     if(World&&World.IsBoss&&CombatTelegraph.Active!=null){
+      foreach(var tele in CombatTelegraph.Active){
+       if(!tele)continue;
+       if(Vector3.Distance(Player.transform.position,tele.transform.position)>34f)continue;
+       Vector3 tv=Camera.main.WorldToViewportPoint(tele.transform.position+Vector3.up*.4f);
+       bool tbehind=tv.z<0f;
+       float tvx=tbehind?-tv.x:tv.x;
+       if(!tbehind&&tv.x>.04f&&tv.x<.96f&&tv.y>.06f&&tv.y<.94f)continue;
+       float tsx=Mathf.Clamp(tvx,.05f,.95f)*1280f;
+       float tsy=(1f-Mathf.Clamp(tv.y,.07f,.93f))*720f;
+       float tang=Mathf.Atan2(tsy-360f,tsx-640f)*Mathf.Rad2Deg+45f;
+       float tpulse=.5f+.45f*Mathf.Sin(Time.unscaledTime*11f);
+       Color twarn=new Color(1f,.55f,.15f,tpulse);
+       var tmatrix=GUI.matrix;
+       GUIUtility.RotateAroundPivot(tang,new Vector2(tsx,tsy));
+       Box(new Rect(tsx-9,tsy-9,18,18),twarn);
+       GUI.matrix=tmatrix;
+      }
+     }
     }
     // Trial box removed per user request for uncluttered playfield.
 
@@ -616,14 +640,18 @@ Panel(390,105,500,68);
 
     Text(240,138,800,24,$"Available Resources:  {Save.coins} Gold   •   {Save.gems} Gems",smallC);
 
+    // Recommended next upgrade (cheapest unmaxed track)
+    int bestRecTrack = Save.healthRank<3 ? 0 : Save.arsenalRank<3 ? 1 : Save.powerRank<3 ? 2 : Save.aetherRank<3 ? 3 : Save.moxieRank<3 ? 4 : Save.tempoRank<3 ? 5 : Save.windRank<3 ? 6 : -1;
+    string recTag(int track)=>track==bestRecTrack?"  ★ RECOMMENDED":"";
+
     // Primary Upgrades (Gold)
     string vitCost=Save.healthRank<3?(50+Save.healthRank*40)+" Gold":"MAXED";
-    if(MenuButton(new Rect(240,170,800,44),$"VITALITY RANK {Save.healthRank}/3  (+{Save.healthRank} Max HP)   —   Cost: {vitCost}",smallBtn:true,st:smallC)){
+    if(MenuButton(new Rect(240,170,800,44),$"VITALITY RANK {Save.healthRank}/3  (+{Save.healthRank} Max HP)   —   Cost: {vitCost}{recTag(0)}",smallBtn:true,st:smallC)){
      int cost=50+Save.healthRank*40;
      if(Save.healthRank<3){if(Save.coins>=cost){Save.coins-=cost;Save.healthRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
     string arsCost=Save.arsenalRank<3?(80+Save.arsenalRank*60)+" Gold":"MAXED";
-    if(MenuButton(new Rect(240,222,520,44),$"ARSENAL RANK {Save.arsenalRank}/3  (+{Save.arsenalRank*8}% DMG)   —   {arsCost}",smallBtn:true,st:smallC)){
+    if(MenuButton(new Rect(240,222,520,44),$"ARSENAL RANK {Save.arsenalRank}/3  (+{Save.arsenalRank*8}% DMG)   —   {arsCost}{recTag(1)}",smallBtn:true,st:smallC)){
      int cost=80+Save.arsenalRank*60;
      if(Save.arsenalRank<3){if(Save.coins>=cost){Save.coins-=cost;Save.arsenalRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
@@ -632,7 +660,7 @@ Panel(390,105,500,68);
 
     // Divine Blessings (Gems)
     string powCost=Save.powerRank<3?(3+Save.powerRank*2)+" Gems":"MAXED";
-    if(MenuButton(new Rect(240,274,800,44),$"ELEMENTAL POWER RANK {Save.powerRank}/3  (+{Save.powerRank*20}% Power)   —   Cost: {powCost}",smallBtn:true,st:smallC)){
+    if(MenuButton(new Rect(240,274,800,44),$"ELEMENTAL POWER RANK {Save.powerRank}/3  (+{Save.powerRank*20}% Power)   —   Cost: {powCost}{recTag(2)}",smallBtn:true,st:smallC)){
      int cost=3+Save.powerRank*2;
      if(Save.powerRank<3){if(Save.gems>=cost){Save.gems-=cost;Save.powerRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }

@@ -581,21 +581,25 @@ namespace LostRealms {
  // =========================================================================
  public sealed class CrumblePlatform:MonoBehaviour {
   public static readonly List<CrumblePlatform> All=new List<CrumblePlatform>();
-  Vector3 origin;Quaternion originRot;float shakeTimer;
+  Vector3 initialOrigin,shakeOrigin;Quaternion initialRot;float shakeTimer;
+  float startFallY;
   enum State{Idle,Shaking,Falling,Fallen}State state=State.Idle;
   Renderer[] renderers;Collider[] colliders;float fallVelocity;
   void OnEnable(){if(!All.Contains(this))All.Add(this);}
   void OnDisable(){All.Remove(this);}
   public static CrumblePlatform Attach(GameObject island){
    var cp=island.AddComponent<CrumblePlatform>();
-   cp.origin=island.transform.position;cp.originRot=island.transform.rotation;
+   cp.initialOrigin=island.transform.position;
+   cp.initialRot=island.transform.rotation;
    cp.renderers=island.GetComponentsInChildren<Renderer>();
    cp.colliders=island.GetComponentsInChildren<Collider>();
    return cp;
   }
 
   public void ResetPlatform(){
-   transform.position=origin;transform.rotation=originRot;
+   transform.position=initialOrigin;transform.rotation=initialRot;
+   var mi=GetComponent<MovingIsland>();
+   if(mi){mi.Origin=initialOrigin;mi.enabled=true;}
    SetVisible(true);state=State.Idle;fallVelocity=0;shakeTimer=0;
   }
 
@@ -608,8 +612,11 @@ namespace LostRealms {
    switch(state){
     case State.Idle:
      // Detect player landing on platform
-     bool onIt=g.Player.Grounded&&Physics.Raycast(g.Player.transform.position+Vector3.up*.2f,Vector3.down,out var hit,.65f,~0,QueryTriggerInteraction.Ignore)&&hit.transform.IsChildOf(transform);
+     bool onIt=IsPlayerOn(g.Player);
      if(onIt){
+      var mi=GetComponent<MovingIsland>();
+      if(mi)mi.enabled=false;
+      shakeOrigin=transform.position;
       state=State.Shaking;shakeTimer=0;
       g.TrapSound("trap_warning",transform.position,3f,13f,0.7f);
      }
@@ -617,9 +624,9 @@ namespace LostRealms {
     case State.Shaking:
      shakeTimer+=Time.deltaTime;
      float sx=Mathf.Sin(shakeTimer*50f)*.06f;float sz=Mathf.Cos(shakeTimer*45f)*.06f;
-     transform.position=origin+new Vector3(sx,0,sz);
+     transform.position=shakeOrigin+new Vector3(sx,0,sz);
      if(shakeTimer>=.75f){
-      state=State.Falling;fallVelocity=0;
+      state=State.Falling;fallVelocity=0;startFallY=transform.position.y;
       g.TrapSound("impact",transform.position,3.5f,15f,0.9f);
       KenneyPuff.Burst(transform.position+Vector3.up*.2f,new Color(.6f,.55f,.45f),12,1.2f);
      }
@@ -634,11 +641,11 @@ namespace LostRealms {
        if(Physics.Raycast(foe.transform.position+Vector3.up*.5f,Vector3.down,out var fhit,1.6f,~0,QueryTriggerInteraction.Ignore)&&fhit.transform.IsChildOf(transform)){
         foe.transform.position+=delta;
         foe.ShiftCenter(delta);
-        if(foe.transform.position.y<origin.y-12f)foe.Hit(999f,0,false,Vector3.down);
+        if(foe.transform.position.y<startFallY-12f)foe.Hit(999f,0,false,Vector3.down);
        }
       }
      }
-     if(transform.position.y<origin.y-18f){
+     if(transform.position.y<startFallY-18f){
       SetVisible(false);state=State.Fallen;
      }
      break;
@@ -651,6 +658,19 @@ namespace LostRealms {
   void SetVisible(bool v){
    if(renderers!=null)foreach(var r in renderers)if(r)r.enabled=v;
    if(colliders!=null)foreach(var c in colliders)if(c)c.enabled=v;
+  }
+  bool IsPlayerOn(Hero player){
+   if(!player||!player.Controller)return false;
+   Vector3 foot=player.transform.position;
+   var hits=Physics.SphereCastAll(foot+Vector3.up*.45f,.28f,Vector3.down,.9f,~0,QueryTriggerInteraction.Ignore);
+   for(int i=0;i<hits.Length;i++){
+    var h=hits[i];
+    if(h.collider==player.Controller||h.transform==player.transform||h.transform.IsChildOf(player.transform))continue;
+    if(h.transform==transform||h.transform.IsChildOf(transform)){
+     if(foot.y>=h.point.y-.35f&&foot.y<=h.point.y+.85f)return true;
+    }
+   }
+   return false;
   }
  }
 

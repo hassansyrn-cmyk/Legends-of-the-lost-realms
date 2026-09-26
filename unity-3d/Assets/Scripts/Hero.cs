@@ -11,6 +11,7 @@ namespace LostRealms {
   float parryUntil,parryReady,counterUntil,pullUntil,stepTimer;Vector3 pullPoint;bool dodgeRewarded,stepAlt;
   Vector3 platformDisplacement;float hyperArmorUntil,ledgeLostAt;
   public void CarryByPlatform(Vector3 delta){platformDisplacement+=delta;}
+  public float VerticalVelocity=>vertical;
   // Heavy weapons (greataxes/hammers) grant hyper-armor during the active
   // swing: damage still lands but the flinch and knockback are shrugged off.
   public bool HyperArmor=>RealmGame.I!=null&&RealmGame.I.Elapsed<hyperArmorUntil;
@@ -176,6 +177,7 @@ namespace LostRealms {
    float grav=Mathf.Abs(vertical)<2.5f?11f:23f;
    vertical-=grav*dt;
    vertical=Mathf.Max(vertical,-20f);
+   if(platformDisplacement.y>0f&&vertical<0f)vertical=0f;
    CollisionFlags contacts=Controller.Move((velocity+Vector3.up*vertical)*dt+platformDisplacement);
    if((contacts&CollisionFlags.Above)!=0&&vertical>0f)vertical=0f;
    platformDisplacement=Vector3.zero;
@@ -192,7 +194,15 @@ namespace LostRealms {
    }
    if(nowGrounded&&HorizontalSpeed>1.2f){
     stepTimer-=dt;
-     if(stepTimer<=0f){stepTimer=HorizontalSpeed>3.5f?.32f:.42f;stepAlt=!stepAlt;g.Sound(stepAlt?"step":"step2");}
+     if(stepTimer<=0f){
+      stepTimer=HorizontalSpeed>3.5f?.32f:.42f;stepAlt=!stepAlt;
+      bool wood=false;
+      if(Physics.Raycast(transform.position+Vector3.up*.25f,Vector3.down,out var gh,1.3f)){
+       string hn=gh.collider.name.ToLower();
+       wood=hn.Contains("bridge")||hn.Contains("wood")||hn.Contains("plank");
+      }
+      g.Sound(stepAlt?"step":"step2",wood?1.26f:1f);
+     }
    }else{stepTimer=.15f;}
    wasGrounded=nowGrounded;
    Energy=Mathf.Min(100,Energy+dt*(12f+4f*RealmGame.I.Save.aetherRank));
@@ -386,13 +396,26 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
   }
   void ParrySuccess(Vector3 source){
    var g=RealmGame.I;parryUntil=0;parryReady=g.Elapsed+.55f;
-   g.HitStop(.14f,.08f);g.CameraRig.Shake=.3f;g.Sound("impact");g.Haptic();
-   Energy=Mathf.Min(100,Energy+20+RealmGame.I.Save.tempoRank*5);counterUntil=g.Elapsed+1.6f;
-   HitSpark.Burst(transform.position+Vector3.up*.95f,-transform.forward,new Color(1f,.96f,.72f),28);
-   DamageTip.Show(transform.position+Vector3.up*1.95f,"PARRY!",new Color(1f,.94f,.6f));
-   var foe=NearestEnemy(source,3.2f);if(foe)foe.Stun(1.1f);
+   g.HitStop(.14f,.08f);g.CameraRig.Shake=.35f;g.Sound("impact");g.Haptic();
+   Energy=Mathf.Min(100,Energy+25+RealmGame.I.Save.tempoRank*5);counterUntil=g.Elapsed+1.8f;
+   HitSpark.Burst(transform.position+Vector3.up*.95f,-transform.forward,new Color(1f,.96f,.72f),32);
+   DamageTip.Show(transform.position+Vector3.up*1.95f,"PARRY DEFLECT!",new Color(1f,.94f,.6f));
+   var foe=NearestEnemy(source,5.5f);
+   if(!foe)foe=NearestEnemy(transform.position,5.5f);
+   if(foe){
+    Vector3 knockDir=foe.transform.position-transform.position;knockDir.y=0;
+    if(knockDir.sqrMagnitude<.01f)knockDir=transform.forward;else knockDir.Normalize();
+    foe.Stun(1.4f);
+    float knockDist=foe.Boss?0.8f:1.85f;
+    foe.PushBack(knockDir,knockDist,0.22f);
+    float riposteDmg=3.8f+g.CurrentWeapon.Damage*2.2f;
+    foe.Hit(riposteDmg,Power,false,knockDir,true);
+    DamageTip.Show(foe.transform.position+Vector3.up*(foe.Boss?2.5f:1.8f),"RIPOSTE!",new Color(1f,.92f,.2f));
+    Vfx.Play("ga_vfx_Nova_01",foe.transform.position+Vector3.up*1f,Quaternion.identity,foe.Boss?1.4f:.9f);
+    g.Sound("blade");
+   }
    Visual.Restart(ParryState());
-   Vfx.Play("ga_vfx_Shield_01",transform.position+Vector3.up*1f,Quaternion.identity,.9f);
+   Vfx.Play("ga_vfx_Shield_01",transform.position+Vector3.up*1f,Quaternion.identity,1.0f);
   }
   // A dodge that actually shrugs off a hit during its active i-frame window
   // rewards the player with energy and a counter opening.

@@ -76,7 +76,7 @@ namespace LostRealms {
  // 1. CRUSHER PILLAR — ancient ruin crusher. Hovers, telegraphs with a ring and
  // dust, slams down (damage + knockdown), then grinds back up. Chapters 4+.
  public sealed class CrusherPillar:MonoBehaviour {
-  Transform head;float timer;Vector3 rest;bool down;Color accent;
+  Transform head,colObj;float timer;Vector3 rest;bool down;Color accent;
   enum Phase{Hover,Warning,Slammed,Rising}Phase phase=Phase.Hover;
   public static CrusherPillar Place(Transform parent,Vector3 localPos,Color accent,Color stone){
    var go=new GameObject("Crusher pillar");go.transform.SetParent(parent,false);go.transform.localPosition=localPos;
@@ -89,11 +89,16 @@ namespace LostRealms {
     Art.Shape("Trim Band",PrimitiveType.Cylinder,new Vector3(0,3.1f-.8f,0),new Vector3(2.5f,.16f,2.5f),Color.Lerp(accent,Color.white,.2f),go.transform);
    }
    var c=go.AddComponent<CrusherPillar>();c.head=head;c.rest=head.localPosition;c.accent=accent;
-   // Physical head: blocks and crushes for real instead of passing through
-   // props and enemies. The collider rides the head transform and hugs the
-   // 2.3 m Tripo model (origin at its spiked base).
-   var box=head.gameObject.AddComponent<BoxCollider>();
-   box.size=new Vector3(2.3f,1.5f,2.3f);box.center=new Vector3(0,.75f,0);
+   // Physical head collider: must be parented to root 'go' (scale 1,1,1) rather than
+   // 'head' (whose FBX import scale is 100, which would blow the collider up to 240m!).
+   var col=new GameObject("CrusherCollider");
+   col.transform.SetParent(go.transform,false);
+   col.transform.localPosition=head.localPosition;
+   col.transform.localRotation=Quaternion.identity;
+   col.transform.localScale=Vector3.one;
+   var box=col.AddComponent<BoxCollider>();
+   box.size=new Vector3(2.3f,2.2f,2.3f);box.center=new Vector3(0,1.1f,0);
+   c.colObj=col.transform;
    TrapArt.Reserve(parent,localPos,2.2f);
    return c;
   }
@@ -103,22 +108,31 @@ namespace LostRealms {
    switch(phase){
     case Phase.Hover:
      head.localPosition=rest+Vector3.up*Mathf.Sin(timer*2.1f)*.14f;
-     if(timer>=2.3f){phase=Phase.Warning;timer=0;
-      g.TrapSound("trap_warning",transform.position,4f,16f,.8f);
-      CombatTelegraph.Create(transform.position,1.7f,.65f,g.World.transform);
+     if(colObj)colObj.localPosition=head.localPosition;
+     if(timer>=2.3f){
+      if(Vector3.Distance(transform.position,g.Player.transform.position)<=5.5f){
+       phase=Phase.Warning;timer=0;
+       g.TrapSound("trap_warning",transform.position,4f,16f,.8f);
+       CombatTelegraph.Create(transform.position,1.7f,.65f,g.World.transform);
+      }else{
+       timer=1.2f;
+      }
      }
      break;
     case Phase.Warning:
      head.localPosition=rest+new Vector3(Mathf.Sin(timer*60f)*.05f,0,Mathf.Cos(timer*53f)*.05f);
+     if(colObj)colObj.localPosition=head.localPosition;
      if(timer>=.65f){phase=Phase.Slammed;timer=0;down=true;
       head.localPosition=new Vector3(rest.x,0f,rest.z);
+      if(colObj)colObj.localPosition=head.localPosition;
       g.TrapSound("trap_crush",transform.position,5f,20f,1f);
       g.CameraRig.Shake=.32f;g.HitStop(.05f,.35f);
       KenneyPuff.Burst(transform.position+Vector3.up*.15f,new Color(.62f,.56f,.46f),14,1.3f);
       Vfx.Play("ga_vfx_Impact_01",transform.position+Vector3.up*.4f,Quaternion.identity,1.1f);
       Vector3 pd=g.Player.transform.position-transform.position;pd.y=0;
       if(pd.magnitude<1.55f&&g.Player.transform.position.y<transform.position.y+1.6f){
-       if(g.Player.Damage(1,transform.position))g.Player.Bounce(7.5f);
+       Vector3 knockDir=pd.sqrMagnitude>.01f?pd.normalized:-transform.forward;
+       if(g.Player.Damage(1,transform.position))g.Player.Bounce(6.0f,knockDir*4.5f);
       }
       if(g.Enemies!=null)foreach(var foe in g.Enemies){
        if(!foe||foe.Health<=0)continue;
@@ -128,10 +142,12 @@ namespace LostRealms {
      }
      break;
     case Phase.Slammed:
+     if(colObj)colObj.localPosition=head.localPosition;
      if(timer>=.9f){phase=Phase.Rising;timer=0;}
      break;
     case Phase.Rising:
      head.localPosition=Vector3.MoveTowards(head.localPosition,rest,Time.deltaTime*2.6f);
+     if(colObj)colObj.localPosition=head.localPosition;
      if(head.localPosition==rest){phase=Phase.Hover;timer=0;down=false;}
      break;
    }

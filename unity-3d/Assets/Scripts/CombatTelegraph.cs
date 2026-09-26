@@ -5,7 +5,10 @@ namespace LostRealms {
  // A shared annulus mesh replaces dozens of individual warning cubes.
  public sealed class CombatTelegraph:MonoBehaviour {
   static Mesh ringMesh;static Material material;
+  public static readonly System.Collections.Generic.List<CombatTelegraph> Active=new System.Collections.Generic.List<CombatTelegraph>();
   Transform sweep;MeshRenderer rimRenderer,sweepRenderer;MaterialPropertyBlock properties;
+  void OnEnable(){if(!Active.Contains(this))Active.Add(this);}
+  void OnDisable(){Active.Remove(this);}
   float duration,age,radius,holdUntil;Color color;
   public void HoldUntil(float gameTime){holdUntil=Mathf.Max(holdUntil,gameTime);}
   public float Progress=>Mathf.Clamp01(age/duration);

@@ -87,16 +87,17 @@ namespace LostRealms {
   }
   void Update(){
    var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
+   if(Vector3.Distance(transform.position,g.Player.transform.position)>6.5f)return;
    timer+=Time.deltaTime;
    if(timer<2.6f){
     if(bowl)bowl.material.SetColor("_EmissionColor",accent*(.25f+Mathf.Sin(Time.time*6f)*.12f));
     return;
    }
    timer=0;
-   // Lob an arcing fireball at Aster (impact ring shows where it lands).
+   // Lob an arcing fireball at Aster (impact ring shows where it lands only when nearby).
    Vector3 mouth=transform.position+Vector3.up*1.1f;
    Vector3 target=g.Player.transform.position+Vector3.up*.4f;
-   CombatTelegraph.Create(target,1.1f,.9f,g.World.transform);
+   if(Vector3.Distance(transform.position,g.Player.transform.position)<=3.5f) CombatTelegraph.Create(target,1.1f,.9f,g.World.transform);
    float T=.9f,g0=4f;
    Vector3 vel=(target-mouth)/T+Vector3.up*(.5f*g0*T);
    TrapBolt.Fire(mouth,vel,1,0,new Color(1f,.5f,.15f),"ga_vfx_Explosion_02",1.1f,2.5f);
@@ -125,6 +126,7 @@ namespace LostRealms {
   }
   void Update(){
    var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
+   if(Vector3.Distance(transform.position,g.Player.transform.position)>6.5f)return;
    timer+=Time.deltaTime;
    if(timer<2.4f){
     if(runes!=null)foreach(var r in runes)if(r)r.material.SetColor("_EmissionColor",new Color(.3f,.6f,.9f)*(.2f+Mathf.Sin(Time.time*4f)*.1f));
@@ -160,19 +162,18 @@ namespace LostRealms {
   }
   void Update(){
    var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
+   if(Vector3.Distance(transform.position,g.Player.transform.position)>6.5f)return;
    timer+=Time.deltaTime;
-   // Aim the whole statue (translation-only islands: rotating in world space
-   // rides along fine â€” the statue never leaves its island-local spot).
    Vector3 to=g.Player.transform.position+Vector3.up*1.1f-transform.position;to.y=0;
    if(to.sqrMagnitude>.01f)transform.rotation=Quaternion.Slerp(transform.rotation,Quaternion.LookRotation(to.normalized,Vector3.up),Time.deltaTime*2.2f);
    if(timer<2.4f)return;
    timer=0;
-   // Spit a green poison bolt from the mouth.
+   // Spit a green poison bolt from the mouth with telegraph only when player is nearby.
    Vector3 mouth=transform.position+transform.forward*.55f+Vector3.up*1.7f;
    Vector3 aim=(g.Player.transform.position+Vector3.up*.85f-mouth).normalized;
    TrapBolt.Fire(mouth+aim*.3f,aim*12f,1,-1,poison,"ga_vfx_Heal_01",1f,2.4f);
    g.TrapSound("trap_poison",transform.position,4f,16f,.9f);
-   CombatTelegraph.Create(g.Player.transform.position,1f,.5f,g.World.transform);
+   if(Vector3.Distance(g.Player.transform.position,transform.position)<=3.5f) CombatTelegraph.Create(g.Player.transform.position,1f,.5f,g.World.transform);
   }
  }
 
