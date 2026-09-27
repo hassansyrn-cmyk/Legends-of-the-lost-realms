@@ -166,6 +166,11 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     float width=last&&IsBoss?19:last?11:arch==IslandArchetype.Arena?13.5f:arch==IslandArchetype.NarrowBridge?4.2f:arch==IslandArchetype.TieredPlatform?10.5f:arch==IslandArchetype.MovingFerry?6f:arch==IslandArchetype.SteppingStones?7.5f:9;
     float length=last?15:arch==IslandArchetype.Arena?13f:arch==IslandArchetype.NarrowBridge?14f:arch==IslandArchetype.TieredPlatform?10f:arch==IslandArchetype.MovingFerry?6f:arch==IslandArchetype.SteppingStones?8f:8.3f;
     var islandObj=Island(p,width,length,i,arch,last&&IsBoss);if(i==0)Spawn=p+Vector3.up*.05f;
+     if(i==1&&islandObj){
+      var tk=realm==1?DartTurret.TurretKind.Lion:(realm==2?DartTurret.TurretKind.Dragon:(realm==3?(stage%2==0?DartTurret.TurretKind.Dragon:DartTurret.TurretKind.Lion):DartTurret.TurretKind.Stone));
+      Vector3 spot=NudgeSpot(islandObj.transform,new Vector3(-width*.34f,.05f,length*.25f),1.4f,width,length);
+      DartTurret.Place(islandObj.transform,spot,accent,stone,tk);
+     }
     // Ferry variety: later chapters mix up ferry motion styles and speed.
     if(arch==IslandArchetype.MovingFerry&&islandObj){
      var motion=islandObj.GetComponent<MovingIsland>();
@@ -242,18 +247,13 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
      // Difficulty ramp: chapter 1 stays trap-free; from chapter 2 the cadence
      // tightens (every 4th island â†’ every 2nd) and big islands take a second
      // trap from chapter 6 on.
-      // Guaranteed Island 1 signature sentry: prominently showcases the realm's 3D turret
-      if(i==1&&islandObj){
-       var tk=realm==1?DartTurret.TurretKind.Lion:(realm==2?DartTurret.TurretKind.Dragon:(realm==3?(stage%2==0?DartTurret.TurretKind.Dragon:DartTurret.TurretKind.Lion):DartTurret.TurretKind.Stone));
-       Vector3 spot=NudgeSpot(islandObj.transform,new Vector3(-width*.34f,.05f,length*.25f),1.4f,width,length);
-       DartTurret.Place(islandObj.transform,spot,accent,stone,tk);
-      }
       int cadence=stage>=8?2:stage>=3?3:4;
       bool isTraversable=arch!=IslandArchetype.NarrowBridge&&arch!=IslandArchetype.SteppingStones&&arch!=IslandArchetype.MovingFerry;
-      if((arch==IslandArchetype.Arena||(stage>=2&&i%cadence==0)||(stage==1&&i==6))&&isTraversable&&i>1){
+      if(stage>=2&&i%cadence==0&&isTraversable){
        int traps=stage>=6&&(arch==IslandArchetype.Arena||width>=10.5f)?2:1;
-       // Two slots never roll the same trap type â€” no triple-brazier ring storms.
+       // Two slots never roll the same trap type — no triple-brazier ring storms.
        var usedTypes=new List<string>();
+       if(arch==IslandArchetype.Arena)usedTypes.Add(stage>=3&&i%2==1?"blade":"spike");
        bool hasRing=stage>=2&&!last&&(i==5||i==9||(stage>=10&&i==12));
        for(int t=0;t<traps;t++)PlaceTrap(islandObj?islandObj.transform:transform,width,length,usedTypes,hasRing,arch);
        // Ring takeoff reserved after trap lanes are set: rings fly above, so
