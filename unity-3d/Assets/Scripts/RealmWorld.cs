@@ -243,7 +243,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
      // tightens (every 4th island â†’ every 2nd) and big islands take a second
      // trap from chapter 6 on.
       int cadence=stage>=8?2:stage>=3?3:4;
-       if(stage>=2&&i%cadence==0&&arch!=IslandArchetype.NarrowBridge&&arch!=IslandArchetype.SteppingStones&&arch!=IslandArchetype.MovingFerry){
+       if((stage>=2&&i%cadence==0||(stage==1&&i==6))&&arch!=IslandArchetype.NarrowBridge&&arch!=IslandArchetype.SteppingStones&&arch!=IslandArchetype.MovingFerry){
        int traps=stage>=6&&(arch==IslandArchetype.Arena||width>=10.5f)?2:1;
        // Two slots never roll the same trap type â€” no triple-brazier ring storms.
        var usedTypes=new List<string>();
@@ -322,11 +322,13 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
   // (wind 3+, crusher 4+, turret 5+, boulder 6+), with realm flavour â€” geysers
   // dominate Emberfall, saws the Dunes, spikes the Frozen Peaks.
    void PlaceTrap(Transform island,float width,float length,List<string> usedTypes,bool hasSpeedRing=false,IslandArchetype arch=IslandArchetype.Standard){
-    var pool=new List<string>{"spike","saw"};
+    var pool=new List<string>{"turret","spike","saw"};
+    pool.Add("turret");
+    if(realm==1)pool.Add("turret");
+    if(realm==2)pool.Add("turret");
     if(realm==3)pool.Insert(0,"geyser");else if(level>=5)pool.Add("geyser");
     if(realm==1)pool.Add("saw");
     if(level>=4)pool.Add("crusher");
-    if(level>=5)pool.Add("turret");
     if(level>=6)pool.Add("boulder");
     // Tripo-model traps (Round 10): realm-weighted elemental hazards.
      if(level>=7)pool.Add("brazier");

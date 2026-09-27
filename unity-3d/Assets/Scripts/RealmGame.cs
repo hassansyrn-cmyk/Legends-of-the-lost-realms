@@ -73,6 +73,19 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    JumpPressed=DashPressed=AttackPressed=AttackReleased=CastPressed=ParryPressed=SpellPressed=SpellReleased=GrapplePressed=false; MoveInput=Vector2.zero; yawInput=0;
    if(hitStopUntil>0f&&Time.unscaledTime>=hitStopUntil){hitStopUntil=0f;Time.timeScale=1f;}
    if(!I||!Player)return;
+   if(Application.isEditor){
+    if(Input.GetKeyDown(KeyCode.Alpha1))LoadLevel(1);
+    else if(Input.GetKeyDown(KeyCode.Alpha2))LoadLevel(2);
+    else if(Input.GetKeyDown(KeyCode.Alpha5))LoadLevel(5);
+    else if(Input.GetKeyDown(KeyCode.Alpha8))LoadLevel(8);
+    else if(Input.GetKeyDown(KeyCode.Alpha0)||Input.GetKeyDown(KeyCode.Minus))LoadLevel(12);
+    else if(Input.GetKeyDown(KeyCode.T)&&Player!=null){
+     Vector3 tpos=Player.transform.position+Player.transform.forward*3.5f;
+     var tk=Realm==1?DartTurret.TurretKind.Lion:(Realm==2?DartTurret.TurretKind.Dragon:DartTurret.TurretKind.Stone);
+     DartTurret.Place(World?World.transform:transform,tpos,Accent,Color.gray,tk);
+     Tell("Spawned "+tk+" Turret ahead!",3);
+    }
+   }
    if(Input.GetKeyDown(KeyCode.Escape)){if(showArsenal)showArsenal=false;else if(Screen==GameScreen.Playing)Pause();else if(Screen==GameScreen.Paused)Resume();else Screen=GameScreen.Menu;}
     if(Screen==GameScreen.Menu||Screen==GameScreen.Map)SetMusic("verdant_theme");
     else if(Screen==GameScreen.Settings)SetMusic("frozen_exploration_theme");
@@ -587,7 +600,7 @@ Panel(390,105,500,68);
     bool prevEnabled=GUI.enabled;
     for(int i=0;i<15;i++){
      float x=80+(i%5)*228,y=150+(i/5)*150;
-     bool unlocked=i+1<=Save.unlocked;
+     bool unlocked=Application.isEditor||i+1<=Save.unlocked;
      bool completed=unlocked&&Save.stars[i]>=3;
      bool selected=unlocked&&i+1==Save.unlocked&&!completed;
 
