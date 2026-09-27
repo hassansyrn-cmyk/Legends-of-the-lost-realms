@@ -24,6 +24,7 @@ public static readonly string[] Realms={"VERDANT KINGDOM","BURNING DUNES","FROZE
   public RealmAudio Audio {get;private set;} public RealmTrials Trial {get;private set;}
    Transform worldRoot; GUIStyle title,titleC,label,small,button,center,big,smallC,tinyC,btnText; Texture2D pixel,circleFill,circleRing,btnBlade,btnJump,btnDodge,btnPower,btnParry,btnSpell,btnPause,joyBase,joyKnob; Texture2D bgMainMenu,avatarAster,btnPrimaryNorm,btnPrimaryHigh,btnStdNorm,btnStdHigh,btnSecNorm,btnSecHigh,panelLarge,panelMedium,cardUnlocked,cardSelected,cardLocked,cardCompleted,headerOrnament,dividerLine,barFrame,barFill,resourceCapsule,iconArsenal,iconAtlas,iconBack,iconClose,iconCoin,iconGem,iconLock,iconMainMenu,iconNewJourney,iconContinue,iconResume,iconRestart,iconSanctuary,iconStar; readonly TouchRouter touch=new TouchRouter(); float yawInput,hitStopUntil,bossIntroUntil,heartbeatNext;bool showArsenal;int arsenalPage;GameScreen arsenalReturn=GameScreen.Settings;readonly System.Collections.Generic.Dictionary<string,Texture2D> iconCache=new System.Collections.Generic.Dictionary<string,Texture2D>();
   public static readonly Color[] ElementColors={new Color(1f,.45f,.1f),new Color(.2f,.85f,1f),new Color(.2f,1f,.55f)};
+  static int debugTurretCycle;
   [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Boot(){
    var existing=FindObjectsByType<RealmGame>(FindObjectsSortMode.None);
    if(existing.Length==0){new GameObject("Lost Realms 3D").AddComponent<RealmGame>();return;}
@@ -81,9 +82,9 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     else if(Input.GetKeyDown(KeyCode.Alpha0)||Input.GetKeyDown(KeyCode.Minus))LoadLevel(12);
     else if(Input.GetKeyDown(KeyCode.T)&&Player!=null){
      Vector3 tpos=Player.transform.position+Player.transform.forward*3.5f;
-     var tk=Realm==1?DartTurret.TurretKind.Lion:(Realm==2?DartTurret.TurretKind.Dragon:DartTurret.TurretKind.Stone);
+     var tk=(DartTurret.TurretKind)(debugTurretCycle++%3);
      DartTurret.Place(World?World.transform:transform,tpos,Accent,Color.gray,tk);
-     Tell("Spawned "+tk+" Turret ahead!",3);
+     Tell("Spawned "+tk+" Turret ahead! [T cycles: Stone -> Dragon -> Lion]",3);
     }
    }
    if(Input.GetKeyDown(KeyCode.Escape)){if(showArsenal)showArsenal=false;else if(Screen==GameScreen.Playing)Pause();else if(Screen==GameScreen.Paused)Resume();else Screen=GameScreen.Menu;}

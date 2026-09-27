@@ -204,13 +204,14 @@ namespace LostRealms {
     col.radius=.65f;col.height=2.2f;col.center=new Vector3(0,1.1f,0);
     TrapArt.Reserve(parent,localPos,1.3f);
    }
+   Debug.Log($"[DartTurret] Spawned {kind} Turret on {parent.name} at world pos {go.transform.position.ToString("F1")}");
    return t;
   }
 
   void Update(){
    var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
    float dist=Vector3.Distance(transform.position,g.Player.transform.position);
-   if(dist>18f)return;
+   if(dist>18f||(g.World&&Vector3.Distance(g.Player.transform.position,g.World.Spawn)<=3.2f))return;
 
    timer+=Time.deltaTime;
 

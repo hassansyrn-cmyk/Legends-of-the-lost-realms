@@ -242,8 +242,15 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
      // Difficulty ramp: chapter 1 stays trap-free; from chapter 2 the cadence
      // tightens (every 4th island â†’ every 2nd) and big islands take a second
      // trap from chapter 6 on.
+      // Guaranteed Island 1 signature sentry: prominently showcases the realm's 3D turret
+      if(i==1&&islandObj){
+       var tk=realm==1?DartTurret.TurretKind.Lion:(realm==2?DartTurret.TurretKind.Dragon:(realm==3?(stage%2==0?DartTurret.TurretKind.Dragon:DartTurret.TurretKind.Lion):DartTurret.TurretKind.Stone));
+       Vector3 spot=NudgeSpot(islandObj.transform,new Vector3(-width*.34f,.05f,length*.25f),1.4f,width,length);
+       DartTurret.Place(islandObj.transform,spot,accent,stone,tk);
+      }
       int cadence=stage>=8?2:stage>=3?3:4;
-       if((stage>=2&&i%cadence==0||(stage==1&&i==6))&&arch!=IslandArchetype.NarrowBridge&&arch!=IslandArchetype.SteppingStones&&arch!=IslandArchetype.MovingFerry){
+      bool isTraversable=arch!=IslandArchetype.NarrowBridge&&arch!=IslandArchetype.SteppingStones&&arch!=IslandArchetype.MovingFerry;
+      if((arch==IslandArchetype.Arena||(stage>=2&&i%cadence==0)||(stage==1&&i==6))&&isTraversable&&i>1){
        int traps=stage>=6&&(arch==IslandArchetype.Arena||width>=10.5f)?2:1;
        // Two slots never roll the same trap type â€” no triple-brazier ring storms.
        var usedTypes=new List<string>();
@@ -261,6 +268,10 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
       CrusherPillar.Place(islandObj.transform,new Vector3(5.5f,.05f,-3.5f),accent,stone);
       if(stage>=12){
        DartTurret.Place(islandObj.transform,new Vector3(-8f,.05f,4f),accent,stone,DartTurret.TurretKind.Lion);
+       DartTurret.Place(islandObj.transform,new Vector3(8f,.05f,4f),accent,stone,DartTurret.TurretKind.Dragon);
+      }else if(stage==7){
+       DartTurret.Place(islandObj.transform,new Vector3(-8f,.05f,4f),accent,stone,DartTurret.TurretKind.Lion);
+      }else if(stage==10){
        DartTurret.Place(islandObj.transform,new Vector3(8f,.05f,4f),accent,stone,DartTurret.TurretKind.Dragon);
       }
      }
