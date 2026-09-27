@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 namespace LostRealms {
  public static class Art {
@@ -572,12 +572,6 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
            mmat.mainTexture=mTex;mmat.SetFloat("_Glossiness",.25f);
            foreach(var r in mp.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=mmat;
           }
-          foreach(var mf in mp.GetComponentsInChildren<MeshFilter>()){
-           if(mf&&mf.sharedMesh&&mf.sharedMesh.vertexCount>0&&!mf.GetComponent<Collider>()){
-            var mc=mf.gameObject.AddComponent<MeshCollider>();
-            mc.sharedMesh=mf.sharedMesh;
-           }
-          }
          }else{
           Art.Shape("CrumbleSlab",PrimitiveType.Cube,new Vector3(0,-.3f,0),new Vector3(4f,.6f,4f),stone,crumbleRoot.transform,true);
          }
@@ -597,6 +591,10 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
         stepRoot.transform.SetParent(root.transform,false);
         stepRoot.transform.position=stoneWorldPos;
 
+        var solidBase=stepRoot.AddComponent<BoxCollider>();
+        solidBase.size=new Vector3(3.8f,.6f,3.8f);
+        solidBase.center=new Vector3(0,-.28f,0);
+
         var sp=Art.Shape("StepPillar",PrimitiveType.Cylinder,new Vector3(0,-.6f,0),new Vector3(3.4f,1.2f,3.4f),stone,stepRoot.transform,false);
         var ss=Art.Shape("StepSurface",PrimitiveType.Cylinder,new Vector3(0,.02f,0),new Vector3(3.5f,.12f,3.5f),top,stepRoot.transform,false);
         if(stepPrefab){
@@ -607,16 +605,6 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
          stepObj.transform.localPosition=new Vector3(0,.02f,0);
          stepObj.transform.localScale=Vector3.one;
          if(stepMat)foreach(var r in stepObj.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=stepMat;
-         foreach(var mf in stepObj.GetComponentsInChildren<MeshFilter>()){
-          if(mf&&mf.sharedMesh&&mf.sharedMesh.vertexCount>0&&!mf.GetComponent<Collider>()){
-           var mc=mf.gameObject.AddComponent<MeshCollider>();
-           mc.sharedMesh=mf.sharedMesh;
-          }
-         }
-        }else{
-         var solidBase=stepRoot.AddComponent<BoxCollider>();
-         solidBase.size=new Vector3(3.4f,.4f,3.4f);
-         solidBase.center=new Vector3(0,-.2f,0);
         }
         var motion2=stepRoot.AddComponent<MovingIsland>();
         motion2.Origin=stoneWorldPos;
@@ -1080,7 +1068,16 @@ public class RealmPickup:MonoBehaviour {
  [DefaultExecutionOrder(-10)] public class MovingIsland:MonoBehaviour {
   public Vector3 Origin,Offset;public IslandMotionStyle Style=IslandMotionStyle.PingPongDwell;
   public float Speed=0.72f,DwellTime=2.0f,TravelTime=2.8f,PhaseOffset;
-  float cycleTimer;bool initialized;
+  float cycleTimer;bool initialized;Rigidbody rb;
+  void Awake(){
+   rb=GetComponent<Rigidbody>();
+   if(!rb){
+    rb=gameObject.AddComponent<Rigidbody>();
+    rb.isKinematic=true;
+    rb.useGravity=false;
+    rb.interpolation=RigidbodyInterpolation.Interpolate;
+   }
+  }
   void Start(){
    if(!initialized){
     initialized=true;
@@ -1135,6 +1132,7 @@ public class RealmPickup:MonoBehaviour {
     candidate=Origin+new Vector3(s*Offset.x,0,0);
    }
 
+   if(rb)rb.MovePosition(candidate);
    transform.position=candidate;
    Physics.SyncTransforms();
    Vector3 delta=transform.position-prior;
@@ -1160,7 +1158,7 @@ public class RealmPickup:MonoBehaviour {
    if(!player||!player.Controller)return false;
    if(!player.Grounded&&player.VerticalVelocity>1.2f)return false;
    Vector3 foot=player.transform.position;
-   var hits=Physics.SphereCastAll(foot+Vector3.up*.45f,.28f,Vector3.down,.9f,~0,QueryTriggerInteraction.Ignore);
+   var hits=Physics.RaycastAll(foot+Vector3.up*.6f,Vector3.down,1.2f,~0,QueryTriggerInteraction.Ignore);
    for(int i=0;i<hits.Length;i++){
     var h=hits[i];
     if(h.collider==player.Controller||h.transform==player.transform||h.transform.IsChildOf(player.transform))continue;
@@ -1168,6 +1166,8 @@ public class RealmPickup:MonoBehaviour {
      if(foot.y>=h.point.y-.35f&&foot.y<=h.point.y+.85f)return true;
     }
    }
+   Vector3 lf=transform.InverseTransformPoint(foot);
+   if(Mathf.Abs(lf.x)<=2.0f&&Mathf.Abs(lf.z)<=2.0f&&lf.y>=-0.45f&&lf.y<=0.85f)return true;
    return false;
   }
  }

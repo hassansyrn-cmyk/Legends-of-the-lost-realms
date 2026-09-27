@@ -662,7 +662,7 @@ namespace LostRealms {
   bool IsPlayerOn(Hero player){
    if(!player||!player.Controller)return false;
    Vector3 foot=player.transform.position;
-   var hits=Physics.SphereCastAll(foot+Vector3.up*.45f,.28f,Vector3.down,.9f,~0,QueryTriggerInteraction.Ignore);
+   var hits=Physics.RaycastAll(foot+Vector3.up*.6f,Vector3.down,1.2f,~0,QueryTriggerInteraction.Ignore);
    for(int i=0;i<hits.Length;i++){
     var h=hits[i];
     if(h.collider==player.Controller||h.transform==player.transform||h.transform.IsChildOf(player.transform))continue;
@@ -670,6 +670,8 @@ namespace LostRealms {
      if(foot.y>=h.point.y-.35f&&foot.y<=h.point.y+.85f)return true;
     }
    }
+   Vector3 lf=transform.InverseTransformPoint(foot);
+   if(Mathf.Abs(lf.x)<=2.3f&&Mathf.Abs(lf.z)<=2.3f&&lf.y>=-0.45f&&lf.y<=0.85f)return true;
    return false;
   }
  }
