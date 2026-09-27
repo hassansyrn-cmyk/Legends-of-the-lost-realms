@@ -278,6 +278,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
      if(IsBoss)SpawnEnemy(p+new Vector3(0,.05f,-1),world==3?21:world+8,true,p,width,length);}
    }
     RealmScenery.Upgrade(this,realm);
+    ChapterLayout.PlaceTurretsOnDeck(transform);
     RealmProps.SpawnGuard=Spawn;
     RealmProps.Scatter(transform,realm,random);
     // Spawn plaza: after all dressing, guarantee the first metres of the

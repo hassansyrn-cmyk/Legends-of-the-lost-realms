@@ -4,6 +4,37 @@ namespace LostRealms {
  // One final pass for every decoration path, including props on secret islands.
  public static class ChapterLayout {
   public static bool IsTrap(Transform t)=>t.GetComponent<SpikeTrap>()||t.GetComponent<SawTrap>()||t.GetComponent<FloorBladeTrap>()||t.GetComponent<PendulumTrap>()||t.GetComponent<FireGeyser>()||t.GetComponent<CrusherPillar>()||t.GetComponent<DartTurret>()||t.GetComponent<RollingBoulder>()||t.GetComponent<FlameBrazier>()||t.GetComponent<FrostTotem>()||t.GetComponent<SerpentStatue>();
+  // Authored flank coordinates can land on the sloped rim of an imported
+  // island. Find real deck support before props consume the remaining space.
+  public static void PlaceTurretsOnDeck(Transform world){
+   Physics.SyncTransforms();
+   foreach(var turret in world.GetComponentsInChildren<DartTurret>()){
+    var t=turret.transform;var island=t.parent;
+    if(!island||island.name!="Island")continue;
+    var size=new Vector3(2f,.1f,2f);
+    if(Supported(island,t,new Bounds(t.position,size),out _))continue;
+    Vector3 original=t.localPosition;
+    int slot=TrapArt.Reserved.FindIndex(s=>s.island==island&&Vector3.Distance(s.local,original)<.1f);
+    float radius=slot>=0?TrapArt.Reserved[slot].radius:1.6f;
+    var own=slot>=0?TrapArt.Reserved[slot]:default;
+    if(slot>=0)TrapArt.Reserved.RemoveAt(slot);
+    bool placed=false;
+    // Search nearest first, leaving the central traversal lane open.
+    for(int ring=1;ring<=16&&!placed;ring++){
+     for(int x=-ring;x<=ring&&!placed;x++)for(int z=-ring;z<=ring&&!placed;z++){
+      if(Mathf.Max(Mathf.Abs(x),Mathf.Abs(z))!=ring)continue;
+      var candidate=original+new Vector3(x*.5f,0,z*.5f);
+      if(Mathf.Abs(candidate.x)<1.6f||!TrapArt.IsClear(island,candidate,radius))continue;
+      var p=island.TransformPoint(candidate);
+      if(!Supported(island,t,new Bounds(p,size),out float y))continue;
+      t.position=new Vector3(p.x,y+.05f,p.z);
+      TrapArt.Reserve(island,t.localPosition,radius);placed=true;
+     }
+    }
+    if(!placed&&slot>=0)TrapArt.Reserved.Add(own);
+   }
+   Physics.SyncTransforms();
+  }
   public static void GroundTraps(Transform world){
    Physics.SyncTransforms();
    foreach(var t in world.GetComponentsInChildren<Transform>()){
