@@ -2,18 +2,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace LostRealms {
- public enum TrialKind { Hunt, Echoes, Elements }
+ public enum TrialKind { Hunt, Echoes, Elements, Resolve }
  // Optional, local-to-this-run objectives. Rewards use the normal chapter bank.
  public sealed class RealmTrials:MonoBehaviour {
   public TrialKind Kind {get;private set;}
   public bool Active {get;private set;}
   public bool Completed {get;private set;}
   public int Count {get;private set;}
-  public int Goal=>Kind==TrialKind.Echoes?3:4;
+  public int Goal=>Kind==TrialKind.Echoes||Kind==TrialKind.Resolve?3:4;
   public int GoldReward=>25+level*2;
   public Vector3 ShrinePosition=>shrine.position;
-  public string Title=>Kind==TrialKind.Hunt?"TRIAL OF COURAGE":Kind==TrialKind.Echoes?"ECHOES OF THE REALM":"ELEMENTAL ATTUNEMENT";
-  public string Objective=>Kind==TrialKind.Hunt?"Defeat 4 enemies":Kind==TrialKind.Echoes?"Recover 3 luminous echoes":"Land 4 weakness hits (match the enemy pip)";
+  public string Title=>Kind==TrialKind.Hunt?"TRIAL OF COURAGE":Kind==TrialKind.Echoes?"ECHOES OF THE REALM":Kind==TrialKind.Resolve?"TRIAL OF RESOLVE":"ELEMENTAL ATTUNEMENT";
+  public string Objective=>Kind==TrialKind.Hunt?"Defeat 4 enemies":Kind==TrialKind.Echoes?"Recover 3 luminous echoes":Kind==TrialKind.Resolve?"Deflect or perfectly dodge 3 incoming attacks":"Land 4 weakness hits (match the enemy pip)";
   public string Status=>Completed?"RESTORED  /  +"+GoldReward+" GOLD  +2 GEMS":Active?Objective+"  "+Count+"/"+Goal:"Stand within the shrine ring to begin";
   int level;float dwell;Transform shrine,core;MeshRenderer border;
   readonly List<TrialEcho> echoes=new List<TrialEcho>();
@@ -21,6 +21,7 @@ namespace LostRealms {
   public static RealmTrials Build(RealmWorld world,int stage){
    if(world.IsBoss)return null;
    var trial=world.gameObject.AddComponent<RealmTrials>();trial.level=stage;trial.Kind=(TrialKind)((stage-1)%3);
+   if(stage==6||stage==12)trial.Kind=TrialKind.Resolve;
    var root=new GameObject("Optional trial shrine");root.transform.SetParent(world.transform,false);root.transform.position=(world.Route.Count>1?world.Route[1]:world.Route.Count>0?world.Route[0]:Vector3.zero)+new Vector3(-2.65f,.14f,0);trial.shrine=root.transform;
    Color stone=new Color(.19f,.24f,.27f);Color accent=Color.Lerp(GameColor(),Color.white,.35f);
    Art.Shape("Trial plinth",PrimitiveType.Cylinder,Vector3.down*.04f,new Vector3(.95f,.12f,.95f),stone,root.transform);
@@ -60,9 +61,10 @@ namespace LostRealms {
   public void EnemyDefeated(){if(Kind==TrialKind.Hunt)Advance();}
   public void WeaknessHit(){if(Kind==TrialKind.Elements)Advance();}
   public void CollectEcho(){if(Kind==TrialKind.Echoes)Advance();}
+  public void PerfectDefense(){if(Kind==TrialKind.Resolve)Advance();}
   void Advance(){
    if(!Active||Completed)return;
-   Count=Mathf.Min(Goal,Count+1);if(Count<Goal)return;
+   Count=Mathf.Min(Goal,Count+1);if(Count<Goal){Game.Tell(Title+"  /  "+Count+"/"+Goal+" — "+Objective,2.5f);return;}
    Completed=true;Active=false;Game.Coins+=GoldReward;Game.Gems+=2;
    Game.Sound("upgrade");Game.Tell(Title+" RESTORED  /  +"+GoldReward+" gold +2 gems. Finish the chapter to bank them.",5f);
    DamageTip.Show(Game.Player.transform.position+Vector3.up*2f,"TRIAL COMPLETE",new Color(1f,.85f,.4f));

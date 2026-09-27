@@ -91,6 +91,7 @@ namespace LostRealms {
     RaycastHit gHit;
     bool grounded=Physics.Raycast(transform.position+Vector3.up*.8f,Vector3.down,out gHit,2.6f,~0,QueryTriggerInteraction.Ignore);
     if(grounded&&state!=State.Dead){
+     var landedBody=GetComponent<Collider>();if(landedBody)landedBody.enabled=true;
      fallSpeed=0f;falling=false;baseY=gHit.point.y;
      Vector3 cp=transform.position;
      if(Mathf.Abs(cp.y-baseY)>0.02f){cp.y=Mathf.MoveTowards(cp.y,baseY,14f*dt);transform.position=cp;}
@@ -106,7 +107,8 @@ namespace LostRealms {
       ReleaseToken();
       if(warning)Destroy(warning);
       if(state!=State.Dead){
-       state=State.Dead;Visual.Restart("death");
+       Health=0;state=State.Dead;comboLeft=0;ClearGlow();Visual.Restart("death");
+       if(game.Trial)game.Trial.EnemyDefeated();
        AshPuff.Burst(transform.position+Vector3.up*.5f,new Color(.36f,.3f,.27f),14,1f,false);
        game.Coins+=Boss?20:3;game.Kills++;game.Sound("enemy_defeat");
       }
@@ -115,7 +117,7 @@ namespace LostRealms {
      }
     }
    }
-   if(state==State.Dead)return;
+   if(state==State.Dead||falling)return;
    if(RealmGame.I.Elapsed<burnUntil&&RealmGame.I.Elapsed>=burnTick){burnTick=RealmGame.I.Elapsed+.7f;ApplyDamage(.5f);if(Health<=0)return;}
    if(RealmGame.I.Elapsed<freezeUntil){Visual.Play("idle");return;}
    if(bodyMat!=null&&RealmGame.I.Elapsed>=flashUntil)bodyMat.SetColor("_EmissionColor",Color.black);
@@ -324,7 +326,7 @@ namespace LostRealms {
     if(!IsLavaBoss)Destroy(gameObject,2.5f);
    }
   }
-  void OnDestroy(){if(RealmGame.I)RealmGame.I.Enemies.Remove(this);}
+  void OnDestroy(){ReleaseToken();if(RealmGame.I)RealmGame.I.Enemies.Remove(this);}
  }
   public class EnemyBolt:MonoBehaviour {
    Vector3 direction;float speed,life=5;int damage;Transform core,flare;Color tint;

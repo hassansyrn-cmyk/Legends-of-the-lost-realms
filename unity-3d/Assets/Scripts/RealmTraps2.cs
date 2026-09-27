@@ -113,7 +113,7 @@ namespace LostRealms {
       if(Vector3.Distance(transform.position,g.Player.transform.position)<=5.5f){
        phase=Phase.Warning;timer=0;
        g.TrapSound("trap_warning",transform.position,4f,16f,.8f);
-       CombatTelegraph.Create(transform.position,1.7f,.65f,g.World.transform);
+       CombatTelegraph.Create(transform.position,1.7f,.65f,transform);
       }else{
        timer=1.2f;
       }
@@ -162,13 +162,22 @@ namespace LostRealms {
    var go=new GameObject("Dart turret");go.transform.SetParent(parent,false);go.transform.localPosition=localPos;
    var model=TrapArt.Load("Trap_Turret",go.transform,accent,stone);
    Transform aim;Renderer mouth=null;
+   var headPivot=new GameObject("HeadPivot");
+   headPivot.transform.SetParent(go.transform,false);
+   headPivot.transform.localPosition=new Vector3(0,1.6f,0);
+   headPivot.transform.localRotation=Quaternion.identity;
+   aim=headPivot.transform;
    if(model){
-    aim=model.transform.Find("Stone Face");if(!aim)aim=model.transform;
-    foreach(var r in model.GetComponentsInChildren<Renderer>(true))if(r.gameObject.name.StartsWith("Mouth"))mouth=r;
+    var face=model.transform.Find("Stone Face");
+    var mth=model.transform.Find("Mouth");
+    var brow=model.transform.Find("Trim Brow");
+    if(face)face.SetParent(headPivot.transform,true);
+    if(mth){mth.SetParent(headPivot.transform,true);mouth=mth.GetComponent<Renderer>();}
+    if(brow)brow.SetParent(headPivot.transform,true);
    }else{
     Art.Shape("Stone Base",PrimitiveType.Cube,new Vector3(0,.3f,0),new Vector3(1.5f,.6f,1.5f),stone,go.transform);
-    aim=Art.Shape("Stone Face",PrimitiveType.Cube,new Vector3(0,1.6f,0),new Vector3(.9f,.9f,.9f),stone,go.transform).transform;
-    var m=Art.Shape("Mouth",PrimitiveType.Cube,new Vector3(0,1.55f,.42f),new Vector3(.26f,.26f,.2f),new Color(.05f,.04f,.05f),go.transform);
+    Art.Shape("Stone Face",PrimitiveType.Cube,Vector3.zero,new Vector3(.9f,.9f,.9f),stone,headPivot.transform);
+    var m=Art.Shape("Mouth",PrimitiveType.Cube,new Vector3(0,-.05f,.42f),new Vector3(.26f,.26f,.2f),new Color(.05f,.04f,.05f),headPivot.transform);
     mouth=m.GetComponent<Renderer>();
    }
    var t=go.AddComponent<DartTurret>();t.aim=aim;t.mouth=mouth;t.rest=aim?aim.localPosition:Vector3.zero;t.accent=accent;
@@ -187,16 +196,20 @@ namespace LostRealms {
    }
    if(timer>=2.2f){
     timer=0;
-    Vector3 origin=aim?aim.position:transform.position+Vector3.up*1.6f;
+    Vector3 origin=mouth?mouth.transform.position:(aim?aim.position:transform.position+Vector3.up*1.6f);
     Vector3 dir=g.Player.transform.position+Vector3.up*.9f-origin;
     dir.y*=.4f;dir.Normalize();
-    if(aim){Vector3 flat=dir;flat.y=0;if(flat.sqrMagnitude>.01f)aim.rotation=Quaternion.LookRotation(flat.normalized,Vector3.up);}
+    if(aim){
+     Vector3 flat=transform.InverseTransformDirection(dir);flat.y=0;
+     if(flat.sqrMagnitude>.01f)aim.localRotation=Quaternion.LookRotation(flat.normalized,Vector3.up);
+    }
     Fire(origin,dir);
     g.TrapSound("trap_dart",transform.position,3f,14f,.5f);
    }else if(timer>1.6f&&aim){
     // track the player during the glow window so a dodge must be timed late
-    Vector3 to=g.Player.transform.position+Vector3.up*.9f-aim.position;to.y=0;
-    if(to.sqrMagnitude>.01f)aim.rotation=Quaternion.Slerp(aim.rotation,Quaternion.LookRotation(to.normalized,Vector3.up),Time.deltaTime*4f);
+    Vector3 to=g.Player.transform.position+Vector3.up*.9f-(mouth?mouth.transform.position:aim.position);
+    Vector3 flat=transform.InverseTransformDirection(to);flat.y=0;
+    if(flat.sqrMagnitude>.01f)aim.localRotation=Quaternion.Slerp(aim.localRotation,Quaternion.LookRotation(flat.normalized,Vector3.up),Time.deltaTime*4f);
    }
   }
   void Fire(Vector3 origin,Vector3 dir){

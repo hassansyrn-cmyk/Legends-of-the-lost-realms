@@ -11,6 +11,14 @@ namespace LostRealms {
  }
 
 public static class WeaponCatalog {
+    // Keep one normal chapter drop, but discover the collection before repeating it.
+    // Reuse the existing roll so selecting loot does not reshuffle the level layout.
+    public static WeaponId DiscoveryDrop(int roll,Progress progress){
+     var missing=new System.Collections.Generic.List<int>();
+     for(int id=1;id<=40;id++)if(progress==null||((progress.weapons==null||!progress.weapons.Contains(id))&&progress.equippedWeapon!=id))missing.Add(id);
+     int index=Mathf.Clamp(roll,1,40)-1;
+     return (WeaponId)(missing.Count>0?missing[index%missing.Count]:index+1);
+    }
     static readonly WeaponDefinition Fists=new WeaponDefinition(WeaponId.AstersBlade,"FISTS","",.85f,.92f,1.12f,1f,Vector3.zero,"fists and kicks — find a weapon to draw arms");
     static readonly WeaponDefinition[] Definitions={
     new WeaponDefinition(WeaponId.AstersBlade,"ASTER'S BLADE","Weapons/Aster_LongSword",1f,1f,1f,1f,Vector3.zero,"Balanced starter blade"),

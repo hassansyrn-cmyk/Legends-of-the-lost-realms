@@ -137,7 +137,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     sun.color=world==1?new Color(1,.83f,.62f):world==3?new Color(1,.55f,.38f):new Color(.88f,.95f,1);sun.intensity=world==3?.95f:1.25f;sun.shadows=LightShadows.Soft;
    // Difficulty pass: chapters grow with progress (12 â†’ 19 islands; boss
    // arenas 8 â†’ 10) so late chapters read as long expeditions.
-   int count=IsBoss?8+(stage>=8?1:0)+(stage>=12?1:0):Mathf.Min(19,12+(stage-1)/2);int weaponIsland=random.Next(2,count-2);WeaponId weaponId=(WeaponId)(stage==1?4:random.Next(1,41));
+   int count=IsBoss?8+(stage>=8?1:0)+(stage>=12?1:0):Mathf.Min(19,12+(stage-1)/2);int weaponIsland=random.Next(2,count-2);WeaponId weaponId=stage==1?WeaponId.BlinkAxe:WeaponCatalog.DiscoveryDrop(random.Next(1,41),RealmGame.I.Save);
    int deferredEnemyKind=-1;
    var checkpoints=new System.Collections.Generic.HashSet<int>{3, IsBoss?6:7};
    if(count>=15&&!IsBoss)checkpoints.Add(count-4);
@@ -243,7 +243,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
      // tightens (every 4th island â†’ every 2nd) and big islands take a second
      // trap from chapter 6 on.
       int cadence=stage>=8?2:stage>=3?3:4;
-       if(stage>=2&&i%cadence==0&&arch!=IslandArchetype.NarrowBridge){
+       if(stage>=2&&i%cadence==0&&arch!=IslandArchetype.NarrowBridge&&arch!=IslandArchetype.SteppingStones&&arch!=IslandArchetype.MovingFerry){
        int traps=stage>=6&&(arch==IslandArchetype.Arena||width>=10.5f)?2:1;
        // Two slots never roll the same trap type â€” no triple-brazier ring storms.
        var usedTypes=new List<string>();

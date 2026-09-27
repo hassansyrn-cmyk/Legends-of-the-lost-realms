@@ -6,6 +6,34 @@ namespace LostRealms {
  public static class QualityUpgradeChecks {
   public static IEnumerator Run(Action<bool,string> check){
    var g=RealmGame.I;
+   var collection=new Progress();for(int id=1;id<=40;id++)if(id!=37)collection.weapons.Add(id);
+   for(int roll=1;roll<=40;roll++)check(WeaponCatalog.DiscoveryDrop(roll,collection)==WeaponId.Maul,"Discovery drop finds remaining weapon: "+roll);
+   collection.weapons.Add(37);check(WeaponCatalog.DiscoveryDrop(40,collection)==WeaponId.SageStaff,"Full collection still gets a valid chapter weapon");
+   g.LoadLevel(1);yield return new WaitForSeconds(.3f);g.Trial.Begin();
+   var ledge=new GameObject("Regression landing deck");ledge.transform.SetParent(g.World.transform);ledge.transform.position=new Vector3(1000,30,0);
+   Art.Shape("Deck",PrimitiveType.Cube,Vector3.down*.25f,new Vector3(10,.5f,10),Color.gray,ledge.transform,true);
+   var fallingEnemy=new GameObject("Regression falling enemy");fallingEnemy.transform.SetParent(g.World.transform);fallingEnemy.transform.position=new Vector3(1000,40,0);
+   var falling=fallingEnemy.AddComponent<Enemy>();falling.Configure(0,false,ledge.transform.position,new Vector2(8,8));falling.Stun(5);
+   Physics.SyncTransforms();yield return new WaitForSeconds(.2f);
+   check(!falling.GetComponent<Collider>().enabled,"Airborne enemy temporarily disables blocking collision");
+   yield return new WaitForSeconds(1.2f);
+   check(falling&&falling.Health>0&&falling.GetComponent<Collider>().enabled&&Mathf.Abs(falling.transform.position.y-30)<.1f,"Enemy landing restores blocking collision");
+   int cliffKills=g.Kills,trialCount=g.Trial.Count;falling.transform.position=new Vector3(1020,30,0);
+   yield return new WaitForSeconds(1.5f);
+   check(g.Kills==cliffKills+1&&g.Trial.Count==trialCount+1,"Cliff defeat pays one kill and courage trial credit");
+   UnityEngine.Object.Destroy(ledge);
+   g.LoadLevel(6);yield return new WaitForSeconds(.3f);
+   check(g.Trial.Kind==TrialKind.Resolve,"Chapter six offers the defense trial");
+   g.Trial.PerfectDefense();check(g.Trial.Count==0,"Defense trial requires activation");g.Trial.Begin();
+   int defenseGold=0;
+   var parry=typeof(Hero).GetMethod("Parry",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance);
+   for(int attempt=0;attempt<3;attempt++){
+    parry.Invoke(g.Player,null);defenseGold=g.Coins;g.Player.Damage(1,g.Player.transform.position+Vector3.forward);
+    if(attempt<2)yield return new WaitForSeconds(.65f);
+   }
+   check(g.Trial.Completed&&g.Trial.Count==3,"Three actual parries complete resolve trial");
+   check(g.Coins==defenseGold+g.Trial.GoldReward,"Defense trial pays its reward once");
+   g.Trial.PerfectDefense();check(g.Coins==defenseGold+g.Trial.GoldReward,"Further defenses cannot farm a completed trial");
    g.LoadLevel(1);yield return new WaitForSeconds(.3f);
    check(g.Trial&&!g.Trial.Active&&!g.Trial.Completed,"Optional shrine starts inactive");
    g.Trial.EnemyDefeated();check(g.Trial.Count==0,"Inactive trials ignore combat");
