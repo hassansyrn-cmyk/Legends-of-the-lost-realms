@@ -260,8 +260,8 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
       CrusherPillar.Place(islandObj.transform,new Vector3(-5.5f,.05f,-3.5f),accent,stone);
       CrusherPillar.Place(islandObj.transform,new Vector3(5.5f,.05f,-3.5f),accent,stone);
       if(stage>=12){
-       DartTurret.Place(islandObj.transform,new Vector3(-8f,.05f,4f),accent,stone);
-       DartTurret.Place(islandObj.transform,new Vector3(8f,.05f,4f),accent,stone);
+       DartTurret.Place(islandObj.transform,new Vector3(-8f,.05f,4f),accent,stone,DartTurret.TurretKind.Lion);
+       DartTurret.Place(islandObj.transform,new Vector3(8f,.05f,4f),accent,stone,DartTurret.TurretKind.Dragon);
       }
      }
      if(IsBoss)SpawnEnemy(p+new Vector3(0,.05f,-1),world==3?21:world+8,true,p,width,length);}
@@ -350,7 +350,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
      Vector3 lane=arch==IslandArchetype.TieredPlatform?new Vector3(0f,.08f,length*.3f):new Vector3(-.8f,.08f,1f);
      switch(pick){
       case "crusher":{Vector3 spot=NudgeSpot(island,new Vector3((usedTypes.Count>1?1f:-1f)*width*.26f,.05f,0),2.2f,width,length);CrusherPillar.Place(island,spot,accent,stone);break;}
-      case "turret":{Vector3 spot=NudgeSpot(island,new Vector3((usedTypes.Count>1?1f:-1f)*width*.34f,.05f,length*.3f),1.3f,width,length);DartTurret.Place(island,spot,accent,stone);break;}
+      case "turret":{Vector3 spot=NudgeSpot(island,new Vector3((usedTypes.Count>1?1f:-1f)*width*.34f,.05f,length*.3f),1.3f,width,length);var tk=realm==1?DartTurret.TurretKind.Lion:(realm==2?DartTurret.TurretKind.Dragon:(realm==3?(level%2==0?DartTurret.TurretKind.Dragon:DartTurret.TurretKind.Lion):(level>=6?DartTurret.TurretKind.Lion:DartTurret.TurretKind.Stone)));DartTurret.Place(island,spot,accent,stone,tk);break;}
      case "boulder":{
       Vector3 bp=new Vector3(0,.05f,length*.42f);
       // The boulder rolls down the middle; sidestep it when the lane is

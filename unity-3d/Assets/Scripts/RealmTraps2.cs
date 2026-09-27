@@ -157,96 +157,196 @@ namespace LostRealms {
  // 2. DART TURRET — ruined-temple sentry. Glows, tracks the player, then fires
  // a straight dart; strafing or dashing dodges it. Chapters 5+.
  public sealed class DartTurret:MonoBehaviour {
-  Transform aim;Renderer mouth;float timer;Vector3 rest;Color accent;
-  public static DartTurret Place(Transform parent,Vector3 localPos,Color accent,Color stone){
+  public enum TurretKind { Stone, Dragon, Lion }
+  TurretKind kind;
+  Transform aim;
+  Renderer[] glowRenderers;
+  float timer;
+  Color accent;
+
+  public static DartTurret Place(Transform parent,Vector3 localPos,Color accent,Color stone,TurretKind kind=TurretKind.Stone){
    var go=new GameObject("Dart turret");go.transform.SetParent(parent,false);go.transform.localPosition=localPos;
-   var model=TrapArt.Load("Trap_Turret",go.transform,accent,stone);
-   Transform aim;Renderer mouth=null;
+   go.transform.localRotation=Quaternion.identity;
+
+   // Visual pivot so aiming smoothly pivots the entire statue without detaching from island grid
    var headPivot=new GameObject("HeadPivot");
    headPivot.transform.SetParent(go.transform,false);
-   headPivot.transform.localPosition=new Vector3(0,1.6f,0);
+   headPivot.transform.localPosition=Vector3.zero;
    headPivot.transform.localRotation=Quaternion.identity;
-   aim=headPivot.transform;
+   var aim=headPivot.transform;
+
+   string modelName=kind==TurretKind.Dragon?"Trap_Turret_Dragon":(kind==TurretKind.Lion?"Trap_Turret_Lion":"Trap_Turret_Stone");
+   var model=TrapArt.LoadTextured(modelName,headPivot.transform);
+   if(!model&&kind==TurretKind.Stone)model=TrapArt.LoadTextured("Trap_Turret",headPivot.transform);
+
+   Renderer[] glow=null;
    if(model){
-    var face=model.transform.Find("Stone Face");
-    var mth=model.transform.Find("Mouth");
-    var brow=model.transform.Find("Trim Brow");
-    if(face)face.SetParent(headPivot.transform,true);
-    if(mth){mth.SetParent(headPivot.transform,true);mouth=mth.GetComponent<Renderer>();}
-    if(brow)brow.SetParent(headPivot.transform,true);
+    glow=model.GetComponentsInChildren<Renderer>(true);
    }else{
     Art.Shape("Stone Base",PrimitiveType.Cube,new Vector3(0,.3f,0),new Vector3(1.5f,.6f,1.5f),stone,go.transform);
-    Art.Shape("Stone Face",PrimitiveType.Cube,Vector3.zero,new Vector3(.9f,.9f,.9f),stone,headPivot.transform);
-    var m=Art.Shape("Mouth",PrimitiveType.Cube,new Vector3(0,-.05f,.42f),new Vector3(.26f,.26f,.2f),new Color(.05f,.04f,.05f),headPivot.transform);
-    mouth=m.GetComponent<Renderer>();
+    var face=Art.Shape("Stone Face",PrimitiveType.Cube,new Vector3(0,1.6f,0),new Vector3(.9f,.9f,.9f),stone,headPivot.transform);
+    var m=Art.Shape("Mouth",PrimitiveType.Cube,new Vector3(0,1.55f,.42f),new Vector3(.26f,.26f,.2f),new Color(.05f,.04f,.05f),headPivot.transform);
+    glow=new[]{face.GetComponent<Renderer>(),m.GetComponent<Renderer>()};
    }
-   var t=go.AddComponent<DartTurret>();t.aim=aim;t.mouth=mouth;t.rest=aim?aim.localPosition:Vector3.zero;t.accent=accent;
-   // Pedestal collider sized to the visible statue (~1.6m wide after the
-   // Blender rescale) — an oversized box read as an invisible wall.
-   var box=go.AddComponent<BoxCollider>();
-   box.size=new Vector3(1.1f,3.4f,1.1f);box.center=new Vector3(0,1.7f,0);
-   TrapArt.Reserve(parent,localPos,1.3f);
+
+   var t=go.AddComponent<DartTurret>();t.kind=kind;t.aim=aim;t.glowRenderers=glow;t.accent=accent;
+   t.timer=UnityEngine.Random.value*0.8f;
+
+   // Pedestal collider sized to the visible statue bounds
+   var col=go.AddComponent<CapsuleCollider>();
+   if(kind==TurretKind.Lion){
+    col.radius=.85f;col.height=2.0f;col.center=new Vector3(0,1.0f,0);
+    TrapArt.Reserve(parent,localPos,1.6f);
+   }else if(kind==TurretKind.Dragon){
+    col.radius=.70f;col.height=2.2f;col.center=new Vector3(0,1.1f,0);
+    TrapArt.Reserve(parent,localPos,1.4f);
+   }else{
+    col.radius=.65f;col.height=2.2f;col.center=new Vector3(0,1.1f,0);
+    TrapArt.Reserve(parent,localPos,1.3f);
+   }
    return t;
   }
+
   void Update(){
    var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
+   float dist=Vector3.Distance(transform.position,g.Player.transform.position);
+   if(dist>18f)return;
+
    timer+=Time.deltaTime;
-   if(mouth){
-    var c=mouth.material;c.SetColor("_EmissionColor",timer>1.6f&&timer<2.2f?accent*1.6f:accent*.1f);
+
+   // Telegraph window (1.6s to 2.2s): glow warning + tracking
+   if(timer>1.6f&&timer<2.2f){
+    float pulse=Mathf.PingPong((timer-1.6f)*6f,1f);
+    Color emColor=accent*(0.8f+pulse*1.4f);
+    if(glowRenderers!=null){
+     foreach(var r in glowRenderers){
+      if(r&&r.material&&r.material.HasProperty("_EmissionColor")){
+       r.material.EnableKeyword("_EMISSION");
+       r.material.SetColor("_EmissionColor",emColor);
+      }
+     }
+    }
+    if(aim){
+     Vector3 to=g.Player.transform.position+Vector3.up*.9f-transform.position;
+     Vector3 localDir=transform.InverseTransformDirection(to);localDir.y=0;
+     if(localDir.sqrMagnitude>.01f)aim.localRotation=Quaternion.Slerp(aim.localRotation,Quaternion.LookRotation(localDir.normalized,Vector3.up),Time.deltaTime*5f);
+    }
+   }else if(timer<1.6f){
+    if(glowRenderers!=null&&timer<.25f){
+     foreach(var r in glowRenderers){
+      if(r&&r.material&&r.material.HasProperty("_EmissionColor")){
+       r.material.SetColor("_EmissionColor",accent*.1f);
+      }
+     }
+    }
+    if(aim){
+     Vector3 to=g.Player.transform.position+Vector3.up*.9f-transform.position;
+     Vector3 localDir=transform.InverseTransformDirection(to);localDir.y=0;
+     if(localDir.sqrMagnitude>.01f)aim.localRotation=Quaternion.Slerp(aim.localRotation,Quaternion.LookRotation(localDir.normalized,Vector3.up),Time.deltaTime*2.5f);
+    }
    }
+
    if(timer>=2.2f){
     timer=0;
-    Vector3 origin=mouth?mouth.transform.position:(aim?aim.position:transform.position+Vector3.up*1.6f);
-    Vector3 dir=g.Player.transform.position+Vector3.up*.9f-origin;
-    dir.y*=.4f;dir.Normalize();
-    if(aim){
-     Vector3 flat=transform.InverseTransformDirection(dir);flat.y=0;
-     if(flat.sqrMagnitude>.01f)aim.localRotation=Quaternion.LookRotation(flat.normalized,Vector3.up);
+    Vector3 forward=aim?aim.forward:transform.forward;
+    Vector3 origin;
+    if(kind==TurretKind.Dragon)origin=transform.position+forward*.65f+Vector3.up*1.45f;
+    else if(kind==TurretKind.Lion)origin=transform.position+forward*.80f+Vector3.up*1.30f;
+    else origin=transform.position+forward*.45f+Vector3.up*1.55f;
+
+    Vector3 target=g.Player.transform.position+Vector3.up*.85f;
+    Vector3 aimDir=(target-origin).normalized;aimDir.y*=.35f;aimDir.Normalize();
+
+    if(kind==TurretKind.Lion){
+     // Steampunk Lion Turret: shoots 3 arrows together in a fan volley
+     Fire(origin,Quaternion.AngleAxis(-9f,Vector3.up)*aimDir,12.5f);
+     Fire(origin,aimDir,13f);
+     Fire(origin,Quaternion.AngleAxis(9f,Vector3.up)*aimDir,12.5f);
+     g.TrapSound("trap_dart",transform.position,4f,18f,.9f);
+     KenneyPuff.Burst(origin,accent,6,.7f);
+    }else if(kind==TurretKind.Dragon){
+     Fire(origin,aimDir,14.5f);
+     g.TrapSound("trap_dart",transform.position,4f,18f,.85f);
+     KenneyPuff.Burst(origin,new Color(1f,.45f,.2f),5,.65f);
+     Vfx.Play("ga_vfx_Impact_01",origin,Quaternion.identity,.8f);
+    }else{
+     Fire(origin,aimDir,13f);
+     g.TrapSound("trap_dart",transform.position,3f,16f,.75f);
+     KenneyPuff.Burst(origin,accent,4,.5f);
     }
-    Fire(origin,dir);
-    g.TrapSound("trap_dart",transform.position,3f,14f,.5f);
-   }else if(timer>1.6f&&aim){
-    // track the player during the glow window so a dodge must be timed late
-    Vector3 to=g.Player.transform.position+Vector3.up*.9f-(mouth?mouth.transform.position:aim.position);
-    Vector3 flat=transform.InverseTransformDirection(to);flat.y=0;
-    if(flat.sqrMagnitude>.01f)aim.localRotation=Quaternion.Slerp(aim.localRotation,Quaternion.LookRotation(flat.normalized,Vector3.up),Time.deltaTime*4f);
    }
   }
-  void Fire(Vector3 origin,Vector3 dir){
-   var dart=Art.Shape("Dart",PrimitiveType.Cube,origin,new Vector3(.09f,.09f,.62f),accent,null);
-   dart.transform.SetParent(RealmGame.I.World.transform,true);
-   dart.transform.rotation=Quaternion.LookRotation(dir,Vector3.up);
-   var r=dart.GetComponent<Renderer>();var m=new Material(Shader.Find("Standard")){name="Dart"};
-   m.color=accent;m.EnableKeyword("_EMISSION");m.SetColor("_EmissionColor",accent*1.4f);
-   r.sharedMaterial=m;r.shadowCastingMode=ShadowCastingMode.Off;
-   darts.Add(new Dart{go=dart.transform,dir=dir,age=0});
+
+  void Fire(Vector3 origin,Vector3 dir,float speed=13f){
+   var g=RealmGame.I;
+   var arrowRoot=new GameObject("Trap Arrow");
+   arrowRoot.transform.SetParent(g!=null&&g.World!=null?g.World.transform:null,true);
+   arrowRoot.transform.position=origin;
+   arrowRoot.transform.rotation=Quaternion.LookRotation(dir,Vector3.up);
+
+   var model=TrapArt.LoadTextured("Trap_Arrow",arrowRoot.transform);
+   if(!model){
+    var dart=Art.Shape("Dart",PrimitiveType.Cube,Vector3.zero,new Vector3(.09f,.09f,.65f),accent,arrowRoot.transform);
+    var r=dart.GetComponent<Renderer>();var m=new Material(Shader.Find("Standard")){name="Dart"};
+    m.color=accent;m.EnableKeyword("_EMISSION");m.SetColor("_EmissionColor",accent*1.4f);
+    r.sharedMaterial=m;r.shadowCastingMode=ShadowCastingMode.Off;
+   }else{
+    foreach(var r in arrowRoot.GetComponentsInChildren<Renderer>(true)){
+     r.shadowCastingMode=ShadowCastingMode.Off;
+     r.receiveShadows=false;
+    }
+   }
+   darts.Add(new Dart{go=arrowRoot.transform,dir=dir,speed=speed,age=0});
   }
-  class Dart{public Transform go;public Vector3 dir;public float age;}
+
+  class Dart{public Transform go;public Vector3 dir;public float speed;public float age;}
   readonly System.Collections.Generic.List<Dart> darts=new System.Collections.Generic.List<Dart>();
-  void OnDestroy(){foreach(var dart in darts)if(dart.go)Destroy(dart.go.gameObject);darts.Clear();}
+  void OnDestroy(){foreach(var dart in darts)if(dart!=null&&dart.go)Destroy(dart.go.gameObject);darts.Clear();}
   void LateUpdate(){
    var g=RealmGame.I;
    if(!g||g.Screen!=GameScreen.Playing)return;
    for(int i=darts.Count-1;i>=0;i--){
-    var d=darts[i];bool dead=d.age>1.8f;
+    var d=darts[i];bool dead=d==null||!d.go||d.age>2.2f;
     if(!dead){
      d.age+=Time.deltaTime;
-     Vector3 previous=d.go.position,next=previous+d.dir*13f*Time.deltaTime;
-     bool wall=Physics.Raycast(previous,d.dir,out RaycastHit obstacle,Vector3.Distance(previous,next),~0,QueryTriggerInteraction.Ignore);
+     d.dir.y-=0.5f*Time.deltaTime;
+     d.go.rotation=Quaternion.LookRotation(d.dir,Vector3.up);
+
+     Vector3 previous=d.go.position,next=previous+d.dir*d.speed*Time.deltaTime;
+     Vector3 travel=next-previous;
+     bool wall=Physics.Raycast(previous,d.dir,out RaycastHit obstacle,travel.magnitude,~0,QueryTriggerInteraction.Ignore);
      if(wall)next=obstacle.point;
      d.go.position=next;
+
+     if(d.age>0.05f&&UnityEngine.Random.value<0.25f){
+      KenneyPuff.Burst(next-d.dir*0.4f,new Color(.85f,.8f,.7f,.4f),1,.25f);
+     }
+
      if(g&&g.Screen==GameScreen.Playing&&g.Player){
       if(ProjectileSweep.Hits(previous,next,g.Player.transform.position+Vector3.up*.9f,.55f,out float contact)){
        g.Player.Damage(1,transform.position);
        dead=true;
+       Vfx.Play("ga_vfx_Impact_01",next,Quaternion.identity,.7f);
+       KenneyPuff.Burst(next,accent,5,.5f);
       }else if(g.Enemies!=null)foreach(var foe in g.Enemies){
        if(!foe||foe.Health<=0||foe.transform.IsChildOf(transform))continue;
-       if(!foe.Boss&&Vector3.Distance(d.go.position,foe.transform.position+Vector3.up*.9f)<.7f){foe.Hit(2f,0,false,d.dir);dead=true;break;}
+       if(!foe.Boss&&Vector3.Distance(d.go.position,foe.transform.position+Vector3.up*.9f)<.75f){
+        foe.Hit(2f,0,false,d.dir);
+        dead=true;
+        Vfx.Play("ga_vfx_Impact_01",next,Quaternion.identity,.7f);
+        KenneyPuff.Burst(next,accent,4,.5f);
+        break;
+       }
       }
      }
-     if(wall||d.go.position.y<transform.position.y-2f)dead=true;
+     if(wall){
+      dead=true;
+      KenneyPuff.Burst(next,new Color(.6f,.55f,.5f),4,.4f);
+     }else if(d.go.position.y<transform.position.y-4f){
+      dead=true;
+     }
     }
-    if(dead){if(d.go)Destroy(d.go.gameObject);darts.RemoveAt(i);}
+    if(dead){if(d!=null&&d.go)Destroy(d.go.gameObject);darts.RemoveAt(i);}
    }
   }
  }
