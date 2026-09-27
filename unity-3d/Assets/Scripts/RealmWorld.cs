@@ -575,9 +575,9 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
          }else{
           Art.Shape("CrumbleSlab",PrimitiveType.Cube,new Vector3(0,-.3f,0),new Vector3(4f,.6f,4f),stone,crumbleRoot.transform,true);
          }
-         var solidBase=crumbleRoot.AddComponent<BoxCollider>();
-         solidBase.size=new Vector3(4.5f,.4f,4.5f);
-         solidBase.center=new Vector3(0,-.2f,0);
+         var crumbleBase=crumbleRoot.AddComponent<BoxCollider>();
+         crumbleBase.size=new Vector3(4.5f,.4f,4.5f);
+         crumbleBase.center=new Vector3(0,-.2f,0);
          CrumblePlatform.Attach(crumbleRoot);
          var motion=crumbleRoot.AddComponent<MovingIsland>();
          motion.Origin=stoneWorldPos;
