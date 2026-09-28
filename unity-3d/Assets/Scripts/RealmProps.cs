@@ -135,10 +135,11 @@ static void PlaceVillage(Transform island,int realm,float width,float length,Sys
      return false;
     }
     static bool IsDeckHit(RaycastHit h,Transform island,Transform ignoreRoot){
-     var renderer=h.collider.GetComponent<Renderer>();
-     if(!(h.collider is MeshCollider)&&renderer&&!renderer.enabled)return false;
      var t=h.transform;
      if(!t||t==ignoreRoot||t.IsChildOf(ignoreRoot))return false;
+     if(h.collider.name.StartsWith("Walkable")&&t.IsChildOf(island))return true;
+     var renderer=h.collider.GetComponent<Renderer>();
+     if(!(h.collider is MeshCollider)&&renderer&&!renderer.enabled)return false;
      while(t!=null&&t!=island){
       var n=t.name;
       if(n.StartsWith("Prop ")||n.StartsWith("Breakable")||n.StartsWith("Pushable"))return false;

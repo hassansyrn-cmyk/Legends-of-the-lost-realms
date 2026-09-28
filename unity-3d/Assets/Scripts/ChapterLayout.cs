@@ -42,12 +42,11 @@ namespace LostRealms {
     // The full moving assembly may hang overhead. Sample its mounting area,
     // not the animated renderer's lowest point.
     var footprint=new Bounds(t.position,new Vector3(2.0f,.1f,2.0f));
-    if(Supported(t.parent,t,footprint,out float y))t.position=new Vector3(t.position.x,y+.05f,t.position.z);
-    else {
-     Transform island=t.parent;Vector3 local=t.localPosition;
-     TrapArt.Reserved.RemoveAll(s=>s.island==island&&Vector3.Distance(s.local,local)<.6f);
-     Debug.Log("ChapterLayout: omitted trap without a level mounting surface: "+t.name);
-     Object.DestroyImmediate(t.gameObject);
+    if(Supported(t.parent,t,footprint,out float y)){
+     t.position=new Vector3(t.position.x,y+.05f,t.position.z);
+    }else if(RealmProps.TryDeckSurface(t.parent,t.localPosition.x,t.localPosition.z,t,out float cy)){
+     float worldY=t.parent.TransformPoint(new Vector3(t.localPosition.x,cy,t.localPosition.z)).y;
+     t.position=new Vector3(t.position.x,worldY+.05f,t.position.z);
     }
    }
    Physics.SyncTransforms();
