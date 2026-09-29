@@ -75,7 +75,7 @@ namespace LostRealms {
    AddTrap<RollingBoulder>(traps,true,0f);
    AddTrap<WindVent>(traps,false,1f);
    AddTrap<FlameBrazier>(traps,false,.9f);
-   AddTrap<FrostTotem>(traps,false,.9f);
+   AddTrap<FrostTotem>(traps,false,1.5f);
    AddTrap<SerpentStatue>(traps,false,1f);
    AddTrap<SpeedRing>(traps,false,1.6f);
    // Trap-trap overlaps (same island only).
@@ -142,6 +142,7 @@ namespace LostRealms {
   static void AddTrap<T>(List<Foot> traps,bool seg,float r) where T:Component{
    foreach(var c in Object.FindObjectsByType<T>(FindObjectsInactive.Include,FindObjectsSortMode.None)){
     var f=new Foot{name=typeof(T).Name+"@"+c.transform.position.ToString("0.#"),island=FindIsland(c.transform),pos=c.transform.position,r=r,isSeg=seg};
+    if(c is DartTurret turret)f.r=turret.PlacementRadius;
     if(seg&&(typeof(T)==typeof(SawTrap)||typeof(T)==typeof(PendulumTrap))){
      // Swing/rail corridor along local X: half-length from the track collider.
      var col=c.GetComponent<BoxCollider>();

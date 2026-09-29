@@ -10,6 +10,24 @@ namespace LostRealms {
   void Update(){var g=RealmGame.I;if(g&&g.Screen==GameScreen.Playing){g.MoveInput=move;g.JumpPressed=jump;jump=false;}}
   void Check(bool okay,string message){if(!okay){Debug.LogError("REALM_TEST_FAILED: "+message);Quit(1);throw new Exception(message);}assertions++;Debug.Log("PASS: "+message);}
   IEnumerator Start(){
+   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-desertFocused")>=0){
+    yield return null;yield return DesertPlaytestChecks.Run(Check,value=>move=value);
+    Check(runtimeErrors==0,"Desert checks emit no runtime errors");
+    Debug.Log("DESERT_FOCUSED_TESTS_PASSED "+assertions);Quit(0);yield break;
+   }
+   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-progressFocused")>=0){
+    yield return null;yield return QualityUpgradeChecks.Run(Check);
+    for(int stage=1;stage<=15;stage++){
+     RealmGame.I.LoadLevel(stage);yield return null;
+     if(RealmGame.I.Trial){
+      bool clear=RealmTrials.ShrineClear(RealmGame.I.Trial.ShrinePosition,RealmGame.I.World.transform);
+      if(!clear)foreach(var collider in Physics.OverlapSphere(RealmGame.I.Trial.ShrinePosition+Vector3.up*.8f,2f))Debug.Log("SHRINE_BLOCKER chapter="+stage+" "+collider.name+" at "+collider.transform.position);
+      Check(clear,"Clear trial access in chapter "+stage);
+     }
+    }
+    Check(runtimeErrors==0,"Focused progress checks emit no runtime errors");
+    Debug.Log("PROGRESS_FOCUSED_TESTS_PASSED "+assertions);Quit(0);yield break;
+   }
    var touch=new TouchRouter();touch.BeginFrame();touch.Sample(1,new Vector2(1014,655),Vector2.zero,TouchPhase.Began);Check(touch.Jump&&touch.Yaw==0,"Jump touch does not orbit");
    touch.BeginFrame();touch.Sample(1,new Vector2(1014,655),new Vector2(-214,-355),TouchPhase.Moved);Check(touch.Yaw==0,"Jump finger remains an action when dragged into camera area");
    touch.Sample(2,new Vector2(820,310),Vector2.zero,TouchPhase.Began);touch.BeginFrame();touch.Sample(2,new Vector2(850,310),new Vector2(30,0),TouchPhase.Moved);Check(touch.Yaw>0,"Separate camera finger can orbit during a jump");

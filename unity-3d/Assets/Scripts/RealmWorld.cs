@@ -279,6 +279,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
    }
     RealmScenery.Upgrade(this,realm);
     ChapterLayout.PlaceTurretsOnDeck(transform);
+    InteractionClearance.MoveDesertSpikes(this,stage);
     RealmProps.SpawnGuard=Spawn;
     RealmProps.Scatter(transform,realm,random);
     // Spawn plaza: after all dressing, guarantee the first metres of the
@@ -304,6 +305,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
       // real positions (not reservations) â€” backstop for every placement path.
       ResolveOverlaps();
       ChapterLayout.Clean(transform);
+      InteractionClearance.Clear(this,stage);
      }
    GameObject FindIsland(Vector3 p){
     if(Physics.Raycast(p+Vector3.up*6f,Vector3.down,out var rh,14f,~0,QueryTriggerInteraction.Ignore)){
@@ -454,6 +456,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
    void CollectTrap<T>(System.Collections.Generic.List<TrapFoot> o,bool seg,float r) where T:Component{
     foreach(var c in FindObjectsByType<T>(FindObjectsInactive.Include,FindObjectsSortMode.None)){
      var f=new TrapFoot{go=c.gameObject,island=IslandOf(c.transform),pos=c.transform.position,r=r,seg=false};
+     if(c is DartTurret turret)f.r=turret.PlacementRadius;
      if(seg){
       if(typeof(T)==typeof(RollingBoulder)){f.a=f.pos;f.b=f.pos+new Vector3(0,0,-11f);f.hw=1.1f;}
       else{
@@ -481,7 +484,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     CollectTrap<RollingBoulder>(traps,true,0f);
     CollectTrap<WindVent>(traps,false,1f);
     CollectTrap<FlameBrazier>(traps,false,.9f);
-    CollectTrap<FrostTotem>(traps,false,.9f);
+    CollectTrap<FrostTotem>(traps,false,1.5f);
     CollectTrap<SerpentStatue>(traps,false,1f);
     for(int i=0;i<traps.Count;i++)for(int j=i+1;j<traps.Count;j++){
      var A=traps[i];var B=traps[j];

@@ -159,6 +159,7 @@ namespace LostRealms {
  public sealed class DartTurret:MonoBehaviour {
   public enum TurretKind { Stone, Dragon, Lion }
   TurretKind kind;
+  public float PlacementRadius=>kind==TurretKind.Lion?1.6f:kind==TurretKind.Dragon?1.4f:1.3f;
   Transform aim;
   Renderer[] glowRenderers;
   float timer;
@@ -256,7 +257,7 @@ namespace LostRealms {
     else origin=transform.position+forward*.45f+Vector3.up*1.55f;
 
     Vector3 target=g.Player.transform.position+Vector3.up*.85f;
-    Vector3 aimDir=(target-origin).normalized;aimDir.y*=.35f;aimDir.Normalize();
+    Vector3 aimDir=(target-origin).normalized;
 
     if(kind==TurretKind.Lion){
      // Steampunk Lion Turret: shoots 3 arrows together in a fan volley
@@ -297,10 +298,12 @@ namespace LostRealms {
      r.receiveShadows=false;
     }
    }
-   darts.Add(new Dart{go=arrowRoot.transform,dir=dir,speed=speed,age=0});
+   float flightTime=g&&g.Player?Vector3.Distance(origin,g.Player.transform.position+Vector3.up*.85f)/speed:0f;
+   darts.Add(new Dart{go=arrowRoot.transform,dir=dir*speed+Vector3.up*(.5f*ArrowGravity*flightTime),age=0});
   }
 
-  class Dart{public Transform go;public Vector3 dir;public float speed;public float age;}
+  const float ArrowGravity=2.5f;
+  class Dart{public Transform go;public Vector3 dir;public float age;}
   readonly System.Collections.Generic.List<Dart> darts=new System.Collections.Generic.List<Dart>();
   void OnDestroy(){foreach(var dart in darts)if(dart!=null&&dart.go)Destroy(dart.go.gameObject);darts.Clear();}
   void LateUpdate(){
@@ -310,21 +313,22 @@ namespace LostRealms {
     var d=darts[i];bool dead=d==null||!d.go||d.age>2.2f;
     if(!dead){
      d.age+=Time.deltaTime;
-     d.dir.y-=0.5f*Time.deltaTime;
+     float dt=Time.deltaTime;
+     Vector3 previous=d.go.position,next=previous+d.dir*dt+Vector3.down*(.5f*ArrowGravity*dt*dt);
+     d.dir+=Vector3.down*(ArrowGravity*dt);
      d.go.rotation=Quaternion.LookRotation(d.dir,Vector3.up);
-
-     Vector3 previous=d.go.position,next=previous+d.dir*d.speed*Time.deltaTime;
      Vector3 travel=next-previous;
-     bool wall=Physics.Raycast(previous,d.dir,out RaycastHit obstacle,travel.magnitude,~0,QueryTriggerInteraction.Ignore);
+     bool wall=Physics.Raycast(previous,travel.normalized,out RaycastHit obstacle,travel.magnitude,~0,QueryTriggerInteraction.Ignore);
      if(wall)next=obstacle.point;
      d.go.position=next;
 
      if(d.age>0.05f&&UnityEngine.Random.value<0.25f){
-      KenneyPuff.Burst(next-d.dir*0.4f,new Color(.85f,.8f,.7f,.4f),1,.25f);
+      KenneyPuff.Burst(next-d.dir.normalized*0.4f,new Color(.85f,.8f,.7f,.4f),1,.25f);
      }
 
      if(g&&g.Screen==GameScreen.Playing&&g.Player){
-      if(ProjectileSweep.Hits(previous,next,g.Player.transform.position+Vector3.up*.9f,.55f,out float contact)){
+      bool bodyHit=wall&&obstacle.collider.GetComponentInParent<Hero>()==g.Player;
+      if(bodyHit||ProjectileSweep.Hits(previous,next,g.Player.transform.position+Vector3.up*.9f,.55f,out _)){
        g.Player.Damage(1,transform.position);
        dead=true;
        Vfx.Play("ga_vfx_Impact_01",next,Quaternion.identity,.7f);

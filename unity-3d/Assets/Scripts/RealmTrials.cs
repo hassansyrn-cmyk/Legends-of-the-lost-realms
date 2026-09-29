@@ -23,6 +23,7 @@ namespace LostRealms {
    var trial=world.gameObject.AddComponent<RealmTrials>();trial.level=stage;trial.Kind=(TrialKind)((stage-1)%3);
    if(stage==6||stage==12)trial.Kind=TrialKind.Resolve;
    var root=new GameObject("Optional trial shrine");root.transform.SetParent(world.transform,false);root.transform.position=(world.Route.Count>1?world.Route[1]:world.Route.Count>0?world.Route[0]:Vector3.zero)+new Vector3(-2.65f,.14f,0);trial.shrine=root.transform;
+   PlaceShrine(world,root.transform);
    Color stone=new Color(.19f,.24f,.27f);Color accent=Color.Lerp(GameColor(),Color.white,.35f);
    Art.Shape("Trial plinth",PrimitiveType.Cylinder,Vector3.down*.04f,new Vector3(.95f,.12f,.95f),stone,root.transform);
    trial.border=CombatTelegraph.Ring(root.transform,1.45f,accent,"Invitation ring");
@@ -42,6 +43,29 @@ namespace LostRealms {
    return trial;
   }
   static Color GameColor()=>RealmGame.I?RealmGame.I.Accent:Color.cyan;
+  internal static bool ShrineClear(Vector3 point,Transform world,float radius=1.1f){
+   foreach(var collider in Physics.OverlapCapsule(point+Vector3.up*.25f,point+Vector3.up*1.5f,radius,~0,QueryTriggerInteraction.Ignore)){
+    for(var t=collider.transform;t&&t!=world;t=t.parent)
+     if(ChapterLayout.IsProp(t)||ChapterLayout.IsTrap(t)||t.GetComponent<Enemy>())return false;
+   }
+   return true;
+  }
+  static void PlaceShrine(RealmWorld world,Transform shrine){
+   Physics.SyncTransforms();
+   // Prefer the first destination, then the cleared spawn plaza if its scenery is dense.
+   for(int route=Mathf.Min(1,world.Route.Count-1);route>=0;route--){
+    Transform island=null;float nearest=float.MaxValue;
+    foreach(Transform t in world.transform){if(t.name!="Island")continue;float d=(t.position-world.Route[route]).sqrMagnitude;if(d<nearest){nearest=d;island=t;}}
+    if(!island)continue;
+    foreach(float x in new[]{-2.65f,0f,2.65f})foreach(float z in new[]{0f,2f,-2f}){
+     Vector3 p=world.Route[route]+new Vector3(x,0,z);
+     if(!ChapterLayout.Supported(island,shrine,new Bounds(p,new Vector3(1.6f,.1f,1.6f)),out float y))continue;
+     p.y=y+.14f;if(!ShrineClear(p,world.transform,1.6f))continue;
+     shrine.position=p;return;
+    }
+   }
+   Debug.LogWarning("Trial shrine has no clear supported slot in chapter "+RealmGame.I.Level);
+  }
   void Update(){
    var g=Game;if(!g||!g.Player||g.Screen!=GameScreen.Playing)return;
    core.localRotation=Quaternion.Euler(45,g.Elapsed*18f,45);
@@ -73,7 +97,8 @@ namespace LostRealms {
   }
  }
  public sealed class TrialEcho:MonoBehaviour {
-  public RealmTrials Owner;public Vector3 Origin;public Transform Core;bool collected;
+  readonly RewardAnchor anchor=new RewardAnchor();
+  public RealmTrials Owner;public Vector3 Origin {get=>anchor.Position;set=>anchor.Bind(transform,value);}public Transform Core;bool collected;
   void Update(){
    var g=RealmGame.I;if(!g||!g.Player||g.Screen!=GameScreen.Playing||!Owner.Active||collected)return;
    transform.position=Origin+Vector3.up*Mathf.Sin(g.Elapsed*1.5f+Origin.z)*.1f;

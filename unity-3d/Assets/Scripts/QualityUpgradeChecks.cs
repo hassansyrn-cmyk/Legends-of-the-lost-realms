@@ -10,6 +10,7 @@ namespace LostRealms {
    for(int roll=1;roll<=40;roll++)check(WeaponCatalog.DiscoveryDrop(roll,collection)==WeaponId.Maul,"Discovery drop finds remaining weapon: "+roll);
    collection.weapons.Add(37);check(WeaponCatalog.DiscoveryDrop(40,collection)==WeaponId.SageStaff,"Full collection still gets a valid chapter weapon");
    g.LoadLevel(1);yield return new WaitForSeconds(.3f);g.Trial.Begin();
+   check(RealmTrials.ShrineClear(g.Trial.ShrinePosition,g.World.transform),"Trial shrine has clear activation space");
    var ledge=new GameObject("Regression landing deck");ledge.transform.SetParent(g.World.transform);ledge.transform.position=new Vector3(1000,30,0);
    Art.Shape("Deck",PrimitiveType.Cube,Vector3.down*.25f,new Vector3(10,.5f,10),Color.gray,ledge.transform,true);
    var fallingEnemy=new GameObject("Regression falling enemy");fallingEnemy.transform.SetParent(g.World.transform);fallingEnemy.transform.position=new Vector3(1000,40,0);
@@ -21,6 +22,18 @@ namespace LostRealms {
    int cliffKills=g.Kills,trialCount=g.Trial.Count;falling.transform.position=new Vector3(1020,30,0);
    yield return new WaitForSeconds(1.5f);
    check(g.Kills==cliffKills+1&&g.Trial.Count==trialCount+1,"Cliff defeat pays one kill and courage trial credit");
+   var rewardFerry=ledge.AddComponent<MovingIsland>();rewardFerry.enabled=false;rewardFerry.Origin=ledge.transform.position;
+   var rewardObject=new GameObject("Moving weapon regression");rewardObject.transform.SetParent(g.World.transform);
+   var reward=rewardObject.AddComponent<WeaponDrop>();reward.Configure(WeaponId.Axe,ledge.transform.position+Vector3.up*.15f);
+   var echoObject=new GameObject("Moving echo regression");echoObject.transform.SetParent(g.World.transform);
+   var echoReward=echoObject.AddComponent<TrialEcho>();echoReward.Owner=g.Trial;echoReward.Origin=ledge.transform.position+Vector3.up*.85f;
+   echoReward.Core=new GameObject("Echo core").transform;echoReward.Core.SetParent(echoObject.transform,false);
+   yield return null;
+   Vector3 weaponOrigin=reward.Origin,echoOrigin=echoReward.Origin;Vector3 carry=new Vector3(3,2,0);ledge.transform.position+=carry;
+   Physics.SyncTransforms();yield return null;
+   check(Vector3.Distance(reward.Origin,weaponOrigin+carry)<.01f,"Weapon reward follows its moving deck");
+   check(Vector3.Distance(echoReward.Origin,echoOrigin+carry)<.01f,"Trial echo follows its moving deck");
+   UnityEngine.Object.Destroy(rewardObject);UnityEngine.Object.Destroy(echoObject);
    UnityEngine.Object.Destroy(ledge);
    g.LoadLevel(6);yield return new WaitForSeconds(.3f);
    check(g.Trial.Kind==TrialKind.Resolve,"Chapter six offers the defense trial");
