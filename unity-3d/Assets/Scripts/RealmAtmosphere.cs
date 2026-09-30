@@ -48,7 +48,7 @@ Color[] sunColors={new Color(1f,.94f,.82f),new Color(1f,.86f,.69f),new Color(.82
      post.ConfigureFog(RenderSettings.fogColor,fogDensity[realm],-2f);
     }
    }
-   CreateAurora();CreateAmbience();
+   CreateAmbience();
   }
   // Frozen-realm aurora ribbons: a few large translucent bands that drift and
   // pulse overhead. One material, cheap quads, no per-pixel work beyond alpha.

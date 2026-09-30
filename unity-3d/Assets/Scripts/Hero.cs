@@ -631,30 +631,34 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
   // damaging on both passes. Ricochets read as a real weapon identity rather
   // than another melee arc.
   public class ChakramProjectile:MonoBehaviour {
+   EquippedWeapon equipment;
    Vector3 dir;float damage,age,outTime=.45f;int power;bool returning;Transform disc,player;
    readonly System.Collections.Generic.Dictionary<Enemy,float> lastHit=new System.Collections.Generic.Dictionary<Enemy,float>();
    public static void Throw(Vector3 p,Vector3 forward,float dmg,int pow){
     var g=RealmGame.I;if(g==null||g.World==null)return;
+    var equipped=g.Player?g.Player.GetComponentInChildren<EquippedWeapon>():null;
+    if(!equipped||equipped.Id!=WeaponId.MoonChakram||equipped.InFlight)return;
     var go=new GameObject("Moon chakram");go.transform.SetParent(g.World.transform,false);go.transform.position=p;
     var c=go.AddComponent<ChakramProjectile>();c.dir=forward;c.damage=dmg;c.power=pow;c.player=g.Player?g.Player.transform:null;
-    Color color=pow==0?new Color(1,.5f,.15f):pow==1?new Color(.3f,.9f,1f):new Color(.45f,1f,.7f);
-    var dgo=GameObject.CreatePrimitive(PrimitiveType.Cylinder);dgo.name="Chakram disc";
-    var col=dgo.GetComponent<Collider>();if(col)Destroy(col);
-    dgo.transform.SetParent(go.transform,false);
-    dgo.transform.localScale=new Vector3(.55f,.05f,.55f);
-    var mr=dgo.GetComponent<MeshRenderer>();
-    var m=new Material(Shader.Find("Standard")){name="Chakram glow"};m.SetColor("_Color",color);m.EnableKeyword("_EMISSION");m.SetColor("_EmissionColor",color*1.6f);m.SetFloat("_Metallic",.2f);m.SetFloat("_Glossiness",.5f);
-    mr.sharedMaterial=m;mr.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;mr.receiveShadows=false;
-    c.disc=dgo.transform;
+    var dgo=WeaponCatalog.CreateModel(WeaponId.MoonChakram,go.transform);
+    if(!dgo){Destroy(go);return;}
+    var renderer=dgo.GetComponentInChildren<Renderer>();
+    if(renderer){
+     var size=renderer.localBounds.size;
+     var axis=size.x<=size.y&&size.x<=size.z?Vector3.right:size.y<=size.z?Vector3.up:Vector3.forward;
+     dgo.transform.rotation=Quaternion.FromToRotation(renderer.transform.TransformDirection(axis),Vector3.up)*dgo.transform.rotation;
+     dgo.transform.position+=p-renderer.bounds.center;
+    }
+    c.equipment=equipped;equipped.BeginThrow();c.disc=go.transform;
    }
    void Update(){
-    var g=RealmGame.I;if(g.Screen!=GameScreen.Playing)return;
+    var g=RealmGame.I;if(!g||!player||!equipment){Destroy(gameObject);return;}if(g.Screen!=GameScreen.Playing)return;
     age+=Time.deltaTime;
     if(!returning){transform.position+=dir*15f*Time.deltaTime;if(age>=outTime)returning=true;}
     else{
-     if(player){Vector3 to=player.position+Vector3.up*1f-transform.position;float d=to.magnitude;
+     if(player){Vector3 to=equipment.CatchPosition-transform.position;float d=to.magnitude;
       if(d<1.1f){Destroy(gameObject);return;}
-      transform.position+=to.normalized*18f*Time.deltaTime;}
+      transform.position=Vector3.MoveTowards(transform.position,equipment.CatchPosition,18f*Time.deltaTime);}
     }
     if(disc)disc.Rotate(0,900f*Time.deltaTime,0);
     foreach(var e in g.Enemies.ToArray()){
@@ -670,6 +674,7 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
     }
     if(age>3.5f)Destroy(gameObject);
    }
+   void OnDestroy(){if(equipment)equipment.EndThrow();}
   }
   public class CharacterVisual:MonoBehaviour {
   public Animator animator;PlayableGraph graph;AnimationMixerPlayable mixer;AnimationClipPlayable[] playable=new AnimationClipPlayable[2];AnimationClip[] clips;string current="";float blend;int slot;bool hasGraph;Transform fallbackBody;

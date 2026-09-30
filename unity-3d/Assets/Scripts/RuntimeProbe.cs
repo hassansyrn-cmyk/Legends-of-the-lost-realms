@@ -10,6 +10,11 @@ namespace LostRealms {
   void Update(){var g=RealmGame.I;if(g&&g.Screen==GameScreen.Playing){g.MoveInput=move;g.JumpPressed=jump;jump=false;}}
   void Check(bool okay,string message){if(!okay){Debug.LogError("REALM_TEST_FAILED: "+message);Quit(1);throw new Exception(message);}assertions++;Debug.Log("PASS: "+message);}
   IEnumerator Start(){
+   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-mobileFocused")>=0){
+    yield return null;yield return MobilePlaytestChecks.Run(Check);
+    Check(runtimeErrors==0,"Mobile playtest checks emit no runtime errors");
+    Debug.Log("MOBILE_FOCUSED_TESTS_PASSED "+assertions);Quit(0);yield break;
+   }
    if(Array.IndexOf(Environment.GetCommandLineArgs(),"-desertFocused")>=0){
     yield return null;yield return DesertPlaytestChecks.Run(Check,value=>move=value);
     Check(runtimeErrors==0,"Desert checks emit no runtime errors");

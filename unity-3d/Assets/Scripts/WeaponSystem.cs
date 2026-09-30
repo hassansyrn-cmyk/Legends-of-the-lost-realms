@@ -161,6 +161,10 @@ public static class WeaponCatalog {
   Hero hero;Transform hand;float drawnUntil,draw;
   Vector3 bladeDir=Vector3.up,flatDir=Vector3.forward,center;bool measured;
   TrailRenderer trail;static readonly float BackGap=.15f;
+  public bool InFlight {get;private set;}
+  public Vector3 CatchPosition=>hand?hand.position:transform.position;
+  public bool BeginThrow(){if(InFlight||!model)return false;InFlight=true;model.SetActive(false);if(trail){trail.emitting=false;trail.Clear();}return true;}
+  public void EndThrow(){InFlight=false;if(model)model.SetActive(true);draw=1f;drawnUntil=Time.time+.3f;}
   public static void Equip(Hero hero,WeaponId id){
    // Destroy is deferred: detach immediately so another pickup this frame
    // cannot find the same pending-destruction model and leave its replacement.
@@ -209,6 +213,10 @@ public static class WeaponCatalog {
    Vector3 longAxis=size.x>=size.y&&size.x>=size.z?Vector3.right:size.y>=size.x&&size.y>=size.z?Vector3.up:Vector3.forward;
    bladeDir=transform.InverseTransformDirection(renderer.transform.TransformDirection(longAxis));
    flatDir=transform.InverseTransformDirection(renderer.transform.TransformDirection(Vector3.forward));
+   if(Id==WeaponId.MoonChakram){
+    Vector3 thinAxis=size.x<=size.y&&size.x<=size.z?Vector3.right:size.y<=size.z?Vector3.up:Vector3.forward;
+    flatDir=transform.InverseTransformDirection(renderer.transform.TransformDirection(thinAxis));
+   }
    center=transform.InverseTransformPoint(renderer.bounds.center);
    measured=true;
   }
@@ -223,11 +231,18 @@ public static class WeaponCatalog {
    rot=Quaternion.FromToRotation(measured?bladeDir:Vector3.up,hero.transform.up);
    Vector3 flat=rot*flatDir;
    if(Vector3.Dot(flat,hero.transform.forward)>=0)rot=Quaternion.AngleAxis(180f,hero.transform.up)*rot;
-   pos=socket-rot*center;
+   if(Id==WeaponId.MoonChakram){
+    rot=Quaternion.LookRotation(-hero.transform.forward,hero.transform.up)*Quaternion.Inverse(Quaternion.LookRotation(flatDir,bladeDir));
+    // The imported chest bone carries a retargeting offset; use the capsule's
+    // torso height so this wide disc stays centered on the visible back.
+    socket=hero.transform.position+hero.transform.up*1.2f-hero.transform.forward*.23f;
+   }
+   pos=socket-rot*(Id==WeaponId.MoonChakram?Vector3.Scale(center,transform.lossyScale):center);
   }
   void LateUpdate(){
    var game=RealmGame.I;if(!game||game.Screen!=GameScreen.Playing)return;
    if(!hero||!hero.Visual||!hand||!model)return;
+   if(InFlight)return;
    string state=hero.Visual.CurrentState;
    if(state.StartsWith("attack_")||state=="charged")drawnUntil=Time.time+1.1f;
    bool shouldDraw=Time.time<drawnUntil;

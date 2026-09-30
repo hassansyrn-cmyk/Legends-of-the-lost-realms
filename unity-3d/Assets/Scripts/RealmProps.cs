@@ -225,7 +225,12 @@ static void PlaceVillage(Transform island,int realm,float width,float length,Sys
     return Mathf.Max(.35f,Mathf.Max(b.size.x,b.size.z)*.5f*s);
    }
    static void AddCollider(GameObject prop){
-    if(prop.GetComponentInChildren<Collider>())return;
+    bool solidDesert=prop.name=="Prop House_01"||prop.name=="Prop House_02"||prop.name=="Prop Tower_01"||prop.name=="Prop Ruin_01"||prop.name=="Prop Tent_01"||prop.name=="Prop Wall_01";
+    if(solidDesert){
+     // Solid architecture must not depend on one-sided imported triangles or
+     // disabled/trigger colliders. Gates retain their open mesh below.
+     foreach(var existing in prop.GetComponentsInChildren<Collider>(true)){existing.enabled=false;Object.Destroy(existing);}
+    }else if(prop.GetComponentInChildren<Collider>())return;
     var renderers=prop.GetComponentsInChildren<Renderer>(true);if(renderers.Length==0)return;
     Bounds b=renderers[0].bounds;
     for(int i=1;i<renderers.Length;i++)b.Encapsulate(renderers[i].bounds);
@@ -245,7 +250,7 @@ static void PlaceVillage(Transform island,int realm,float width,float length,Sys
       col.center=new Vector3(0,size.y*0.35f,0);
       col.height=size.y*0.7f;
       col.radius=Mathf.Min(0.45f,Mathf.Min(size.x,size.z)*0.25f);
-     }else if(IsBuilding(prop.name)){
+     }else if(IsBuilding(prop.name)&&!solidDesert){
       // Buildings keep their real mesh for collision: the concave MeshCollider
       // follows the model, so doorway/gate openings stay passable while the
       // walls still block. One collider per renderer (same GameObject, so the
