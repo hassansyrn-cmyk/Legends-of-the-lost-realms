@@ -9,6 +9,9 @@ out-tsc
 *.aab
 *.keystore
 *.jks
+key.properties
+signing.properties
+keystore-base64.txt
 *.p12
 *.signing.json
 builds/

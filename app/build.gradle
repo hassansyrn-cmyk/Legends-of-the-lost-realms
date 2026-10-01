@@ -18,9 +18,28 @@ android {
         versionName '5.0.0'
     }
 
+    signingConfigs {
+        release {
+            // Credentials are supplied only through the environment (for example,
+            // GitHub Actions secrets). Never commit a key.properties file.
+            def keystorePath = System.getenv('KEYSTORE_PATH')
+            def keystorePassword = System.getenv('KEYSTORE_PASSWORD')
+            def keyAlias = System.getenv('KEY_ALIAS')
+            def keyPassword = System.getenv('KEY_PASSWORD')
+
+            if (keystorePath && keystorePassword && keyAlias && keyPassword) {
+                setStoreFile(file(keystorePath))
+                setStorePassword(keystorePassword)
+                setKeyAlias(keyAlias)
+                setKeyPassword(keyPassword)
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
+            signingConfig signingConfigs.release
         }
     }
 
