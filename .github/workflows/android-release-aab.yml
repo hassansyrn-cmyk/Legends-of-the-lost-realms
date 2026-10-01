@@ -41,6 +41,10 @@ jobs:
         shell: bash
         run: bash .github/scripts/verify-unity-ci-config.sh
 
+      - name: Prepare Android output directory
+        shell: bash
+        run: mkdir -p unity-3d/Builds/Android
+
       - name: Cache Unity Library
         uses: actions/cache@v4
         with:
