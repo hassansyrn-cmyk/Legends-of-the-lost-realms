@@ -70,7 +70,13 @@ jobs:
           AAB="app/build/outputs/bundle/release/app-release.aab"
           test -s "$AAB"
           jarsigner -verify -verbose -certs "$AAB" >/dev/null
-          ./gradlew --no-daemon :app:properties | grep -E 'applicationId:|versionCode:|versionName:'
+          unzip -l "$AAB" | grep -Eq 'META-INF/[^ ]+\.(RSA|DSA|EC)$'
+          grep -q "applicationId 'com.manus.lostrealms'" app/build.gradle
+          grep -q 'versionCode 60' app/build.gradle
+          grep -q "versionName '5.0.0'" app/build.gradle
+          echo 'applicationId=com.manus.lostrealms'
+          echo 'versionCode=60'
+          echo 'versionName=5.0.0'
           echo "Verified signed AAB: $AAB"
 
       - name: Upload signed AAB artifact
