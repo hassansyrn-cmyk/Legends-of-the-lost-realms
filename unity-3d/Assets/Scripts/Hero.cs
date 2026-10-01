@@ -10,6 +10,7 @@ namespace LostRealms {
   Vector3 velocity;Vector3 moveWish;float vertical,jumpGrace,dashUntil,dashReady,dodgeVisualUntil,hitUntil,immuneUntil,attackReady,comboUntil,chargeStart,attackBufferUntil,spellUntil;int jumps,combo,airDashes;bool charging,attackBufferCharged,spellCharging,wasGrounded,plunging;float jumpBuffer,spellChargeStart;string attackState="attack_1",hitState="hit",parryState="charged",dodgeVisualState="dodge";
   float parryUntil,parryReady,counterUntil,pullUntil,stepTimer;Vector3 pullPoint;bool dodgeRewarded,stepAlt;
   Vector3 platformDisplacement;float hyperArmorUntil,ledgeLostAt;
+  bool pendingCharge;int chargeReleaseVersion;
   public void CarryByPlatform(Vector3 delta){platformDisplacement+=delta;}
   public float VerticalVelocity=>vertical;
   // Heavy weapons (greataxes/hammers) grant hyper-armor during the active
@@ -32,7 +33,7 @@ namespace LostRealms {
    var g=RealmGame.I;
    if(!g||!g.CameraRig||!Visual||!Controller)return;
    if(g.Screen!=GameScreen.Playing){
-    if(g.Screen==GameScreen.Defeated)Visual.Play("death");else Visual.Play("idle");
+    if(g.Screen==GameScreen.Defeated)Visual.Play("death");else if(!pendingCharge)Visual.Play("idle");
     return;
    }
    // Input shaping only: camera-facing wish is computed here for rotation
@@ -88,7 +89,7 @@ namespace LostRealms {
     Visual.Play(parryState);
    }else if(plunging){
     Visual.Play("charged");
-   }else if(RealmGame.I.Elapsed<attackReady-.06f){
+   }else if(RealmGame.I.Elapsed<attackReady-(pendingCharge?0f:.06f)){
     Visual.Play(attackState);
    }else if(!Grounded){
     Visual.Play("jump");
@@ -239,7 +240,7 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
   void Attack(bool charged){
    // Never cut a dodge roll or hit flinch mid-clip: queue instead so the
    // swing starts exactly as the current visual blends out.
-   if(RealmGame.I.Elapsed<attackReady||RealmGame.I.Elapsed<dodgeVisualUntil||RealmGame.I.Elapsed<hitUntil){
+   if(pendingCharge||RealmGame.I.Elapsed<attackReady||RealmGame.I.Elapsed<dodgeVisualUntil||RealmGame.I.Elapsed<hitUntil){
     attackBufferUntil=RealmGame.I.Elapsed+.3f;attackBufferCharged=charged;return;
    }
    var g=RealmGame.I;var weapon=g.CurrentWeapon;
@@ -303,6 +304,14 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
      Vfx.Play("ga_vfx_Hyperdrive_01",transform.position+Vector3.up*.9f,Quaternion.LookRotation(transform.forward),1.2f);
      DamageTip.Show(transform.position+Vector3.up*2.2f,"CRITICAL RIPOSTE!",new Color(1f,.92f,.25f));
     }
+    int staffElement=WeaponCatalog.ChargedShot(weapon.Id);
+    if(charged&&(staffElement>=0||WeaponCatalog.ChargedSlash(weapon.Id))){
+     pendingCharge=true;int version=++chargeReleaseVersion;
+     // Release before the recovery tail; normalized timing follows weapon playback speed.
+     float releaseAt=g.Elapsed+attackDuration*.85f;
+     StartCoroutine(ReleaseChargedShot(weapon.Id,damage+g.Save.powerRank*.18f,releaseAt,version,GetComponentInChildren<EquippedWeapon>()));
+     return; // Ranged charge replaces the melee hit, rather than hitting twice.
+    }
     // Moon Chakram's charged throw: a returning disc that hits on both passes.
     if(charged&&weapon.Id==WeaponId.MoonChakram)ChakramProjectile.Throw(transform.position+Vector3.up*1f,transform.forward,damage,Power);
 
@@ -335,6 +344,24 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
    }
   }
 
+  System.Collections.IEnumerator ReleaseChargedShot(WeaponId weapon,float damage,float releaseAt,int version,EquippedWeapon equipped){
+   var g=RealmGame.I;
+   while(g&&version==chargeReleaseVersion){
+    if(Health<=0||!equipped||!equipped.gameObject.activeInHierarchy||g.Player!=this||(g.Screen!=GameScreen.Playing&&g.Screen!=GameScreen.Paused))break;
+    if(g.Screen==GameScreen.Playing){
+     if(g.Elapsed<hitUntil||g.Elapsed<dodgeVisualUntil||g.Elapsed<parryUntil||plunging)break;
+     if(g.Elapsed>=releaseAt){
+      Vector3 origin=transform.position+Vector3.up*1.05f;
+      if(weapon==WeaponId.BrassFangs){
+       for(int i=-1;i<=1;i++)StaffShot.Fire(origin+transform.right*(i*.38f),Quaternion.AngleAxis(i*4f,Vector3.up)*transform.forward,damage*.45f,2,weapon);
+      }else StaffShot.Fire(origin,transform.forward,damage,WeaponCatalog.ChargedSlash(weapon)?2:WeaponCatalog.ChargedShot(weapon),weapon);
+      break;
+     }
+    }
+    yield return null;
+   }
+   if(version==chargeReleaseVersion)pendingCharge=false;
+  }
   void StartPlunge(){
    var g=RealmGame.I;
    plunging=true;charging=false;

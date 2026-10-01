@@ -7,6 +7,10 @@ out-tsc
 *.tsbuildinfo
 *.apk
 *.aab
+*.keystore
+*.jks
+*.p12
+*.signing.json
 builds/
 .expo
 .expo-shared
