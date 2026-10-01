@@ -74,7 +74,6 @@ jobs:
           test -s "$AAB"
           apksigner verify --verbose "$APK"
           jarsigner -verify -verbose -certs "$AAB" >/dev/null
-          unzip -l "$APK" | grep -Eq 'META-INF/[^ ]+\.(RSA|DSA|EC)$'
           unzip -l "$AAB" | grep -Eq 'META-INF/[^ ]+\.(RSA|DSA|EC)$'
           grep -q "applicationId 'com.manus.lostrealms'" app/build.gradle
           grep -q 'versionCode 60' app/build.gradle
