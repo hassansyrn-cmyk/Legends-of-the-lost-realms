@@ -12,12 +12,23 @@ public static class RealmRelease {
   if(string.IsNullOrEmpty(value))throw new InvalidOperationException("Missing release setting: "+name);
   return value;
  }
+ static string First(string primary,string fallback) {
+  var value=Environment.GetEnvironmentVariable(primary);
+  if(!string.IsNullOrEmpty(value))return value;
+  return Required(fallback);
+ }
  public static void AndroidBundle() {
-  string keystore=Path.GetFullPath(Required("ANDROID_KEYSTORE_PATH"));
+  string keystoreSetting=Environment.GetEnvironmentVariable("ANDROID_KEYSTORE_PATH");
+  // GameCI's supported Android inputs create the keystore inside the project
+  // and expose its relative name to the Unity container. Keep the explicit
+  // ANDROID_KEYSTORE_PATH contract as the primary path for local builds.
+  string keystore=Path.GetFullPath(string.IsNullOrEmpty(keystoreSetting)?Required("ANDROID_KEYSTORE_NAME"):keystoreSetting);
   if(!File.Exists(keystore))throw new FileNotFoundException("Release keystore not found.");
-  string alias=Required("ANDROID_KEY_ALIAS"),storePass=Required("ANDROID_KEYSTORE_PASSWORD"),keyPass=Required("ANDROID_KEY_PASSWORD");
+  string alias=First("ANDROID_KEY_ALIAS","ANDROID_KEYALIAS_NAME");
+  string storePass=First("ANDROID_KEYSTORE_PASSWORD","ANDROID_KEYSTORE_PASS");
+  string keyPass=First("ANDROID_KEY_PASSWORD","ANDROID_KEYALIAS_PASS");
   if(!int.TryParse(Required("ANDROID_VERSION_CODE"),out int code)||code<1)throw new InvalidOperationException("ANDROID_VERSION_CODE must be a positive integer.");
-  string version=Required("ANDROID_VERSION_NAME");
+  string version=First("ANDROID_VERSION_NAME","VERSION");
   if(!BuildPipeline.IsBuildTargetSupported(BuildTargetGroup.Android,BuildTarget.Android))throw new InvalidOperationException("Install Unity Android Build Support.");
   // Preserve the tested animation assets. A clean checkout must use the canonical baker.
   if(!File.Exists("Assets/Resources/Characters/Aster.prefab"))AsterPhase1.Prepare();

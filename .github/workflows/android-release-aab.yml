@@ -47,35 +47,28 @@ jobs:
           path: unity-3d/Library
           key: Unity-${{ env.UNITY_VERSION }}-Android-${{ hashFiles('unity-3d/Assets/**', 'unity-3d/Packages/**', 'unity-3d/ProjectSettings/**') }}
 
-      - name: Reconstruct upload keystore
-        shell: bash
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-        run: |
-          set -Eeuo pipefail
-          test -n "$KEYSTORE_BASE64"
-          mkdir -p unity-3d/Builds/Android
-          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > unity-3d/Builds/Android/.afaq-upload-key.jks
-          chmod 600 unity-3d/Builds/Android/.afaq-upload-key.jks
-          test -s unity-3d/Builds/Android/.afaq-upload-key.jks
-
       - name: Build signed Unity AAB
         uses: game-ci/unity-builder@v4
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          ANDROID_KEYSTORE_PATH: /github/workspace/unity-3d/Builds/Android/.afaq-upload-key.jks
-          ANDROID_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          ANDROID_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          ANDROID_VERSION_CODE: ${{ env.ANDROID_VERSION_CODE }}
-          ANDROID_VERSION_NAME: ${{ env.ANDROID_VERSION_NAME }}
         with:
           projectPath: unity-3d
           unityVersion: ${{ env.UNITY_VERSION }}
           targetPlatform: Android
           buildMethod: RealmRelease.AndroidBundle
+          versioning: Custom
+          version: ${{ env.ANDROID_VERSION_NAME }}
+          androidVersionCode: ${{ env.ANDROID_VERSION_CODE }}
+          androidExportType: androidAppBundle
+          androidTargetSdkVersion: 36
+          androidSymbolType: public
+          androidKeystoreName: Builds/Android/.afaq-upload-key.jks
+          androidKeystoreBase64: ${{ secrets.KEYSTORE_BASE64 }}
+          androidKeystorePass: ${{ secrets.KEYSTORE_PASSWORD }}
+          androidKeyaliasName: ${{ secrets.KEY_ALIAS }}
+          androidKeyaliasPass: ${{ secrets.KEY_PASSWORD }}
           dockerCpuLimit: 2
 
       - name: Install bundletool
