@@ -1,16 +1,21 @@
-name: Android Release AAB
+name: Unity 3D Android Release AAB
 
 on:
-  workflow_dispatch:
   push:
     branches: [Astra3]
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+env:
+  UNITY_VERSION: 6000.6.0f1
+  ANDROID_VERSION_CODE: ${{ github.run_id }}
+  ANDROID_VERSION_NAME: 0.1.${{ github.run_number }}
+
 jobs:
-  build-release-aab:
-    name: Build signed Android App Bundle
+  build-unity-release-aab:
+    name: Build signed Unity IL2CPP ARM64 AAB
     runs-on: ubuntu-latest
 
     steps:
@@ -18,78 +23,152 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: Astra3
+          lfs: true
           fetch-depth: 1
 
-      - name: Set up Java 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-          cache: gradle
-
-      - name: Set up Android SDK
+      - name: Verify Unity CI configuration
         shell: bash
-        run: |
-          set -Eeuo pipefail
-          export ANDROID_HOME="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
-          SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -path '*/bin/sdkmanager' -print -quit)"
-          test -x "$SDKMANAGER"
-          SDK_BIN="$(dirname "$SDKMANAGER")"
-          echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
-          echo "$SDK_BIN" >> "$GITHUB_PATH"
-          echo "$ANDROID_HOME/platform-tools" >> "$GITHUB_PATH"
-          "$SDKMANAGER" --version
-          yes | "$SDKMANAGER" --licenses >/dev/null || true
-          "$SDKMANAGER" "platform-tools" "platforms;android-35" "build-tools;35.0.0"
-          echo "$ANDROID_HOME/build-tools/35.0.0" >> "$GITHUB_PATH"
+        run: bash .github/scripts/verify-unity-ci-config.sh
 
-      - name: Reconstruct release keystore
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: unity-3d/Library
+          key: Unity-${{ env.UNITY_VERSION }}-Android-${{ hashFiles('unity-3d/Assets/**', 'unity-3d/Packages/**', 'unity-3d/ProjectSettings/**') }}
+
+      - name: Reconstruct upload keystore
         shell: bash
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
           set -Eeuo pipefail
           test -n "$KEYSTORE_BASE64"
-          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/afaq-upload-key.jks"
-          chmod 600 "$RUNNER_TEMP/afaq-upload-key.jks"
-          test -s "$RUNNER_TEMP/afaq-upload-key.jks"
+          mkdir -p unity-3d/Builds/Android
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > unity-3d/Builds/Android/.afaq-upload-key.jks
+          chmod 600 unity-3d/Builds/Android/.afaq-upload-key.jks
+          test -s unity-3d/Builds/Android/.afaq-upload-key.jks
 
-      - name: Build signed release APK and AAB
+      - name: Build signed Unity AAB
+        uses: game-ci/unity-builder@v4
         env:
-          KEYSTORE_PATH: ${{ runner.temp }}/afaq-upload-key.jks
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew --no-daemon --stacktrace assembleRelease bundleRelease
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          ANDROID_KEYSTORE_PATH: /github/workspace/unity-3d/Builds/Android/.afaq-upload-key.jks
+          ANDROID_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          ANDROID_VERSION_CODE: ${{ env.ANDROID_VERSION_CODE }}
+          ANDROID_VERSION_NAME: ${{ env.ANDROID_VERSION_NAME }}
+        with:
+          projectPath: unity-3d
+          unityVersion: ${{ env.UNITY_VERSION }}
+          targetPlatform: Android
+          buildMethod: RealmRelease.AndroidBundle
+          dockerCpuLimit: 2
 
-      - name: Verify signed APK, AAB, and release metadata
+      - name: Install bundletool
         shell: bash
-        env:
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
         run: |
           set -Eeuo pipefail
-          APK="app/build/outputs/apk/release/app-release.apk"
-          AAB="app/build/outputs/bundle/release/app-release.aab"
-          test -s "$APK"
-          test -s "$AAB"
-          apksigner verify --verbose "$APK"
-          jarsigner -verify -verbose -certs "$AAB" >/dev/null
-          unzip -l "$AAB" | grep -Eq 'META-INF/[^ ]+\.(RSA|DSA|EC)$'
-          grep -q "applicationId 'com.manus.lostrealms'" app/build.gradle
-          grep -q 'versionCode 60' app/build.gradle
-          grep -q "versionName '5.0.0'" app/build.gradle
-          echo 'applicationId=com.manus.lostrealms'
-          echo 'versionCode=60'
-          echo 'versionName=5.0.0'
-          echo "Verified signed APK: $APK"
-          echo "Verified signed AAB: $AAB"
+          curl -fsSL \
+            -o "$RUNNER_TEMP/bundletool.jar" \
+            https://github.com/google/bundletool/releases/download/1.17.2/bundletool-all-1.17.2.jar
+          test -s "$RUNNER_TEMP/bundletool.jar"
 
-      - name: Upload signed APK and AAB artifacts
+      - name: Verify generated Unity AAB
+        shell: bash
+        env:
+          KEYSTORE_PATH: ${{ github.workspace }}/unity-3d/Builds/Android/.afaq-upload-key.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          EXPECTED_PACKAGE: com.manus.lostrealms3d
+          EXPECTED_VERSION_CODE: ${{ env.ANDROID_VERSION_CODE }}
+          EXPECTED_VERSION_NAME: ${{ env.ANDROID_VERSION_NAME }}
+        run: |
+          set -Eeuo pipefail
+          AAB="unity-3d/Builds/Android/LostRealms3D.aab"
+          test -s "$AAB"
+
+          # Verify the actual bundle's JAR signature and certificate fingerprint.
+          jarsigner -verify -verbose -certs "$AAB" >/dev/null
+          keytool -printcert -jarfile "$AAB" > "$RUNNER_TEMP/aab-certificate.txt"
+          keytool -list -v -keystore "$KEYSTORE_PATH" -storepass "$KEYSTORE_PASSWORD" -alias "$KEY_ALIAS" > "$RUNNER_TEMP/keystore-certificate.txt"
+          python3 - "$RUNNER_TEMP/aab-certificate.txt" "$RUNNER_TEMP/keystore-certificate.txt" <<'PY'
+          import re
+          import sys
+
+          def fingerprint(path):
+              text = open(path, encoding="utf-8", errors="replace").read()
+              match = re.search(r"SHA256:\s*([0-9A-Fa-f:]+)", text)
+              if not match:
+                  raise SystemExit(f"No SHA-256 certificate fingerprint found in {path}")
+              return match.group(1).replace(":", "").upper()
+
+          bundle_fp = fingerprint(sys.argv[1])
+          keystore_fp = fingerprint(sys.argv[2])
+          if bundle_fp != keystore_fp:
+              raise SystemExit("AAB certificate does not match the configured upload keystore")
+          print(f"signing_certificate_sha256={bundle_fp}")
+          PY
+
+          # Dump the manifest from the actual AAB and assert package/version values.
+          java -jar "$RUNNER_TEMP/bundletool.jar" dump manifest --bundle="$AAB" > "$RUNNER_TEMP/aab-manifest.xml"
+          python3 - "$RUNNER_TEMP/aab-manifest.xml" <<'PY'
+          import re
+          import sys
+
+          text = open(sys.argv[1], encoding="utf-8", errors="replace").read()
+          def attr(name):
+              match = re.search(rf'(?:android:)?{name}=["\']([^"\']+)', text)
+              if not match:
+                  raise SystemExit(f"Missing {name} in generated AAB manifest")
+              return match.group(1)
+
+          package = attr("package")
+          version_code = attr("versionCode")
+          version_name = attr("versionName")
+          expected = {
+              "package": "${{ env.EXPECTED_PACKAGE }}",
+              "versionCode": "${{ env.EXPECTED_VERSION_CODE }}",
+              "versionName": "${{ env.EXPECTED_VERSION_NAME }}",
+          }
+          actual = {"package": package, "versionCode": version_code, "versionName": version_name}
+          if actual != expected:
+              raise SystemExit(f"Generated AAB metadata mismatch: expected={expected} actual={actual}")
+          for key, value in actual.items():
+              print(f"{key}={value}")
+          PY
+
+          cp "$AAB" "$RUNNER_TEMP/LostRealms3D-${GITHUB_RUN_ID}.aab"
+          sha256sum "$RUNNER_TEMP/LostRealms3D-${GITHUB_RUN_ID}.aab"
+
+      - name: Upload signed Unity AAB artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Legends-of-the-Lost-Realms-Astra3-release-builds
-          path: |
-            app/build/outputs/apk/release/app-release.apk
-            app/build/outputs/bundle/release/app-release.aab
+          name: Legends-of-the-Lost-Realms-Unity-Astra3-${{ github.run_id }}
+          path: ${{ runner.temp }}/LostRealms3D-${{ github.run_id }}.aab
           if-no-files-found: error
-          retention-days: 30
+          retention-days: 1
+
+      - name: Confirm downloadable artifact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          for attempt in 1 2 3 4 5; do
+            if gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts" \
+              --jq '.artifacts[] | select(.name == "Legends-of-the-Lost-Realms-Unity-Astra3-'"${GITHUB_RUN_ID}"'") | .id' | grep -q .; then
+              echo "Artifact is available for download."
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Artifact upload was not confirmed; failing the workflow." >&2
+          exit 1
+
+      - name: Remove temporary signing material
+        if: always()
+        shell: bash
+        run: rm -f unity-3d/Builds/Android/.afaq-upload-key.jks
