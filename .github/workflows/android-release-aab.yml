@@ -41,6 +41,7 @@ jobs:
           "$SDKMANAGER" --version
           yes | "$SDKMANAGER" --licenses >/dev/null || true
           "$SDKMANAGER" "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+          echo "$ANDROID_HOME/build-tools/35.0.0" >> "$GITHUB_PATH"
 
       - name: Reconstruct release keystore
         shell: bash
@@ -53,23 +54,27 @@ jobs:
           chmod 600 "$RUNNER_TEMP/afaq-upload-key.jks"
           test -s "$RUNNER_TEMP/afaq-upload-key.jks"
 
-      - name: Build signed release AAB
+      - name: Build signed release APK and AAB
         env:
           KEYSTORE_PATH: ${{ runner.temp }}/afaq-upload-key.jks
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew --no-daemon --stacktrace bundleRelease
+        run: ./gradlew --no-daemon --stacktrace assembleRelease bundleRelease
 
-      - name: Verify signed AAB and release metadata
+      - name: Verify signed APK, AAB, and release metadata
         shell: bash
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
         run: |
           set -Eeuo pipefail
+          APK="app/build/outputs/apk/release/app-release.apk"
           AAB="app/build/outputs/bundle/release/app-release.aab"
+          test -s "$APK"
           test -s "$AAB"
+          apksigner verify --verbose "$APK"
           jarsigner -verify -verbose -certs "$AAB" >/dev/null
+          unzip -l "$APK" | grep -Eq 'META-INF/[^ ]+\.(RSA|DSA|EC)$'
           unzip -l "$AAB" | grep -Eq 'META-INF/[^ ]+\.(RSA|DSA|EC)$'
           grep -q "applicationId 'com.manus.lostrealms'" app/build.gradle
           grep -q 'versionCode 60' app/build.gradle
@@ -77,12 +82,15 @@ jobs:
           echo 'applicationId=com.manus.lostrealms'
           echo 'versionCode=60'
           echo 'versionName=5.0.0'
+          echo "Verified signed APK: $APK"
           echo "Verified signed AAB: $AAB"
 
-      - name: Upload signed AAB artifact
+      - name: Upload signed APK and AAB artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Legends-of-the-Lost-Realms-Astra3-release-aab
-          path: app/build/outputs/bundle/release/app-release.aab
+          name: Legends-of-the-Lost-Realms-Astra3-release-builds
+          path: |
+            app/build/outputs/apk/release/app-release.apk
+            app/build/outputs/bundle/release/app-release.aab
           if-no-files-found: error
           retention-days: 30
