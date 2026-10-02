@@ -10,7 +10,7 @@ permissions:
 
 env:
   UNITY_VERSION: 6000.6.0f1
-  ANDROID_VERSION_CODE: ${{ github.run_id }}
+  ANDROID_VERSION_CODE: ${{ github.run_number }}
   ANDROID_VERSION_NAME: 0.1.${{ github.run_number }}
 
 jobs:
