@@ -65,7 +65,12 @@ namespace LostRealms {
     if(!game||!game.Save.sound)return;
     float now=Time.unscaledTime;
     bool frequent=name=="step"||name=="step2"||name=="coin"||name=="impact"||name=="enemy_warning";
-    float spacing=name.StartsWith("trap_")?.18f:name=="step"||name=="step2"?.12f:frequent?.055f:.025f;
+    float spacing=name.StartsWith("trap_")?.18f:name=="enemy_warning"?.18f:name=="step"||name=="step2"?.12f:frequent?.055f:.025f;
+    if(name=="enemy_warning"){
+     int activeWarn=0;
+     for(int w=0;w<voices.Length;w++)if(voices[w].isPlaying&&priorities[w]==1)activeWarn++;
+     if(activeWarn>=1)return;
+    }
     if(lastPlayed.TryGetValue(name,out float last)&&now-last<spacing)return;
     var clip=Clip("sfx_"+name);if(!clip)return;lastPlayed[name]=now;
     int priority=name=="hurt"||name=="defeat"||name=="complete"||name=="checkpoint"||name=="upgrade"||name.StartsWith("boss")||name=="weapon_pickup"?3:frequent?1:2;

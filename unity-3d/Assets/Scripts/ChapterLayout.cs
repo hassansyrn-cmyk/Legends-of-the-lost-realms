@@ -1,9 +1,40 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 namespace LostRealms {
  // One final pass for every decoration path, including props on secret islands.
  public static class ChapterLayout {
   public static bool IsTrap(Transform t)=>t.GetComponent<SpikeTrap>()||t.GetComponent<SawTrap>()||t.GetComponent<FloorBladeTrap>()||t.GetComponent<PendulumTrap>()||t.GetComponent<FireGeyser>()||t.GetComponent<CrusherPillar>()||t.GetComponent<DartTurret>()||t.GetComponent<RollingBoulder>()||t.GetComponent<FlameBrazier>()||t.GetComponent<FrostTotem>()||t.GetComponent<SerpentStatue>();
+  // Authored flank coordinates can land on the sloped rim of an imported
+  // island. Find real deck support before props consume the remaining space.
+  public static void PlaceTurretsOnDeck(Transform world){
+   Physics.SyncTransforms();
+   foreach(var turret in world.GetComponentsInChildren<DartTurret>()){
+    var t=turret.transform;var island=t.parent;
+    if(!island||island.name!="Island")continue;
+    var size=new Vector3(2f,.1f,2f);
+    if(Supported(island,t,new Bounds(t.position,size),out _))continue;
+    Vector3 original=t.localPosition;
+    int slot=TrapArt.Reserved.FindIndex(s=>s.island==island&&Vector3.Distance(s.local,original)<.1f);
+    float radius=slot>=0?TrapArt.Reserved[slot].radius:1.6f;
+    var own=slot>=0?TrapArt.Reserved[slot]:default;
+    if(slot>=0)TrapArt.Reserved.RemoveAt(slot);
+    bool placed=false;
+    // Search nearest first, leaving the central traversal lane open.
+    for(int ring=1;ring<=16&&!placed;ring++){
+     for(int x=-ring;x<=ring&&!placed;x++)for(int z=-ring;z<=ring&&!placed;z++){
+      if(Mathf.Max(Mathf.Abs(x),Mathf.Abs(z))!=ring)continue;
+      var candidate=original+new Vector3(x*.5f,0,z*.5f);
+      if(Mathf.Abs(candidate.x)<1.6f||!TrapArt.IsClear(island,candidate,radius))continue;
+      var p=island.TransformPoint(candidate);
+      if(!Supported(island,t,new Bounds(p,size),out float y))continue;
+      t.position=new Vector3(p.x,y+.05f,p.z);
+      TrapArt.Reserve(island,t.localPosition,radius);placed=true;
+     }
+    }
+    if(!placed&&slot>=0)TrapArt.Reserved.Add(own);
+   }
+   Physics.SyncTransforms();
+  }
   public static void GroundTraps(Transform world){
    Physics.SyncTransforms();
    foreach(var t in world.GetComponentsInChildren<Transform>()){
@@ -11,12 +42,11 @@ namespace LostRealms {
     // The full moving assembly may hang overhead. Sample its mounting area,
     // not the animated renderer's lowest point.
     var footprint=new Bounds(t.position,new Vector3(2.0f,.1f,2.0f));
-    if(Supported(t.parent,t,footprint,out float y))t.position=new Vector3(t.position.x,y+.05f,t.position.z);
-    else {
-     Transform island=t.parent;Vector3 local=t.localPosition;
-     TrapArt.Reserved.RemoveAll(s=>s.island==island&&Vector3.Distance(s.local,local)<.6f);
-     Debug.Log("ChapterLayout: omitted trap without a level mounting surface: "+t.name);
-     Object.DestroyImmediate(t.gameObject);
+    if(Supported(t.parent,t,footprint,out float y)){
+     t.position=new Vector3(t.position.x,y+.05f,t.position.z);
+    }else if(RealmProps.TryDeckSurface(t.parent,t.localPosition.x,t.localPosition.z,t,out float cy)){
+     float worldY=t.parent.TransformPoint(new Vector3(t.localPosition.x,cy,t.localPosition.z)).y;
+     t.position=new Vector3(t.position.x,worldY+.05f,t.position.z);
     }
    }
    Physics.SyncTransforms();
@@ -45,25 +75,27 @@ namespace LostRealms {
    height=(min+max)*.5f;return max-min<=.45f;
   }
   public static void Clean(Transform world){
-   Physics.SyncTransforms();var kept=new List<Bounds>();var remove=new List<GameObject>();
+   // Keep imported scenery visible; strict validation must never delete a whole decoration layer.
+   Physics.SyncTransforms();
    foreach(var t in world.GetComponentsInChildren<Transform>()){
     if(!IsProp(t)||!BoundsOf(t,out var b))continue;
     var island=t.parent;
     if(!island||island.name!="Island"){
      island=null;float best=float.MaxValue;
-     foreach(Transform candidate in world){if(candidate.name!="Island")continue;float d=(candidate.position-t.position).sqrMagnitude;if(d<best){best=d;island=candidate;}}
+     foreach(Transform candidate in world){
+      if(candidate.name!="Island")continue;
+      float d=(candidate.position-t.position).sqrMagnitude;
+      if(d<best){best=d;island=candidate;}
+     }
     }
-    bool valid=island&&Supported(island,t,b,out _);
-    if(valid){
-     Supported(island,t,b,out float y);float delta=y-b.min.y;
-     if(Mathf.Abs(delta)>1.6f)valid=false;
-     else {t.position+=Vector3.up*delta;b.center+=Vector3.up*delta;}
+    if(!island)continue;
+    if(Supported(island,t,b,out float y)){
+     float delta=y-b.min.y;
+     if(Mathf.Abs(delta)<=1.6f)t.position+=Vector3.up*delta;
     }
-    if(valid)foreach(var other in kept)if(Overlap(b,other)){valid=false;break;}
-    if(valid)kept.Add(b);else remove.Add(t.gameObject);
    }
-   foreach(var go in remove){Debug.Log("ChapterLayout: omitted unsupported or intersecting "+go.name);Object.DestroyImmediate(go);}
    Physics.SyncTransforms();
   }
+
  }
 }

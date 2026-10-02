@@ -9,7 +9,7 @@ namespace LostRealms {
  // Extra clips come from Animations/<Role>_{attack_2,victory,gethit} baked by
  // GolemBossSetup, resolved through CharacterVisual.extraClips.
  public partial class Enemy {
-  public bool IsGolemBoss=>false;
+  public bool IsGolemBoss=>Boss&&(Kind==8||Kind==9||Kind==10);
   int golemSeenPhase=1;int golemMove;bool golemComboPending;bool golemHitThisCharge;
   float slamReady,chargeReady,chargeUntil;Vector3 chargeDir;
   // Pose override: while set, the AI pauses and the pose clip plays out
@@ -35,7 +35,7 @@ namespace LostRealms {
    // Charge in progress: bulldoze toward the locked direction.
    if(chargeUntil>g.Elapsed){
     Visual.Play("run_fast");
-    transform.position=Clamp(transform.position+chargeDir*6.4f*dt);
+    transform.position=Clamp(transform.position+chargeDir*7.8f*dt);
     if(distance<1.9f&&!golemHitThisCharge){
       golemHitThisCharge=true;
       if(g.Player.Damage(2+(g.Realm>=2?1:0),transform.position))g.Player.ApplyForce(delta.normalized*8f+Vector3.up*2.5f);
@@ -52,11 +52,11 @@ namespace LostRealms {
     if(timer>0)return;
     // Attack selection: slam (close, phase 2+), charge (mid, phase 3),
     // otherwise a melee swing that may combo into a second.
-    if(phase>=2&&distance<4.2f&&g.Elapsed>=slamReady){
+    if(phase>=2&&distance<4.8f&&g.Elapsed>=slamReady){
      golemMove=9;state=State.Windup;timer=1.15f;golemComboPending=false;
      target=transform.position;target.y=baseY;
      Visual.Restart("attack_2");
-      warning=CombatTelegraph.Create(transform.position,3.2f,timer,g.World.transform);
+      warning=CombatTelegraph.Create(transform.position,3.8f,timer,g.World.transform);
       g.Sound("boss_warning",RealmAudio.BossPitch(Kind));
       return;
     }
@@ -89,11 +89,12 @@ namespace LostRealms {
      state=State.Attack;timer=.5f;
      if(golemMove==9){
       // Ground slam: radial crushing zone with dust and shockwave.
-       StrikeZone.Create(transform.position,3.2f,3,.01f);
-      Vfx.Play("ga_vfx_Shockwave_01",transform.position+Vector3.up*.15f,Quaternion.identity,1.4f);
-      KenneyPuff.Burst(transform.position+Vector3.up*.25f,new Color(.62f,.56f,.46f),16,1.5f);
-       g.Sound("boss",RealmAudio.BossPitch(Kind));g.CameraRig.Shake=.35f;
-      slamReady=g.Elapsed+7f;
+       StrikeZone.Create(transform.position,3.8f,3+(g.Realm>=2?1:0),.01f);
+      Vfx.Play("ga_vfx_Shockwave_01",transform.position+Vector3.up*.15f,Quaternion.identity,1.8f);
+      Vfx.Play("ga_vfx_Explosion_01",transform.position+Vector3.up*.3f,Quaternion.identity,1.2f);
+      KenneyPuff.Burst(transform.position+Vector3.up*.25f,new Color(.62f,.56f,.46f),22,1.8f);
+       g.Sound("boss",RealmAudio.BossPitch(Kind));g.CameraRig.Shake=.45f;
+      slamReady=g.Elapsed+Mathf.Max(4.5f,6.5f-phase*.8f);
      }else{
       Vector3 strike=Clamp(golemComboPending?g.Player.transform.position:attackOrigin+transform.forward*1.6f);
       strike.y=baseY;

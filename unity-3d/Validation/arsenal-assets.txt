@@ -1,0 +1,95 @@
+ASTER_ROOT_OK attack_1
+ASTER_ROOT_OK attack_2
+ASTER_ROOT_OK attack_3
+ASTER_ROOT_OK block
+ASTER_ROOT_OK cast
+ASTER_ROOT_OK charged
+ASTER_ROOT_OK chop_1
+ASTER_ROOT_OK chop_2
+ASTER_ROOT_OK chop_3
+ASTER_ROOT_OK death
+ASTER_ROOT_OK dodge
+ASTER_ROOT_OK double_jump
+ASTER_ROOT_OK hit
+ASTER_ROOT_OK hit_2
+ASTER_ROOT_OK hit_3
+ASTER_ROOT_OK hit_4
+ASTER_ROOT_OK hit_5
+ASTER_ROOT_OK idle
+ASTER_ROOT_OK jump
+ASTER_ROOT_OK roll
+ASTER_ROOT_OK run
+ASTER_ROOT_OK spear_1
+ASTER_ROOT_OK spear_2
+ASTER_ROOT_OK spear_3
+ASTER_ROOT_OK unarmed_1
+ASTER_ROOT_OK unarmed_2
+ASTER_ROOT_OK unarmed_3
+ASTER_ROOT_OK walk
+AUDIO_OK sfx_attack_charged_1 peak=0.7622681 rms=0.145596065269124
+AUDIO_OK sfx_attack_charged_2 peak=0.7773132 rms=0.162830402063025
+AUDIO_OK sfx_attack_charged_3 peak=0.7828674 rms=0.167635570481815
+AUDIO_OK sfx_attack_chop_1 peak=0.756958 rms=0.138206872483238
+AUDIO_OK sfx_attack_chop_2 peak=0.7979736 rms=0.152152635194241
+AUDIO_OK sfx_attack_chop_3 peak=0.7770996 rms=0.140742180518311
+AUDIO_OK sfx_attack_slash_1 peak=0.8196411 rms=0.149105483726796
+AUDIO_OK sfx_attack_slash_2 peak=0.7404785 rms=0.123594336154527
+AUDIO_OK sfx_attack_slash_3 peak=0.8517761 rms=0.150345800757988
+AUDIO_OK sfx_attack_spear_1 peak=0.7998657 rms=0.143862707380053
+AUDIO_OK sfx_attack_spear_2 peak=0.7206421 rms=0.125583234454175
+AUDIO_OK sfx_attack_spear_3 peak=0.7812195 rms=0.143679746287966
+AUDIO_OK sfx_attack_unarmed_1 peak=0.7754517 rms=0.142292123614882
+AUDIO_OK sfx_attack_unarmed_2 peak=0.774292 rms=0.163027755305758
+AUDIO_OK sfx_attack_unarmed_3 peak=0.7327881 rms=0.139342646753857
+AUDIO_OK sfx_trap_blade peak=0.8318787 rms=0.0832837916160709
+AUDIO_OK sfx_trap_boulder peak=0.7866821 rms=0.192551602841541
+AUDIO_OK sfx_trap_crush peak=0.7425537 rms=0.0740357120623584
+AUDIO_OK sfx_trap_dart peak=0.7653503 rms=0.0595059491908243
+AUDIO_OK sfx_trap_fan_loop peak=0.7755432 rms=0.233788954041713
+AUDIO_OK sfx_trap_fire peak=0.7677002 rms=0.101615769318389
+AUDIO_OK sfx_trap_frost peak=0.8322449 rms=0.0832528202678798
+AUDIO_OK sfx_trap_poison peak=0.7919617 rms=0.0666066926357976
+AUDIO_OK sfx_trap_saw_loop peak=0.7818604 rms=0.234815241772015
+AUDIO_OK sfx_trap_spikes peak=0.7640991 rms=0.0591479266640224
+AUDIO_OK sfx_trap_warning peak=0.7593689 rms=0.096305321028999
+AUDIO_OK sfx_trap_wind peak=0.7880859 rms=0.17511677333931
+ICON_PIXELS_OK Aster_Axe.png visible=1022
+ICON_PIXELS_OK Aster_CurvedSword.png visible=749
+ICON_PIXELS_OK Aster_LongSword.png visible=561
+ICON_PIXELS_OK AxeBattle.png visible=1317
+ICON_PIXELS_OK AxeBearded.png visible=1176
+ICON_PIXELS_OK AxeCleaver.png visible=865
+ICON_PIXELS_OK AxeIron.png visible=1146
+ICON_PIXELS_OK BlinkAxe.png visible=902
+ICON_PIXELS_OK BlinkMace.png visible=1234
+ICON_PIXELS_OK BlinkSpear.png visible=342
+ICON_PIXELS_OK BrassFangs.png visible=3285
+ICON_PIXELS_OK EmberTorch.png visible=729
+ICON_PIXELS_OK Executioner.png visible=479
+ICON_PIXELS_OK HalberdA.png visible=224
+ICON_PIXELS_OK HalberdB.png visible=274
+ICON_PIXELS_OK HalberdC.png visible=250
+ICON_PIXELS_OK HovlMagic.png visible=584
+ICON_PIXELS_OK HovlMoon.png visible=494
+ICON_PIXELS_OK HovlMoon2.png visible=488
+ICON_PIXELS_OK HuntsmanSpear.png visible=225
+ICON_PIXELS_OK Juggernaut.png visible=536
+ICON_PIXELS_OK Maul.png visible=1239
+ICON_PIXELS_OK MoonChakram.png visible=2435
+ICON_PIXELS_OK PureAxe2H.png visible=479
+ICON_PIXELS_OK PureHammer.png visible=1239
+ICON_PIXELS_OK PureScythe.png visible=387
+ICON_PIXELS_OK PureSpear.png visible=225
+ICON_PIXELS_OK PureSword1H.png visible=656
+ICON_PIXELS_OK PureSword2H.png visible=536
+ICON_PIXELS_OK RangerAxe.png visible=840
+ICON_PIXELS_OK RiftDagger.png visible=1025
+ICON_PIXELS_OK SageStaff.png visible=358
+ICON_PIXELS_OK SquireBlade.png visible=656
+ICON_PIXELS_OK SwordClaymore.png visible=411
+ICON_PIXELS_OK SwordFalchion.png visible=598
+ICON_PIXELS_OK SwordGreat.png visible=327
+ICON_PIXELS_OK SwordSabre.png visible=313
+ICON_PIXELS_OK SwordShort.png visible=471
+ICON_PIXELS_OK SwordZweihander.png visible=361
+ICON_PIXELS_OK WardenPike.png visible=427

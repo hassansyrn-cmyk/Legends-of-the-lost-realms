@@ -1,0 +1,1521 @@
+STAGE 1 start
+STAGE 1 built islands=12
+WARN stage=1 PROP_ON_PROP Prop Bush_02
+WARN stage=1 PROP_ON_PROP Prop Grass_02
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_bench_wood_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_bench_wood_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_bench_wood_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_sack_01
+WARN stage=1 PROP_ON_PROP Breakable crate
+WARN stage=1 PROP_ON_PROP Breakable crate
+WARN stage=1 PROP_ON_PROP Prop Rock_01
+WARN stage=1 PROP_ON_PROP Prop Bush_03
+WARN stage=1 PROP_ON_PROP Prop Bush_03
+WARN stage=1 PROP_ON_PROP Prop Bush_01
+WARN stage=1 PROP_ON_PROP Prop Bush_01
+WARN stage=1 PROP_ON_PROP Prop Bush_01
+WARN stage=1 PROP_ON_PROP Prop Bush_03
+WARN stage=1 PROP_ON_PROP Prop Bush_03
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_flower_02
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_flower_02
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_flower_02
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_flower_02
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_flower_02
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_bush_02
+WARN stage=1 PROP_ON_PROP Breakable barrel
+WARN stage=1 PROP_ON_PROP Pushable block
+WARN stage=1 PROP_UNSUPPORTED Prop Tree_03
+WARN stage=1 PROP_ON_PROP Prop Tree_01
+WARN stage=1 PROP_UNSUPPORTED Prop rpgpp_lt_tree_02
+WARN stage=1 PROP_ON_PROP Prop Rock_02
+WARN stage=1 PROP_ON_PROP Prop Rock_02
+WARN stage=1 PROP_ON_PROP Prop Flowers_01
+WARN stage=1 PROP_ON_PROP Prop Flowers_01
+WARN stage=1 PROP_ON_PROP Prop Bush_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_flower_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_flower_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_flower_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_flower_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_flower_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_crate_02
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_bench_wood_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_bench_wood_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_bench_wood_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=1 PROP_ON_PROP Breakable barrel
+WARN stage=1 PROP_ON_PROP Breakable barrel
+WARN stage=1 PROP_ON_PROP Breakable barrel
+WARN stage=1 PROP_ON_PROP Breakable crate
+WARN stage=1 PROP_ON_PROP Prop Bush_03
+WARN stage=1 PROP_UNSUPPORTED Prop Tree_04
+WARN stage=1 PROP_UNSUPPORTED Prop Rock_03
+WARN stage=1 PROP_UNSUPPORTED Prop Rock_02
+WARN stage=1 PROP_ON_PROP Prop Bush_03
+WARN stage=1 PROP_ON_PROP Prop Mushroom_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_flower_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_wagon_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_wagon_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_wagon_01
+WARN stage=1 PROP_UNSUPPORTED Prop rpgpp_lt_wagon_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_03
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_03
+WARN stage=1 PROP_UNSUPPORTED Prop rpgpp_lt_rock_03
+WARN stage=1 PROP_ON_PROP Breakable barrel
+WARN stage=1 PROP_ON_PROP Breakable crate
+WARN stage=1 PROP_ON_PROP Breakable crate
+WARN stage=1 PROP_UNSUPPORTED Pushable block
+WARN stage=1 PROP_ON_PROP Prop Tree_03
+WARN stage=1 PROP_ON_PROP Prop Rock_02
+WARN stage=1 PROP_ON_PROP Prop Rock_02
+WARN stage=1 PROP_ON_PROP Prop Grass_02
+WARN stage=1 PROP_ON_PROP Prop Grass_02
+WARN stage=1 PROP_ON_PROP Prop Bush_03
+WARN stage=1 PROP_ON_PROP Prop Bush_03
+WARN stage=1 PROP_ON_PROP Prop Bush_03
+WARN stage=1 PROP_ON_PROP Prop Bush_02
+WARN stage=1 PROP_ON_PROP Prop Bush_03
+WARN stage=1 PROP_ON_PROP Prop Bush_03
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=1 PROP_ON_PROP Breakable barrel
+WARN stage=1 PROP_ON_PROP Breakable barrel
+WARN stage=1 PROP_ON_PROP Prop Tree_01
+WARN stage=1 PROP_ON_PROP Prop Rock_02
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_flower_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_flower_02
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_grass_small_01a
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_grass_small_01a
+WARN stage=1 PROP_ON_PROP Prop Grass_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_02
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_02
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_log_wood_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_log_wood_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_log_wood_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=1 PROP_ON_PROP Breakable barrel
+WARN stage=1 PROP_ON_PROP Breakable barrel
+WARN stage=1 PROP_ON_PROP Breakable barrel
+WARN stage=1 PROP_ON_PROP Breakable barrel
+WARN stage=1 PROP_ON_PROP Prop Rock_02
+WARN stage=1 PROP_ON_PROP Prop Rock_03
+WARN stage=1 PROP_ON_PROP Prop Bush_01
+WARN stage=1 PROP_ON_PROP Prop Bush_03
+WARN stage=1 PROP_ON_PROP Prop Bush_03
+WARN stage=1 PROP_ON_PROP Prop Bush_01
+WARN stage=1 PROP_ON_PROP Prop Bush_01
+WARN stage=1 PROP_ON_PROP Prop Bush_01
+WARN stage=1 PROP_ON_PROP Prop Grass_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=1 PROP_ON_PROP Breakable barrel
+WARN stage=1 PROP_ON_PROP Prop Tree_03
+WARN stage=1 PROP_ON_PROP Prop Rock_03
+WARN stage=1 PROP_ON_PROP Prop Rock_02
+WARN stage=1 PROP_ON_PROP Prop Rock_02
+WARN stage=1 PROP_ON_PROP Prop Rock_02
+WARN stage=1 PROP_ON_PROP Prop Rock_01
+WARN stage=1 PROP_ON_PROP Prop Mushroom_01
+WARN stage=1 PROP_ON_PROP Prop Mushroom_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_flower_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_flower_01
+WARN stage=1 PROP_ON_PROP Prop Bush_01
+WARN stage=1 PROP_ON_PROP Prop Bush_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_flower_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_flower_01
+WARN stage=1 PROP_ON_PROP Prop Bush_02
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=1 PROP_ON_PROP Breakable crate
+WARN stage=1 PROP_ON_PROP Breakable crate
+WARN stage=1 PROP_ON_PROP Pushable block
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_tree_02
+WARN stage=1 PROP_ON_PROP Prop Rock_01
+WARN stage=1 PROP_ON_PROP Prop Grass_02
+WARN stage=1 PROP_ON_PROP Prop Mushroom_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_crate_02
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_crate_02
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_02
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=1 PROP_ON_PROP Breakable barrel
+WARN stage=1 PROP_ON_PROP Breakable barrel
+WARN stage=1 PROP_ON_PROP Breakable barrel
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_tree_01
+WARN stage=1 PROP_ON_PROP Prop Rock_02
+WARN stage=1 PROP_ON_PROP Prop Rock_03
+WARN stage=1 PROP_ON_PROP Prop Rock_03
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_flower_02
+WARN stage=1 PROP_ON_PROP Prop Bush_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_shed_wood_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_shed_wood_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_shed_wood_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_barrel_02
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_sack_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_sack_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_sack_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_sack_01
+WARN stage=1 PROP_ON_PROP Breakable crate
+WARN stage=1 PROP_ON_PROP Breakable crate
+WARN stage=1 PROP_ON_PROP Breakable crate
+WARN stage=1 PROP_ON_PROP Breakable crate
+WARN stage=1 PROP_ON_PROP Breakable barrel
+WARN stage=1 PROP_ON_PROP Breakable barrel
+WARN stage=1 PROP_UNSUPPORTED Pushable block
+WARN stage=1 PROP_ON_PROP Prop Tree_04
+WARN stage=1 PROP_ON_PROP Prop Tree_04
+WARN stage=1 PROP_ON_PROP Prop Rock_03
+WARN stage=1 PROP_ON_PROP Prop Rock_03
+WARN stage=1 PROP_ON_PROP Prop Rock_02
+WARN stage=1 PROP_ON_PROP Prop Rock_02
+WARN stage=1 PROP_ON_PROP Prop Rock_02
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_bush_01
+WARN stage=1 PROP_ON_PROP Prop Mushroom_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_shed_wood_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_shed_wood_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_shed_wood_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_shed_wood_01
+WARN stage=1 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+STAGE 1 island=1 props=10
+STAGE 1 island=2 props=14
+STAGE 1 island=3 props=16
+STAGE 1 island=4 props=0
+STAGE 1 island=9 props=13
+STAGE 1 island=12 props=20
+STAGE 1 island=13 props=0
+STAGE 1 island=15 props=16
+STAGE 1 island=17 props=18
+STAGE 1 island=18 props=0
+STAGE 1 island=20 props=17
+STAGE 1 island=23 props=20
+STAGE 1 island=24 props=0
+STAGE 1 island=26 props=20
+STAGE 1 island=28 props=22
+STAGE 1 island=29 props=0
+STAGE 1 island=31 props=17
+STAGE 1 done traps=3
+STAGE 2 start
+STAGE 2 built islands=12
+WARN stage=2 PROP_ON_PROP Prop Rock_03
+WARN stage=2 PROP_ON_PROP Prop Bush_01
+WARN stage=2 PROP_ON_PROP Prop Bush_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_grass_small_01a
+WARN stage=2 PROP_ON_PROP Prop Bush_03
+WARN stage=2 PROP_ON_PROP Prop Grass_02
+WARN stage=2 PROP_ON_PROP Prop Grass_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_flower_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_crate_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_vase_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_vase_01
+WARN stage=2 PROP_ON_PROP Breakable barrel
+WARN stage=2 PROP_ON_PROP Prop Rock_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_flower_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=2 PROP_ON_PROP Breakable barrel
+WARN stage=2 PROP_ON_PROP Breakable barrel
+WARN stage=2 PROP_ON_PROP Breakable crate
+WARN stage=2 PROP_ON_PROP Breakable crate
+WARN stage=2 PROP_ON_PROP Prop Tree_03
+WARN stage=2 PROP_ON_PROP Prop Tree_04
+WARN stage=2 PROP_ON_PROP Prop Tree_04
+WARN stage=2 PROP_ON_PROP Prop Rock_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_flower_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_bush_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_wagon_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_wagon_01
+WARN stage=2 PROP_UNSUPPORTED Prop rpgpp_lt_wagon_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_log_wood_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_rock_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=2 PROP_UNSUPPORTED Prop Tree_04
+WARN stage=2 PROP_UNSUPPORTED Prop Tree_04
+WARN stage=2 PROP_ON_PROP Prop Rock_03
+WARN stage=2 PROP_ON_PROP Prop Rock_03
+WARN stage=2 PROP_ON_PROP Prop Rock_02
+WARN stage=2 PROP_UNSUPPORTED Prop Rock_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_flower_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_flower_02
+WARN stage=2 PROP_UNSUPPORTED Prop Bush_03
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_grass_small_01a
+WARN stage=2 PROP_ON_PROP Prop Bush_03
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_sack_01
+WARN stage=2 PROP_UNSUPPORTED Prop rpgpp_lt_sack_01
+WARN stage=2 PROP_ON_PROP Prop Rock_02
+WARN stage=2 PROP_ON_PROP Prop Rock_01
+WARN stage=2 PROP_ON_PROP Prop Rock_01
+WARN stage=2 PROP_ON_PROP Prop Bush_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_bush_01
+WARN stage=2 PROP_ON_PROP Prop Bush_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_flower_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_flower_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_barrel_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_crate_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_crate_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_vase_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_bush_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_bush_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_bush_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=2 PROP_ON_PROP Breakable barrel
+WARN stage=2 PROP_ON_PROP Breakable barrel
+WARN stage=2 PROP_ON_PROP Prop Rock_03
+WARN stage=2 PROP_ON_PROP Prop Rock_03
+WARN stage=2 PROP_ON_PROP Prop Rock_02
+WARN stage=2 PROP_ON_PROP Prop Rock_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_grass_small_01a
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_grass_small_01a
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_flower_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_flower_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_crate_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_crate_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_crate_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_crate_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_crate_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_log_wood_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_log_wood_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_log_wood_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_log_wood_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_log_wood_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=2 PROP_ON_PROP Breakable barrel
+WARN stage=2 PROP_ON_PROP Prop Rock_03
+WARN stage=2 PROP_ON_PROP Prop Rock_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_grass_small_01a
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_vase_01
+WARN stage=2 PROP_ON_PROP Breakable crate
+WARN stage=2 PROP_UNSUPPORTED Prop Tree_03
+WARN stage=2 PROP_ON_PROP Prop Tree_04
+WARN stage=2 PROP_UNSUPPORTED Prop Tree_04
+WARN stage=2 PROP_ON_PROP Prop Rock_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_flower_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_bench_wood_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_bench_wood_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_bench_wood_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=2 PROP_UNSUPPORTED Prop rpgpp_lt_bush_02
+WARN stage=2 PROP_ON_PROP Prop Rock_02
+WARN stage=2 PROP_ON_PROP Prop Bush_03
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_barrel_01
+WARN stage=2 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=2 PROP_ON_PROP Breakable crate
+STAGE 2 island=1 props=18
+STAGE 2 island=2 props=12
+STAGE 2 island=3 props=0
+STAGE 2 island=4 props=0
+STAGE 2 island=6 props=21
+STAGE 2 island=9 props=0
+STAGE 2 island=12 props=21
+STAGE 2 island=13 props=0
+STAGE 2 island=18 props=0
+STAGE 2 island=20 props=21
+STAGE 2 island=21 props=0
+STAGE 2 island=24 props=15
+STAGE 2 island=27 props=0
+STAGE 2 island=30 props=0
+STAGE 2 island=31 props=0
+STAGE 2 island=33 props=21
+STAGE 2 island=36 props=15
+STAGE 2 island=37 props=0
+STAGE 2 island=39 props=18
+STAGE 2 done traps=8
+STAGE 3 start
+STAGE 3 built islands=13
+WARN stage=3 PROP_ON_PROP Prop Rock_02
+WARN stage=3 PROP_ON_PROP Prop Flowers_01
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_bush_01
+WARN stage=3 PROP_ON_PROP Prop Bush_02
+WARN stage=3 PROP_ON_PROP Prop Grass_01
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_sack_01
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_sack_01
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_sack_01
+WARN stage=3 PROP_ON_PROP Breakable barrel
+WARN stage=3 PROP_ON_PROP Prop Rock_01
+WARN stage=3 PROP_ON_PROP Prop Flowers_01
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_flower_02
+WARN stage=3 PROP_ON_PROP Prop Bush_02
+WARN stage=3 PROP_ON_PROP Prop Bush_02
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_crate_01
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_crate_01
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_bucket_01
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_bucket_01
+WARN stage=3 PROP_UNSUPPORTED Prop rpgpp_lt_tree_01
+WARN stage=3 PROP_UNSUPPORTED Prop Rock_02
+WARN stage=3 PROP_ON_PROP Prop Rock_02
+WARN stage=3 PROP_UNSUPPORTED Prop Rock_02
+WARN stage=3 PROP_ON_PROP Prop Rock_02
+WARN stage=3 PROP_ON_PROP Prop Grass_02
+WARN stage=3 PROP_ON_PROP Prop Bush_01
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_log_wood_01
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_log_wood_01
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_rock_03
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_rock_03
+WARN stage=3 PROP_UNSUPPORTED Prop rpgpp_lt_rock_03
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_tree_02
+WARN stage=3 PROP_ON_PROP Prop Rock_01
+WARN stage=3 PROP_ON_PROP Prop Rock_01
+WARN stage=3 PROP_ON_PROP Prop Rock_03
+WARN stage=3 PROP_ON_PROP Prop Rock_03
+WARN stage=3 PROP_ON_PROP Prop Bush_02
+WARN stage=3 PROP_ON_PROP Prop Bush_02
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_flower_02
+WARN stage=3 PROP_ON_PROP Prop Rock_02
+WARN stage=3 PROP_ON_PROP Prop Grass_02
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_shed_wood_01
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_shed_wood_01
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_sack_01
+WARN stage=3 PROP_UNSUPPORTED Prop Tree_01
+WARN stage=3 PROP_ON_PROP Prop Rock_03
+WARN stage=3 PROP_ON_PROP Prop Rock_03
+WARN stage=3 PROP_UNSUPPORTED Prop Rock_03
+WARN stage=3 PROP_ON_PROP Prop Bush_03
+WARN stage=3 PROP_ON_PROP Prop Bush_03
+WARN stage=3 PROP_ON_PROP Prop Bush_03
+WARN stage=3 PROP_UNSUPPORTED Prop Bush_03
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_flower_01
+WARN stage=3 PROP_ON_PROP Prop Bush_03
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_crate_02
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_crate_02
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_crate_02
+WARN stage=3 PROP_ON_PROP Breakable crate
+WARN stage=3 PROP_ON_PROP Breakable crate
+WARN stage=3 PROP_ON_PROP Pushable block
+WARN stage=3 PROP_ON_PROP Prop Rock_03
+WARN stage=3 PROP_ON_PROP Prop Bush_02
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_flower_02
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_wagon_01
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_barrel_01
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_barrel_01
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_bucket_01
+WARN stage=3 PROP_ON_PROP Prop rpgpp_lt_sack_01
+STAGE 3 island=1 props=15
+STAGE 3 island=2 props=10
+STAGE 3 island=3 props=0
+STAGE 3 island=4 props=0
+STAGE 3 island=6 props=14
+STAGE 3 island=9 props=0
+STAGE 3 island=12 props=17
+STAGE 3 island=13 props=0
+STAGE 3 island=15 props=0
+STAGE 3 island=17 props=0
+STAGE 3 island=18 props=0
+STAGE 3 island=21 props=11
+STAGE 3 island=27 props=0
+STAGE 3 island=30 props=0
+STAGE 3 island=31 props=0
+STAGE 3 island=33 props=15
+STAGE 3 island=36 props=21
+STAGE 3 island=37 props=0
+STAGE 3 island=39 props=0
+STAGE 3 island=40 props=18
+STAGE 3 done traps=9
+STAGE 4 start
+STAGE 4 built islands=8
+WARN stage=4 PROP_ON_PROP Prop Rock_02
+WARN stage=4 PROP_ON_PROP Prop Bush_03
+WARN stage=4 PROP_ON_PROP Prop Bush_03
+WARN stage=4 PROP_ON_PROP Prop rpgpp_lt_bush_01
+WARN stage=4 PROP_ON_PROP Prop rpgpp_lt_bush_01
+WARN stage=4 PROP_ON_PROP Prop rpgpp_lt_bush_01
+WARN stage=4 PROP_ON_PROP Prop rpgpp_lt_barrel_01
+WARN stage=4 PROP_ON_PROP Prop rpgpp_lt_barrel_01
+WARN stage=4 PROP_ON_PROP Breakable crate
+WARN stage=4 PROP_ON_PROP Breakable crate
+WARN stage=4 PROP_ON_PROP Prop Rock_02
+WARN stage=4 PROP_UNSUPPORTED Prop Rock_02
+WARN stage=4 PROP_ON_PROP Prop Rock_01
+WARN stage=4 PROP_ON_PROP Prop Rock_01
+WARN stage=4 PROP_ON_PROP Prop Rock_01
+WARN stage=4 PROP_ON_PROP Prop Rock_01
+WARN stage=4 PROP_ON_PROP Prop rpgpp_lt_flower_01
+WARN stage=4 PROP_ON_PROP Prop rpgpp_lt_flower_01
+WARN stage=4 PROP_ON_PROP Prop rpgpp_lt_flower_01
+WARN stage=4 PROP_ON_PROP Prop Bush_03
+WARN stage=4 PROP_ON_PROP Prop rpgpp_lt_bush_01
+WARN stage=4 PROP_ON_PROP Prop rpgpp_lt_bush_01
+WARN stage=4 PROP_ON_PROP Prop rpgpp_lt_bush_01
+WARN stage=4 PROP_ON_PROP Prop rpgpp_lt_bush_01
+WARN stage=4 PROP_ON_PROP Prop Mushroom_01
+WARN stage=4 PROP_ON_PROP Prop Mushroom_01
+WARN stage=4 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=4 PROP_ON_PROP Breakable crate
+WARN stage=4 PROP_ON_PROP Breakable crate
+WARN stage=4 PROP_ON_PROP Breakable crate
+WARN stage=4 PROP_ON_PROP Breakable crate
+WARN stage=4 PROP_ON_PROP Prop rpgpp_lt_tree_01
+WARN stage=4 PROP_ON_PROP Prop Rock_03
+WARN stage=4 PROP_ON_PROP Prop Flowers_01
+WARN stage=4 PROP_ON_PROP Prop Flowers_01
+WARN stage=4 PROP_ON_PROP Prop Bush_02
+WARN stage=4 PROP_ON_PROP Prop rpgpp_lt_bush_01
+WARN stage=4 PROP_ON_PROP Prop rpgpp_lt_bush_01
+WARN stage=4 PROP_ON_PROP Prop Bush_02
+WARN stage=4 PROP_ON_PROP Prop Bush_02
+WARN stage=4 PROP_ON_PROP Prop Bush_02
+WARN stage=4 PROP_UNSUPPORTED Prop Rock_03
+WARN stage=4 PROP_ON_PROP Prop Rock_01
+WARN stage=4 PROP_UNSUPPORTED Prop Rock_01
+WARN stage=4 PROP_ON_PROP Prop Bush_01
+WARN stage=4 PROP_ON_PROP Prop rpgpp_lt_flower_02
+WARN stage=4 PROP_ON_PROP Prop rpgpp_lt_rock_02
+WARN stage=4 PROP_ON_PROP Prop rpgpp_lt_rock_02
+WARN stage=4 PROP_UNSUPPORTED Prop rpgpp_lt_tree_02
+WARN stage=4 PROP_ON_PROP Prop Rock_01
+WARN stage=4 PROP_ON_PROP Prop Rock_01
+WARN stage=4 PROP_ON_PROP Prop Rock_03
+WARN stage=4 PROP_ON_PROP Prop rpgpp_lt_bush_01
+WARN stage=4 PROP_ON_PROP Prop rpgpp_lt_rock_01
+WARN stage=4 PROP_ON_PROP Prop rpgpp_lt_rock_01
+WARN stage=4 PROP_ON_PROP Prop rpgpp_lt_sack_01
+WARN stage=4 PROP_ON_PROP Prop rpgpp_lt_sack_01
+WARN stage=4 PROP_ON_PROP Breakable crate
+WARN stage=4 PROP_ON_PROP Breakable crate
+WARN stage=4 PROP_ON_PROP Breakable crate
+STAGE 4 island=1 props=13
+STAGE 4 island=2 props=13
+STAGE 4 island=3 props=0
+STAGE 4 island=4 props=0
+STAGE 4 island=6 props=14
+STAGE 4 island=9 props=0
+STAGE 4 island=12 props=0
+STAGE 4 island=13 props=0
+STAGE 4 island=14 props=0
+STAGE 4 island=21 props=14
+STAGE 4 island=22 props=0
+STAGE 4 island=25 props=19
+STAGE 4 done traps=6
+STAGE 5 start
+STAGE 5 built islands=14
+WARN stage=5 PROP_ON_PROP Prop Rock_04
+WARN stage=5 PROP_ON_PROP Prop Mushroom_01
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_ladder_01
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_vase_01
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_vase_01
+WARN stage=5 PROP_ON_PROP Breakable crate
+WARN stage=5 PROP_ON_PROP Breakable crate
+WARN stage=5 PROP_UNSUPPORTED Prop Tower_01
+WARN stage=5 PROP_ON_PROP Prop Rock_04
+WARN stage=5 PROP_ON_PROP Prop Bush_02
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=5 PROP_UNSUPPORTED Prop rpgpp_lt_rock_small_01
+WARN stage=5 PROP_ON_PROP Prop Bush_02
+WARN stage=5 PROP_ON_PROP Prop Bush_02
+WARN stage=5 PROP_ON_PROP Prop Bush_02
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_rock_01
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_bush_02
+WARN stage=5 PROP_ON_PROP Breakable crate
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_shed_wood_01
+WARN stage=5 PROP_UNSUPPORTED Prop rpgpp_lt_shed_wood_01
+WARN stage=5 PROP_UNSUPPORTED Prop rpgpp_lt_rock_02
+WARN stage=5 PROP_ON_PROP Breakable barrel
+WARN stage=5 PROP_ON_PROP Breakable barrel
+WARN stage=5 PROP_UNSUPPORTED Prop Rock_03
+WARN stage=5 PROP_ON_PROP Prop Rock_03
+WARN stage=5 PROP_UNSUPPORTED Prop Rock_03
+WARN stage=5 PROP_ON_PROP Prop Mushroom_01
+WARN stage=5 PROP_ON_PROP Prop Mushroom_01
+WARN stage=5 PROP_ON_PROP Prop Grass_02
+WARN stage=5 PROP_ON_PROP Prop Grass_02
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_shed_wood_02
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_shed_wood_02
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_shed_wood_02
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_crate_02
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_crate_02
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_crate_02
+WARN stage=5 PROP_UNSUPPORTED Prop rpgpp_lt_rock_small_02
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_bush_02
+WARN stage=5 PROP_ON_PROP Prop Banner
+WARN stage=5 PROP_ON_PROP Prop Banner
+WARN stage=5 PROP_ON_PROP Prop Banner
+WARN stage=5 PROP_ON_PROP Breakable crate
+WARN stage=5 PROP_ON_PROP Breakable barrel
+WARN stage=5 PROP_ON_PROP Breakable barrel
+WARN stage=5 PROP_ON_PROP Breakable barrel
+WARN stage=5 PROP_ON_PROP Prop Rock_03
+WARN stage=5 PROP_ON_PROP Prop Rock_03
+WARN stage=5 PROP_ON_PROP Prop Rock_03
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=5 PROP_ON_PROP Prop Bush_02
+WARN stage=5 PROP_ON_PROP Prop Mushroom_01
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_log_wood_01
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_log_wood_01
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_log_wood_01
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_log_wood_01
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_log_wood_01
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=5 PROP_ON_PROP Breakable crate
+WARN stage=5 PROP_ON_PROP Breakable crate
+WARN stage=5 PROP_ON_PROP Breakable crate
+WARN stage=5 PROP_ON_PROP Breakable crate
+WARN stage=5 PROP_ON_PROP Breakable crate
+WARN stage=5 PROP_ON_PROP Breakable crate
+WARN stage=5 PROP_ON_PROP Breakable crate
+WARN stage=5 PROP_ON_PROP Breakable crate
+WARN stage=5 PROP_ON_PROP Breakable crate
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+WARN stage=5 PROP_UNSUPPORTED Prop rpgpp_lt_rock_small_01
+WARN stage=5 PROP_UNSUPPORTED Prop rpgpp_lt_rock_small_02
+WARN stage=5 PROP_ON_PROP Breakable crate
+WARN stage=5 PROP_ON_PROP Prop Rock_03
+WARN stage=5 PROP_UNSUPPORTED Prop Rock_03
+WARN stage=5 PROP_ON_PROP Prop Rock_05
+WARN stage=5 PROP_ON_PROP Prop Rock_05
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=5 PROP_ON_PROP Prop Mushroom_01
+WARN stage=5 PROP_ON_PROP Prop Mushroom_01
+WARN stage=5 PROP_ON_PROP Prop Bush_02
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_bucket_01
+WARN stage=5 PROP_ON_PROP Prop Banner
+WARN stage=5 PROP_ON_PROP Prop Banner
+WARN stage=5 PROP_ON_PROP Breakable barrel
+WARN stage=5 PROP_ON_PROP Breakable barrel
+WARN stage=5 PROP_ON_PROP Breakable barrel
+WARN stage=5 PROP_UNSUPPORTED Prop Tent_01
+WARN stage=5 PROP_ON_PROP Prop Rock_03
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_shed_wood_02
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_shed_wood_02
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_crate_01
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_crate_01
+WARN stage=5 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=5 PROP_ON_PROP Breakable barrel
+STAGE 5 island=1 props=15
+STAGE 5 island=2 props=13
+STAGE 5 island=3 props=0
+STAGE 5 island=4 props=0
+STAGE 5 island=6 props=16
+STAGE 5 island=12 props=0
+WARN stage=5 island=15 CLUTTER props=25
+STAGE 5 island=16 props=0
+STAGE 5 island=18 props=0
+STAGE 5 island=20 props=0
+STAGE 5 island=21 props=0
+STAGE 5 island=24 props=12
+STAGE 5 island=27 props=0
+STAGE 5 island=30 props=0
+STAGE 5 island=31 props=0
+STAGE 5 island=33 props=17
+STAGE 5 island=36 props=17
+STAGE 5 island=37 props=0
+STAGE 5 island=39 props=0
+STAGE 5 island=40 props=0
+STAGE 5 island=41 props=0
+STAGE 5 island=44 props=17
+STAGE 5 done traps=9
+STAGE 6 start
+STAGE 6 built islands=14
+WARN stage=6 PROP_ON_PROP Prop Rock_05
+WARN stage=6 PROP_UNSUPPORTED Prop Rock_05
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=6 PROP_ON_PROP Prop Bush_02
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_02
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_02
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_bush_02
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_bush_02
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=6 PROP_UNSUPPORTED Prop rpgpp_lt_rock_small_02
+WARN stage=6 PROP_ON_PROP Breakable crate
+WARN stage=6 PROP_ON_PROP Breakable crate
+WARN stage=6 PROP_ON_PROP Breakable barrel
+WARN stage=6 PROP_UNSUPPORTED Prop Ruin_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=6 PROP_ON_PROP Prop Mushroom_01
+WARN stage=6 PROP_ON_PROP Prop Grass_02
+WARN stage=6 PROP_UNSUPPORTED Prop Grass_02
+WARN stage=6 PROP_ON_PROP Prop Grass_02
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_crate_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_crate_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_crate_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_sack_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_sack_01
+WARN stage=6 PROP_ON_PROP Breakable barrel
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_well_01
+WARN stage=6 PROP_UNSUPPORTED Prop rpgpp_lt_ladder_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=6 PROP_ON_PROP Prop Rock_03
+WARN stage=6 PROP_ON_PROP Prop Rock_04
+WARN stage=6 PROP_ON_PROP Prop Rock_04
+WARN stage=6 PROP_ON_PROP Prop Grass_02
+WARN stage=6 PROP_ON_PROP Prop Mushroom_01
+WARN stage=6 PROP_ON_PROP Prop Mushroom_01
+WARN stage=6 PROP_ON_PROP Prop Mushroom_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+WARN stage=6 PROP_UNSUPPORTED Prop rpgpp_lt_crate_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_vase_01
+WARN stage=6 PROP_ON_PROP Breakable crate
+WARN stage=6 PROP_ON_PROP Breakable crate
+WARN stage=6 PROP_ON_PROP Prop Mushroom_01
+WARN stage=6 PROP_ON_PROP Prop Mushroom_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_crate_02
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_crate_02
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_log_wood_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=6 PROP_UNSUPPORTED Prop Rock_04
+WARN stage=6 PROP_ON_PROP Prop Rock_03
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_crate_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_crate_01
+WARN stage=6 PROP_UNSUPPORTED Prop Gate_01
+WARN stage=6 PROP_ON_PROP Prop Rock_03
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=6 PROP_UNSUPPORTED Prop Grass_02
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_crate_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_crate_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_bush_02
+WARN stage=6 PROP_ON_PROP Pushable block
+WARN stage=6 PROP_ON_PROP Pushable block
+WARN stage=6 PROP_UNSUPPORTED Prop Tower_01
+WARN stage=6 PROP_ON_PROP Prop Rock_03
+WARN stage=6 PROP_ON_PROP Prop Rock_03
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=6 PROP_ON_PROP Prop Bush_02
+WARN stage=6 PROP_ON_PROP Prop Bush_02
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_wagon_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_wagon_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_wagon_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_bench_wood_01
+WARN stage=6 PROP_ON_PROP Prop rpgpp_lt_bench_wood_01
+WARN stage=6 PROP_ON_PROP Prop Banner
+WARN stage=6 PROP_ON_PROP Breakable barrel
+STAGE 6 island=1 props=19
+STAGE 6 island=2 props=11
+STAGE 6 island=3 props=0
+STAGE 6 island=4 props=0
+STAGE 6 island=6 props=16
+STAGE 6 island=9 props=0
+STAGE 6 island=12 props=18
+STAGE 6 island=13 props=0
+STAGE 6 island=15 props=0
+STAGE 6 island=17 props=0
+STAGE 6 island=18 props=0
+STAGE 6 island=24 props=12
+STAGE 6 island=27 props=0
+STAGE 6 island=30 props=0
+STAGE 6 island=31 props=0
+STAGE 6 island=33 props=12
+STAGE 6 island=36 props=17
+STAGE 6 island=37 props=0
+STAGE 6 island=39 props=0
+STAGE 6 island=40 props=0
+STAGE 6 island=41 props=0
+STAGE 6 island=44 props=20
+STAGE 6 done traps=11
+STAGE 7 start
+STAGE 7 built islands=8
+WARN stage=7 PROP_ON_PROP Prop House_02
+WARN stage=7 PROP_ON_PROP Prop Rock_03
+WARN stage=7 PROP_ON_PROP Prop Rock_03
+WARN stage=7 PROP_ON_PROP Prop Rock_05
+WARN stage=7 PROP_ON_PROP Prop Rock_05
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=7 PROP_ON_PROP Prop Mushroom_01
+WARN stage=7 PROP_ON_PROP Prop Bush_02
+WARN stage=7 PROP_ON_PROP Prop Bush_02
+WARN stage=7 PROP_ON_PROP Prop Bush_02
+WARN stage=7 PROP_ON_PROP Prop Bush_02
+WARN stage=7 PROP_ON_PROP Prop Grass_02
+WARN stage=7 PROP_ON_PROP Prop Grass_02
+WARN stage=7 PROP_ON_PROP Prop Grass_02
+WARN stage=7 PROP_ON_PROP Prop Grass_02
+WARN stage=7 PROP_ON_PROP Prop Grass_02
+WARN stage=7 PROP_ON_PROP Prop Bush_02
+WARN stage=7 PROP_ON_PROP Prop Bush_02
+WARN stage=7 PROP_ON_PROP Prop Bush_02
+WARN stage=7 PROP_ON_PROP Prop Bush_02
+WARN stage=7 PROP_ON_PROP Prop Grass_02
+WARN stage=7 PROP_UNSUPPORTED Prop Grass_02
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_vase_01
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_vase_01
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_vase_01
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_vase_01
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_vase_01
+WARN stage=7 PROP_ON_PROP Breakable crate
+WARN stage=7 PROP_ON_PROP Breakable barrel
+WARN stage=7 PROP_UNSUPPORTED Prop House_02
+WARN stage=7 PROP_ON_PROP Prop Rock_04
+WARN stage=7 PROP_ON_PROP Prop Rock_04
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=7 PROP_ON_PROP Prop Mushroom_01
+WARN stage=7 PROP_ON_PROP Prop Mushroom_01
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=7 PROP_UNSUPPORTED Prop rpgpp_lt_rock_small_01
+WARN stage=7 PROP_ON_PROP Prop Grass_02
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_log_wood_01
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_log_wood_01
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_bucket_01
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_rock_03
+WARN stage=7 PROP_UNSUPPORTED Prop rpgpp_lt_rock_03
+WARN stage=7 PROP_ON_PROP Breakable barrel
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=7 PROP_ON_PROP Prop Bush_02
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_log_wood_01
+WARN stage=7 PROP_UNSUPPORTED Prop rpgpp_lt_log_wood_01
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_bush_02
+WARN stage=7 PROP_ON_PROP Prop rpgpp_lt_bush_02
+WARN stage=7 PROP_ON_PROP Breakable crate
+WARN stage=7 PROP_ON_PROP Prop Rock_03
+WARN stage=7 PROP_UNSUPPORTED Prop rpgpp_lt_shed_wood_02
+STAGE 7 island=1 props=20
+STAGE 7 island=2 props=11
+STAGE 7 island=3 props=0
+STAGE 7 island=4 props=0
+STAGE 7 island=6 props=13
+STAGE 7 island=9 props=0
+STAGE 7 island=12 props=0
+STAGE 7 island=13 props=0
+STAGE 7 island=17 props=0
+STAGE 7 island=21 props=13
+STAGE 7 island=22 props=0
+STAGE 7 island=25 props=11
+STAGE 7 done traps=11
+STAGE 8 start
+STAGE 8 built islands=15
+WARN stage=8 PROP_ON_PROP Prop Rock_04
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=8 PROP_ON_PROP Prop Mushroom_01
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_bucket_01
+WARN stage=8 PROP_ON_PROP Prop Mushroom_01
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_log_wood_01
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_log_wood_01
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_bush_02
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=8 PROP_ON_PROP Breakable crate
+WARN stage=8 PROP_ON_PROP Breakable crate
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=8 PROP_ON_PROP Prop Bush_01
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_sack_01
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_sack_01
+WARN stage=8 PROP_ON_PROP Breakable crate
+WARN stage=8 PROP_ON_PROP Prop DeadTree_01
+WARN stage=8 PROP_ON_PROP Prop Snowman_01
+WARN stage=8 PROP_UNSUPPORTED Prop Snowman_01
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=8 PROP_UNSUPPORTED Prop rpgpp_lt_rock_small_02
+WARN stage=8 PROP_ON_PROP Prop Sign_01
+WARN stage=8 PROP_UNSUPPORTED Prop rpgpp_lt_rock_small_01
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_crate_02
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_crate_02
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_bush_02
+WARN stage=8 PROP_ON_PROP Prop Well_01
+WARN stage=8 PROP_ON_PROP Prop Rock_05
+WARN stage=8 PROP_ON_PROP Prop Sign_01
+WARN stage=8 PROP_ON_PROP Prop Stump_01
+WARN stage=8 PROP_ON_PROP Prop Stump_01
+WARN stage=8 PROP_ON_PROP Prop Stump_01
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=8 PROP_ON_PROP Prop Sign_01
+WARN stage=8 PROP_ON_PROP Pushable block
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_tree_pine_01
+WARN stage=8 PROP_UNSUPPORTED Prop rpgpp_lt_rock_02
+WARN stage=8 PROP_ON_PROP Prop Rock_05
+WARN stage=8 PROP_UNSUPPORTED Prop Mushroom_01
+WARN stage=8 PROP_ON_PROP Breakable crate
+WARN stage=8 PROP_UNSUPPORTED Breakable crate
+WARN stage=8 PROP_UNSUPPORTED Prop Tree_02
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_rock_01
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_bucket_01
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=8 PROP_ON_PROP Prop Rock_03
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_rock_01
+WARN stage=8 PROP_ON_PROP Prop Rock_01
+WARN stage=8 PROP_ON_PROP Prop Rock_01
+WARN stage=8 PROP_ON_PROP Prop Mushroom_01
+WARN stage=8 PROP_ON_PROP Prop Mushroom_01
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=8 PROP_ON_PROP Prop Stump_01
+WARN stage=8 PROP_ON_PROP Prop Sign_01
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+WARN stage=8 PROP_ON_PROP Pushable block
+WARN stage=8 PROP_ON_PROP Prop Pine_02
+WARN stage=8 PROP_ON_PROP Prop Rock_05
+WARN stage=8 PROP_ON_PROP Prop Bush_02
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_rock_02
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_bush_02
+WARN stage=8 PROP_ON_PROP Prop rpgpp_lt_bush_02
+WARN stage=8 PROP_ON_PROP Breakable crate
+STAGE 8 island=1 props=16
+STAGE 8 island=2 props=12
+STAGE 8 island=3 props=0
+STAGE 8 island=4 props=0
+STAGE 8 island=6 props=17
+STAGE 8 island=9 props=0
+STAGE 8 island=13 props=10
+STAGE 8 island=14 props=0
+STAGE 8 island=16 props=0
+STAGE 8 island=18 props=0
+STAGE 8 island=19 props=0
+STAGE 8 island=22 props=14
+STAGE 8 island=25 props=0
+STAGE 8 island=28 props=0
+STAGE 8 island=29 props=0
+STAGE 8 island=31 props=15
+STAGE 8 island=35 props=11
+STAGE 8 island=36 props=0
+STAGE 8 island=38 props=0
+STAGE 8 island=39 props=0
+STAGE 8 island=40 props=0
+STAGE 8 island=46 props=19
+STAGE 8 island=49 props=17
+STAGE 8 done traps=11
+STAGE 9 start
+STAGE 9 built islands=16
+WARN stage=9 PROP_UNSUPPORTED Prop Tree_01
+WARN stage=9 PROP_ON_PROP Prop Bush_01
+WARN stage=9 PROP_ON_PROP Prop Sign_01
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_rock_03
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_rock_03
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_rock_03
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_bush_02
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_bush_02
+WARN stage=9 PROP_ON_PROP Breakable crate
+WARN stage=9 PROP_ON_PROP Breakable crate
+WARN stage=9 PROP_ON_PROP Prop Pine_03
+WARN stage=9 PROP_ON_PROP Prop Rock_01
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=9 PROP_ON_PROP Prop Stump_01
+WARN stage=9 PROP_ON_PROP Prop Mushroom_01
+WARN stage=9 PROP_ON_PROP Prop Bush_02
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_bucket_01
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_bucket_01
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_sack_01
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_sack_01
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_sack_01
+WARN stage=9 PROP_ON_PROP Breakable crate
+WARN stage=9 PROP_ON_PROP Prop Pine_02
+WARN stage=9 PROP_UNSUPPORTED Prop Rock_02
+WARN stage=9 PROP_ON_PROP Prop Rock_01
+WARN stage=9 PROP_UNSUPPORTED Prop Rock_01
+WARN stage=9 PROP_UNSUPPORTED Prop rpgpp_lt_rock_small_01
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_bucket_01
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_bush_02
+WARN stage=9 PROP_UNSUPPORTED Prop Tree_02
+WARN stage=9 PROP_ON_PROP Prop Stump_01
+WARN stage=9 PROP_UNSUPPORTED Prop rpgpp_lt_rock_small_01
+WARN stage=9 PROP_ON_PROP Prop Mushroom_01
+WARN stage=9 PROP_ON_PROP Prop Bush_01
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_shed_wood_02
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_shed_wood_02
+WARN stage=9 PROP_UNSUPPORTED Prop rpgpp_lt_shed_wood_02
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=9 PROP_UNSUPPORTED Prop rpgpp_lt_rock_small_02
+WARN stage=9 PROP_UNSUPPORTED Prop Pine_03
+WARN stage=9 PROP_ON_PROP Prop Well_01
+WARN stage=9 PROP_ON_PROP Prop Sign_01
+WARN stage=9 PROP_ON_PROP Prop Mushroom_01
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_crate_01
+WARN stage=9 PROP_UNSUPPORTED Prop Pine_01
+WARN stage=9 PROP_ON_PROP Prop Rock_01
+WARN stage=9 PROP_UNSUPPORTED Prop Rock_01
+WARN stage=9 PROP_ON_PROP Prop Bush_01
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=9 PROP_UNSUPPORTED Prop rpgpp_lt_shed_wood_02
+WARN stage=9 PROP_ON_PROP Breakable barrel
+WARN stage=9 PROP_UNSUPPORTED Prop Pine_01
+WARN stage=9 PROP_UNSUPPORTED Prop Rock_02
+WARN stage=9 PROP_ON_PROP Prop Rock_02
+WARN stage=9 PROP_ON_PROP Prop Bush_01
+WARN stage=9 PROP_ON_PROP Prop Bush_02
+WARN stage=9 PROP_UNSUPPORTED Prop Bush_02
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=9 PROP_ON_PROP Prop Stump_01
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_shed_wood_02
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_shed_wood_02
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_shed_wood_02
+WARN stage=9 PROP_UNSUPPORTED Prop rpgpp_lt_shed_wood_02
+WARN stage=9 PROP_ON_PROP Breakable barrel
+WARN stage=9 PROP_ON_PROP Prop Pine_01
+WARN stage=9 PROP_UNSUPPORTED Prop Pine_01
+WARN stage=9 PROP_ON_PROP Prop Stump_01
+WARN stage=9 PROP_ON_PROP Prop Bush_02
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_bucket_01
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_bucket_01
+WARN stage=9 PROP_ON_PROP Prop Mushroom_01
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_ladder_01
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_crate_02
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_sack_01
+WARN stage=9 PROP_UNSUPPORTED Prop Pine_01
+WARN stage=9 PROP_ON_PROP Prop Rock_02
+WARN stage=9 PROP_ON_PROP Prop Stump_01
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_rock_01
+WARN stage=9 PROP_ON_PROP Prop rpgpp_lt_vase_01
+STAGE 9 island=1 props=18
+STAGE 9 island=2 props=14
+STAGE 9 island=3 props=0
+STAGE 9 island=4 props=0
+STAGE 9 island=6 props=19
+STAGE 9 island=9 props=0
+STAGE 9 island=13 props=15
+STAGE 9 island=14 props=0
+STAGE 9 island=16 props=0
+STAGE 9 island=21 props=0
+STAGE 9 island=22 props=0
+STAGE 9 island=25 props=10
+STAGE 9 island=28 props=0
+STAGE 9 island=31 props=0
+STAGE 9 island=32 props=0
+STAGE 9 island=34 props=18
+STAGE 9 island=38 props=15
+STAGE 9 island=39 props=0
+STAGE 9 island=41 props=0
+STAGE 9 island=42 props=0
+STAGE 9 island=43 props=0
+STAGE 9 island=46 props=15
+STAGE 9 island=49 props=0
+STAGE 9 island=50 props=0
+STAGE 9 island=52 props=17
+STAGE 9 done traps=11
+STAGE 10 start
+STAGE 10 built islands=9
+WARN stage=10 PROP_UNSUPPORTED Prop Tree_01
+WARN stage=10 PROP_UNSUPPORTED Prop Tree_01
+WARN stage=10 PROP_ON_PROP Prop rpgpp_lt_rock_02
+WARN stage=10 PROP_ON_PROP Prop Well_01
+WARN stage=10 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=10 PROP_ON_PROP Prop Bush_02
+WARN stage=10 PROP_ON_PROP Prop Bush_02
+WARN stage=10 PROP_ON_PROP Prop Bush_01
+WARN stage=10 PROP_ON_PROP Prop Bush_01
+WARN stage=10 PROP_ON_PROP Prop Bush_01
+WARN stage=10 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+WARN stage=10 PROP_ON_PROP Prop rpgpp_lt_box_wood_01
+WARN stage=10 PROP_ON_PROP Prop rpgpp_lt_vase_01
+WARN stage=10 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=10 PROP_ON_PROP Breakable barrel
+WARN stage=10 PROP_ON_PROP Breakable barrel
+WARN stage=10 PROP_ON_PROP Breakable barrel
+WARN stage=10 PROP_ON_PROP Breakable barrel
+WARN stage=10 PROP_ON_PROP Breakable crate
+WARN stage=10 PROP_ON_PROP Breakable crate
+WARN stage=10 PROP_ON_PROP Prop Bush_02
+WARN stage=10 PROP_ON_PROP Prop Bush_01
+WARN stage=10 PROP_ON_PROP Prop rpgpp_lt_bucket_01
+WARN stage=10 PROP_UNSUPPORTED Prop Rock_03
+WARN stage=10 PROP_ON_PROP Prop Well_01
+WARN stage=10 PROP_ON_PROP Prop Bush_02
+WARN stage=10 PROP_UNSUPPORTED Prop Bush_02
+WARN stage=10 PROP_UNSUPPORTED Prop rpgpp_lt_log_wood_01
+WARN stage=10 PROP_ON_PROP Prop rpgpp_lt_crate_01
+WARN stage=10 PROP_UNSUPPORTED Prop rpgpp_lt_crate_01
+WARN stage=10 PROP_ON_PROP Prop rpgpp_lt_barrel_02
+WARN stage=10 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=10 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=10 PROP_ON_PROP Breakable crate
+WARN stage=10 PROP_ON_PROP Prop Sign_01
+WARN stage=10 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=10 PROP_ON_PROP Prop rpgpp_lt_rock_02
+WARN stage=10 PROP_ON_PROP Prop rpgpp_lt_sack_01
+WARN stage=10 PROP_ON_PROP Prop rpgpp_lt_sack_01
+WARN stage=10 PROP_ON_PROP Breakable crate
+WARN stage=10 PROP_ON_PROP Breakable crate
+WARN stage=10 PROP_ON_PROP Breakable crate
+WARN stage=10 PROP_ON_PROP Breakable crate
+WARN stage=10 PROP_UNSUPPORTED Prop Pine_02
+WARN stage=10 PROP_ON_PROP Prop rpgpp_lt_barrel_02
+STAGE 10 island=1 props=15
+STAGE 10 island=2 props=10
+STAGE 10 island=3 props=0
+STAGE 10 island=4 props=0
+STAGE 10 island=6 props=18
+STAGE 10 island=9 props=0
+STAGE 10 island=13 props=0
+STAGE 10 island=14 props=0
+STAGE 10 island=18 props=0
+STAGE 10 island=22 props=9
+STAGE 10 island=23 props=0
+STAGE 10 island=26 props=11
+STAGE 10 island=28 props=0
+STAGE 10 island=31 props=10
+STAGE 10 done traps=9
+STAGE 11 start
+STAGE 11 built islands=17
+WARN stage=11 PROP_ON_PROP Prop Grass_02
+WARN stage=11 PROP_ON_PROP Prop Bush_02
+WARN stage=11 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=11 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=11 PROP_ON_PROP Breakable crate
+WARN stage=11 PROP_UNSUPPORTED Prop Rock_05
+WARN stage=11 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=11 PROP_ON_PROP Prop Grass_02
+WARN stage=11 PROP_ON_PROP Breakable crate
+WARN stage=11 PROP_ON_PROP Prop Tree_03
+WARN stage=11 PROP_ON_PROP Prop Rock_04
+WARN stage=11 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=11 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=11 PROP_ON_PROP Prop Bush_02
+WARN stage=11 PROP_ON_PROP Prop Banner
+WARN stage=11 PROP_ON_PROP Breakable barrel
+WARN stage=11 PROP_ON_PROP Breakable barrel
+WARN stage=11 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=11 PROP_UNSUPPORTED Prop Grass_02
+WARN stage=11 PROP_UNSUPPORTED Breakable barrel
+WARN stage=11 PROP_ON_PROP Prop Rock_03
+WARN stage=11 PROP_ON_PROP Prop Rock_04
+WARN stage=11 PROP_ON_PROP Prop Rock_04
+WARN stage=11 PROP_ON_PROP Prop Rock_05
+WARN stage=11 PROP_ON_PROP Prop Flowers_01
+WARN stage=11 PROP_ON_PROP Prop Flowers_01
+WARN stage=11 PROP_ON_PROP Prop Flowers_01
+WARN stage=11 PROP_ON_PROP Prop Flowers_01
+WARN stage=11 PROP_ON_PROP Prop Flowers_01
+WARN stage=11 PROP_ON_PROP Breakable barrel
+WARN stage=11 PROP_ON_PROP Breakable barrel
+WARN stage=11 PROP_ON_PROP Breakable crate
+WARN stage=11 PROP_ON_PROP Breakable crate
+WARN stage=11 PROP_ON_PROP Pushable block
+WARN stage=11 PROP_ON_PROP Prop Rock_03
+WARN stage=11 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=11 PROP_UNSUPPORTED Prop rpgpp_lt_rock_small_01
+WARN stage=11 PROP_UNSUPPORTED Prop rpgpp_lt_rock_small_02
+WARN stage=11 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=11 PROP_UNSUPPORTED Prop rpgpp_lt_rock_small_02
+WARN stage=11 PROP_ON_PROP Prop Grass_02
+WARN stage=11 PROP_ON_PROP Breakable barrel
+WARN stage=11 PROP_ON_PROP Breakable barrel
+WARN stage=11 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=11 PROP_ON_PROP Prop Flowers_01
+WARN stage=11 PROP_ON_PROP Prop Bush_02
+WARN stage=11 PROP_ON_PROP Breakable crate
+WARN stage=11 PROP_ON_PROP Prop Tree_03
+WARN stage=11 PROP_UNSUPPORTED Prop Bush_02
+WARN stage=11 PROP_ON_PROP Prop Bush_02
+WARN stage=11 PROP_UNSUPPORTED Prop Tree_02
+WARN stage=11 PROP_UNSUPPORTED Prop Rock_04
+WARN stage=11 PROP_ON_PROP Prop Rock_05
+STAGE 11 island=1 props=9
+STAGE 11 island=2 props=8
+STAGE 11 island=3 props=0
+STAGE 11 island=4 props=0
+STAGE 11 island=6 props=17
+STAGE 11 island=9 props=0
+STAGE 11 island=13 props=7
+STAGE 11 island=14 props=0
+STAGE 11 island=16 props=0
+STAGE 11 island=18 props=0
+STAGE 11 island=19 props=0
+STAGE 11 island=22 props=16
+STAGE 11 island=25 props=0
+STAGE 11 island=28 props=0
+STAGE 11 island=29 props=0
+STAGE 11 island=31 props=12
+STAGE 11 island=35 props=10
+STAGE 11 island=36 props=0
+STAGE 11 island=38 props=0
+STAGE 11 island=39 props=0
+STAGE 11 island=40 props=0
+STAGE 11 island=47 props=13
+STAGE 11 island=50 props=0
+STAGE 11 island=51 props=0
+STAGE 11 island=53 props=16
+STAGE 11 island=56 props=12
+STAGE 11 done traps=14
+STAGE 12 start
+STAGE 12 built islands=17
+WARN stage=12 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=12 PROP_ON_PROP Breakable barrel
+WARN stage=12 PROP_ON_PROP Breakable crate
+WARN stage=12 PROP_ON_PROP Prop Rock_04
+WARN stage=12 PROP_ON_PROP Prop Flowers_01
+WARN stage=12 PROP_UNSUPPORTED Prop rpgpp_lt_rock_small_01
+WARN stage=12 PROP_ON_PROP Prop Grass_02
+WARN stage=12 PROP_ON_PROP Prop Rock_03
+WARN stage=12 PROP_ON_PROP Prop Rock_04
+WARN stage=12 PROP_ON_PROP Prop Banner
+WARN stage=12 PROP_ON_PROP Prop Tree_03
+STAGE 12 THREW IOException: Win32 IO returned 1224. Path: C:\Users\X1 YOGA\Documents\3D Lost Realms OpenCode\Legends-of-the-lost-realms\unity-3d\Validation\organize-sweep.txt
+STAGE 13 start
+STAGE 13 built islands=18
+WARN stage=13 PROP_ON_PROP Prop Tree_01
+WARN stage=13 PROP_ON_PROP Prop Rock_05
+WARN stage=13 PROP_ON_PROP Prop Rock_05
+WARN stage=13 PROP_ON_PROP Prop Flowers_01
+WARN stage=13 PROP_ON_PROP Prop Bush_02
+WARN stage=13 PROP_ON_PROP Prop Bush_02
+WARN stage=13 PROP_ON_PROP Prop Flowers_01
+WARN stage=13 PROP_ON_PROP Prop Bush_02
+WARN stage=13 PROP_ON_PROP Prop Banner
+WARN stage=13 PROP_ON_PROP Prop Banner
+WARN stage=13 PROP_ON_PROP Breakable crate
+WARN stage=13 PROP_UNSUPPORTED Prop Tree_02
+WARN stage=13 PROP_ON_PROP Prop Rock_04
+WARN stage=13 PROP_ON_PROP Prop Bush_02
+WARN stage=13 PROP_ON_PROP Prop Bush_02
+WARN stage=13 PROP_ON_PROP Prop Flowers_01
+WARN stage=13 PROP_ON_PROP Prop Banner
+WARN stage=13 PROP_ON_PROP Prop Banner
+WARN stage=13 PROP_ON_PROP Breakable barrel
+WARN stage=13 PROP_UNSUPPORTED Prop Tree_01
+WARN stage=13 PROP_ON_PROP Prop Tree_02
+WARN stage=13 PROP_ON_PROP Prop Rock_03
+WARN stage=13 PROP_ON_PROP Prop Rock_03
+WARN stage=13 PROP_ON_PROP Prop Rock_03
+WARN stage=13 PROP_ON_PROP Prop Bush_02
+WARN stage=13 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=13 PROP_ON_PROP Prop Flowers_01
+WARN stage=13 PROP_ON_PROP Prop Banner
+WARN stage=13 PROP_ON_PROP Prop Banner
+WARN stage=13 PROP_ON_PROP Prop Banner
+WARN stage=13 PROP_UNSUPPORTED Prop Rock_05
+WARN stage=13 PROP_UNSUPPORTED Prop Rock_05
+WARN stage=13 PROP_ON_PROP Prop Flowers_01
+WARN stage=13 PROP_ON_PROP Breakable barrel
+WARN stage=13 PROP_ON_PROP Prop Rock_03
+WARN stage=13 PROP_ON_PROP Prop Rock_04
+WARN stage=13 PROP_ON_PROP Prop Rock_03
+WARN stage=13 PROP_ON_PROP Prop Rock_03
+WARN stage=13 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=13 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=13 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=13 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=13 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=13 PROP_UNSUPPORTED Prop Tree_03
+WARN stage=13 PROP_ON_PROP Prop Tree_01
+WARN stage=13 PROP_ON_PROP Prop Rock_03
+WARN stage=13 PROP_ON_PROP Prop Rock_05
+WARN stage=13 PROP_ON_PROP Prop Rock_05
+WARN stage=13 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=13 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=13 PROP_ON_PROP Prop Grass_02
+WARN stage=13 PROP_ON_PROP Prop Grass_02
+WARN stage=13 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=13 PROP_ON_PROP Prop Flowers_01
+WARN stage=13 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=13 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=13 PROP_ON_PROP Breakable crate
+WARN stage=13 PROP_ON_PROP Breakable crate
+WARN stage=13 PROP_ON_PROP Breakable crate
+WARN stage=13 PROP_UNSUPPORTED Prop Rock_03
+WARN stage=13 PROP_ON_PROP Prop Bush_02
+WARN stage=13 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=13 PROP_ON_PROP Prop Bush_02
+WARN stage=13 PROP_UNSUPPORTED Prop Bush_02
+WARN stage=13 PROP_ON_PROP Prop Bush_02
+WARN stage=13 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=13 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=13 PROP_ON_PROP Breakable crate
+WARN stage=13 PROP_UNSUPPORTED Breakable crate
+WARN stage=13 PROP_ON_PROP Prop Rock_04
+WARN stage=13 PROP_ON_PROP Prop Rock_03
+WARN stage=13 PROP_ON_PROP Prop Flowers_01
+WARN stage=13 PROP_ON_PROP Prop Flowers_01
+WARN stage=13 PROP_ON_PROP Prop Flowers_01
+WARN stage=13 PROP_ON_PROP Prop Flowers_01
+WARN stage=13 PROP_ON_PROP Prop Bush_02
+WARN stage=13 PROP_ON_PROP Prop Grass_02
+WARN stage=13 PROP_ON_PROP Prop Flowers_01
+WARN stage=13 PROP_ON_PROP Prop Flowers_01
+WARN stage=13 PROP_ON_PROP Prop Rock_05
+WARN stage=13 PROP_ON_PROP Prop Banner
+WARN stage=13 PROP_ON_PROP Prop Rock_05
+WARN stage=13 PROP_ON_PROP Prop Rock_04
+WARN stage=13 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=13 PROP_ON_PROP Prop Bush_02
+WARN stage=13 PROP_ON_PROP Prop Bush_02
+WARN stage=13 PROP_ON_PROP Prop Bush_02
+WARN stage=13 PROP_ON_PROP Prop Rock_04
+WARN stage=13 PROP_ON_PROP Prop Rock_04
+WARN stage=13 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=13 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=13 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=13 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=13 PROP_ON_PROP Prop Grass_02
+WARN stage=13 PROP_ON_PROP Prop Grass_02
+WARN stage=13 PROP_ON_PROP Prop Grass_02
+WARN stage=13 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=13 PROP_ON_PROP Breakable crate
+WARN stage=13 PROP_ON_PROP Breakable crate
+STAGE 13 island=1 props=16
+STAGE 13 island=2 props=16
+STAGE 13 island=3 props=0
+STAGE 13 island=4 props=0
+STAGE 13 island=6 props=19
+STAGE 13 island=9 props=0
+STAGE 13 island=13 props=14
+STAGE 13 island=14 props=0
+STAGE 13 island=16 props=0
+STAGE 13 island=18 props=0
+STAGE 13 island=19 props=0
+STAGE 13 island=22 props=11
+STAGE 13 island=28 props=0
+STAGE 13 island=32 props=0
+STAGE 13 island=33 props=0
+STAGE 13 island=35 props=22
+STAGE 13 island=39 props=14
+STAGE 13 island=40 props=0
+STAGE 13 island=42 props=0
+STAGE 13 island=43 props=0
+STAGE 13 island=44 props=0
+STAGE 13 island=48 props=14
+STAGE 13 island=51 props=0
+STAGE 13 island=52 props=0
+STAGE 13 island=55 props=15
+STAGE 13 island=58 props=6
+STAGE 13 island=59 props=0
+STAGE 13 island=61 props=15
+STAGE 13 done traps=16
+STAGE 14 start
+STAGE 14 built islands=18
+WARN stage=14 PROP_UNSUPPORTED Prop Rock_03
+WARN stage=14 PROP_UNSUPPORTED Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop Bush_02
+WARN stage=14 PROP_ON_PROP Breakable crate
+WARN stage=14 PROP_ON_PROP Prop Flowers_01
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_UNSUPPORTED Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Breakable crate
+WARN stage=14 PROP_ON_PROP Breakable crate
+WARN stage=14 PROP_ON_PROP Prop Rock_03
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=14 PROP_ON_PROP Breakable crate
+WARN stage=14 PROP_ON_PROP Prop Tree_02
+WARN stage=14 PROP_ON_PROP Prop Rock_05
+WARN stage=14 PROP_ON_PROP Prop Rock_05
+WARN stage=14 PROP_ON_PROP Prop Rock_05
+WARN stage=14 PROP_UNSUPPORTED Prop Rock_04
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_UNSUPPORTED Prop Grass_02
+WARN stage=14 PROP_UNSUPPORTED Prop Banner
+WARN stage=14 PROP_ON_PROP Breakable crate
+WARN stage=14 PROP_ON_PROP Breakable crate
+WARN stage=14 PROP_ON_PROP Prop Rock_04
+WARN stage=14 PROP_ON_PROP Prop Bush_02
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop Banner
+WARN stage=14 PROP_ON_PROP Prop Banner
+WARN stage=14 PROP_ON_PROP Prop Rock_03
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop Grass_02
+WARN stage=14 PROP_ON_PROP Breakable crate
+WARN stage=14 PROP_ON_PROP Breakable crate
+WARN stage=14 PROP_ON_PROP Prop Tree_03
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_UNSUPPORTED Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop Tree_03
+WARN stage=14 PROP_ON_PROP Prop Tree_03
+WARN stage=14 PROP_UNSUPPORTED Prop Tree_03
+WARN stage=14 PROP_ON_PROP Prop Flowers_01
+WARN stage=14 PROP_UNSUPPORTED Prop Flowers_01
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=14 PROP_ON_PROP Prop Bush_02
+WARN stage=14 PROP_ON_PROP Prop Banner
+WARN stage=14 PROP_UNSUPPORTED Prop Tree_01
+WARN stage=14 PROP_ON_PROP Prop Grass_02
+WARN stage=14 PROP_ON_PROP Breakable barrel
+WARN stage=14 PROP_UNSUPPORTED Prop Tree_02
+WARN stage=14 PROP_ON_PROP Prop Rock_03
+WARN stage=14 PROP_ON_PROP Prop Rock_03
+WARN stage=14 PROP_ON_PROP Prop Bush_02
+WARN stage=14 PROP_ON_PROP Prop Bush_02
+WARN stage=14 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=14 PROP_ON_PROP Prop Banner
+WARN stage=14 PROP_ON_PROP Prop Banner
+WARN stage=14 PROP_ON_PROP Prop Banner
+WARN stage=14 PROP_ON_PROP Breakable crate
+STAGE 14 island=1 props=15
+STAGE 14 island=2 props=10
+STAGE 14 island=3 props=0
+STAGE 14 island=4 props=0
+STAGE 14 island=6 props=17
+STAGE 14 island=9 props=0
+STAGE 14 island=13 props=12
+STAGE 14 island=14 props=0
+STAGE 14 island=16 props=0
+STAGE 14 island=18 props=0
+STAGE 14 island=19 props=0
+STAGE 14 island=22 props=10
+STAGE 14 island=25 props=0
+STAGE 14 island=29 props=0
+STAGE 14 island=30 props=0
+STAGE 14 island=32 props=15
+STAGE 14 island=36 props=5
+STAGE 14 island=37 props=0
+STAGE 14 island=39 props=0
+STAGE 14 island=43 props=0
+STAGE 14 island=44 props=0
+STAGE 14 island=48 props=14
+STAGE 14 island=51 props=0
+STAGE 14 island=52 props=0
+STAGE 14 island=55 props=18
+STAGE 14 island=58 props=10
+STAGE 14 island=59 props=0
+STAGE 14 island=61 props=16
+STAGE 14 done traps=16
+STAGE 15 start
+STAGE 15 built islands=10
+WARN stage=15 PROP_ON_PROP Prop Tree_02
+WARN stage=15 PROP_UNSUPPORTED Prop rpgpp_lt_rock_small_02
+WARN stage=15 PROP_ON_PROP Prop Flowers_01
+WARN stage=15 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=15 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=15 PROP_ON_PROP Prop Bush_02
+WARN stage=15 PROP_ON_PROP Prop Bush_02
+WARN stage=15 PROP_ON_PROP Prop Bush_02
+WARN stage=15 PROP_ON_PROP Prop Banner
+WARN stage=15 PROP_ON_PROP Prop Banner
+WARN stage=15 PROP_ON_PROP Prop Banner
+WARN stage=15 PROP_ON_PROP Breakable crate
+WARN stage=15 PROP_UNSUPPORTED Prop Tree_01
+WARN stage=15 PROP_ON_PROP Prop Bush_02
+WARN stage=15 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=15 PROP_ON_PROP Prop Bush_02
+WARN stage=15 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=15 PROP_ON_PROP Prop rpgpp_lt_rock_small_01
+WARN stage=15 PROP_ON_PROP Prop Banner
+WARN stage=15 PROP_ON_PROP Prop Banner
+WARN stage=15 PROP_ON_PROP Prop Banner
+WARN stage=15 PROP_ON_PROP Breakable crate
+WARN stage=15 PROP_ON_PROP Breakable crate
+WARN stage=15 PROP_ON_PROP Prop Rock_03
+WARN stage=15 PROP_ON_PROP Prop Grass_02
+WARN stage=15 PROP_UNSUPPORTED Prop Tree_01
+WARN stage=15 PROP_UNSUPPORTED Prop Rock_03
+WARN stage=15 PROP_ON_PROP Prop Rock_03
+WARN stage=15 PROP_UNSUPPORTED Prop Rock_03
+WARN stage=15 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=15 PROP_ON_PROP Prop Bush_02
+WARN stage=15 PROP_ON_PROP Prop Banner
+WARN stage=15 PROP_UNSUPPORTED Prop Banner
+WARN stage=15 PROP_ON_PROP Prop Grass_02
+WARN stage=15 PROP_ON_PROP Prop Grass_02
+WARN stage=15 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=15 PROP_ON_PROP Prop Banner
+WARN stage=15 PROP_UNSUPPORTED Prop Tree_01
+WARN stage=15 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=15 PROP_UNSUPPORTED Prop rpgpp_lt_rock_small_01
+WARN stage=15 PROP_ON_PROP Prop rpgpp_lt_rock_small_02
+WARN stage=15 PROP_ON_PROP Prop Bush_02
+WARN stage=15 PROP_ON_PROP Prop Bush_02
+WARN stage=15 PROP_ON_PROP Prop Grass_02
+WARN stage=15 PROP_ON_PROP Pushable block
+STAGE 15 island=1 props=16
+STAGE 15 island=2 props=11
+STAGE 15 island=3 props=0
+STAGE 15 island=4 props=0
+STAGE 15 island=6 props=11
+STAGE 15 island=9 props=0
+STAGE 15 island=13 props=0
+STAGE 15 island=14 props=0
+STAGE 15 island=15 props=0
+STAGE 15 island=19 props=10
+STAGE 15 island=20 props=0
+STAGE 15 island=23 props=11
+STAGE 15 island=28 props=0
+STAGE 15 island=32 props=12
+STAGE 15 island=33 props=0
+STAGE 15 island=36 props=7
+STAGE 15 done traps=11
+SWEEP_DONE 1-15

@@ -11,6 +11,17 @@ namespace LostRealms {
  }
 
 public static class WeaponCatalog {
+    // Explicit identities: spear-shaped weapons remain physical polearms.
+    public static int ChargedShot(WeaponId id)=>id==WeaponId.EmberTorch?0:id==WeaponId.SageStaff||id==WeaponId.WardenPike?2:-1;
+    public static bool ChargedSlash(WeaponId id)=>id==WeaponId.PureScythe||id==WeaponId.BrassFangs;
+    // Keep one normal chapter drop, but discover the collection before repeating it.
+    // Reuse the existing roll so selecting loot does not reshuffle the level layout.
+    public static WeaponId DiscoveryDrop(int roll,Progress progress){
+     var missing=new System.Collections.Generic.List<int>();
+     for(int id=1;id<=40;id++)if(progress==null||((progress.weapons==null||!progress.weapons.Contains(id))&&progress.equippedWeapon!=id))missing.Add(id);
+     int index=Mathf.Clamp(roll,1,40)-1;
+     return (WeaponId)(missing.Count>0?missing[index%missing.Count]:index+1);
+    }
     static readonly WeaponDefinition Fists=new WeaponDefinition(WeaponId.AstersBlade,"FISTS","",.85f,.92f,1.12f,1f,Vector3.zero,"fists and kicks — find a weapon to draw arms");
     static readonly WeaponDefinition[] Definitions={
     new WeaponDefinition(WeaponId.AstersBlade,"ASTER'S BLADE","Weapons/Aster_LongSword",1f,1f,1f,1f,Vector3.zero,"Balanced starter blade"),
@@ -35,7 +46,7 @@ public static class WeaponCatalog {
     new WeaponDefinition(WeaponId.HovlMoon2,"LUNAR TALON","Weapons/HovlMoon2",1.3f,1.15f,1f,1.25f,new Vector3(12,90,-90),"curved blade  •  steady arcs"),
     new WeaponDefinition(WeaponId.PureAxe2H,"TITAN AXE","Weapons/PureAxe2H",1.5f,.92f,.78f,1.32f,new Vector3(8,0,0),"two-handed cleave  •  heavy"),
     new WeaponDefinition(WeaponId.PureHammer,"CRUSHER","Weapons/PureHammer",1.62f,.86f,.74f,1.22f,new Vector3(8,0,0),"blunt force  •  slow recovery"),
-    new WeaponDefinition(WeaponId.PureScythe,"REAPER'S SCYTHE","Weapons/PureScythe",1.1f,1.25f,.88f,1.42f,new Vector3(12,90,-90),"sweeping arc  •  deceptive reach"),
+    new WeaponDefinition(WeaponId.PureScythe,"REAPER'S SCYTHE","Weapons/PureScythe",1.1f,1.25f,.88f,1.42f,new Vector3(12,90,-90),"hold attack: spectral crescent slash"),
     new WeaponDefinition(WeaponId.PureSword2H,"TEMPEST BLADE","Weapons/PureSword2H",1.35f,1.2f,.82f,1.36f,new Vector3(10,90,-90),"two-handed tempo  •  wide swing"),
     new WeaponDefinition(WeaponId.PureSpear,"REAPER'S SPEAR","Weapons/PureSpear",1.05f,1.35f,.95f,1.5f,new Vector3(10,0,0),"long thrust  •  probing reach"),
     new WeaponDefinition(WeaponId.PureSword1H,"DUELING BLADE","Weapons/PureSword1H",1.1f,1f,1.08f,1.05f,new Vector3(10,90,-90),"balanced one-hand  •  quick"),
@@ -49,11 +60,11 @@ public static class WeaponCatalog {
     new WeaponDefinition(WeaponId.HuntsmanSpear,"HUNTSMAN SPEAR","Weapons/HuntsmanSpear",1.1f,1.35f,1f,1.5f,new Vector3(10,0,0),"long thrust  •  steady tempo"),
     new WeaponDefinition(WeaponId.MoonChakram,"MOON CHAKRAM","Weapons/MoonChakram",1.15f,1.05f,1.2f,1.1f,new Vector3(12,90,-90),"whirling disc  •  rapid arcs"),
     new WeaponDefinition(WeaponId.RiftDagger,"RIFT DAGGER","Weapons/RiftDagger",1f,.85f,1.25f,.9f,new Vector3(10,90,-90),"piercing fang  •  very fast"),
-    new WeaponDefinition(WeaponId.WardenPike,"WARDEN PIKE","Weapons/WardenPike",1.15f,1.4f,.92f,1.5f,new Vector3(10,0,0),"oathkeeper thrust  •  longest reach"),
+    new WeaponDefinition(WeaponId.WardenPike,"WARDEN PIKE","Weapons/WardenPike",1.15f,1.4f,.92f,1.5f,new Vector3(10,0,0),"hold attack: storm lance  •  chaining thunder"),
     new WeaponDefinition(WeaponId.Maul,"MAUL","Weapons/Maul",1.75f,.9f,.66f,1.25f,new Vector3(8,0,0),"siege hammer  •  slowest swing"),
-    new WeaponDefinition(WeaponId.BrassFangs,"BRASS FANGS","Weapons/BrassFangs",1.2f,.8f,1.3f,.9f,new Vector3(8,0,0),"brawler knuckles  •  punch flurry"),
-    new WeaponDefinition(WeaponId.EmberTorch,"EMBER TORCH","Weapons/EmberTorch",1.2f,.9f,1f,1.1f,new Vector3(8,0,0),"burning brand  •  steady arcs"),
-    new WeaponDefinition(WeaponId.SageStaff,"SAGE STAFF","Weapons/SageStaff",1.05f,1.35f,.95f,1.5f,new Vector3(10,0,0),"wand-shell staff  •  probing reach")
+    new WeaponDefinition(WeaponId.BrassFangs,"BRASS FANGS","Weapons/BrassFangs",1.2f,.8f,1.3f,.9f,new Vector3(8,0,0),"hold attack: three-claw slash volley"),
+    new WeaponDefinition(WeaponId.EmberTorch,"EMBER TORCH","Weapons/EmberTorch",1.2f,.9f,1f,1.1f,new Vector3(8,0,0),"hold attack: fireball  •  small flame splash"),
+    new WeaponDefinition(WeaponId.SageStaff,"SAGE STAFF","Weapons/SageStaff",1.05f,1.35f,.95f,1.5f,new Vector3(10,0,0),"hold attack: thunder bolt  •  arcs to a nearby foe")
    };
   public static WeaponDefinition Get(int rawId){return rawId<0?Fists:Definitions[Mathf.Clamp(rawId,0,Definitions.Length-1)];}
   public static WeaponDefinition Get(WeaponId id)=>Get((int)id);
@@ -115,6 +126,7 @@ public static class WeaponCatalog {
 
  public sealed class WeaponDrop:MonoBehaviour {
   public WeaponId Id;public Vector3 Origin;Transform model;float phase;
+  readonly RewardAnchor anchor=new RewardAnchor();
   public void Configure(WeaponId id,Vector3 origin){
    Id=id;Origin=origin;phase=((int)id+1)*1.37f;
    Physics.SyncTransforms();
@@ -123,18 +135,22 @@ public static class WeaponCatalog {
    for(int i=0;i<hits.Length;i++){if(hits[i].normal.y>=.5f&&!hits[i].transform.name.StartsWith("Prop ")&&hits[i].point.y>bestY)bestY=hits[i].point.y;}
    if(bestY>float.NegativeInfinity)Origin=new Vector3(origin.x,bestY+.15f,origin.z);
    transform.position=Origin+Vector3.up*.75f;
+   anchor.Bind(transform,Origin);
    var definition=WeaponCatalog.Get(id);var created=WeaponCatalog.CreateModel(id,transform);model=created?created.transform:null;if(!model)Debug.LogError("WEAPON_DROP_SETUP_FAILED: "+definition.Name);else Art.Ring(new Vector3(0,-.55f,0),.7f,new Color(1f,.85f,.3f),transform);Vfx.Play("ga_vfx_LootDrop_01",Origin+Vector3.up*.6f,Quaternion.identity,.9f);
   }
   void Start(){
+   Origin=anchor.Position;
    Physics.SyncTransforms();
    var hits=Physics.RaycastAll(Origin+Vector3.up*6f,Vector3.down,12f,~0,QueryTriggerInteraction.Ignore);
    float bestY=float.NegativeInfinity;
    for(int i=0;i<hits.Length;i++){if(hits[i].normal.y>=.5f&&!hits[i].transform.name.StartsWith("Prop ")&&hits[i].point.y>bestY)bestY=hits[i].point.y;}
    if(bestY>float.NegativeInfinity){float minSafe=bestY+.15f;if(Origin.y<minSafe)Origin.y=minSafe;}
    transform.position=Origin+Vector3.up*.75f;
+   anchor.Bind(transform,Origin);
   }
   void Update(){
    var game=RealmGame.I;if(!game||game.Screen!=GameScreen.Playing||!game.Player)return;
+   Origin=anchor.Position;
    float time=game.Elapsed+phase;transform.position=Origin+Vector3.up*(.75f+Mathf.Sin(time*1.4f)*.09f);transform.Rotate(0,Time.deltaTime*24f,0,Space.World);
    if(model)model.localRotation=Quaternion.Euler(0,0,Mathf.Sin(time*1.8f)*7f);
    if(Vector3.Distance(game.Player.transform.position+Vector3.up*.8f,transform.position)<1.3f){
@@ -148,6 +164,10 @@ public static class WeaponCatalog {
   Hero hero;Transform hand;float drawnUntil,draw;
   Vector3 bladeDir=Vector3.up,flatDir=Vector3.forward,center;bool measured;
   TrailRenderer trail;static readonly float BackGap=.15f;
+  public bool InFlight {get;private set;}
+  public Vector3 CatchPosition=>hand?hand.position:transform.position;
+  public bool BeginThrow(){if(InFlight||!model)return false;InFlight=true;model.SetActive(false);if(trail){trail.emitting=false;trail.Clear();}return true;}
+  public void EndThrow(){InFlight=false;if(model)model.SetActive(true);draw=1f;drawnUntil=Time.time+.3f;}
   public static void Equip(Hero hero,WeaponId id){
    // Destroy is deferred: detach immediately so another pickup this frame
    // cannot find the same pending-destruction model and leave its replacement.
@@ -196,6 +216,10 @@ public static class WeaponCatalog {
    Vector3 longAxis=size.x>=size.y&&size.x>=size.z?Vector3.right:size.y>=size.x&&size.y>=size.z?Vector3.up:Vector3.forward;
    bladeDir=transform.InverseTransformDirection(renderer.transform.TransformDirection(longAxis));
    flatDir=transform.InverseTransformDirection(renderer.transform.TransformDirection(Vector3.forward));
+   if(Id==WeaponId.MoonChakram||Id==WeaponId.BrassFangs){
+    Vector3 thinAxis=size.x<=size.y&&size.x<=size.z?Vector3.right:size.y<=size.z?Vector3.up:Vector3.forward;
+    flatDir=transform.InverseTransformDirection(renderer.transform.TransformDirection(thinAxis));
+   }
    center=transform.InverseTransformPoint(renderer.bounds.center);
    measured=true;
   }
@@ -210,11 +234,18 @@ public static class WeaponCatalog {
    rot=Quaternion.FromToRotation(measured?bladeDir:Vector3.up,hero.transform.up);
    Vector3 flat=rot*flatDir;
    if(Vector3.Dot(flat,hero.transform.forward)>=0)rot=Quaternion.AngleAxis(180f,hero.transform.up)*rot;
-   pos=socket-rot*center;
+   if(Id==WeaponId.MoonChakram||Id==WeaponId.BrassFangs){
+    rot=Quaternion.LookRotation(-hero.transform.forward,Id==WeaponId.BrassFangs?hero.transform.right:hero.transform.up)*Quaternion.Inverse(Quaternion.LookRotation(flatDir,bladeDir));
+    // The imported chest bone carries a retargeting offset; use the capsule's
+    // torso height so this wide disc stays centered on the visible back.
+    socket=hero.transform.position+hero.transform.up*1.2f-hero.transform.forward*.23f;
+   }
+   pos=socket-rot*(Id==WeaponId.MoonChakram||Id==WeaponId.BrassFangs?Vector3.Scale(center,transform.lossyScale):center);
   }
   void LateUpdate(){
    var game=RealmGame.I;if(!game||game.Screen!=GameScreen.Playing)return;
    if(!hero||!hero.Visual||!hand||!model)return;
+   if(InFlight)return;
    string state=hero.Visual.CurrentState;
    if(state.StartsWith("attack_")||state=="charged")drawnUntil=Time.time+1.1f;
    bool shouldDraw=Time.time<drawnUntil;

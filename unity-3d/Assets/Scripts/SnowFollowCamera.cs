@@ -224,25 +224,11 @@ namespace LostRealms {
 
                 if (snowMaterial == null) {
                     var tex = Resources.Load<Texture2D>("VFX/Textures/circle_01");
-                    var shader = Shader.Find("Mobile/Particles/Alpha Blended")
-                              ?? Shader.Find("Particles/Standard Unlit")
-                              ?? Shader.Find("Sprites/Default");
+                    var shader = Shader.Find("Sprites/Default");
                     snowMaterial = new Material(shader) { name = "SnowParticleMaterial" };
                     if (tex != null) snowMaterial.mainTexture = tex;
                     snowMaterial.color = new Color(1f, 1f, 1f, 0.85f);
-                    snowMaterial.enableInstancing = true;
                     snowMaterial.renderQueue = 3000;
-                    // Fix black squares on mobile: Particles/Standard Unlit
-                    // defaults to opaque when the Mobile shader is stripped from
-                    // the build.  Force alpha-blend state so the snowflake
-                    // texture's transparent background is honoured on every device.
-                    snowMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                    snowMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                    snowMaterial.SetInt("_ZWrite", 0);
-                    snowMaterial.DisableKeyword("_ALPHATEST_ON");
-                    snowMaterial.EnableKeyword("_ALPHABLEND_ON");
-                    snowMaterial.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                    if (snowMaterial.HasProperty("_Mode")) snowMaterial.SetFloat("_Mode", 2f);
                 }
                 psRenderer.sharedMaterial = snowMaterial;
             }

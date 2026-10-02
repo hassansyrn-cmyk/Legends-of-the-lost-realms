@@ -2,7 +2,7 @@ name: Unity 3D Android APK
 
 on:
   push:
-    branches: [ chatgpt-astra/unity-3d, main, 'feature/**', 'fix/**', Antigravity, Antigravity2 ]
+    branches: [ chatgpt-astra/unity-3d, main, 'feature/**', 'fix/**', 'Antigravity*' ]
   workflow_dispatch:
     inputs:
       publish_release:
@@ -20,6 +20,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Free disk space for Unity Android container
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          echo "Disk space before cleanup:"
+          df -h /
+          # GameCI supplies its own Android toolchain inside the Unity container.
+          sudo rm -rf /usr/local/lib/android/sdk /usr/share/dotnet /opt/ghc /usr/local/share/boost
+          docker system prune --all --force
+          echo "Disk space after cleanup:"
+          df -h /
+
       - name: Check out source
         uses: actions/checkout@v4
         with:

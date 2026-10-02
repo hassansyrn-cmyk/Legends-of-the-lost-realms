@@ -1,0 +1,7 @@
+CI_LITERAL_GUARDS_OK verify-aster-motion-tuning.sh
+CI_LITERAL_GUARDS_OK verify-phase2-relics.sh
+CI_LITERAL_GUARDS_OK verify-phase3-graphics.sh
+CI_LITERAL_GUARDS_OK verify-startup-safety.sh
+CI_LITERAL_GUARDS_OK verify-unity-ci-config.sh
+CI_LITERAL_GUARDS_OK verify-weapon-system.sh
+CI_POWERSHELL_CHECKS_PASSED 95 (literal and asset equivalents; shell scripts not executed)

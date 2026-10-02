@@ -1,0 +1,3 @@
+weapons=4,16,33 equipped=16
+oldsave weapons=present(0) equipped=5
+SAVE_PROBE_PASSED

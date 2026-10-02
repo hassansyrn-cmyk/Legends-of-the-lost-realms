@@ -7,10 +7,14 @@ namespace LostRealms {
   public CharacterController Controller;public int MaxHealth,Health,Power;public float Energy=100;public bool Grounded=>Controller&&Controller.isGrounded; public CharacterVisual Visual;
   public int windUsed;
   const float MaxMoveSpeed=4.8f,GroundResponse=18f,AirResponse=8f,StopResponse=22f;
+  public float MoveSpeedMultiplier=1f;
+  public float CurrentMoveSpeed=>MaxMoveSpeed*MoveSpeedMultiplier;
   Vector3 velocity;Vector3 moveWish;float vertical,jumpGrace,dashUntil,dashReady,dodgeVisualUntil,hitUntil,immuneUntil,attackReady,comboUntil,chargeStart,attackBufferUntil,spellUntil;int jumps,combo,airDashes;bool charging,attackBufferCharged,spellCharging,wasGrounded,plunging;float jumpBuffer,spellChargeStart;string attackState="attack_1",hitState="hit",parryState="charged",dodgeVisualState="dodge";
   float parryUntil,parryReady,counterUntil,pullUntil,stepTimer;Vector3 pullPoint;bool dodgeRewarded,stepAlt;
   Vector3 platformDisplacement;float hyperArmorUntil,ledgeLostAt;
+  bool pendingCharge;int chargeReleaseVersion;
   public void CarryByPlatform(Vector3 delta){platformDisplacement+=delta;}
+  public float VerticalVelocity=>vertical;
   // Heavy weapons (greataxes/hammers) grant hyper-armor during the active
   // swing: damage still lands but the flinch and knockback are shrugged off.
   public bool HyperArmor=>RealmGame.I!=null&&RealmGame.I.Elapsed<hyperArmorUntil;
@@ -21,17 +25,33 @@ namespace LostRealms {
   public bool Attacking=>RealmGame.I!=null&&RealmGame.I.Elapsed<attackReady-.06f;
   public bool Pulling=>RealmGame.I!=null&&RealmGame.I.Elapsed<pullUntil;
   public bool Plunging=>plunging;
+  public void ApplySkin(SkinDefinition skin,bool reEquipWeapon=true){
+   MoveSpeedMultiplier=skin.SpeedMult;
+   int baseHp=5+(RealmGame.I!=null?RealmGame.I.Save.healthRank:0);
+   int prevMax=MaxHealth;
+   MaxHealth=Mathf.Max(1,baseHp+skin.BonusHealth);
+   if(prevMax<=0)Health=MaxHealth;
+   else Health=Mathf.Clamp(Health+(MaxHealth-prevMax),1,MaxHealth);
+   if(Visual){
+    Destroy(Visual.gameObject);
+    Visual=null;
+   }
+   Visual=CharacterVisual.Create(skin.PrefabName,transform,1.8f,new Color(.25f,.55f,.57f));
+   if(reEquipWeapon&&RealmGame.I&&RealmGame.I.Save.equippedWeapon>=0){
+    EquippedWeapon.Equip(this,(WeaponId)RealmGame.I.Save.equippedWeapon);
+   }
+  }
   void Awake(){
    Controller=gameObject.AddComponent<CharacterController>();Controller.height=1.75f;Controller.radius=.32f;Controller.center=Vector3.up*.9f;Controller.stepOffset=.35f;Controller.slopeLimit=48;Controller.skinWidth=.08f;Controller.minMoveDistance=.001f;
-   MaxHealth=5+RealmGame.I.Save.healthRank;Health=MaxHealth;
-   Visual=CharacterVisual.Create("Aster",transform,1.8f,new Color(.25f,.55f,.57f));
+   var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
+   ApplySkin(skin,false);
   }
   void Start(){if(RealmGame.I&&RealmGame.I.Save.equippedWeapon>=0)EquippedWeapon.Equip(this,(WeaponId)RealmGame.I.Save.equippedWeapon);}
   void Update(){
    var g=RealmGame.I;
    if(!g||!g.CameraRig||!Visual||!Controller)return;
    if(g.Screen!=GameScreen.Playing){
-    if(g.Screen==GameScreen.Defeated)Visual.Play("death");else Visual.Play("idle");
+    if(g.Screen==GameScreen.Defeated)Visual.Play("death");else if(!pendingCharge)Visual.Play("idle");
     return;
    }
    // Input shaping only: camera-facing wish is computed here for rotation
@@ -87,12 +107,12 @@ namespace LostRealms {
     Visual.Play(parryState);
    }else if(plunging){
     Visual.Play("charged");
-   }else if(RealmGame.I.Elapsed<attackReady-.06f){
+   }else if(RealmGame.I.Elapsed<attackReady-(pendingCharge?0f:.06f)){
     Visual.Play(attackState);
    }else if(!Grounded){
     Visual.Play("jump");
    }else if(moveWish.sqrMagnitude>.01f||HorizontalSpeed>.2f){
-    float speedRatio=Mathf.Clamp01(HorizontalSpeed/MaxMoveSpeed);
+    float speedRatio=Mathf.Clamp01(HorizontalSpeed/CurrentMoveSpeed);
     Visual.PlayWalk(speedRatio);
    }else{
     Visual.Play("idle");
@@ -113,7 +133,7 @@ namespace LostRealms {
    Vector3 wish=moveWish;
 
    // Grounding and Jump Grace (Coyote time)
-   if(Grounded){jumps=0;airDashes=1+Mathf.Min(3,RealmGame.I.Save.moxieRank);jumpGrace=.14f;if(vertical<0)vertical=-3f;}else jumpGrace-=dt;
+   if(Grounded){var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);jumps=0;airDashes=1+Mathf.Min(3,RealmGame.I.Save.moxieRank)+skin.BonusAirDashes;jumpGrace=.14f;if(vertical<0)vertical=-3f;}else jumpGrace-=dt;
    jumpBuffer=jumpPressed?.13f:Mathf.Max(0,jumpBuffer-dt);
    if(jumpBuffer>0&&(jumps<2||jumpGrace>0)){
     jumpBuffer=0;
@@ -160,13 +180,13 @@ namespace LostRealms {
     if(to.magnitude<1.3f||Grounded){pullUntil=0;velocity*=.4f;vertical=Mathf.Max(vertical,0f);}
     else{Vector3 d=to.normalized;velocity=d*Mathf.Min(15f,to.magnitude*4.5f);velocity.y=0;vertical=Mathf.Max(vertical,d.y*9f);}
    }else if(RealmGame.I.Elapsed>=dashUntil){
-    Vector3 desiredVelocity=wish.sqrMagnitude>.0001f?wish.normalized*(MaxMoveSpeed*Mathf.Clamp01(wish.magnitude)):Vector3.zero;
+    Vector3 desiredVelocity=wish.sqrMagnitude>.0001f?wish.normalized*(CurrentMoveSpeed*Mathf.Clamp01(wish.magnitude)):Vector3.zero;
     float response=desiredVelocity.sqrMagnitude>.001f?(Grounded?GroundResponse:AirResponse):StopResponse;
     velocity=Vector3.MoveTowards(velocity,desiredVelocity,response*dt);
     velocity.y=0;
     // Dash leftover (or knockback) must not linger above run speed and
     // slingshot Aster across small islands.
-    if(velocity.sqrMagnitude>MaxMoveSpeed*MaxMoveSpeed)velocity=Vector3.MoveTowards(velocity,desiredVelocity,StopResponse*2f*dt);
+    if(velocity.sqrMagnitude>CurrentMoveSpeed*CurrentMoveSpeed)velocity=Vector3.MoveTowards(velocity,desiredVelocity,StopResponse*2f*dt);
    }else{
     velocity.y=0;
    }
@@ -176,6 +196,7 @@ namespace LostRealms {
    float grav=Mathf.Abs(vertical)<2.5f?11f:23f;
    vertical-=grav*dt;
    vertical=Mathf.Max(vertical,-20f);
+   if(platformDisplacement.y>0f&&vertical<0f)vertical=0f;
    CollisionFlags contacts=Controller.Move((velocity+Vector3.up*vertical)*dt+platformDisplacement);
    if((contacts&CollisionFlags.Above)!=0&&vertical>0f)vertical=0f;
    platformDisplacement=Vector3.zero;
@@ -192,15 +213,23 @@ namespace LostRealms {
    }
    if(nowGrounded&&HorizontalSpeed>1.2f){
     stepTimer-=dt;
-     if(stepTimer<=0f){stepTimer=HorizontalSpeed>3.5f?.32f:.42f;stepAlt=!stepAlt;g.Sound(stepAlt?"step":"step2");}
+     if(stepTimer<=0f){
+      stepTimer=HorizontalSpeed>3.5f?.32f:.42f;stepAlt=!stepAlt;
+      bool wood=false;
+      if(Physics.Raycast(transform.position+Vector3.up*.25f,Vector3.down,out var gh,1.3f)){
+       string hn=gh.collider.name.ToLower();
+       wood=hn.Contains("bridge")||hn.Contains("wood")||hn.Contains("plank");
+      }
+      g.Sound(stepAlt?"step":"step2",wood?1.26f:1f);
+     }
    }else{stepTimer=.15f;}
    wasGrounded=nowGrounded;
-   Energy=Mathf.Min(100,Energy+dt*(12f+4f*RealmGame.I.Save.aetherRank));
+   Energy=Mathf.Min(100,Energy+dt*(12f+4f*RealmGame.I.Save.aetherRank)*(SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0).EnergyRegenMult));
   }
 
   public void Warp(Vector3 p){platformDisplacement=Vector3.zero;Controller.enabled=false;transform.position=p;Controller.enabled=true;vertical=0;velocity=Vector3.zero;jumpBuffer=0;charging=false;plunging=false;dashUntil=0;attackBufferUntil=0;immuneUntil=RealmGame.I.Elapsed+1.2f;parryUntil=0;parryReady=0;counterUntil=0;RealmGame.I.CameraRig.Snap();}
   public void Push(Vector3 p){Controller.enabled=false;transform.position=p;Controller.enabled=true;}
-  public void Bounce(float upwardVelocity,Vector3 horizontalImpulse=default){vertical=upwardVelocity;if(horizontalImpulse.sqrMagnitude>.01f)velocity=horizontalImpulse;jumps=1;airDashes=1+Mathf.Min(3,RealmGame.I.Save.moxieRank);jumpGrace=0;jumpBuffer=0;Visual.Restart("jump");}
+  public void Bounce(float upwardVelocity,Vector3 horizontalImpulse=default){vertical=upwardVelocity;if(horizontalImpulse.sqrMagnitude>.01f)velocity=horizontalImpulse;jumps=1;airDashes=1+Mathf.Min(3,RealmGame.I.Save.moxieRank)+SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0).BonusAirDashes;jumpGrace=0;jumpBuffer=0;Visual.Restart("jump");}
   public void Boost(Vector3 impulse){velocity=Vector3.ClampMagnitude(velocity+impulse,14f);airDashes=Mathf.Max(airDashes,1);}
   // Continuous external force (wind vents, geysers): small per-step impulses,
   // no clamp and no air-dash refresh — Boost is for one-shot launches.
@@ -210,10 +239,12 @@ namespace LostRealms {
    if(Health<=0)return false;
    if(RealmGame.I.Elapsed<parryUntil){ParrySuccess(source);return false;}
    if(RealmGame.I.Elapsed<immuneUntil){if(RealmGame.I.Elapsed<dashUntil)PerfectDodge(source);return false;}
-Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=RealmGame.I.Elapsed+1;
+var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
+    int netDamage=Mathf.Max(1,Mathf.RoundToInt(damage*skin.DamageTakenMult));
+    Health=Mathf.Max(0,Health-netDamage);RealmGame.I.DamageTaken+=netDamage;immuneUntil=RealmGame.I.Elapsed+1;
     // Hyper-armor: heavy-weapon swings absorb the hit without flinching or
     // losing ground — the swing commits. Lethal hits always break through.
-    bool armored=HyperArmor&&Health>0;
+    bool armored=(HyperArmor||skin.InnateHyperArmor)&&Health>0;
     if(!armored){
      hitUntil=RealmGame.I.Elapsed+.5f;
      Vector3 knock=transform.position-source;knock.y=0;if(knock.sqrMagnitude<.01f)knock=-transform.forward;knock.y=0;velocity=knock.normalized*4.5f;RealmGame.I.Sound("hurt");RealmGame.I.CameraRig.Shake=.18f;RealmGame.I.CameraRig.Kick(knock.normalized,.4f);
@@ -229,7 +260,7 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
   void Attack(bool charged){
    // Never cut a dodge roll or hit flinch mid-clip: queue instead so the
    // swing starts exactly as the current visual blends out.
-   if(RealmGame.I.Elapsed<attackReady||RealmGame.I.Elapsed<dodgeVisualUntil||RealmGame.I.Elapsed<hitUntil){
+   if(pendingCharge||RealmGame.I.Elapsed<attackReady||RealmGame.I.Elapsed<dodgeVisualUntil||RealmGame.I.Elapsed<hitUntil){
     attackBufferUntil=RealmGame.I.Elapsed+.3f;attackBufferCharged=charged;return;
    }
    var g=RealmGame.I;var weapon=g.CurrentWeapon;
@@ -245,7 +276,8 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
    //  heavy (greataxe/hammer grips, Damage>=1.4) = hyper-armor through the swing,
    //  pole (spear/halberd/staff) = tipper sweet-spot, flurry (fists/dagger) =
    //  faster chains + backstab crits, chakram = returning-disc specialist.
-   bool heavy=style=="chop"&&weapon.Damage>=1.4f;
+   var skin=SkinCatalog.Get(g.Save.equippedSkin);
+   bool heavy=(style=="chop"&&weapon.Damage>=1.4f)||skin.InnateHyperArmor;
    bool pole=style=="spear";
    bool flurry=style=="unarmed"||weapon.Id==WeaponId.RiftDagger;
    if(flurry)attackDuration*=.85f;
@@ -265,7 +297,7 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
     if(lungeDir.sqrMagnitude<.01f)lungeDir=Vector3.forward;
     lungeDir.Normalize();
     float lungeStep=(isDashStrike?4.2f:charged?3f:2f)*(Grounded?1f:.5f);
-    velocity=Vector3.ClampMagnitude(velocity*.55f+lungeDir*lungeStep*.45f,MaxMoveSpeed);velocity.y=0;
+    velocity=Vector3.ClampMagnitude(velocity*.55f+lungeDir*lungeStep*.45f,CurrentMoveSpeed);velocity.y=0;
 
      Visual.PlayAttack(combo,charged,weapon.Tempo/(flurry?.85f:1f),style);
      // Armed swings ring steel; bare fists thud — never swords unarmed.
@@ -283,6 +315,8 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
     float damage=(charged?3.5f:combo==3?2.5f:1.5f)*weapon.Damage;
     if(isDashStrike){damage*=1.35f;reach*=1.2f;}
     damage*=1f+g.Save.arsenalRank*.08f;
+    damage*=skin.DamageMult;
+    if(combo==3&&!charged)damage*=skin.FinisherDamageMult;
     if(RealmGame.I.Elapsed<counterUntil){
      damage*=2.2f+RealmGame.I.Save.tempoRank*.25f;
      counterUntil=0;
@@ -292,6 +326,14 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
      g.Sound("impact");
      Vfx.Play("ga_vfx_Hyperdrive_01",transform.position+Vector3.up*.9f,Quaternion.LookRotation(transform.forward),1.2f);
      DamageTip.Show(transform.position+Vector3.up*2.2f,"CRITICAL RIPOSTE!",new Color(1f,.92f,.25f));
+    }
+    int staffElement=WeaponCatalog.ChargedShot(weapon.Id);
+    if(charged&&(staffElement>=0||WeaponCatalog.ChargedSlash(weapon.Id))){
+     pendingCharge=true;int version=++chargeReleaseVersion;
+     // Release before the recovery tail; normalized timing follows weapon playback speed.
+     float releaseAt=g.Elapsed+attackDuration*.85f;
+     StartCoroutine(ReleaseChargedShot(weapon.Id,damage+g.Save.powerRank*.18f,releaseAt,version,GetComponentInChildren<EquippedWeapon>()));
+     return; // Ranged charge replaces the melee hit, rather than hitting twice.
     }
     // Moon Chakram's charged throw: a returning disc that hits on both passes.
     if(charged&&weapon.Id==WeaponId.MoonChakram)ChakramProjectile.Throw(transform.position+Vector3.up*1f,transform.forward,damage,Power);
@@ -325,6 +367,24 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
    }
   }
 
+  System.Collections.IEnumerator ReleaseChargedShot(WeaponId weapon,float damage,float releaseAt,int version,EquippedWeapon equipped){
+   var g=RealmGame.I;
+   while(g&&version==chargeReleaseVersion){
+    if(Health<=0||!equipped||!equipped.gameObject.activeInHierarchy||g.Player!=this||(g.Screen!=GameScreen.Playing&&g.Screen!=GameScreen.Paused))break;
+    if(g.Screen==GameScreen.Playing){
+     if(g.Elapsed<hitUntil||g.Elapsed<dodgeVisualUntil||g.Elapsed<parryUntil||plunging)break;
+     if(g.Elapsed>=releaseAt){
+      Vector3 origin=transform.position+Vector3.up*1.05f;
+      if(weapon==WeaponId.BrassFangs){
+       for(int i=-1;i<=1;i++)StaffShot.Fire(origin+transform.right*(i*.38f),Quaternion.AngleAxis(i*4f,Vector3.up)*transform.forward,damage*.45f,2,weapon);
+      }else StaffShot.Fire(origin,transform.forward,damage,WeaponCatalog.ChargedSlash(weapon)?2:WeaponCatalog.ChargedShot(weapon),weapon);
+      break;
+     }
+    }
+    yield return null;
+   }
+   if(version==chargeReleaseVersion)pendingCharge=false;
+  }
   void StartPlunge(){
    var g=RealmGame.I;
    plunging=true;charging=false;
@@ -380,25 +440,41 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
    string ParryState(){return WeaponCatalog.AttackStyle(RealmGame.I.CurrentWeapon)=="unarmed"?"charged":"block";}
    void Parry(){
    float now=RealmGame.I.Elapsed;if(now<parryReady||!Grounded)return;
-   parryUntil=now+.2f;parryReady=now+.55f;
+   var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
+   parryUntil=now+(.2f+skin.BonusParryWindow);parryReady=now+.55f;
    RealmGame.I.Sound("player_dash");
    Visual.Restart(ParryState());
   }
   void ParrySuccess(Vector3 source){
    var g=RealmGame.I;parryUntil=0;parryReady=g.Elapsed+.55f;
-   g.HitStop(.14f,.08f);g.CameraRig.Shake=.3f;g.Sound("impact");g.Haptic();
-   Energy=Mathf.Min(100,Energy+20+RealmGame.I.Save.tempoRank*5);counterUntil=g.Elapsed+1.6f;
-   HitSpark.Burst(transform.position+Vector3.up*.95f,-transform.forward,new Color(1f,.96f,.72f),28);
-   DamageTip.Show(transform.position+Vector3.up*1.95f,"PARRY!",new Color(1f,.94f,.6f));
-   var foe=NearestEnemy(source,3.2f);if(foe)foe.Stun(1.1f);
+   if(g.Trial)g.Trial.PerfectDefense();
+   g.HitStop(.14f,.08f);g.CameraRig.Shake=.35f;g.Sound("impact");g.Haptic();
+   Energy=Mathf.Min(100,Energy+25+RealmGame.I.Save.tempoRank*5);counterUntil=g.Elapsed+1.8f;
+   HitSpark.Burst(transform.position+Vector3.up*.95f,-transform.forward,new Color(1f,.96f,.72f),32);
+   DamageTip.Show(transform.position+Vector3.up*1.95f,"PARRY DEFLECT!",new Color(1f,.94f,.6f));
+   var foe=NearestEnemy(source,5.5f);
+   if(!foe)foe=NearestEnemy(transform.position,5.5f);
+   if(foe){
+    Vector3 knockDir=foe.transform.position-transform.position;knockDir.y=0;
+    if(knockDir.sqrMagnitude<.01f)knockDir=transform.forward;else knockDir.Normalize();
+    foe.Stun(1.4f);
+    float knockDist=foe.Boss?0.8f:1.85f;
+    foe.PushBack(knockDir,knockDist,0.22f);
+    float riposteDmg=3.8f+g.CurrentWeapon.Damage*2.2f;
+    foe.Hit(riposteDmg,Power,false,knockDir,true);
+    DamageTip.Show(foe.transform.position+Vector3.up*(foe.Boss?2.5f:1.8f),"RIPOSTE!",new Color(1f,.92f,.2f));
+    Vfx.Play("ga_vfx_Nova_01",foe.transform.position+Vector3.up*1f,Quaternion.identity,foe.Boss?1.4f:.9f);
+    g.Sound("blade");
+   }
    Visual.Restart(ParryState());
-   Vfx.Play("ga_vfx_Shield_01",transform.position+Vector3.up*1f,Quaternion.identity,.9f);
+   Vfx.Play("ga_vfx_Shield_01",transform.position+Vector3.up*1f,Quaternion.identity,1.0f);
   }
   // A dodge that actually shrugs off a hit during its active i-frame window
   // rewards the player with energy and a counter opening.
   void PerfectDodge(Vector3 source){
    if(dodgeRewarded)return;dodgeRewarded=true;
    var g=RealmGame.I;g.HitStop(.1f,.1f);g.CameraRig.Shake=.2f;g.Sound("player_dash");g.Haptic();
+   if(g.Trial)g.Trial.PerfectDefense();
    Energy=Mathf.Min(100,Energy+30);counterUntil=g.Elapsed+1.4f;
    DamageTip.Show(transform.position+Vector3.up*1.95f,"PERFECT DODGE",new Color(.65f,.95f,1f));
   }
@@ -606,30 +682,34 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
   // damaging on both passes. Ricochets read as a real weapon identity rather
   // than another melee arc.
   public class ChakramProjectile:MonoBehaviour {
+   EquippedWeapon equipment;
    Vector3 dir;float damage,age,outTime=.45f;int power;bool returning;Transform disc,player;
    readonly System.Collections.Generic.Dictionary<Enemy,float> lastHit=new System.Collections.Generic.Dictionary<Enemy,float>();
    public static void Throw(Vector3 p,Vector3 forward,float dmg,int pow){
     var g=RealmGame.I;if(g==null||g.World==null)return;
+    var equipped=g.Player?g.Player.GetComponentInChildren<EquippedWeapon>():null;
+    if(!equipped||equipped.Id!=WeaponId.MoonChakram||equipped.InFlight)return;
     var go=new GameObject("Moon chakram");go.transform.SetParent(g.World.transform,false);go.transform.position=p;
     var c=go.AddComponent<ChakramProjectile>();c.dir=forward;c.damage=dmg;c.power=pow;c.player=g.Player?g.Player.transform:null;
-    Color color=pow==0?new Color(1,.5f,.15f):pow==1?new Color(.3f,.9f,1f):new Color(.45f,1f,.7f);
-    var dgo=GameObject.CreatePrimitive(PrimitiveType.Cylinder);dgo.name="Chakram disc";
-    var col=dgo.GetComponent<Collider>();if(col)Destroy(col);
-    dgo.transform.SetParent(go.transform,false);
-    dgo.transform.localScale=new Vector3(.55f,.05f,.55f);
-    var mr=dgo.GetComponent<MeshRenderer>();
-    var m=new Material(Shader.Find("Standard")){name="Chakram glow"};m.SetColor("_Color",color);m.EnableKeyword("_EMISSION");m.SetColor("_EmissionColor",color*1.6f);m.SetFloat("_Metallic",.2f);m.SetFloat("_Glossiness",.5f);
-    mr.sharedMaterial=m;mr.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;mr.receiveShadows=false;
-    c.disc=dgo.transform;
+    var dgo=WeaponCatalog.CreateModel(WeaponId.MoonChakram,go.transform);
+    if(!dgo){Destroy(go);return;}
+    var renderer=dgo.GetComponentInChildren<Renderer>();
+    if(renderer){
+     var size=renderer.localBounds.size;
+     var axis=size.x<=size.y&&size.x<=size.z?Vector3.right:size.y<=size.z?Vector3.up:Vector3.forward;
+     dgo.transform.rotation=Quaternion.FromToRotation(renderer.transform.TransformDirection(axis),Vector3.up)*dgo.transform.rotation;
+     dgo.transform.position+=p-renderer.bounds.center;
+    }
+    c.equipment=equipped;equipped.BeginThrow();c.disc=go.transform;
    }
    void Update(){
-    var g=RealmGame.I;if(g.Screen!=GameScreen.Playing)return;
+    var g=RealmGame.I;if(!g||!player||!equipment){Destroy(gameObject);return;}if(g.Screen!=GameScreen.Playing)return;
     age+=Time.deltaTime;
     if(!returning){transform.position+=dir*15f*Time.deltaTime;if(age>=outTime)returning=true;}
     else{
-     if(player){Vector3 to=player.position+Vector3.up*1f-transform.position;float d=to.magnitude;
+     if(player){Vector3 to=equipment.CatchPosition-transform.position;float d=to.magnitude;
       if(d<1.1f){Destroy(gameObject);return;}
-      transform.position+=to.normalized*18f*Time.deltaTime;}
+      transform.position=Vector3.MoveTowards(transform.position,equipment.CatchPosition,18f*Time.deltaTime);}
     }
     if(disc)disc.Rotate(0,900f*Time.deltaTime,0);
     foreach(var e in g.Enemies.ToArray()){
@@ -645,6 +725,7 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
     }
     if(age>3.5f)Destroy(gameObject);
    }
+   void OnDestroy(){if(equipment)equipment.EndThrow();}
   }
   public class CharacterVisual:MonoBehaviour {
   public Animator animator;PlayableGraph graph;AnimationMixerPlayable mixer;AnimationClipPlayable[] playable=new AnimationClipPlayable[2];AnimationClip[] clips;string current="";float blend;int slot;bool hasGraph;Transform fallbackBody;
@@ -662,7 +743,10 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
   static readonly string[] Names={"idle","walk","run","attack_1","attack_2","attack_3","charged","jump","double_jump","dodge","hit","death","block","hit_2","hit_3","cast","roll","hit_4","hit_5"};
 
   public static CharacterVisual Create(string role,Transform parent,float height,Color color){
-   var holder=new GameObject(role+" visual");holder.transform.SetParent(parent,false);var v=holder.AddComponent<CharacterVisual>();
+   var holder=new GameObject(role+" visual");holder.transform.SetParent(parent,false);
+   bool isAsterRole=role=="Aster"||role.StartsWith("Aster_");
+   if(isAsterRole)holder.transform.localPosition=new Vector3(0,-.055f,0);
+   var v=holder.AddComponent<CharacterVisual>();
    v.lavaBoss=role=="LavaBoss";
    GameObject modelRef=null;
    var prefab=Resources.Load<GameObject>("Characters/"+role);
@@ -674,6 +758,9 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
      var asterMaterial=Resources.Load<Material>("Materials/Aster");
      if(!asterMaterial)throw new System.Exception("Missing runtime Aster material");
      foreach(var renderer in model.GetComponentsInChildren<Renderer>(true))renderer.sharedMaterial=asterMaterial;
+    }else if(role.StartsWith("Aster_")){
+     var skinMaterial=Resources.Load<Material>("Materials/"+role);
+     if(skinMaterial)foreach(var renderer in model.GetComponentsInChildren<Renderer>(true))renderer.sharedMaterial=skinMaterial;
     }else{
      var skin=CharacterSkin(role);
      if(skin)foreach(var renderer in model.GetComponentsInChildren<Renderer>(true))renderer.sharedMaterial=skin;
@@ -704,7 +791,7 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
    // The supplied Mixamo Aster clips are generated into Resources/Animations/Aster.
    // Other characters retain the existing shared fallback set.
     for(int i=0;i<Names.Length;i++){
-     if(role=="Aster")v.clips[i]=Resources.Load<AnimationClip>("Animations/"+role+"/"+Names[i]);
+     if(isAsterRole)v.clips[i]=Resources.Load<AnimationClip>("Animations/Aster/"+Names[i]);
      else{
       string legacy=Names[i].StartsWith("attack_")?"attack":Names[i]=="charged"?"attack":Names[i]=="run"?"walk":Names[i];
       v.clips[i]=Resources.Load<AnimationClip>("Animations/"+role+"/"+Names[i])
@@ -715,23 +802,23 @@ Health=Mathf.Max(0,Health-damage);RealmGame.I.DamageTaken+=damage;immuneUntil=Re
         ??Resources.Load<AnimationClip>("Animations/Shared/"+legacy);
      }
     }
-   if(role=="Aster"&&System.Array.Exists(v.clips,c=>c==null))throw new System.Exception("Aster Phase 1 animation set is incomplete");
-   if(role=="Aster")for(int s=0;s<3;s++){
+   if(isAsterRole&&System.Array.Exists(v.clips,c=>c==null))throw new System.Exception("Aster Phase 1 animation set is incomplete");
+   if(isAsterRole)for(int s=0;s<3;s++){
     v.chopClips[s]=Resources.Load<AnimationClip>("Animations/Aster/chop_"+(s+1));
     v.spearClips[s]=Resources.Load<AnimationClip>("Animations/Aster/spear_"+(s+1));
     v.unarmedClips[s]=Resources.Load<AnimationClip>("Animations/Aster/unarmed_"+(s+1));
    }
-   if(role!="Aster")foreach(var st in new[]{"attack_2","victory","gethit","dizzy","run_fast"}){
+   if(!isAsterRole)foreach(var st in new[]{"attack_2","victory","gethit","dizzy","run_fast"}){
     var extra=Resources.Load<AnimationClip>("Animations/"+role+"_"+st);
     if(extra)v.extraClips[st]=extra;
    }
-   if(role!="Aster"){var runFast=Resources.Load<AnimationClip>("Animations/"+role+"_run");if(runFast)v.extraClips["run_fast"]=runFast;}
+   if(!isAsterRole){var runFast=Resources.Load<AnimationClip>("Animations/"+role+"_run");if(runFast)v.extraClips["run_fast"]=runFast;}
    // Removed dynamic Animator addition. Prefabs should contain their own Animators if they are animated.
    // Normalize any FBX model to the requested role height and ground it on its
    // real bounds — pack FBX ship arbitrary scales and pivot offsets (the golem
    // imported at 473 units with feet 1.3 below origin). Aster is exempt: its
    // prefab scale is baked by AsterPhase1.
-    if(modelRef&&role!="Aster"){
+    if(modelRef&&!isAsterRole){
      var renderers=modelRef.GetComponentsInChildren<Renderer>(true);
      if(renderers.Length>0){
       Bounds nb=renderers[0].bounds;

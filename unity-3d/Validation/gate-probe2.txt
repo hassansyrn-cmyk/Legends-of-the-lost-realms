@@ -1,0 +1,21 @@
+PASS 59pc = 0 stars (gate sealed)
+PASS 60pc = 1 star (gate opens)
+PASS 79pc = 1 star
+PASS 80pc = 2 stars
+PASS 94.9pc = 2 stars
+PASS 95pc = 3 stars
+PASS 100pc = 3 stars
+PASS mixed completion averages thirds
+PASS over-collection clamps to 1
+PASS empty categories count complete
+PASS zero run seals gate
+DIAG world=True route=12 enemies=9 I_is_gr=True
+PASS level-1 totals wired (coins=36 gems=5 foes=9)
+PASS boss kind 8 realm 0 HP=30 (want 30)
+PASS boss kind 9 realm 1 HP=46 (want 46)
+PASS boss kind 10 realm 2 HP=62 (want 62)
+PASS boss kind 21 realm 3 HP=78 (want 78)
+PASS regular enemy HP untouched (3.3)
+PASS sealed gate blocks Finish
+PASS full clear opens gate at 3 stars
+GATE_PROBE_PASSED

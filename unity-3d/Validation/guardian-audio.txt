@@ -1,0 +1,4 @@
+heartwood duration=2.7 peak=0.8 original synthesis
+sunscar duration=1.85 peak=0.8 original synthesis
+whiteout duration=3.1 peak=0.8 original synthesis
+warden duration=2.35 peak=0.8 original synthesis
