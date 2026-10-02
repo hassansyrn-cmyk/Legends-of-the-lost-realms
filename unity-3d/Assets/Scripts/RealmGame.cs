@@ -10,7 +10,14 @@ namespace LostRealms {
     if(equippedWeapon>=0&&!weapons.Contains(equippedWeapon))weapons.Add(equippedWeapon);
     for(int i=weapons.Count-1;i>=0;i--)if(weapons[i]<0||weapons[i]>40||weapons.IndexOf(weapons[i])!=i)weapons.RemoveAt(i);
    }
-   public int version=2;public int unlocked=1, equippedWeapon=-1, coins, gems, healthRank, powerRank, arsenalRank, aetherRank, moxieRank, tempoRank, windRank, tipsSeen; public int[] stars=new int[15]; public float[] best=new float[15]; public bool music=true,sound=true,postFx=true,shake=true,haptics=true; public List<int> weapons=new List<int>();
+   public void NormalizeSkins(){
+    equippedSkin=Mathf.Clamp(equippedSkin,0,4);
+    if(skins==null)skins=new List<int>();
+    if(!skins.Contains(0))skins.Add(0);
+    if(!skins.Contains(equippedSkin))skins.Add(equippedSkin);
+    for(int i=skins.Count-1;i>=0;i--)if(skins[i]<0||skins[i]>4||skins.IndexOf(skins[i])!=i)skins.RemoveAt(i);
+   }
+   public int version=2;public int unlocked=1, equippedWeapon=-1, equippedSkin=0, coins, gems, healthRank, powerRank, arsenalRank, aetherRank, moxieRank, tempoRank, windRank, tipsSeen; public int[] stars=new int[15]; public float[] best=new float[15]; public bool music=true,sound=true,postFx=true,shake=true,haptics=true; public List<int> weapons=new List<int>(); public List<int> skins=new List<int>{0};
   }
  public class RealmGame : MonoBehaviour {
   public static RealmGame I; public static bool Testing=>Array.IndexOf(Environment.GetCommandLineArgs(),"-realmTest")>=0; public static readonly string[] Titles={"Mosslight Trail","Whispering Falls","Rootbound Ruins","The Elder Grove","Sunscorched Pass","Temple of Keys","Sandstone Colossus","Frostwind Climb","Crystal Hollow","Crown of Winter","Ember Foothills","Brimstone Rampart","Cindervein Gorge","Obsidian Ascent","Emberfall Summit"};
@@ -22,7 +29,7 @@ public static readonly string[] Realms={"VERDANT KINGDOM","BURNING DUNES","FROZE
   public Vector2 MoveInput; public bool JumpPressed,DashPressed,AttackPressed,AttackReleased,CastPressed,ParryPressed,SpellPressed,SpellReleased,GrapplePressed; public bool AttackHeld,SpellHeld,JumpHeld;
   public readonly List<Enemy> Enemies=new List<Enemy>(); public AudioSource Music,Sfx;
   public RealmAudio Audio {get;private set;} public RealmTrials Trial {get;private set;}
-   Transform worldRoot; GUIStyle title,titleC,label,small,button,center,big,smallC,tinyC,btnText; Texture2D pixel,circleFill,circleRing,btnBlade,btnJump,btnDodge,btnPower,btnParry,btnSpell,btnPause,joyBase,joyKnob; Texture2D bgMainMenu,avatarAster,btnPrimaryNorm,btnPrimaryHigh,btnStdNorm,btnStdHigh,btnSecNorm,btnSecHigh,panelLarge,panelMedium,cardUnlocked,cardSelected,cardLocked,cardCompleted,headerOrnament,dividerLine,barFrame,barFill,resourceCapsule,iconArsenal,iconAtlas,iconBack,iconClose,iconCoin,iconGem,iconLock,iconMainMenu,iconNewJourney,iconContinue,iconResume,iconRestart,iconSanctuary,iconStar; readonly TouchRouter touch=new TouchRouter(); float yawInput,hitStopUntil,bossIntroUntil,heartbeatNext;bool showArsenal;int arsenalPage;GameScreen arsenalReturn=GameScreen.Settings;readonly System.Collections.Generic.Dictionary<string,Texture2D> iconCache=new System.Collections.Generic.Dictionary<string,Texture2D>();
+   Transform worldRoot; GUIStyle title,titleC,label,small,button,center,big,smallC,tinyC,btnText; Texture2D pixel,circleFill,circleRing,btnBlade,btnJump,btnDodge,btnPower,btnParry,btnSpell,btnPause,joyBase,joyKnob; Texture2D bgMainMenu,avatarAster,btnPrimaryNorm,btnPrimaryHigh,btnStdNorm,btnStdHigh,btnSecNorm,btnSecHigh,panelLarge,panelMedium,cardUnlocked,cardSelected,cardLocked,cardCompleted,headerOrnament,dividerLine,barFrame,barFill,resourceCapsule,iconArsenal,iconAtlas,iconBack,iconClose,iconCoin,iconGem,iconLock,iconMainMenu,iconNewJourney,iconContinue,iconResume,iconRestart,iconSanctuary,iconStar; readonly TouchRouter touch=new TouchRouter(); float yawInput,hitStopUntil,bossIntroUntil,heartbeatNext;bool showArsenal,showSkins;int arsenalPage,skinPage;GameScreen arsenalReturn=GameScreen.Settings,skinReturn=GameScreen.Settings;readonly System.Collections.Generic.Dictionary<string,Texture2D> iconCache=new System.Collections.Generic.Dictionary<string,Texture2D>();
   public static readonly Color[] ElementColors={new Color(1f,.45f,.1f),new Color(.2f,.85f,1f),new Color(.2f,1f,.55f)};
   static int debugTurretCycle;
   [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Boot(){
@@ -40,6 +47,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     // Collected-weapons inventory: init for old saves, grandfather the
     // currently equipped blade, drop dupes and out-of-range ids.
     Save.NormalizeWeapons();
+    Save.NormalizeSkins();
     Save.healthRank=Mathf.Clamp(Save.healthRank,0,3);Save.powerRank=Mathf.Clamp(Save.powerRank,0,3);Save.arsenalRank=Mathf.Clamp(Save.arsenalRank,0,3);
     Save.aetherRank=Mathf.Clamp(Save.aetherRank,0,3);Save.moxieRank=Mathf.Clamp(Save.moxieRank,0,3);Save.tempoRank=Mathf.Clamp(Save.tempoRank,0,3);Save.windRank=Mathf.Clamp(Save.windRank,0,3);
    Music=gameObject.AddComponent<AudioSource>(); Music.loop=true; Music.volume=.24f; Sfx=gameObject.AddComponent<AudioSource>(); Sfx.volume=.7f;
@@ -87,7 +95,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
      Tell("Spawned "+tk+" Turret ahead! [T cycles: Stone -> Dragon -> Lion]",3);
     }
    }
-   if(Input.GetKeyDown(KeyCode.Escape)){if(showArsenal)showArsenal=false;else if(Screen==GameScreen.Playing)Pause();else if(Screen==GameScreen.Paused)Resume();else Screen=GameScreen.Menu;}
+   if(Input.GetKeyDown(KeyCode.Escape)){if(showSkins)showSkins=false;else if(showArsenal)showArsenal=false;else if(Screen==GameScreen.Playing)Pause();else if(Screen==GameScreen.Paused)Resume();else Screen=GameScreen.Menu;}
     if(Screen==GameScreen.Menu||Screen==GameScreen.Map)SetMusic("verdant_theme");
     else if(Screen==GameScreen.Settings)SetMusic("frozen_exploration_theme");
     else if(Screen==GameScreen.Playing){
@@ -123,7 +131,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    MoveInput=Vector2.ClampMagnitude(MoveInput,1); CameraRig.Yaw+=yawInput;
   }
   public void Pause(){Screen=GameScreen.Paused;Audio.Suspend(true);touch.Reset();}
-  public void Resume(){showArsenal=false;Screen=GameScreen.Playing;Audio.Suspend(false);}
+  public void Resume(){showSkins=false;showArsenal=false;Screen=GameScreen.Playing;Audio.Suspend(false);}
   void SetMusic(string key){
    if(Audio)Audio.SetTrack(key);
   }
@@ -172,6 +180,37 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     Save.equippedWeapon=-1;Persist();
     if(Player)foreach(var old in Player.GetComponentsInChildren<EquippedWeapon>(true)){old.gameObject.SetActive(false);old.transform.SetParent(null);Destroy(old.gameObject);}
     Sound("power_select");Tell("BARE FISTS  —  visit the Arsenal to rearm.",3.5f);
+   }
+   public SkinDefinition CurrentSkin=>SkinCatalog.Get(Save.equippedSkin);
+   public bool BuySkin(SkinId id){
+    int skinIndex=(int)id;
+    var def=SkinCatalog.Get(id);
+    if(Save.skins==null)Save.skins=new List<int>{0};
+    if(Save.skins.Contains(skinIndex))return false;
+    if(Save.coins<def.CostCoins||Save.gems<def.CostGems){
+     Sound("power_fail");
+     Tell("Need "+(Save.coins<def.CostCoins?def.CostCoins+" Gold":def.CostGems+" Gems")+" for "+def.Name);
+     return false;
+    }
+    Save.coins-=def.CostCoins;
+    Save.gems-=def.CostGems;
+    Save.skins.Add(skinIndex);
+    Save.equippedSkin=skinIndex;
+    Persist();
+    if(Player)Player.ApplySkin(def);
+    Sound("upgrade");
+    Tell("UNLOCKED & EQUIPPED "+def.Name+"!",4.5f);
+    return true;
+   }
+   public void EquipSkin(SkinId id){
+    int skinIndex=(int)id;
+    if(Save.skins==null||!Save.skins.Contains(skinIndex))return;
+    Save.equippedSkin=skinIndex;
+    Persist();
+    var def=SkinCatalog.Get(id);
+    if(Player)Player.ApplySkin(def);
+    Sound("power_select");
+    Tell("EQUIPPED OUTFIT: "+def.Name,4f);
    }
   public void ActivateCheckpoint(Vector3 position){Checkpoint=position;CheckpointActive=true;Sound("checkpoint");Tell("Checkpoint restored. Your trail is safe.");}
   public void Respawn(){Player.Warp(Checkpoint);Player.Health=Player.MaxHealth;Player.Energy=100;CrumblePlatform.ResetAll();Sound("respawn");Vfx.Play("ga_vfx_Portal_01",Checkpoint,Quaternion.identity,1.1f);Tell("Returned to the checkpoint.");}
@@ -349,6 +388,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    if(Screen==GameScreen.Playing&&!Player)return;
    Styles();
    GUI.matrix=Matrix4x4.TRS(Vector3.zero,Quaternion.identity,new Vector3(UnityEngine.Screen.width/1280f,UnityEngine.Screen.height/720f,1));
+   if(showSkins&&(Screen==GameScreen.Settings||Screen==GameScreen.Paused)){WardrobeView();return;}
    if(showArsenal&&(Screen==GameScreen.Settings||Screen==GameScreen.Paused)){ArsenalView();return;}
    if(Screen==GameScreen.Playing){
     // Health & Realm Banner
@@ -658,12 +698,14 @@ Panel(390,105,500,68);
     int bestRecTrack = Save.healthRank<3 ? 0 : Save.arsenalRank<3 ? 1 : Save.powerRank<3 ? 2 : Save.aetherRank<3 ? 3 : Save.moxieRank<3 ? 4 : Save.tempoRank<3 ? 5 : Save.windRank<3 ? 6 : -1;
     string recTag(int track)=>track==bestRecTrack?"  ★ RECOMMENDED":"";
 
-    // Primary Upgrades (Gold)
+    // Primary Upgrades (Gold) & Wardrobe
     string vitCost=Save.healthRank<3?(50+Save.healthRank*40)+" Gold":"MAXED";
-    if(MenuButton(new Rect(240,170,800,44),$"VITALITY RANK {Save.healthRank}/3  (+{Save.healthRank} Max HP)   —   Cost: {vitCost}{recTag(0)}",smallBtn:true,st:smallC)){
+    if(MenuButton(new Rect(240,170,520,44),$"VITALITY RANK {Save.healthRank}/3  (+{Save.healthRank} Max HP)   —   Cost: {vitCost}{recTag(0)}",smallBtn:true,st:smallC)){
      int cost=50+Save.healthRank*40;
      if(Save.healthRank<3){if(Save.coins>=cost){Save.coins-=cost;Save.healthRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
+    if(MenuButton(new Rect(770,170,270,44),$"WARDROBE ({Save.skins.Count}/5)",smallBtn:true,st:smallC)){showSkins=true;skinPage=0;skinReturn=GameScreen.Settings;Sound("power_select");}
+    if(showSkins){WardrobeView();return;}
     string arsCost=Save.arsenalRank<3?(80+Save.arsenalRank*60)+" Gold":"MAXED";
     if(MenuButton(new Rect(240,222,520,44),$"ARSENAL RANK {Save.arsenalRank}/3  (+{Save.arsenalRank*8}% DMG)   —   {arsCost}{recTag(1)}",smallBtn:true,st:smallC)){
      int cost=80+Save.arsenalRank*60;
@@ -713,6 +755,65 @@ Panel(390,105,500,68);
 
     if(MenuButton(new Rect(480,562,320,48),"BACK",iconBack,smallBtn:true,st:smallC))Screen=GameScreen.Menu;
     return;
+   }
+
+   void WardrobeView(){
+    Panel(170,40,940,640);
+    Text(210,50,860,36,"Wardrobe & Outfits",titleC);
+    if(headerOrnament)GUI.DrawTexture(new Rect(440,86,400,20),headerOrnament,ScaleMode.ScaleToFit);
+    if(dividerLine)GUI.DrawTexture(new Rect(210,108,860,10),dividerLine,ScaleMode.StretchToFill);
+    else Box(new Rect(210,112,860,2),new Color(Accent.r,Accent.g,Accent.b,.35f));
+
+    Text(210,118,860,22,$"Available:  {Save.coins} Gold   •   {Save.gems} Gems    |    Equipped: {CurrentSkin.Name.ToUpper()}",smallC);
+
+    for(int i=0;i<SkinCatalog.Count;i++){
+     var def=SkinCatalog.Get(i);
+     bool owned=Save.skins!=null&&Save.skins.Contains(i);
+     bool eq=Save.equippedSkin==i;
+     float ry=144+i*94;
+
+     Color border=eq?new Color(1f,.85f,.35f):owned?new Color(.38f,.95f,.7f,.7f):new Color(.35f,.4f,.5f,.5f);
+     BoxOutline(new Rect(210,ry,860,88),new Color(.02f,.05f,.08f,.88f),border,eq?2f:1.2f);
+
+     Rect slot=new Rect(218,ry+6,76,76);
+     BoxOutline(slot,new Color(.03f,.07f,.12f,.95f),border,1.5f);
+     string badge=i==0?"⚔":i==1?"🗡":i==2?"🛡":i==3?"🏰":"🪓";
+     Text(slot.x,slot.y+18,76,40,badge,big);
+
+     GUI.color=eq?new Color(1f,.92f,.45f):Color.white;
+     Text(304,ry+6,480,22,$"{def.Name.ToUpper()}  —  {def.Title}",small);
+     GUI.color=Color.white;
+
+     GUI.color=new Color(.38f,.95f,.7f);
+     Text(304,ry+28,480,20,def.StatSummary,tinyC);
+     GUI.color=Color.white;
+
+     Text(304,ry+48,480,34,def.Description,tinyC);
+
+     if(eq){
+      GUI.color=new Color(1f,.9f,.35f);
+      Box(new Rect(790,ry+22,168,44),new Color(.25f,.20f,.05f,.8f));
+      BoxOutline(new Rect(790,ry+22,168,44),new Color(0,0,0,0),new Color(1f,.85f,.35f),1.5f);
+      Text(790,ry+32,168,22,"✓ EQUIPPED",smallC);
+      GUI.color=Color.white;
+     }else if(owned){
+      if(MenuButton(new Rect(790,ry+22,168,44),"EQUIP",smallBtn:true,st:smallC)){
+       EquipSkin(def.Id);
+      }
+     }else{
+      string costStr=def.CostCoins>0&&def.CostGems>0?$"{def.CostCoins}G + {def.CostGems}💎":def.CostCoins>0?$"{def.CostCoins} Gold":$"{def.CostGems} Gems";
+      bool canAfford=Save.coins>=def.CostCoins&&Save.gems>=def.CostGems;
+      GUI.color=canAfford?Color.white:new Color(1f,.45f,.45f);
+      if(MenuButton(new Rect(790,ry+22,168,44),$"BUY: {costStr}",smallBtn:true,st:tinyC)){
+       BuySkin(def.Id);
+      }
+      GUI.color=Color.white;
+     }
+    }
+
+    if(MenuButton(new Rect(500,622,280,44),skinReturn==GameScreen.Paused?"BACK TO PAUSE":"BACK TO SANCTUARY",iconBack,smallBtn:true,st:smallC)){
+     showSkins=false;Sound("power_select");
+    }
    }
 
    Texture2D WeaponIcon(WeaponDefinition def){
@@ -799,10 +900,12 @@ Panel(390,105,500,68);
    }else if(Screen==GameScreen.Paused){
     Text(355,222,570,36,"Your journey is paused. All progress is safe.",smallC);
     if(MenuButton(new Rect(355,270,570,56),"RESUME JOURNEY",iconResume,primary:true))Resume();
-    if(MenuButton(new Rect(355,338,570,50),"ARSENAL  —  change weapon",iconArsenal)){showArsenal=true;arsenalPage=0;arsenalReturn=GameScreen.Paused;Sound("power_select");}
+    if(MenuButton(new Rect(355,338,280,50),"ARSENAL",iconArsenal)){showArsenal=true;arsenalPage=0;arsenalReturn=GameScreen.Paused;Sound("power_select");}
+    if(MenuButton(new Rect(645,338,280,50),"WARDROBE",smallBtn:true,st:smallC)){showSkins=true;skinPage=0;skinReturn=GameScreen.Paused;Sound("power_select");}
+    if(showSkins){WardrobeView();return;}
     if(MenuButton(new Rect(355,400,275,50),"ATLAS",iconAtlas))Screen=GameScreen.Map;
     if(MenuButton(new Rect(650,400,275,50),"RESTART",iconRestart))LoadLevel(Level);
-    if(MenuButton(new Rect(355,462,570,50),"MAIN MENU",iconMainMenu)){showArsenal=false;Audio.Suspend(false);Time.timeScale=1;Screen=GameScreen.Menu;}
+    if(MenuButton(new Rect(355,462,570,50),"MAIN MENU",iconMainMenu)){showSkins=false;showArsenal=false;Audio.Suspend(false);Time.timeScale=1;Screen=GameScreen.Menu;}
     if(showArsenal){ArsenalView();return;}
     return;
    }else{
