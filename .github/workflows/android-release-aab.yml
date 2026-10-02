@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 env:
   UNITY_VERSION: 6000.6.0f1
@@ -151,30 +151,50 @@ jobs:
           cp "$AAB" "$RUNNER_TEMP/LostRealms3D-${GITHUB_RUN_ID}.aab"
           sha256sum "$RUNNER_TEMP/LostRealms3D-${GITHUB_RUN_ID}.aab"
 
+      - name: Publish signed AAB release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          RELEASE_TAG="v0.1.${{ github.run_number }}-aab"
+          AAB="${RUNNER_TEMP}/LostRealms3D-${GITHUB_RUN_ID}.aab"
+          test -s "$AAB"
+
+          gh release create "$RELEASE_TAG" \
+            --title "Lost Realms 3D Play Store AAB (Build ${{ github.run_number }})" \
+            --notes "Signed production Android App Bundle (AAB) for Google Play Store.
+
+          - Package: com.manus.lostrealms3d
+          - Version Code: ${{ env.ANDROID_VERSION_CODE }}
+          - Version Name: ${{ env.ANDROID_VERSION_NAME }}
+          - Commit: ${GITHUB_SHA}
+          - Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" \
+            --prerelease \
+            "$AAB"
+
+          echo "AAB successfully published to GitHub Release: $RELEASE_TAG"
+
+      - name: Confirm downloadable release asset
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          RELEASE_TAG="v0.1.${{ github.run_number }}-aab"
+          asset_count="$(gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets | length')"
+          test "$asset_count" -ge 1
+          echo "Verified $asset_count release asset(s) ready for download."
+
       - name: Upload signed Unity AAB artifact
         uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
           name: Legends-of-the-Lost-Realms-Unity-Astra3-${{ github.run_id }}
           path: ${{ runner.temp }}/LostRealms3D-${{ github.run_id }}.aab
           if-no-files-found: error
           retention-days: 1
 
-      - name: Confirm downloadable artifact
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -Eeuo pipefail
-          for attempt in 1 2 3 4 5; do
-            if gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts" \
-              --jq '.artifacts[] | select(.name == "Legends-of-the-Lost-Realms-Unity-Astra3-'"${GITHUB_RUN_ID}"'") | .id' | grep -q .; then
-              echo "Artifact is available for download."
-              exit 0
-            fi
-            sleep 5
-          done
-          echo "Artifact upload was not confirmed; failing the workflow." >&2
-          exit 1
 
       - name: Remove temporary signing material
         if: always()
