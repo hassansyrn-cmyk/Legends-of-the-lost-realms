@@ -11,11 +11,11 @@ namespace LostRealms {
     for(int i=weapons.Count-1;i>=0;i--)if(weapons[i]<0||weapons[i]>40||weapons.IndexOf(weapons[i])!=i)weapons.RemoveAt(i);
    }
    public void NormalizeSkins(){
-    equippedSkin=Mathf.Clamp(equippedSkin,0,4);
+    equippedSkin=Mathf.Clamp(equippedSkin,0,5);
     if(skins==null)skins=new List<int>();
     if(!skins.Contains(0))skins.Add(0);
     if(!skins.Contains(equippedSkin))skins.Add(equippedSkin);
-    for(int i=skins.Count-1;i>=0;i--)if(skins[i]<0||skins[i]>4||skins.IndexOf(skins[i])!=i)skins.RemoveAt(i);
+    for(int i=skins.Count-1;i>=0;i--)if(skins[i]<0||skins[i]>5||skins.IndexOf(skins[i])!=i)skins.RemoveAt(i);
    }
    public int version=2;public int unlocked=1, equippedWeapon=-1, equippedSkin=0, coins, gems, healthRank, powerRank, arsenalRank, aetherRank, moxieRank, tempoRank, windRank, tipsSeen; public int[] stars=new int[15]; public float[] best=new float[15]; public bool music=true,sound=true,postFx=true,shake=true,haptics=true; public List<int> weapons=new List<int>(); public List<int> skins=new List<int>{0};
   }
@@ -758,60 +758,60 @@ Panel(390,105,500,68);
    }
 
    void WardrobeView(){
-    Panel(170,40,940,640);
-    Text(210,50,860,36,"Wardrobe & Outfits",titleC);
-    if(headerOrnament)GUI.DrawTexture(new Rect(440,86,400,20),headerOrnament,ScaleMode.ScaleToFit);
-    if(dividerLine)GUI.DrawTexture(new Rect(210,108,860,10),dividerLine,ScaleMode.StretchToFill);
-    else Box(new Rect(210,112,860,2),new Color(Accent.r,Accent.g,Accent.b,.35f));
+    Panel(170,32,940,656);
+    Text(210,40,860,32,"Wardrobe & Outfits",titleC);
+    if(headerOrnament)GUI.DrawTexture(new Rect(440,74,400,18),headerOrnament,ScaleMode.ScaleToFit);
+    if(dividerLine)GUI.DrawTexture(new Rect(210,95,860,8),dividerLine,ScaleMode.StretchToFill);
+    else Box(new Rect(210,98,860,2),new Color(Accent.r,Accent.g,Accent.b,.35f));
 
-    Text(210,118,860,22,$"Available:  {Save.coins} Gold   •   {Save.gems} Gems    |    Equipped: {CurrentSkin.Name.ToUpper()}",smallC);
+    Text(210,105,860,20,$"Available:  {Save.coins} Gold   •   {Save.gems} Gems    |    Equipped: {CurrentSkin.Name.ToUpper()}",smallC);
 
     for(int i=0;i<SkinCatalog.Count;i++){
      var def=SkinCatalog.Get(i);
      bool owned=Save.skins!=null&&Save.skins.Contains(i);
      bool eq=Save.equippedSkin==i;
-     float ry=144+i*94;
+     float ry=128+i*81;
 
      Color border=eq?new Color(1f,.85f,.35f):owned?new Color(.38f,.95f,.7f,.7f):new Color(.35f,.4f,.5f,.5f);
-     BoxOutline(new Rect(210,ry,860,88),new Color(.02f,.05f,.08f,.88f),border,eq?2f:1.2f);
+     BoxOutline(new Rect(210,ry,860,76),new Color(.02f,.05f,.08f,.88f),border,eq?2f:1.2f);
 
-     Rect slot=new Rect(218,ry+6,76,76);
+     Rect slot=new Rect(218,ry+4,68,68);
      BoxOutline(slot,new Color(.03f,.07f,.12f,.95f),border,1.5f);
-     string badge=i==0?"⚔":i==1?"🗡":i==2?"🛡":i==3?"🏰":"🪓";
-     Text(slot.x,slot.y+18,76,40,badge,big);
+     string badge=i==0?"⚔":i==1?"🗡":i==2?"🛡":i==3?"🏰":i==4?"🪓":"🏜";
+     Text(slot.x,slot.y+15,68,36,badge,big);
 
      GUI.color=eq?new Color(1f,.92f,.45f):Color.white;
-     Text(304,ry+6,480,22,$"{def.Name.ToUpper()}  —  {def.Title}",small);
+     Text(298,ry+4,486,20,$"{def.Name.ToUpper()}  —  {def.Title}",small);
      GUI.color=Color.white;
 
      GUI.color=new Color(.38f,.95f,.7f);
-     Text(304,ry+28,480,20,def.StatSummary,tinyC);
+     Text(298,ry+24,486,18,def.StatSummary,tinyC);
      GUI.color=Color.white;
 
-     Text(304,ry+48,480,34,def.Description,tinyC);
+     Text(298,ry+42,486,30,def.Description,tinyC);
 
      if(eq){
       GUI.color=new Color(1f,.9f,.35f);
-      Box(new Rect(790,ry+22,168,44),new Color(.25f,.20f,.05f,.8f));
-      BoxOutline(new Rect(790,ry+22,168,44),new Color(0,0,0,0),new Color(1f,.85f,.35f),1.5f);
-      Text(790,ry+32,168,22,"✓ EQUIPPED",smallC);
+      Box(new Rect(792,ry+16,166,42),new Color(.25f,.20f,.05f,.8f));
+      BoxOutline(new Rect(792,ry+16,166,42),new Color(0,0,0,0),new Color(1f,.85f,.35f),1.5f);
+      Text(792,ry+26,166,20,"✓ EQUIPPED",smallC);
       GUI.color=Color.white;
      }else if(owned){
-      if(MenuButton(new Rect(790,ry+22,168,44),"EQUIP",smallBtn:true,st:smallC)){
+      if(MenuButton(new Rect(792,ry+16,166,42),"EQUIP",smallBtn:true,st:smallC)){
        EquipSkin(def.Id);
       }
      }else{
       string costStr=def.CostCoins>0&&def.CostGems>0?$"{def.CostCoins}G + {def.CostGems}💎":def.CostCoins>0?$"{def.CostCoins} Gold":$"{def.CostGems} Gems";
       bool canAfford=Save.coins>=def.CostCoins&&Save.gems>=def.CostGems;
       GUI.color=canAfford?Color.white:new Color(1f,.45f,.45f);
-      if(MenuButton(new Rect(790,ry+22,168,44),$"BUY: {costStr}",smallBtn:true,st:tinyC)){
+      if(MenuButton(new Rect(792,ry+16,166,42),$"BUY: {costStr}",smallBtn:true,st:tinyC)){
        BuySkin(def.Id);
       }
       GUI.color=Color.white;
      }
     }
 
-    if(MenuButton(new Rect(500,622,280,44),skinReturn==GameScreen.Paused?"BACK TO PAUSE":"BACK TO SANCTUARY",iconBack,smallBtn:true,st:smallC)){
+    if(MenuButton(new Rect(500,620,280,44),skinReturn==GameScreen.Paused?"BACK TO PAUSE":"BACK TO SANCTUARY",iconBack,smallBtn:true,st:smallC)){
      showSkins=false;Sound("power_select");
     }
    }

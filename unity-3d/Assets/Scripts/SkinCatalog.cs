@@ -7,7 +7,8 @@ namespace LostRealms {
   ShadowAssassin = 1,
   RoyalKnight = 2,
   ArmoredJuggernaut = 3,
-  ValhallaViking = 4
+  ValhallaViking = 4,
+  DesertWarrior = 5
  }
 
  public readonly struct SkinDefinition {
@@ -151,6 +152,25 @@ namespace LostRealms {
     innateHyperArmor: false,
     "+22% Melee DMG  •  +35% Finisher DMG  •  +25% Aether Regen  •  +1 HP",
     "Fierce northland raider imbued with primal frost fury. Unleashes savage blows and channels rapid aether regen."
+   ),
+   new SkinDefinition(
+    SkinId.DesertWarrior,
+    "Desert Nomad",
+    "THE SUNSCORCHED NOMAD",
+    "Aster_DesertWarrior",
+    "Aster_DesertWarrior",
+    500, 10,
+    bonusHealth: 1,
+    speedMult: 1.10f,
+    damageMult: 1.15f,
+    finisherDamageMult: 1.15f,
+    damageTakenMult: 0.92f,
+    bonusAirDashes: 1,
+    energyRegenMult: 1.15f,
+    bonusParryWindow: 0.08f,
+    innateHyperArmor: false,
+    "+10% Speed  •  +15% Melee DMG  •  +1 Air Dash  •  +15% Aether Regen",
+    "Tempered beneath blistering suns and endless dunes. Fluid bladecraft and whirlwind mobility grant superior traversal and quick recovery."
    )
   };
 

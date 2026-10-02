@@ -30,7 +30,8 @@ namespace LostRealms {
    new SkinInfo("Aster_Assassin", "Shadow Assassin", "Aster_Assassin.fbx", "Aster_Assassin_Diffuse.jpg", "Aster_Assassin_Normal.png"),
    new SkinInfo("Aster_Knight", "Royal Knight", "Aster_Knight.fbx", "Aster_Knight_Diffuse.jpg", "Aster_Knight_Normal.png"),
    new SkinInfo("Aster_KnightArmored", "Armored Juggernaut", "Aster_KnightArmored.fbx", "Aster_KnightArmored_Diffuse.jpg", "Aster_KnightArmored_Normal.png"),
-   new SkinInfo("Aster_Viking", "Valhalla Viking", "Aster_Viking.fbx", "Aster_Viking_Diffuse.jpg", "Aster_Viking_Normal.png")
+   new SkinInfo("Aster_Viking", "Valhalla Viking", "Aster_Viking.fbx", "Aster_Viking_Diffuse.jpg", "Aster_Viking_Normal.png"),
+   new SkinInfo("Aster_DesertWarrior", "Desert Nomad", "Aster_DesertWarrior.fbx", "Aster_DesertWarrior_Diffuse.jpg", "Aster_DesertWarrior_Normal.png")
   };
 
   [MenuItem("Lost Realms/Skins/Build All Aster Skins")]
@@ -160,8 +161,9 @@ namespace LostRealms {
     foreach (var renderer in renderers.Skip(1)) bounds.Encapsulate(renderer.bounds);
     float scale = 1.8f / Mathf.Max(.01f, bounds.size.y);
     model.transform.localScale = Vector3.one * scale;
-    model.transform.localPosition -= new Vector3(bounds.center.x, bounds.min.y, bounds.center.z) * scale;
-    model.transform.localPosition += Vector3.up * (baselineRootY * scale);
+    // Align X and Z to model center, and set Y to baselineRootY (1.0546f)
+    // so humanoid animation retargeting places the feet at the exact same grounded height as Aster.
+    model.transform.localPosition = new Vector3(-bounds.center.x * scale, baselineRootY, -bounds.center.z * scale);
 
     var animator = model.GetComponentInChildren<Animator>(true);
     if (!animator) animator = model.AddComponent<Animator>();

@@ -11,11 +11,11 @@ namespace LostRealms {
    int passed = 0;
 
    // 1. Verify Catalog
-   if (SkinCatalog.Count != 5) {
-    throw new Exception($"Expected 5 skins, found {SkinCatalog.Count}");
+   if (SkinCatalog.Count != 6) {
+    throw new Exception($"Expected 6 skins, found {SkinCatalog.Count}");
    }
    passed++;
-   Debug.Log("PASS: SkinCatalog has 5 skins.");
+   Debug.Log("PASS: SkinCatalog has 6 skins.");
 
    // 2. Verify all prefabs, materials, and CharacterVisual instantiations
    var testRoot = new GameObject("SkinProbeRoot");

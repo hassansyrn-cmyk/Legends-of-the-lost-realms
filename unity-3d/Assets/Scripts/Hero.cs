@@ -743,7 +743,10 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
   static readonly string[] Names={"idle","walk","run","attack_1","attack_2","attack_3","charged","jump","double_jump","dodge","hit","death","block","hit_2","hit_3","cast","roll","hit_4","hit_5"};
 
   public static CharacterVisual Create(string role,Transform parent,float height,Color color){
-   var holder=new GameObject(role+" visual");holder.transform.SetParent(parent,false);var v=holder.AddComponent<CharacterVisual>();
+   var holder=new GameObject(role+" visual");holder.transform.SetParent(parent,false);
+   bool isAsterRole=role=="Aster"||role.StartsWith("Aster_");
+   if(isAsterRole)holder.transform.localPosition=new Vector3(0,-.055f,0);
+   var v=holder.AddComponent<CharacterVisual>();
    v.lavaBoss=role=="LavaBoss";
    GameObject modelRef=null;
    var prefab=Resources.Load<GameObject>("Characters/"+role);
@@ -785,7 +788,6 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
    }
 
    v.clips=new AnimationClip[Names.Length];
-   bool isAsterRole=role=="Aster"||role.StartsWith("Aster_");
    // The supplied Mixamo Aster clips are generated into Resources/Animations/Aster.
    // Other characters retain the existing shared fallback set.
     for(int i=0;i<Names.Length;i++){

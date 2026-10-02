@@ -610,18 +610,24 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
 
         var solidBase=stepRoot.AddComponent<BoxCollider>();
         solidBase.size=new Vector3(3.8f,.6f,3.8f);
-        solidBase.center=new Vector3(0,-.28f,0);
+        solidBase.center=new Vector3(0,-.30f,0);
 
         var sp=Art.Shape("StepPillar",PrimitiveType.Cylinder,new Vector3(0,-.6f,0),new Vector3(3.4f,1.2f,3.4f),stone,stepRoot.transform,false);
-        var ss=Art.Shape("StepSurface",PrimitiveType.Cylinder,new Vector3(0,.02f,0),new Vector3(3.5f,.12f,3.5f),top,stepRoot.transform,false);
+        var ss=Art.Shape("StepSurface",PrimitiveType.Cylinder,Vector3.zero,new Vector3(3.5f,.12f,3.5f),top,stepRoot.transform,false);
         if(stepPrefab){
          var spr=sp.GetComponent<Renderer>();if(spr)spr.enabled=false;
          var ssr=ss.GetComponent<Renderer>();if(ssr)ssr.enabled=false;
          var stepObj=Instantiate(stepPrefab,stepRoot.transform,false);
          stepObj.name="StepVisual_"+k;
-         stepObj.transform.localPosition=new Vector3(0,.02f,0);
+         stepObj.transform.localPosition=Vector3.zero;
          stepObj.transform.localScale=Vector3.one;
          if(stepMat)foreach(var r in stepObj.GetComponentsInChildren<Renderer>(true))r.sharedMaterial=stepMat;
+         foreach(var mf in stepObj.GetComponentsInChildren<MeshFilter>()){
+          if(mf&&mf.sharedMesh&&mf.sharedMesh.vertexCount>0&&!mf.GetComponent<Collider>()){
+           var mc=mf.gameObject.AddComponent<MeshCollider>();
+           mc.sharedMesh=mf.sharedMesh;
+          }
+         }
         }
         var motion2=stepRoot.AddComponent<MovingIsland>();
         motion2.Origin=stoneWorldPos;
