@@ -17,7 +17,7 @@ namespace LostRealms {
    check(roundtrip.weapons.Count==2&&roundtrip.equippedWeapon==33,"Arsenal collection and equipped selection round-trip through save JSON");
    g.UnequipWeapon();yield return null;
    check(g.Save.weapons.Count==2&&g.Save.equippedWeapon==-1&&!g.Player.GetComponentInChildren<EquippedWeapon>(),"Unequip removes model but retains collected weapons");
-   for(int id=0;id<=40;id++){
+   for(int id=0;id<=43;id++){
     var def=WeaponCatalog.Get(id);string name=def.Resource.Substring(def.Resource.LastIndexOf('/')+1);
     check(Resources.Load<Texture2D>("Weapons/Icons/"+name),"Arsenal icon resolves for "+def.Name);
    }

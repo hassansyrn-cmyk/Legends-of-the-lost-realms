@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace LostRealms {
- public enum WeaponId { AstersBlade=0, LongSword=1, Axe=2, CurvedSword=3, BlinkAxe=4, BlinkMace=5, BlinkSpear=6, AxeIron=7, AxeBattle=8, AxeBearded=9, AxeCleaver=10, SwordShort=11, SwordFalchion=12, SwordSabre=13, SwordClaymore=14, SwordZweihander=15, SwordGreat=16, HovlMagic=17, HovlMoon=18, HovlMoon2=19, PureAxe2H=20, PureHammer=21, PureScythe=22, PureSword2H=23, PureSpear=24, PureSword1H=25, HalberdA=26, HalberdB=27, HalberdC=28, RangerAxe=29, Executioner=30, SquireBlade=31, Juggernaut=32, HuntsmanSpear=33, MoonChakram=34, RiftDagger=35, WardenPike=36, Maul=37, BrassFangs=38, EmberTorch=39, SageStaff=40 }
+ public enum WeaponId { AstersBlade=0, LongSword=1, Axe=2, CurvedSword=3, BlinkAxe=4, BlinkMace=5, BlinkSpear=6, AxeIron=7, AxeBattle=8, AxeBearded=9, AxeCleaver=10, SwordShort=11, SwordFalchion=12, SwordSabre=13, SwordClaymore=14, SwordZweihander=15, SwordGreat=16, HovlMagic=17, HovlMoon=18, HovlMoon2=19, PureAxe2H=20, PureHammer=21, PureScythe=22, PureSword2H=23, PureSpear=24, PureSword1H=25, HalberdA=26, HalberdB=27, HalberdC=28, RangerAxe=29, Executioner=30, SquireBlade=31, Juggernaut=32, HuntsmanSpear=33, MoonChakram=34, RiftDagger=35, WardenPike=36, Maul=37, BrassFangs=38, EmberTorch=39, SageStaff=40, FantasyGreatsword=41, FierySword=42, OrnateCurvedBlade=43 }
 
   public readonly struct WeaponDefinition {
    public readonly WeaponId Id;public readonly string Name,Resource,Summary;public readonly float Damage,Reach,Tempo,ModelScale;public readonly Vector3 EquipEuler;
@@ -14,12 +14,13 @@ public static class WeaponCatalog {
     // Explicit identities: spear-shaped weapons remain physical polearms.
     public static int ChargedShot(WeaponId id)=>id==WeaponId.EmberTorch?0:id==WeaponId.SageStaff||id==WeaponId.WardenPike?2:-1;
     public static bool ChargedSlash(WeaponId id)=>id==WeaponId.PureScythe||id==WeaponId.BrassFangs;
+    public static bool HasSpecialHold(WeaponId id)=>id==WeaponId.FantasyGreatsword||id==WeaponId.FierySword||id==WeaponId.OrnateCurvedBlade||ChargedShot(id)>=0||ChargedSlash(id);
     // Keep one normal chapter drop, but discover the collection before repeating it.
     // Reuse the existing roll so selecting loot does not reshuffle the level layout.
     public static WeaponId DiscoveryDrop(int roll,Progress progress){
      var missing=new System.Collections.Generic.List<int>();
-     for(int id=1;id<=40;id++)if(progress==null||((progress.weapons==null||!progress.weapons.Contains(id))&&progress.equippedWeapon!=id))missing.Add(id);
-     int index=Mathf.Clamp(roll,1,40)-1;
+     for(int id=1;id<=43;id++)if(progress==null||((progress.weapons==null||!progress.weapons.Contains(id))&&progress.equippedWeapon!=id))missing.Add(id);
+     int index=Mathf.Clamp(roll,1,43)-1;
      return (WeaponId)(missing.Count>0?missing[index%missing.Count]:index+1);
     }
     static readonly WeaponDefinition Fists=new WeaponDefinition(WeaponId.AstersBlade,"FISTS","",.85f,.92f,1.12f,1f,Vector3.zero,"fists and kicks — find a weapon to draw arms");
@@ -64,7 +65,10 @@ public static class WeaponCatalog {
     new WeaponDefinition(WeaponId.Maul,"MAUL","Weapons/Maul",1.75f,.9f,.66f,1.25f,new Vector3(8,0,0),"siege hammer  •  slowest swing"),
     new WeaponDefinition(WeaponId.BrassFangs,"BRASS FANGS","Weapons/BrassFangs",1.2f,.8f,1.3f,.9f,new Vector3(8,0,0),"hold attack: three-claw slash volley"),
     new WeaponDefinition(WeaponId.EmberTorch,"EMBER TORCH","Weapons/EmberTorch",1.2f,.9f,1f,1.1f,new Vector3(8,0,0),"hold attack: fireball  •  small flame splash"),
-    new WeaponDefinition(WeaponId.SageStaff,"SAGE STAFF","Weapons/SageStaff",1.05f,1.35f,.95f,1.5f,new Vector3(10,0,0),"hold attack: thunder bolt  •  arcs to a nearby foe")
+    new WeaponDefinition(WeaponId.SageStaff,"SAGE STAFF","Weapons/SageStaff",1.05f,1.35f,.95f,1.5f,new Vector3(10,0,0),"hold attack: thunder bolt  •  arcs to a nearby foe"),
+    new WeaponDefinition(WeaponId.FantasyGreatsword,"FANTASY GREATSWORD","Weapons/FantasyGreatsword",1.65f,1.38f,.74f,1.45f,new Vector3(10,90,-90),"hold attack: aether quake  •  cascading seismic rift"),
+    new WeaponDefinition(WeaponId.FierySword,"INFERNO BLADE","Weapons/FierySword",1.45f,1.22f,1.08f,1.28f,new Vector3(10,90,-90),"hold attack: inferno crescent  •  exploding flame wave"),
+    new WeaponDefinition(WeaponId.OrnateCurvedBlade,"ORNATE CURVED BLADE","Weapons/OrnateCurvedBlade",1.24f,1.16f,1.32f,1.18f,new Vector3(12,90,-90),"hold attack: gale vortex  •  swirling multi-hit cyclone")
    };
   public static WeaponDefinition Get(int rawId){return rawId<0?Fists:Definitions[Mathf.Clamp(rawId,0,Definitions.Length-1)];}
   public static WeaponDefinition Get(WeaponId id)=>Get((int)id);
@@ -83,9 +87,9 @@ public static class WeaponCatalog {
   // (Hero.Attack applies the bonus). -1 = mundane.
   public static int Affinity(WeaponDefinition def){
    switch(def.Id){
-    case WeaponId.EmberTorch:return 0;
+    case WeaponId.EmberTorch:case WeaponId.FierySword:return 0;
     case WeaponId.HovlMagic:case WeaponId.HovlMoon:case WeaponId.HovlMoon2:case WeaponId.SageStaff:return 1;
-    case WeaponId.MoonChakram:case WeaponId.PureScythe:case WeaponId.HalberdC:return 2;
+    case WeaponId.MoonChakram:case WeaponId.PureScythe:case WeaponId.HalberdC:case WeaponId.OrnateCurvedBlade:return 2;
     default:return -1;
    }
   }
