@@ -118,6 +118,17 @@ namespace LostRealms {
 
     var gv = GaleVortex.Fire(Vector3.up, Vector3.forward, 5f);
     Check(gv != null, "GaleVortex fires and instantiates cleanly");
+
+    // 9. Test EquipWeapon on RealmGame for IDs 41, 42, 43 (Arsenal reflection)
+    dummyGame.Save.weapons.Clear();
+    dummyGame.Save.equippedWeapon = -1;
+    dummyGame.EquipWeapon(WeaponId.FantasyGreatsword);
+    Check(dummyGame.Save.weapons.Contains(41) && dummyGame.Save.equippedWeapon == 41, "EquipWeapon(41) adds to Save.weapons and equips");
+    dummyGame.EquipWeapon(WeaponId.FierySword);
+    Check(dummyGame.Save.weapons.Contains(42) && dummyGame.Save.equippedWeapon == 42, "EquipWeapon(42) adds to Save.weapons and equips");
+    dummyGame.EquipWeapon(WeaponId.OrnateCurvedBlade);
+    Check(dummyGame.Save.weapons.Contains(43) && dummyGame.Save.equippedWeapon == 43, "EquipWeapon(43) adds to Save.weapons and equips");
+    Check(dummyGame.Save.weapons.Count == 3, "All 3 new weapons present in Save.weapons for Arsenal");
    } finally {
     RealmGame.I = null;
     UnityEngine.Object.DestroyImmediate(rigGo);

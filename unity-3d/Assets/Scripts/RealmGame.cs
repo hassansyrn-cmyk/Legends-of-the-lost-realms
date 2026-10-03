@@ -169,7 +169,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     return $"Realm gate sealed — completion {(int)(Completion()*100f)}% (need 60%): coins {(int)(Mathf.Clamp01(c)*100f)}% • gems {(int)(Mathf.Clamp01(g)*100f)}% • foes {(int)(Mathf.Clamp01(k)*100f)}%";
    }
    public void EquipWeapon(WeaponId id){
-    if((int)id<0||(int)id>40)return;
+    if((int)id<0||(int)id>43)return;
     if(Save.weapons==null)Save.weapons=new List<int>();
     if((int)id>=0&&!Save.weapons.Contains((int)id))Save.weapons.Add((int)id);
     Save.equippedWeapon=(int)id;Persist();
