@@ -7,10 +7,10 @@ namespace LostRealms {
   public WeaponId Weapon=>weapon;
   public static StaffShot Fire(Vector3 origin,Vector3 forward,float damage,int element,WeaponId weapon=WeaponId.AstersBlade){
    var g=RealmGame.I;if(!g||!g.World)return null;
-   var go=new GameObject(element==0?"Staff fireball":"Staff thunder bolt");go.transform.SetParent(g.World.transform,false);go.transform.position=origin;
+   var go=new GameObject(element==0?"Staff fireball":element==1?"Staff frost bolt":"Staff thunder bolt");go.transform.SetParent(g.World.transform,false);go.transform.position=origin;
    var shot=go.AddComponent<StaffShot>();shot.direction=forward.normalized;shot.damage=damage;shot.element=element;shot.weapon=weapon;
    if(shot.Slash||weapon==WeaponId.WardenPike){
-    go.name=weapon==WeaponId.PureScythe?"Reaper crescent":weapon==WeaponId.BrassFangs?"Fang claw slash":"Warden storm lance";
+    go.name=weapon==WeaponId.OrnateCurvedBlade?"Gale crosscut":weapon==WeaponId.VoidReaper?"Void Reaper crescent":weapon==WeaponId.PureScythe?"Reaper crescent":weapon==WeaponId.BrassFangs?"Fang claw slash":"Warden storm lance";
     shot.material=ChargedWeaponArt.Build(go.transform,forward,weapon);
     g.Sound(shot.Slash?"sword_slash":"gale_cast");return shot;
    }
@@ -21,7 +21,7 @@ namespace LostRealms {
    var renderer=core.GetComponent<Renderer>();renderer.sharedMaterial=shot.material;renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
    var trail=go.AddComponent<TrailRenderer>();trail.sharedMaterial=shot.material;trail.time=element==0?.18f:.09f;trail.startWidth=element==0?.22f:.12f;trail.endWidth=0;trail.minVertexDistance=.08f;
    Vfx.Play(element==0?"eric_FX_Fireball":"ga_vfx_Electricity_01",origin,Quaternion.LookRotation(forward),.35f,go.transform);
-   g.Sound(element==0?"ember_cast":"gale_cast");return shot;
+   g.Sound(element==0?"ember_cast":element==1?"frost_cast":"gale_cast");return shot;
   }
   void Update(){
    var g=RealmGame.I;if(!g||!g.Player){Destroy(gameObject);return;}if(g.Screen!=GameScreen.Playing)return;
@@ -34,7 +34,7 @@ namespace LostRealms {
    to=from+direction*stop;Enemy target=null;float nearest=2f;
    foreach(var enemy in g.Enemies){
     if(!enemy||enemy.Health<=0)continue;
-    if(ProjectileSweep.Hits(from,to,enemy.transform.position+Vector3.up*.85f,enemy.Radius+(weapon==WeaponId.PureScythe?.65f:.18f),out float fraction)&&fraction<nearest&&Clear(from,enemy.transform.position+Vector3.up*.85f)){
+    if(ProjectileSweep.Hits(from,to,enemy.transform.position+Vector3.up*.85f,enemy.Radius+(weapon==WeaponId.PureScythe||weapon==WeaponId.OrnateCurvedBlade||weapon==WeaponId.VoidReaper?.65f:.18f),out float fraction)&&fraction<nearest&&Clear(from,enemy.transform.position+Vector3.up*.85f)){
      nearest=fraction;target=enemy;
     }
    }
@@ -48,8 +48,9 @@ namespace LostRealms {
   }
   void Impact(Enemy target){
    var g=RealmGame.I;Vector3 point=transform.position;
-   Vfx.Play(Slash?"eric_FX_Purple_Hit_02":weapon==WeaponId.WardenPike?"ga_vfx_Lightning_02":element==0?"ga_vfx_Explosion_02":"ga_vfx_Electricity_01",point,Quaternion.identity,Slash?.4f:element==0?.65f:.55f);
-   if(target)target.Hit(damage,Slash?-1:element,!Slash,direction);
+   bool gale=weapon==WeaponId.OrnateCurvedBlade;
+   Vfx.Play(gale?"ga_vfx_Hyperdrive_01":Slash?"eric_FX_Purple_Hit_02":weapon==WeaponId.WardenPike?"ga_vfx_Lightning_02":element==0?"ga_vfx_Explosion_02":"ga_vfx_Electricity_01",point,Quaternion.identity,Slash?.4f:element==0?.65f:.55f);
+   if(target)target.Hit(damage,gale?2:Slash?-1:element,gale||!Slash,direction);
    if(target&&!Slash){
     Enemy arc=null;float closest=3.5f;
     foreach(var other in g.Enemies.ToArray()){

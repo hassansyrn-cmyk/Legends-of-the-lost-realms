@@ -4,12 +4,14 @@ using UnityEngine;
 
 namespace LostRealms {
  public sealed class EarthQuakeSlam : MonoBehaviour {
-  public static EarthQuakeSlam Create(Vector3 heroPos, Vector3 forward, float damage) {
+  int element=-1;
+  public static EarthQuakeSlam Create(Vector3 heroPos, Vector3 forward, float damage, int element=-1) {
    var g = RealmGame.I; if (!g || !g.World) return null;
    var go = new GameObject("EarthQuakeSlam");
    go.transform.SetParent(g.World.transform, false);
    go.transform.position = heroPos;
    var slam = go.AddComponent<EarthQuakeSlam>();
+   slam.element=element;
    slam.StartCoroutine(slam.Execute(heroPos, forward.normalized, damage));
    return slam;
   }
@@ -19,15 +21,15 @@ namespace LostRealms {
    Vector3 impactPoint = origin + forward * 1.25f;
    g.CameraRig.Shake = 0.45f;
    g.CameraRig.Kick(-forward, 0.6f);
-   g.Sound("impact");
+   g.Sound(element==1?"frost_cast":"impact");
    g.HitStop(0.12f, 0.05f);
-   DamageTip.Show(impactPoint + Vector3.up * 1.8f, "AETHER QUAKE!", new Color(1f, 0.85f, 0.3f));
+   DamageTip.Show(impactPoint + Vector3.up * 1.8f, element==1?"GLACIER BREAK!":"AETHER QUAKE!",element==1?new Color(.55f,.85f,1f):new Color(1f,.85f,.3f));
 
    Vfx.Play("ga_vfx_Shockwave_01", impactPoint + Vector3.up * 0.1f, Quaternion.identity, 1.4f);
    Vfx.Play("ga_vfx_Impact_01", impactPoint + Vector3.up * 0.3f, Quaternion.identity, 1.3f);
    Vfx.Play("ga_vfx_Hyperdrive_01", impactPoint + Vector3.up * 0.2f, Quaternion.LookRotation(forward), 0.85f);
 
-   HitFoes(impactPoint, 3.8f, damage * 1.35f, forward, true);
+   HitFoes(impactPoint, 3.8f, damage * 1.35f, forward, true,element);
 
    for (int step = 1; step <= 4; step++) {
     yield return new WaitForSeconds(0.065f);
@@ -37,20 +39,20 @@ namespace LostRealms {
      fissurePt.y = hit.point.y;
     }
     Vfx.Play("ga_vfx_Shockwave_01", fissurePt + Vector3.up * 0.05f, Quaternion.identity, 1.0f + step * 0.15f);
-    Vfx.Play("ga_vfx_Explosion_02", fissurePt + Vector3.up * 0.2f, Quaternion.identity, 0.45f);
+    Vfx.Play(element==1?"ga_vfx_Electricity_01":"ga_vfx_Explosion_02",fissurePt+Vector3.up*.2f,Quaternion.identity,element==1?.5f:.45f);
     g.Sound("attack_chop_1");
-    HitFoes(fissurePt, 2.3f, damage * 0.85f, forward, false);
+    HitFoes(fissurePt, 2.3f, damage * 0.85f, forward, false,element);
    }
    Destroy(gameObject, 0.5f);
   }
 
-  void HitFoes(Vector3 center, float radius, float dmg, Vector3 dir, bool guardBreak) {
+  void HitFoes(Vector3 center, float radius, float dmg, Vector3 dir, bool guardBreak,int element) {
    var g = RealmGame.I; if (!g) return;
    foreach (var e in g.Enemies.ToArray()) {
     if (!e || e.Health <= 0) continue;
     Vector3 d = e.transform.position - center; d.y = 0;
     if (d.magnitude < radius + e.Radius) {
-     e.Hit(dmg, -1, true, (dir + Vector3.up * 0.35f).normalized, guardBreak);
+     e.Hit(dmg,element,element>=0,(dir+Vector3.up*.35f).normalized,guardBreak);
     }
    }
    for (int i = BreakableCrate.All.Count - 1; i >= 0; i--) {

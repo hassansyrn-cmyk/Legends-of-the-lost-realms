@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace LostRealms {
- public enum WeaponId { AstersBlade=0, LongSword=1, Axe=2, CurvedSword=3, BlinkAxe=4, BlinkMace=5, BlinkSpear=6, AxeIron=7, AxeBattle=8, AxeBearded=9, AxeCleaver=10, SwordShort=11, SwordFalchion=12, SwordSabre=13, SwordClaymore=14, SwordZweihander=15, SwordGreat=16, HovlMagic=17, HovlMoon=18, HovlMoon2=19, PureAxe2H=20, PureHammer=21, PureScythe=22, PureSword2H=23, PureSpear=24, PureSword1H=25, HalberdA=26, HalberdB=27, HalberdC=28, RangerAxe=29, Executioner=30, SquireBlade=31, Juggernaut=32, HuntsmanSpear=33, MoonChakram=34, RiftDagger=35, WardenPike=36, Maul=37, BrassFangs=38, EmberTorch=39, SageStaff=40, FantasyGreatsword=41, FierySword=42, OrnateCurvedBlade=43 }
+ public enum WeaponId { AstersBlade=0, LongSword=1, Axe=2, CurvedSword=3, BlinkAxe=4, BlinkMace=5, BlinkSpear=6, AxeIron=7, AxeBattle=8, AxeBearded=9, AxeCleaver=10, SwordShort=11, SwordFalchion=12, SwordSabre=13, SwordClaymore=14, SwordZweihander=15, SwordGreat=16, HovlMagic=17, HovlMoon=18, HovlMoon2=19, PureAxe2H=20, PureHammer=21, PureScythe=22, PureSword2H=23, PureSpear=24, PureSword1H=25, HalberdA=26, HalberdB=27, HalberdC=28, RangerAxe=29, Executioner=30, SquireBlade=31, Juggernaut=32, HuntsmanSpear=33, MoonChakram=34, RiftDagger=35, WardenPike=36, Maul=37, BrassFangs=38, EmberTorch=39, SageStaff=40, FantasyGreatsword=41, FierySword=42, OrnateCurvedBlade=43, AstralStaff=44, GlacierMaul=45, VoidReaper=46, FrostHalberd=47, VerdantFang=48 }
 
   public readonly struct WeaponDefinition {
    public readonly WeaponId Id;public readonly string Name,Resource,Summary;public readonly float Damage,Reach,Tempo,ModelScale;public readonly Vector3 EquipEuler;
@@ -11,16 +11,17 @@ namespace LostRealms {
  }
 
 public static class WeaponCatalog {
+    public const int MaxId=(int)WeaponId.VerdantFang;
     // Explicit identities: spear-shaped weapons remain physical polearms.
-    public static int ChargedShot(WeaponId id)=>id==WeaponId.EmberTorch?0:id==WeaponId.SageStaff||id==WeaponId.WardenPike?2:-1;
-    public static bool ChargedSlash(WeaponId id)=>id==WeaponId.PureScythe||id==WeaponId.BrassFangs;
-    public static bool HasSpecialHold(WeaponId id)=>id==WeaponId.FantasyGreatsword||id==WeaponId.FierySword||id==WeaponId.OrnateCurvedBlade||ChargedShot(id)>=0||ChargedSlash(id);
+    public static int ChargedShot(WeaponId id)=>id==WeaponId.EmberTorch?0:id==WeaponId.AstralStaff||id==WeaponId.FrostHalberd?1:id==WeaponId.SageStaff||id==WeaponId.WardenPike?2:-1;
+    public static bool ChargedSlash(WeaponId id)=>id==WeaponId.PureScythe||id==WeaponId.BrassFangs||id==WeaponId.OrnateCurvedBlade||id==WeaponId.VoidReaper;
+    public static bool HasSpecialHold(WeaponId id)=>id==WeaponId.FantasyGreatsword||id==WeaponId.FierySword||id==WeaponId.OrnateCurvedBlade||id==WeaponId.GlacierMaul||ChargedShot(id)>=0||ChargedSlash(id);
     // Keep one normal chapter drop, but discover the collection before repeating it.
     // Reuse the existing roll so selecting loot does not reshuffle the level layout.
     public static WeaponId DiscoveryDrop(int roll,Progress progress){
      var missing=new System.Collections.Generic.List<int>();
-     for(int id=1;id<=43;id++)if(progress==null||((progress.weapons==null||!progress.weapons.Contains(id))&&progress.equippedWeapon!=id))missing.Add(id);
-     int index=Mathf.Clamp(roll,1,43)-1;
+     for(int id=1;id<=MaxId;id++)if(progress==null||((progress.weapons==null||!progress.weapons.Contains(id))&&progress.equippedWeapon!=id))missing.Add(id);
+     int index=Mathf.Clamp(roll,1,MaxId)-1;
      return (WeaponId)(missing.Count>0?missing[index%missing.Count]:index+1);
     }
     static readonly WeaponDefinition Fists=new WeaponDefinition(WeaponId.AstersBlade,"FISTS","",.85f,.92f,1.12f,1f,Vector3.zero,"fists and kicks — find a weapon to draw arms");
@@ -68,7 +69,12 @@ public static class WeaponCatalog {
     new WeaponDefinition(WeaponId.SageStaff,"SAGE STAFF","Weapons/SageStaff",1.05f,1.35f,.95f,1.5f,new Vector3(10,0,0),"hold attack: thunder bolt  •  arcs to a nearby foe"),
     new WeaponDefinition(WeaponId.FantasyGreatsword,"FANTASY GREATSWORD","Weapons/FantasyGreatsword",1.65f,1.38f,.74f,1.45f,new Vector3(10,90,-90),"hold attack: aether quake  •  cascading seismic rift"),
     new WeaponDefinition(WeaponId.FierySword,"INFERNO BLADE","Weapons/FierySword",1.45f,1.22f,1.08f,1.28f,new Vector3(10,90,-90),"hold attack: inferno crescent  •  exploding flame wave"),
-    new WeaponDefinition(WeaponId.OrnateCurvedBlade,"ORNATE CURVED BLADE","Weapons/OrnateCurvedBlade",1.24f,1.16f,1.32f,1.18f,new Vector3(12,90,-90),"hold attack: gale vortex  •  swirling multi-hit cyclone")
+    new WeaponDefinition(WeaponId.OrnateCurvedBlade,"ORNATE CURVED BLADE","Weapons/OrnateCurvedBlade",1.24f,1.16f,1.32f,1.18f,new Vector3(12,90,-90),"hold attack: gale crosscut  •  twin wind crescents"),
+    new WeaponDefinition(WeaponId.AstralStaff,"ASTRAL STAFF","Weapons/AstralStaff",1.08f,1.34f,.98f,1.48f,new Vector3(10,0,0),"hold attack: frost bolt  •  freezes on impact"),
+    new WeaponDefinition(WeaponId.GlacierMaul,"GLACIER MAUL","Weapons/GlacierMaul",1.82f,.94f,.62f,1.35f,new Vector3(8,0,0),"hold attack: glacier break  •  freezing ground rift"),
+    new WeaponDefinition(WeaponId.VoidReaper,"VOID REAPER","Weapons/VoidReaper",1.28f,1.27f,.86f,1.48f,new Vector3(10,90,-90),"hold attack: shadow crescent  •  long-range cut"),
+    new WeaponDefinition(WeaponId.FrostHalberd,"FROST HALBERD","Weapons/FrostHalberd",1.18f,1.42f,.9f,1.52f,new Vector3(10,0,0),"hold attack: ice lance  •  freezes on impact"),
+    new WeaponDefinition(WeaponId.VerdantFang,"VERDANT FANG","Weapons/VerdantFang",1.28f,1.12f,.96f,1.32f,new Vector3(10,90,-90),"leaf-forged blade  •  gale affinity")
    };
   public static WeaponDefinition Get(int rawId){return rawId<0?Fists:Definitions[Mathf.Clamp(rawId,0,Definitions.Length-1)];}
   public static WeaponDefinition Get(WeaponId id)=>Get((int)id);
@@ -88,8 +94,8 @@ public static class WeaponCatalog {
   public static int Affinity(WeaponDefinition def){
    switch(def.Id){
     case WeaponId.EmberTorch:case WeaponId.FierySword:return 0;
-    case WeaponId.HovlMagic:case WeaponId.HovlMoon:case WeaponId.HovlMoon2:case WeaponId.SageStaff:return 1;
-    case WeaponId.MoonChakram:case WeaponId.PureScythe:case WeaponId.HalberdC:case WeaponId.OrnateCurvedBlade:return 2;
+    case WeaponId.AstralStaff:case WeaponId.GlacierMaul:case WeaponId.FrostHalberd:case WeaponId.HovlMagic:case WeaponId.HovlMoon:case WeaponId.HovlMoon2:case WeaponId.SageStaff:return 1;
+    case WeaponId.MoonChakram:case WeaponId.PureScythe:case WeaponId.HalberdC:case WeaponId.OrnateCurvedBlade:case WeaponId.VerdantFang:return 2;
     default:return -1;
    }
   }
@@ -164,6 +170,22 @@ public static class WeaponCatalog {
  }
 
  public sealed class EquippedWeapon:MonoBehaviour {
+  public static bool HasAuthoredGrip(WeaponId id)=>id==WeaponId.FantasyGreatsword||id==WeaponId.FierySword||id==WeaponId.OrnateCurvedBlade;
+  public static bool HasGripAnchor(WeaponId id)=>HasAuthoredGrip(id)||id==WeaponId.AstralStaff||id==WeaponId.GlacierMaul||id==WeaponId.VoidReaper||id==WeaponId.FrostHalberd||id==WeaponId.VerdantFang;
+  // Mesh-local handle centers measured from the textured front views in WeaponPoseProbe.
+  public static Vector3 GripPoint(WeaponId id)=>id==WeaponId.FantasyGreatsword?new Vector3(.247f,.799f,0):id==WeaponId.FierySword?new Vector3(-.334f,.819f,0):new Vector3(.020f,.728f,0);
+  public static Vector3 GripAnchorPoint(WeaponId id,Bounds bounds){
+   if(HasAuthoredGrip(id))return GripPoint(id);
+   Vector3 size=bounds.size;
+   int axis=size.x>=size.y&&size.x>=size.z?0:size.y>=size.z?1:2;
+   float fraction=id==WeaponId.VerdantFang?.16f:.5f;
+   Vector3 point=bounds.center;
+   if(axis==0)point.x=bounds.min.x+size.x*fraction;
+   else if(axis==1)point.y=bounds.min.y+size.y*fraction;
+   else point.z=bounds.min.z+size.z*fraction;
+   return point;
+  }
+  static Vector3 BladeAxis(WeaponId id)=>id==WeaponId.FantasyGreatsword?new Vector3(-.64f,-.768f,0):id==WeaponId.FierySword?new Vector3(.707f,-.707f,0):Vector3.down;
   public WeaponId Id;GameObject model;
   Hero hero;Transform hand;float drawnUntil,draw;
   Vector3 bladeDir=Vector3.up,flatDir=Vector3.forward,center;bool measured;
@@ -184,6 +206,13 @@ public static class WeaponCatalog {
    equipped.model=WeaponCatalog.CreateModel(id,root.transform);
    if(!equipped.model){UnityEngine.Object.Destroy(root);return;}
    equipped.model.transform.localPosition=Vector3.zero;equipped.model.transform.localRotation=Quaternion.Euler(definition.EquipEuler);
+   if(HasAuthoredGrip(id)){
+    equipped.model.transform.localRotation=Quaternion.Euler(definition.EquipEuler)*Quaternion.Inverse(Quaternion.LookRotation(Vector3.forward,BladeAxis(id)));
+   }
+   if(HasGripAnchor(id)){
+    var mesh=equipped.model.GetComponentInChildren<Renderer>();
+    if(mesh)equipped.model.transform.localPosition-=root.transform.InverseTransformPoint(mesh.transform.TransformPoint(GripAnchorPoint(id,mesh.localBounds)));
+   }
    equipped.Measure();
    equipped.BuildTrail(definition);
    equipped.Sheath(out var pos,out var rot);equipped.transform.SetPositionAndRotation(pos,rot);
@@ -219,30 +248,35 @@ public static class WeaponCatalog {
    var size=renderer.localBounds.size;
    Vector3 longAxis=size.x>=size.y&&size.x>=size.z?Vector3.right:size.y>=size.x&&size.y>=size.z?Vector3.up:Vector3.forward;
    bladeDir=transform.InverseTransformDirection(renderer.transform.TransformDirection(longAxis));
-   flatDir=transform.InverseTransformDirection(renderer.transform.TransformDirection(Vector3.forward));
+   if(HasAuthoredGrip(Id))bladeDir=transform.InverseTransformDirection(renderer.transform.TransformDirection(BladeAxis(Id))).normalized;
+   Vector3 thinAxis=size.x<=size.y&&size.x<=size.z?Vector3.right:size.y<=size.z?Vector3.up:Vector3.forward;
+   flatDir=transform.InverseTransformDirection(renderer.transform.TransformDirection(thinAxis));
    if(Id==WeaponId.MoonChakram||Id==WeaponId.BrassFangs){
-    Vector3 thinAxis=size.x<=size.y&&size.x<=size.z?Vector3.right:size.y<=size.z?Vector3.up:Vector3.forward;
     flatDir=transform.InverseTransformDirection(renderer.transform.TransformDirection(thinAxis));
    }
    center=transform.InverseTransformPoint(renderer.bounds.center);
    measured=true;
   }
   void Sheath(out Vector3 pos,out Quaternion rot){
-   var anim=hero&&hero.Visual?hero.Visual.animator:null;
-   Vector3 socket=hero?hero.transform.position+Vector3.up*1.3f:Vector3.zero;
-   var chest=anim?anim.GetBoneTransform(HumanBodyBones.Chest):null;
-   if(chest)socket=chest.position;
-   socket+=hero.transform.forward*(-BackGap)+hero.transform.up*.04f;
+   Transform facing=hero&&hero.Visual?hero.Visual.transform:hero.transform;
+   if(HasAuthoredGrip(Id)){
+    // Handle above the right shoulder, blade down across the back, flat against the torso.
+    Vector3 down=(-facing.up-facing.right*.28f).normalized;
+    rot=Quaternion.LookRotation(-facing.forward,down)*Quaternion.Inverse(Quaternion.LookRotation(flatDir,bladeDir));
+    Vector3 back=facing.TransformPoint(new Vector3(0,Id==WeaponId.OrnateCurvedBlade?1.12f:1.02f,-.28f));
+    pos=back-rot*Vector3.Scale(center,transform.lossyScale);return;
+   }
+   Vector3 socket=facing.TransformPoint(new Vector3(0,1.2f,-BackGap-.08f));
    // Longest local axis (the blade) stands up the spine; twist so the flat of
    // the weapon lies against the back rather than its edge.
-   rot=Quaternion.FromToRotation(measured?bladeDir:Vector3.up,hero.transform.up);
+   rot=Quaternion.FromToRotation(measured?bladeDir:Vector3.up,facing.up);
    Vector3 flat=rot*flatDir;
-   if(Vector3.Dot(flat,hero.transform.forward)>=0)rot=Quaternion.AngleAxis(180f,hero.transform.up)*rot;
+   if(Vector3.Dot(flat,facing.forward)>=0)rot=Quaternion.AngleAxis(180f,facing.up)*rot;
    if(Id==WeaponId.MoonChakram||Id==WeaponId.BrassFangs){
-    rot=Quaternion.LookRotation(-hero.transform.forward,Id==WeaponId.BrassFangs?hero.transform.right:hero.transform.up)*Quaternion.Inverse(Quaternion.LookRotation(flatDir,bladeDir));
+    rot=Quaternion.LookRotation(-facing.forward,Id==WeaponId.BrassFangs?facing.right:facing.up)*Quaternion.Inverse(Quaternion.LookRotation(flatDir,bladeDir));
     // The imported chest bone carries a retargeting offset; use the capsule's
     // torso height so this wide disc stays centered on the visible back.
-    socket=hero.transform.position+hero.transform.up*1.2f-hero.transform.forward*.23f;
+    socket=facing.TransformPoint(new Vector3(0,1.2f,-.28f));
    }
    pos=socket-rot*(Id==WeaponId.MoonChakram||Id==WeaponId.BrassFangs?Vector3.Scale(center,transform.lossyScale):center);
   }
@@ -255,9 +289,14 @@ public static class WeaponCatalog {
    bool shouldDraw=Time.time<drawnUntil;
    if(trail)trail.emitting=shouldDraw&&draw>=.9f;
    draw=Mathf.MoveTowards(draw,shouldDraw?1f:0f,Time.deltaTime*(shouldDraw?9f:3.5f));
-   if(draw>=1f){transform.SetPositionAndRotation(hand.position,hand.rotation);return;}
+   Vector3 handPosition=hand.position;
+   if(HasGripAnchor(Id)&&hero.Visual.animator){
+    var knuckle=hero.Visual.animator.GetBoneTransform(HumanBodyBones.RightMiddleProximal);
+    if(knuckle)handPosition=Vector3.Lerp(hand.position,knuckle.position,.65f);
+   }
+   if(draw>=1f){transform.SetPositionAndRotation(handPosition,hand.rotation);return;}
    Sheath(out var pos,out var rot);
-   transform.position=Vector3.Lerp(pos,hand.position,draw);
+   transform.position=Vector3.Lerp(pos,handPosition,draw);
    transform.rotation=Quaternion.Slerp(rot,hand.rotation,draw);
   }
   static Transform FindHand(CharacterVisual visual){

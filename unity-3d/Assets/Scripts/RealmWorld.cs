@@ -137,7 +137,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     sun.color=world==1?new Color(1,.83f,.62f):world==3?new Color(1,.55f,.38f):new Color(.88f,.95f,1);sun.intensity=world==3?.95f:1.25f;sun.shadows=LightShadows.Soft;
    // Difficulty pass: chapters grow with progress (12 â†’ 19 islands; boss
    // arenas 8 â†’ 10) so late chapters read as long expeditions.
-   int count=IsBoss?8+(stage>=8?1:0)+(stage>=12?1:0):Mathf.Min(19,12+(stage-1)/2);int weaponIsland=random.Next(2,count-2);WeaponId weaponId=stage==1?WeaponId.BlinkAxe:stage==2?WeaponId.OrnateCurvedBlade:stage==3?WeaponId.FantasyGreatsword:stage==4?WeaponId.FierySword:WeaponCatalog.DiscoveryDrop(random.Next(1,44),RealmGame.I.Save);
+   int count=IsBoss?8+(stage>=8?1:0)+(stage>=12?1:0):Mathf.Min(19,12+(stage-1)/2);int weaponIsland=random.Next(2,count-2);WeaponId weaponId=stage==1?WeaponId.BlinkAxe:stage==2?WeaponId.OrnateCurvedBlade:stage==3?WeaponId.FantasyGreatsword:stage==4?WeaponId.FierySword:stage==5?WeaponId.AstralStaff:stage==6?WeaponId.GlacierMaul:stage==7?WeaponId.VoidReaper:stage==8?WeaponId.FrostHalberd:stage==9?WeaponId.VerdantFang:WeaponCatalog.DiscoveryDrop(random.Next(1,WeaponCatalog.MaxId+1),RealmGame.I.Save);
    int deferredEnemyKind=-1;
    var checkpoints=new System.Collections.Generic.HashSet<int>{3, IsBoss?6:7};
    if(count>=15&&!IsBoss)checkpoints.Add(count-4);

@@ -5,10 +5,10 @@ namespace LostRealms {
  public enum GameScreen { Menu, Map, Playing, Paused, Complete, Defeated, Settings }
 [Serializable] public class Progress {
    public void NormalizeWeapons(){
-    equippedWeapon=Mathf.Clamp(equippedWeapon,-1,43);
+    equippedWeapon=Mathf.Clamp(equippedWeapon,-1,WeaponCatalog.MaxId);
     if(weapons==null)weapons=new List<int>();
     if(equippedWeapon>=0&&!weapons.Contains(equippedWeapon))weapons.Add(equippedWeapon);
-    for(int i=weapons.Count-1;i>=0;i--)if(weapons[i]<0||weapons[i]>43||weapons.IndexOf(weapons[i])!=i)weapons.RemoveAt(i);
+    for(int i=weapons.Count-1;i>=0;i--)if(weapons[i]<0||weapons[i]>WeaponCatalog.MaxId||weapons.IndexOf(weapons[i])!=i)weapons.RemoveAt(i);
    }
    public void NormalizeSkins(){
     equippedSkin=Mathf.Clamp(equippedSkin,0,5);
@@ -43,7 +43,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
      else if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v1")){Save=JsonUtility.FromJson<Progress>(PlayerPrefs.GetString("LostRealms3D.v1"))??new Progress();Save.version=2;Persist();}}catch{Save=new Progress();}
     if(Save.stars==null||Save.stars.Length!=15){var old=Save.stars;Save.stars=new int[15];if(old!=null)for(int i=0;i<old.Length&&i<15;i++)Save.stars[i]=old[i];}
     if(Save.best==null||Save.best.Length!=15){var old=Save.best;Save.best=new float[15];if(old!=null)for(int i=0;i<old.Length&&i<15;i++)Save.best[i]=old[i];}
-    Save.unlocked=Mathf.Clamp(Save.unlocked,1,15);Save.equippedWeapon=Mathf.Clamp(Save.equippedWeapon,-1,43);
+    Save.unlocked=Mathf.Clamp(Save.unlocked,1,15);Save.equippedWeapon=Mathf.Clamp(Save.equippedWeapon,-1,WeaponCatalog.MaxId);
     // Collected-weapons inventory: init for old saves, grandfather the
     // currently equipped blade, drop dupes and out-of-range ids.
     Save.NormalizeWeapons();
@@ -169,7 +169,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     return $"Realm gate sealed — completion {(int)(Completion()*100f)}% (need 60%): coins {(int)(Mathf.Clamp01(c)*100f)}% • gems {(int)(Mathf.Clamp01(g)*100f)}% • foes {(int)(Mathf.Clamp01(k)*100f)}%";
    }
    public void EquipWeapon(WeaponId id){
-    if((int)id<0||(int)id>43)return;
+    if((int)id<0||(int)id>WeaponCatalog.MaxId)return;
     if(Save.weapons==null)Save.weapons=new List<int>();
     if((int)id>=0&&!Save.weapons.Contains((int)id))Save.weapons.Add((int)id);
     Save.equippedWeapon=(int)id;Persist();

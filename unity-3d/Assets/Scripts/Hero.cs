@@ -377,12 +377,15 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
       Vector3 origin=transform.position+Vector3.up*1.05f;
       if(weapon==WeaponId.BrassFangs){
        for(int i=-1;i<=1;i++)StaffShot.Fire(origin+transform.right*(i*.38f),Quaternion.AngleAxis(i*4f,Vector3.up)*transform.forward,damage*.45f,2,weapon);
+      }else if(weapon==WeaponId.GlacierMaul){
+       EarthQuakeSlam.Create(transform.position,transform.forward,damage,1);
       }else if(weapon==WeaponId.FantasyGreatsword){
        EarthQuakeSlam.Create(transform.position,transform.forward,damage);
       }else if(weapon==WeaponId.FierySword){
        InfernoWave.Fire(origin,transform.forward,damage);
       }else if(weapon==WeaponId.OrnateCurvedBlade){
-       GaleVortex.Fire(origin,transform.forward,damage);
+       for(int side=-1;side<=1;side+=2)
+        StaffShot.Fire(origin+transform.right*(side*.10f),Quaternion.AngleAxis(side*4f,Vector3.up)*transform.forward,damage*.7f,2,weapon);
       }else StaffShot.Fire(origin,transform.forward,damage,WeaponCatalog.ChargedSlash(weapon)?2:WeaponCatalog.ChargedShot(weapon),weapon);
       break;
      }
