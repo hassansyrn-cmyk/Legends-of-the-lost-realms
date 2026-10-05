@@ -1,1 +1,1 @@
-Passed 1947 runtime assertions: movement, double jump, fifteen routes, models, four bosses, passive-contact damage, defeat, pause and checkpoint respawn.
+Passed 1983 runtime assertions: movement, double jump, fifteen routes, models, four bosses, passive-contact damage, defeat, pause and checkpoint respawn.

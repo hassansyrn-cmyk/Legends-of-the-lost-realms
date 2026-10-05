@@ -289,7 +289,8 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
 
     // Small facing assist keeps nearby targets usable with a phone stick.
     // Partial turn only: an instant snap reads as a teleport pop.
-    Enemy closest=null;float nearest=3.5f;foreach(var foe in g.Enemies){if(!foe||foe.Health<=0)continue;Vector3 d=foe.transform.position-transform.position;d.y=0;if(d.magnitude<nearest&&Vector3.Dot(transform.forward,d.normalized)>.35f){closest=foe;nearest=d.magnitude;}}
+    Enemy closest=SoftLock.Assist(this);
+    if(!closest){float nearest=3.5f;foreach(var foe in g.Enemies){if(!foe||foe.Health<=0)continue;Vector3 d=foe.transform.position-transform.position;d.y=0;if(d.magnitude<nearest&&Vector3.Dot(transform.forward,d.normalized)>.35f){closest=foe;nearest=d.magnitude;}}}
     if(closest){Vector3 aim=closest.transform.position-transform.position;aim.y=0;if(aim.sqrMagnitude>.01f)transform.rotation=Quaternion.Slerp(transform.rotation,Quaternion.LookRotation(aim.normalized),.65f);}
     // Forward attack step blended with current momentum (never a teleport
     // pop), softened in air so jump arcs survive the swing.
@@ -457,6 +458,7 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
   void ParrySuccess(Vector3 source){
    var g=RealmGame.I;parryUntil=0;parryReady=g.Elapsed+.55f;
    if(g.Trial)g.Trial.PerfectDefense();
+   if(g.Save!=null)g.Save.lifetimeParries++;
    g.HitStop(.14f,.08f);g.CameraRig.Shake=.35f;g.Sound("impact");g.Haptic();
    Energy=Mathf.Min(100,Energy+25+RealmGame.I.Save.tempoRank*5);counterUntil=g.Elapsed+1.8f;
    HitSpark.Burst(transform.position+Vector3.up*.95f,-transform.forward,new Color(1f,.96f,.72f),32);
@@ -484,6 +486,7 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
    if(dodgeRewarded)return;dodgeRewarded=true;
    var g=RealmGame.I;g.HitStop(.1f,.1f);g.CameraRig.Shake=.2f;g.Sound("player_dash");g.Haptic();
    if(g.Trial)g.Trial.PerfectDefense();
+   if(g.Save!=null)g.Save.lifetimeDodges++;
    Energy=Mathf.Min(100,Energy+30);counterUntil=g.Elapsed+1.4f;
    DamageTip.Show(transform.position+Vector3.up*1.95f,"PERFECT DODGE",new Color(.65f,.95f,1f));
   }

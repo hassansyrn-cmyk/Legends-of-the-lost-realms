@@ -27,6 +27,7 @@ namespace LostRealms {
    // Each family's vulnerable element (0 ember, 1 frost, 2 gale). Matching the
    // player's current element deals bonus damage and triggers that reaction.
     static readonly int[] Weakness={2,1,0,0,1,0,2,2,0,1,0,2,0,1,0,1,0,1,1,0,2,2};
+   public static int WeaknessOf(int kind)=>Weakness[Mathf.Clamp(kind,0,21)];
    public int WeakElement=>Weakness[Mathf.Clamp(Kind,0,21)];
   // Kind 11 (Flyer) hovers: it ignores the ground clamp and bobs in the air.
   bool aerial;
@@ -111,6 +112,7 @@ namespace LostRealms {
        if(game.Trial)game.Trial.EnemyDefeated();
        AshPuff.Burst(transform.position+Vector3.up*.5f,new Color(.36f,.3f,.27f),14,1f,false);
        game.Coins+=Boss?20:3;game.Kills++;game.Sound("enemy_defeat");
+       CombatFeel.OnEnemyKilled(this);
       }
       Destroy(gameObject,0.1f);
       return;
@@ -290,6 +292,7 @@ namespace LostRealms {
    // Directional flinch: the body leans away from the blow, sized by the hit
    // weight (light twist → heavy stagger → finisher knockback lean).
    if(Visual&&!Visual.UsesFallback){var flinch=Visual.GetComponent<EnemyFlinch>();if(flinch)flinch.Hit(k,real,Boss);}
+   CombatFeel.OnEnemyHit(this,real,weak,guardBreak,k);
   }
   void Glow(Color color,float duration){flashColor=color;flashUntil=RealmGame.I.Elapsed+duration;if(bodyMat){bodyMat.EnableKeyword("_EMISSION");bodyMat.SetColor("_EmissionColor",color*1.6f);}}
   void ClearGlow(){if(bodyMat)bodyMat.SetColor("_EmissionColor",Color.black);}
@@ -299,6 +302,7 @@ namespace LostRealms {
     state=State.Dead;comboLeft=0;ReleaseToken();if(IsLavaBoss)Visual.transform.localPosition=Vector3.zero;if(RealmGame.I.Trial)RealmGame.I.Trial.EnemyDefeated();ClearGlow();if(warning)Destroy(warning);Visual.Restart("death");
      var collider=GetComponent<Collider>();if(collider)collider.enabled=false;
      RealmGame.I.Coins+=Boss?20:3;RealmGame.I.Kills++;RealmGame.I.Sound("enemy_defeat");
+     CombatFeel.OnEnemyKilled(this);
     if(RealmGame.I.Elapsed<burnUntil){
      Vfx.Play("ga_vfx_Explosion_01",transform.position+Vector3.up*(Boss?1.8f:.9f),Quaternion.identity,1.15f);
      DamageTip.Show(transform.position+Vector3.up*1.6f,"CONFLAGRATION!",new Color(1f,.55f,.15f));
