@@ -1,0 +1,30 @@
+name: Source Regression Checks
+
+# Fast, license-free guards (Aster motion tuning, weapon system, startup safety, graphics, CI config).
+# The heavier Unity play-mode suites (-realmTest, -weaponAudit) need a GPU + license and are run locally;
+# see AGENTS.md for the exact commands.
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [ main, 'Antigravity*', 'feature/**', 'fix/**' ]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Run verify-*.sh guards
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Run all verify scripts
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          for script in .github/scripts/verify-*.sh; do
+            echo "=== $script"
+            bash "$script"
+          done
