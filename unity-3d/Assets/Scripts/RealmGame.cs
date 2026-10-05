@@ -31,7 +31,7 @@ public static readonly string[] Realms={"VERDANT KINGDOM","BURNING DUNES","FROZE
   public Vector2 MoveInput; public bool JumpPressed,DashPressed,AttackPressed,AttackReleased,CastPressed,ParryPressed,SpellPressed,SpellReleased,GrapplePressed; public bool AttackHeld,SpellHeld,JumpHeld;
   public readonly List<Enemy> Enemies=new List<Enemy>(); public AudioSource Music,Sfx;
   public RealmAudio Audio {get;private set;} public RealmTrials Trial {get;private set;}
-   Transform worldRoot; GUIStyle title,titleC,label,small,button,center,big,smallC,tinyC,btnText; Texture2D pixel,circleFill,circleRing,btnBlade,btnJump,btnDodge,btnPower,btnParry,btnSpell,btnPause,joyBase,joyKnob; Texture2D bgMainMenu,avatarAster,btnPrimaryNorm,btnPrimaryHigh,btnStdNorm,btnStdHigh,btnSecNorm,btnSecHigh,panelLarge,panelMedium,cardUnlocked,cardSelected,cardLocked,cardCompleted,headerOrnament,dividerLine,barFrame,barFill,resourceCapsule,iconArsenal,iconAtlas,iconBack,iconClose,iconCoin,iconGem,iconLock,iconMainMenu,iconNewJourney,iconContinue,iconResume,iconRestart,iconSanctuary,iconStar; readonly TouchRouter touch=new TouchRouter(); float yawInput,hitStopUntil,bossIntroUntil,heartbeatNext;bool showArsenal,showSkins,showCodex,showAchievements;int arsenalPage,skinPage,codexPage,achievementsPage;GameScreen arsenalReturn=GameScreen.Settings,skinReturn=GameScreen.Settings,codexReturn=GameScreen.Settings,achievementsReturn=GameScreen.Settings;readonly System.Collections.Generic.Dictionary<string,Texture2D> iconCache=new System.Collections.Generic.Dictionary<string,Texture2D>();
+   Transform worldRoot; GUIStyle title,titleC,label,small,button,center,big,smallC,tinyC,btnText; Texture2D pixel,circleFill,circleRing,btnBlade,btnJump,btnDodge,btnPower,btnParry,btnSpell,btnPause,joyBase,joyKnob; Texture2D bgMainMenu,avatarAster,btnPrimaryNorm,btnPrimaryHigh,btnStdNorm,btnStdHigh,btnSecNorm,btnSecHigh,panelLarge,panelMedium,cardUnlocked,cardSelected,cardLocked,cardCompleted,headerOrnament,dividerLine,barFrame,barFill,resourceCapsule,iconArsenal,iconAtlas,iconBack,iconClose,iconCoin,iconGem,iconLock,iconMainMenu,iconNewJourney,iconContinue,iconResume,iconRestart,iconSanctuary,iconStar; readonly TouchRouter touch=new TouchRouter(); float yawInput,hitStopUntil,bossIntroUntil,heartbeatNext;bool showArsenal,showSkins,showCodex,showAchievements,showVault;int arsenalPage,skinPage,codexPage,achievementsPage;GameScreen arsenalReturn=GameScreen.Settings,skinReturn=GameScreen.Settings,codexReturn=GameScreen.Settings,achievementsReturn=GameScreen.Settings,vaultReturn=GameScreen.Settings;enum VaultState{Browse,Opening,Revealed};VaultState vaultState=VaultState.Browse;ChestType openingChestType=ChestType.Normal;float vaultAnimTimer=0f;ChestReward currentChestReward=null;bool showDropRates=false;readonly System.Collections.Generic.Dictionary<string,Texture2D> iconCache=new System.Collections.Generic.Dictionary<string,Texture2D>();
   public static readonly Color[] ElementColors={new Color(1f,.45f,.1f),new Color(.2f,.85f,1f),new Color(.2f,1f,.55f)};
   static int debugTurretCycle;
   [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Boot(){
@@ -66,7 +66,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
   }
   public void Persist(){if(Testing)return;PlayerPrefs.SetString("LostRealms3D.v2",JsonUtility.ToJson(Save));PlayerPrefs.Save();}
   public void LoadLevel(int id){
-   showArsenal=false;arsenalPage=0;showCodex=false;showAchievements=false;
+   showArsenal=false;arsenalPage=0;showCodex=false;showAchievements=false;showVault=false;
    if(Audio)Audio.ClearRunSounds();
    Time.timeScale=1; touch.Reset(); if(worldRoot){worldRoot.gameObject.SetActive(false);Destroy(worldRoot.gameObject);} Enemies.Clear(); Level=Mathf.Clamp(id,1,15); Realm=Level<=4?0:Level<=7?1:Level<=10?2:3; Coins=Gems=DamageTaken=EarnedStars=0; Kills=CoinsTotal=GemsTotal=KillsTotal=0; Elapsed=0; CheckpointActive=false;Combo=0;comboUntil=0;
    worldRoot=new GameObject("Realm "+Level+" - "+Titles[Level-1]).transform; World=worldRoot.gameObject.AddComponent<RealmWorld>();   try{World.Build(Level,Realm);}catch(System.Exception e){Debug.LogError("LEVEL_BUILD_FAILED "+Level+": "+e);}
@@ -84,6 +84,15 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
   void Update(){
    JumpPressed=DashPressed=AttackPressed=AttackReleased=CastPressed=ParryPressed=SpellPressed=SpellReleased=GrapplePressed=false; MoveInput=Vector2.zero; yawInput=0;
    if(hitStopUntil>0f&&Time.unscaledTime>=hitStopUntil){hitStopUntil=0f;Time.timeScale=1f;}
+   RewardedAdManager.Update(Time.unscaledDeltaTime);
+   if(vaultState==VaultState.Opening){
+    vaultAnimTimer+=Time.unscaledDeltaTime;
+    if(vaultAnimTimer>=0.7f){
+     vaultState=VaultState.Revealed;
+     Sound(currentChestReward!=null&&currentChestReward.Rarity==RewardRarity.Epic?"level_clear":"upgrade");
+     if(CameraRig)CameraRig.Shake=currentChestReward!=null&&currentChestReward.Rarity==RewardRarity.Epic?.35f:.15f;
+    }
+   }
    if(!I||!Player)return;
    if(Application.isEditor){
     if(Input.GetKeyDown(KeyCode.Alpha1))LoadLevel(1);
@@ -98,7 +107,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
      Tell("Spawned "+tk+" Turret ahead! [T cycles: Stone -> Dragon -> Lion]",3);
     }
    }
-   if(Input.GetKeyDown(KeyCode.Escape)){if(showSkins)showSkins=false;else if(showArsenal)showArsenal=false;else if(showCodex)showCodex=false;else if(showAchievements)showAchievements=false;else if(Screen==GameScreen.Playing)Pause();else if(Screen==GameScreen.Paused)Resume();else Screen=GameScreen.Menu;}
+   if(Input.GetKeyDown(KeyCode.Escape)){if(RewardedAdManager.IsShowing)RewardedAdManager.Close();else if(showVault)showVault=false;else if(showSkins)showSkins=false;else if(showArsenal)showArsenal=false;else if(showCodex)showCodex=false;else if(showAchievements)showAchievements=false;else if(Screen==GameScreen.Playing)Pause();else if(Screen==GameScreen.Paused)Resume();else Screen=GameScreen.Menu;}
     if(Screen==GameScreen.Menu||Screen==GameScreen.Map)SetMusic("verdant_theme");
     else if(Screen==GameScreen.Settings)SetMusic("frozen_exploration_theme");
     else if(Screen==GameScreen.Playing){
@@ -134,7 +143,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    MoveInput=Vector2.ClampMagnitude(MoveInput,1); CameraRig.Yaw+=yawInput;
   }
   public void Pause(){Screen=GameScreen.Paused;Audio.Suspend(true);touch.Reset();}
-  public void Resume(){showSkins=false;showArsenal=false;showCodex=false;showAchievements=false;Screen=GameScreen.Playing;Audio.Suspend(false);}
+  public void Resume(){showSkins=false;showArsenal=false;showCodex=false;showAchievements=false;showVault=false;Screen=GameScreen.Playing;Audio.Suspend(false);}
   void SetMusic(string key){
    if(Audio)Audio.SetTrack(key);
   }
@@ -394,7 +403,8 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    GUI.matrix=Matrix4x4.TRS(Vector3.zero,Quaternion.identity,new Vector3(UnityEngine.Screen.width/1280f,UnityEngine.Screen.height/720f,1));
    if(showSkins&&(Screen==GameScreen.Settings||Screen==GameScreen.Paused)){WardrobeView();return;}
    if(showArsenal&&(Screen==GameScreen.Settings||Screen==GameScreen.Paused)){ArsenalView();return;}
-   if(showCodex&&(Screen==GameScreen.Settings||Screen==GameScreen.Paused)){BestiaryView();return;}
+   if(showCodex&&(Screen==GameScreen.Settings||Screen==GameScreen.Paused)){BestiaryView();if(RewardedAdManager.IsShowing)RewardedAdManager.DrawGUI(pixel,titleC,smallC,btnText);return;}
+   if(showVault&&(Screen==GameScreen.Settings||Screen==GameScreen.Paused)){VaultView();if(RewardedAdManager.IsShowing)RewardedAdManager.DrawGUI(pixel,titleC,smallC,btnText);return;}
    if(showAchievements&&(Screen==GameScreen.Settings||Screen==GameScreen.Paused)){AchievementsView();return;}
    if(Screen==GameScreen.Playing){
     // Health & Realm Banner
@@ -710,8 +720,9 @@ Panel(390,105,500,68);
      int cost=50+Save.healthRank*40;
      if(Save.healthRank<3){if(Save.coins>=cost){Save.coins-=cost;Save.healthRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
-    if(MenuButton(new Rect(770,170,270,44),$"WARDROBE ({Save.skins.Count}/5)",smallBtn:true,st:smallC)){showSkins=true;skinPage=0;skinReturn=GameScreen.Settings;Sound("power_select");}
-    if(showSkins){WardrobeView();return;}
+    if(MenuButton(new Rect(770,170,270,44),"TREASURE VAULT",iconSanctuary,smallBtn:true,st:smallC)){showVault=true;vaultState=VaultState.Browse;vaultReturn=GameScreen.Settings;Sound("power_select");}
+    if(showVault){VaultView();return;}
+
     string arsCost=Save.arsenalRank<3?(80+Save.arsenalRank*60)+" Gold":"MAXED";
     if(MenuButton(new Rect(240,222,520,44),$"ARSENAL RANK {Save.arsenalRank}/3  (+{Save.arsenalRank*8}% DMG)   —   {arsCost}{recTag(1)}",smallBtn:true,st:smallC)){
      int cost=80+Save.arsenalRank*60;
@@ -726,8 +737,8 @@ Panel(390,105,500,68);
      int cost=3+Save.powerRank*2;
      if(Save.powerRank<3){if(Save.gems>=cost){Save.gems-=cost;Save.powerRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
-    if(MenuButton(new Rect(770,274,270,44),$"BESTIARY ({Codex.Discovered(Save)}/{Codex.Kinds})",smallBtn:true,st:smallC)){showCodex=true;codexPage=0;codexReturn=GameScreen.Settings;Sound("power_select");}
-    if(showCodex){BestiaryView();return;}
+    if(MenuButton(new Rect(770,274,270,44),$"WARDROBE ({Save.skins.Count}/5)",smallBtn:true,st:smallC)){showSkins=true;skinPage=0;skinReturn=GameScreen.Settings;Sound("power_select");}
+    if(showSkins){WardrobeView();return;}
 
     string aethCost=Save.aetherRank<3?(4+Save.aetherRank*2)+" Gems":"MAXED";
     if(MenuButton(new Rect(240,326,255,44),$"AETHER {Save.aetherRank}/3 (+{Save.aetherRank*25}% Reg)  —  {aethCost}",smallBtn:true,st:tinyC)){
@@ -739,19 +750,21 @@ Panel(390,105,500,68);
      int cost=5+Save.moxieRank*2;
      if(Save.moxieRank<3){if(Save.gems>=cost){Save.gems-=cost;Save.moxieRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
-    if(MenuButton(new Rect(770,326,270,44),$"ACHIEVEMENTS ({Codex.UnlockedCount(Save)}/{Codex.All.Length})",smallBtn:true,st:smallC)){showAchievements=true;achievementsPage=0;achievementsReturn=GameScreen.Settings;Sound("power_select");}
-    if(showAchievements){AchievementsView();return;}
+    if(MenuButton(new Rect(770,326,270,44),$"BESTIARY ({Codex.Discovered(Save)}/{Codex.Kinds})",smallBtn:true,st:smallC)){showCodex=true;codexPage=0;codexReturn=GameScreen.Settings;Sound("power_select");}
+    if(showCodex){BestiaryView();return;}
 
     string tempoCost=Save.tempoRank<3?(5+Save.tempoRank*2)+" Gems":"MAXED";
-    if(MenuButton(new Rect(240,378,395,44),$"TEMPO {Save.tempoRank}/3 (+{Save.tempoRank*15}% Ctr)  —  {tempoCost}",smallBtn:true,st:smallC)){
+    if(MenuButton(new Rect(240,378,255,44),$"TEMPO {Save.tempoRank}/3 (+{Save.tempoRank*15}% Ctr)  —  {tempoCost}",smallBtn:true,st:tinyC)){
      int cost=5+Save.tempoRank*2;
      if(Save.tempoRank<3){if(Save.gems>=cost){Save.gems-=cost;Save.tempoRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
     string windCost=Save.windRank<3?(7+Save.windRank*3)+" Gems":"MAXED";
-    if(MenuButton(new Rect(645,378,395,44),$"SECOND WIND {Save.windRank}/3 ({Save.windRank} Revive)  —  {windCost}",smallBtn:true,st:smallC)){
+    if(MenuButton(new Rect(505,378,255,44),$"SECOND WIND {Save.windRank}/3 ({Save.windRank} Rev)  —  {windCost}",smallBtn:true,st:tinyC)){
      int cost=7+Save.windRank*3;
      if(Save.windRank<3){if(Save.gems>=cost){Save.gems-=cost;Save.windRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
+    if(MenuButton(new Rect(770,378,270,44),$"ACHIEVEMENTS ({Codex.UnlockedCount(Save)}/{Codex.All.Length})",smallBtn:true,st:smallC)){showAchievements=true;achievementsPage=0;achievementsReturn=GameScreen.Settings;Sound("power_select");}
+    if(showAchievements){AchievementsView();return;}
 
     // Audio & Preferences
     if(MenuButton(new Rect(240,436,260,42),"MUSIC: "+(Save.music?"ENABLED":"MUTED"),smallBtn:true,st:smallC)){Save.music=!Save.music;Persist();}
@@ -818,11 +831,9 @@ Panel(390,105,500,68);
        EquipSkin(def.Id);
       }
      }else{
-      string costStr=def.CostCoins>0&&def.CostGems>0?$"{def.CostCoins}G + {def.CostGems}💎":def.CostCoins>0?$"{def.CostCoins} Gold":$"{def.CostGems} Gems";
-      bool canAfford=Save.coins>=def.CostCoins&&Save.gems>=def.CostGems;
-      GUI.color=canAfford?Color.white:new Color(1f,.45f,.45f);
-      if(MenuButton(new Rect(792,ry+16,166,42),$"BUY: {costStr}",smallBtn:true,st:tinyC)){
-       BuySkin(def.Id);
+      GUI.color=new Color(.82f,.45f,1f);
+      if(MenuButton(new Rect(792,ry+16,166,42),"EPIC CHEST",smallBtn:true,st:tinyC)){
+       showVault=true;vaultState=VaultState.Browse;vaultReturn=skinReturn;Sound("power_select");
       }
       GUI.color=Color.white;
      }
@@ -833,20 +844,6 @@ Panel(390,105,500,68);
     }
    }
 
-   Texture2D WeaponIcon(WeaponDefinition def){
-    if(string.IsNullOrEmpty(def.Resource))return null;
-    string key=def.Resource.Substring(def.Resource.LastIndexOf('/')+1);
-    if(iconCache.TryGetValue(key,out var tex))return tex;
-    tex=Resources.Load<Texture2D>("Weapons/Icons/"+key);
-    iconCache[key]=tex;return tex;
-   }
-   Texture2D SkinPortrait(SkinDefinition def){
-    string key="skin:"+def.PrefabName;
-    if(iconCache.TryGetValue(key,out var tex))return tex;
-    string path=def.Id==SkinId.Wanderer?"UI/Portraits/UI_Avatar_Aster_HP_Headshot":"Characters/Icons/"+def.PrefabName;
-    tex=Resources.Load<Texture2D>(path);
-    iconCache[key]=tex;return tex;
-   }
    void ArsenalView(){
     Panel(200,50,880,625);
     Text(240,60,800,48,$"Arsenal  —  {Save.weapons.Count} Collected",titleC);
@@ -924,16 +921,18 @@ Panel(390,105,500,68);
    }else if(Screen==GameScreen.Paused){
     Text(355,222,570,36,"Your journey is paused. All progress is safe.",smallC);
     if(MenuButton(new Rect(355,270,570,56),"RESUME JOURNEY",iconResume,primary:true))Resume();
-    if(MenuButton(new Rect(355,332,280,46),"ARSENAL",iconArsenal)){showArsenal=true;arsenalPage=0;arsenalReturn=GameScreen.Paused;Sound("power_select");}
-    if(MenuButton(new Rect(645,332,280,46),"WARDROBE",smallBtn:true,st:smallC)){showSkins=true;skinPage=0;skinReturn=GameScreen.Paused;Sound("power_select");}
+    if(MenuButton(new Rect(355,324,280,44),"ARSENAL",iconArsenal)){showArsenal=true;arsenalPage=0;arsenalReturn=GameScreen.Paused;Sound("power_select");}
+    if(MenuButton(new Rect(645,324,280,44),"WARDROBE",smallBtn:true,st:smallC)){showSkins=true;skinPage=0;skinReturn=GameScreen.Paused;Sound("power_select");}
     if(showSkins){WardrobeView();return;}
-    if(MenuButton(new Rect(355,384,280,46),$"BESTIARY ({Codex.Discovered(Save)}/{Codex.Kinds})",smallBtn:true,st:smallC)){showCodex=true;codexPage=0;codexReturn=GameScreen.Paused;Sound("power_select");}
+    if(MenuButton(new Rect(355,372,570,44),"TREASURE VAULT & CHESTS",iconSanctuary,smallBtn:true,st:smallC)){showVault=true;vaultState=VaultState.Browse;vaultReturn=GameScreen.Paused;Sound("power_select");}
+    if(showVault){VaultView();return;}
+    if(MenuButton(new Rect(355,420,280,44),$"BESTIARY ({Codex.Discovered(Save)}/{Codex.Kinds})",smallBtn:true,st:smallC)){showCodex=true;codexPage=0;codexReturn=GameScreen.Paused;Sound("power_select");}
     if(showCodex){BestiaryView();return;}
-    if(MenuButton(new Rect(645,384,280,46),$"ACHIEVEMENTS ({Codex.UnlockedCount(Save)}/{Codex.All.Length})",smallBtn:true,st:smallC)){showAchievements=true;achievementsPage=0;achievementsReturn=GameScreen.Paused;Sound("power_select");}
+    if(MenuButton(new Rect(645,420,280,44),$"ACHIEVEMENTS ({Codex.UnlockedCount(Save)}/{Codex.All.Length})",smallBtn:true,st:smallC)){showAchievements=true;achievementsPage=0;achievementsReturn=GameScreen.Paused;Sound("power_select");}
     if(showAchievements){AchievementsView();return;}
-    if(MenuButton(new Rect(355,436,275,46),"ATLAS",iconAtlas))Screen=GameScreen.Map;
-    if(MenuButton(new Rect(650,436,275,46),"RESTART",iconRestart))LoadLevel(Level);
-    if(MenuButton(new Rect(355,488,570,48),"MAIN MENU",iconMainMenu)){showSkins=false;showArsenal=false;showCodex=false;showAchievements=false;Audio.Suspend(false);Time.timeScale=1;Screen=GameScreen.Menu;}
+    if(MenuButton(new Rect(355,468,275,44),"ATLAS",iconAtlas))Screen=GameScreen.Map;
+    if(MenuButton(new Rect(650,468,275,44),"RESTART",iconRestart))LoadLevel(Level);
+    if(MenuButton(new Rect(355,516,570,46),"MAIN MENU",iconMainMenu)){showSkins=false;showArsenal=false;showCodex=false;showAchievements=false;showVault=false;Audio.Suspend(false);Time.timeScale=1;Screen=GameScreen.Menu;}
     if(showArsenal){ArsenalView();return;}
     return;
    }else{
@@ -994,6 +993,21 @@ Panel(390,105,500,68);
     GUI.Label(new Rect(r.x,r.y+r.height*(primary?.16f:.26f),r.width,r.height*.38f),name,primary?big:center);
     if(sub.Length>0)GUI.Label(new Rect(r.x,r.y+r.height*(primary?.58f:.6f),r.width,r.height*.26f),sub,tinyC);
    }
+   Texture2D WeaponIcon(WeaponDefinition def){
+    if(string.IsNullOrEmpty(def.Resource))return null;
+    string key=def.Resource.Substring(def.Resource.LastIndexOf('/')+1);
+    if(iconCache.TryGetValue(key,out var tex))return tex;
+    tex=Resources.Load<Texture2D>("Weapons/Icons/"+key);
+    iconCache[key]=tex;return tex;
+   }
+   Texture2D SkinPortrait(SkinDefinition def){
+    string key="skin:"+def.PrefabName;
+    if(iconCache.TryGetValue(key,out var tex))return tex;
+    string path=def.Id==SkinId.Wanderer?"UI/Portraits/UI_Avatar_Aster_HP_Headshot":"Characters/Icons/"+def.PrefabName;
+    tex=Resources.Load<Texture2D>(path);
+    iconCache[key]=tex;return tex;
+   }
+
   int TotalStars(){int n=0;foreach(int s in Save.stars)n+=s;return n;}
 
    void BestiaryView(){
@@ -1130,6 +1144,205 @@ Panel(390,105,500,68);
     if(MenuButton(new Rect(860,600,200,44),achievementsReturn==GameScreen.Paused?"PAUSE":"SANCTUARY",iconBack,smallBtn:true,st:smallC)){
      showAchievements=false;Sound("power_select");
     }
+   }
+
+
+   void VaultView(){
+    Panel(160,36,960,648);
+    Text(200,44,880,32,"Treasure Vault & Chests",titleC);
+    if(headerOrnament)GUI.DrawTexture(new Rect(440,76,400,18),headerOrnament,ScaleMode.ScaleToFit);
+    if(dividerLine)GUI.DrawTexture(new Rect(200,96,880,8),dividerLine,ScaleMode.StretchToFill);
+    else Box(new Rect(200,98,880,2),new Color(Accent.r,Accent.g,Accent.b,.35f));
+
+    Text(200,105,880,20,$"Treasury:  {Save.coins} Gold    •    {Save.gems} Gems    |    Weapons: {Save.weapons.Count}/49    •    Outfits: {Save.skins.Count}/6",smallC);
+
+    if(showDropRates){
+     Rect modal=new Rect(320,130,640,460);
+     BoxOutline(modal,new Color(.04f,.08f,.12f,.98f),Accent,2f);
+     Text(340,146,600,28,"CHEST PROBABILITIES & RULES",titleC);
+     Text(360,186,560,18,"• NORMAL CHEST (150 Gold or Free via Ad):",small);
+     Text(380,208,540,18,"- 65% Common Resources (50-150 Gold, 1-2 Gems)",tinyC);
+     Text(380,226,540,18,"- 35% Standard Weapons (Non-Special)",tinyC);
+
+     Text(360,256,560,18,"• GOLDEN CHEST (600 Gold or 10 Gems):",small);
+     Text(380,278,540,18,"- 30% Rich Resources (200-450 Gold, 3-6 Gems)",tinyC);
+     Text(380,296,540,18,"- 50% Standard Weapons",tinyC);
+     Text(380,314,540,18,"- 20% RARE SPECIAL-HOLD WEAPONS (12 Elemental/Charged weapons)",tinyC);
+
+     Text(360,344,560,18,"• EPIC CHEST (35 Gems):",small);
+     Text(380,366,540,18,"- 15% Stash (500-1000 Gold, 8-15 Gems)",tinyC);
+     Text(380,384,540,18,"- 35% Standard Weapons",tinyC);
+     Text(380,402,540,18,"- 35% RARE SPECIAL-HOLD WEAPONS",tinyC);
+     Text(380,420,540,18,"- 15% EPIC CHARACTER OUTFITS (5 Unlockable Skins)",tinyC);
+
+     Text(360,452,560,36,"★ DUPLICATE PROTECTION: Already owned weapons & outfits automatically convert into compensatory Gold and Gems so no pull is ever wasted.",tinyC);
+
+     if(MenuButton(new Rect(540,514,200,44),"CLOSE",iconClose,smallBtn:true,st:smallC)){showDropRates=false;Sound("power_select");}
+     return;
+    }
+
+    if(vaultState==VaultState.Opening){
+     Rect box=new Rect(420,200,440,280);
+     float pulse=1f+.04f*Mathf.Sin(Time.unscaledTime*12f);
+     BoxOutline(box,new Color(.03f,.07f,.12f,.96f),Color.Lerp(Accent,Color.white,.4f*pulse),2.5f);
+     Text(440,240,400,36,"UNLOCKING CHEST...",titleC);
+     float pct=Mathf.Clamp01(vaultAnimTimer/0.7f);
+     Rect barBg=new Rect(480,300,320,16);
+     Box(barBg,new Color(.08f,.12f,.18f,.9f));
+     Box(new Rect(barBg.x,barBg.y,barBg.width*pct,barBg.height),new Color(1f,.85f,.3f));
+     BoxOutline(barBg,Color.clear,Accent,1f);
+     Text(440,336,400,24,"Gathering the realm's treasures...",tinyC);
+     return;
+    }
+
+    if(vaultState==VaultState.Revealed&&currentChestReward!=null){
+     Rect rev=new Rect(340,130,600,460);
+     Color rBorder=currentChestReward.Rarity==RewardRarity.Epic?new Color(.82f,.45f,1f):currentChestReward.Rarity==RewardRarity.Rare?new Color(1f,.85f,.35f):new Color(.38f,.95f,.7f);
+     BoxOutline(rev,new Color(.03f,.06f,.10f,.98f),rBorder,2.5f);
+
+     string rarTag=currentChestReward.Rarity==RewardRarity.Epic?"✦ EPIC REWARD ✦":currentChestReward.Rarity==RewardRarity.Rare?"★ RARE REWARD ★":"• COMMON REWARD •";
+     GUI.color=rBorder;
+     Text(360,146,560,26,rarTag,smallC);
+     GUI.color=Color.white;
+
+     Rect iconBox=new Rect(580,182,120,120);
+     BoxOutline(iconBox,new Color(.05f,.10f,.16f,.9f),rBorder,1.5f);
+     if(currentChestReward.Type==ChestRewardType.Weapon){
+      var wdef=WeaponCatalog.Get(currentChestReward.Weapon);
+      var wicon=WeaponIcon(wdef);
+      if(wicon)GUI.DrawTexture(new Rect(iconBox.x+10,iconBox.y+10,100,100),wicon,ScaleMode.ScaleToFit);
+      else Text(iconBox.x,iconBox.y+42,120,36,"⚔",big);
+     }else if(currentChestReward.Type==ChestRewardType.Skin){
+      var sdef=SkinCatalog.Get((int)currentChestReward.Skin);
+      var sportrait=SkinPortrait(sdef);
+      if(sportrait)GUI.DrawTexture(new Rect(iconBox.x+6,iconBox.y+6,108,108),sportrait,ScaleMode.ScaleToFit);
+      else Text(iconBox.x,iconBox.y+42,120,36,"👑",big);
+     }else{
+      if(iconGem&&currentChestReward.Gems>0)GUI.DrawTexture(new Rect(iconBox.x+36,iconBox.y+36,48,48),iconGem,ScaleMode.ScaleToFit);
+      else if(iconCoin)GUI.DrawTexture(new Rect(iconBox.x+36,iconBox.y+36,48,48),iconCoin,ScaleMode.ScaleToFit);
+      else Text(iconBox.x,iconBox.y+42,120,36,"💎",big);
+     }
+
+     Text(360,314,560,28,currentChestReward.Title.ToUpper(),center);
+     GUI.color=new Color(.8f,.88f,.95f);
+     Text(360,344,560,24,currentChestReward.Subtitle,smallC);
+     GUI.color=Color.white;
+
+     if(currentChestReward.IsDuplicate){
+      GUI.color=new Color(1f,.85f,.35f);
+      Text(360,378,560,22,$"DUPLICATE CONVERTED: +{currentChestReward.Gold} Gold  +{currentChestReward.Gems} Gems added to treasury!",tinyC);
+      GUI.color=Color.white;
+     }
+
+     if(!currentChestReward.IsDuplicate&&currentChestReward.Type==ChestRewardType.Weapon){
+      if(MenuButton(new Rect(420,418,440,44),$"EQUIP {currentChestReward.Title.ToUpper()} NOW",iconArsenal,smallBtn:true,st:smallC)){
+       EquipWeapon(currentChestReward.Weapon);vaultState=VaultState.Browse;Sound("power_select");
+      }
+     }else if(!currentChestReward.IsDuplicate&&currentChestReward.Type==ChestRewardType.Skin){
+      if(MenuButton(new Rect(420,418,440,44),$"EQUIP {currentChestReward.Title.ToUpper()} NOW",smallBtn:true,st:smallC)){
+       EquipSkin(currentChestReward.Skin);vaultState=VaultState.Browse;Sound("power_select");
+      }
+     }
+
+     if(MenuButton(new Rect(500,476,280,44),"CONTINUE",iconContinue,smallBtn:true,st:smallC)){
+      vaultState=VaultState.Browse;Sound("power_select");
+     }
+     return;
+    }
+
+    float cy=136f,cw=284f,ch=440f;
+
+    // Card 1: Normal Chest
+    Rect c1=new Rect(200,cy,cw,ch);
+    BoxOutline(c1,new Color(.03f,.07f,.11f,.92f),new Color(.55f,.65f,.75f,.8f),1.5f);
+    Text(c1.x+10,c1.y+14,cw-20,24,"NORMAL CHEST",center);
+    Text(c1.x+10,c1.y+38,cw-20,18,"Iron & Bronze Cache",tinyC);
+    Rect slot1=new Rect(c1.x+82,c1.y+64,120,90);
+    BoxOutline(slot1,new Color(.05f,.10f,.16f,.9f),new Color(.55f,.65f,.75f,.6f),1.2f);
+    if(iconArsenal)GUI.DrawTexture(new Rect(slot1.x+36,slot1.y+22,48,48),iconArsenal,ScaleMode.ScaleToFit);
+    else Text(slot1.x,slot1.y+26,120,36,"📦",big);
+    Text(c1.x+14,c1.y+166,cw-28,20,"• 65% Common Resources",tinyC);
+    Text(c1.x+14,c1.y+188,cw-28,20,"• 35% Standard Weapons",tinyC);
+    Text(c1.x+14,c1.y+210,cw-28,20,"• Duplicate conversion refunds",tinyC);
+
+    bool canNorm=ChestSystem.CanOpen(ChestType.Normal,Save);
+    GUI.color=canNorm?Color.white:new Color(1f,.45f,.45f);
+    if(MenuButton(new Rect(c1.x+22,c1.y+260,cw-44,46),$"OPEN: {ChestSystem.NormalGoldCost} GOLD",smallBtn:true,st:smallC)){
+     if(canNorm){ChestSystem.DeductCost(ChestType.Normal,Save);StartOpeningChest(ChestType.Normal);}
+     else Sound("power_fail");
+    }
+    GUI.color=new Color(.38f,.95f,.7f);
+    if(MenuButton(new Rect(c1.x+22,c1.y+316,cw-44,46),"WATCH AD (FREE)",iconContinue,smallBtn:true,st:smallC)){
+     RewardedAdManager.ShowRewardedAd(()=>{StartOpeningChest(ChestType.Normal);});
+    }
+    GUI.color=Color.white;
+
+    // Card 2: Golden Chest
+    Rect c2=new Rect(500,cy,cw,ch);
+    BoxOutline(c2,new Color(.07f,.05f,.02f,.92f),new Color(1f,.82f,.3f,.95f),1.8f);
+    GUI.color=new Color(1f,.9f,.45f);
+    Text(c2.x+10,c2.y+14,cw-20,24,"GOLDEN CHEST",center);
+    GUI.color=Color.white;
+    Text(c2.x+10,c2.y+38,cw-20,18,"Gilded Sunscar Vault",tinyC);
+    Rect slot2=new Rect(c2.x+82,c2.y+64,120,90);
+    BoxOutline(slot2,new Color(.12f,.09f,.03f,.9f),new Color(1f,.82f,.3f,.8f),1.5f);
+    Text(slot2.x,slot2.y+26,120,36,"⚜",big);
+    Text(c2.x+14,c2.y+166,cw-28,20,"• 30% Rich Resources",tinyC);
+    Text(c2.x+14,c2.y+188,cw-28,20,"• 50% Standard Weapons",tinyC);
+    GUI.color=new Color(1f,.88f,.45f);
+    Text(c2.x+14,c2.y+210,cw-28,20,"• 20% RARE SPECIAL WEAPONS",tinyC);
+    GUI.color=Color.white;
+
+    bool canGoldCoins=ChestSystem.CanOpen(ChestType.Golden,Save,false);
+    GUI.color=canGoldCoins?Color.white:new Color(1f,.45f,.45f);
+    if(MenuButton(new Rect(c2.x+22,c2.y+260,cw-44,46),$"OPEN: {ChestSystem.GoldenGoldCost} GOLD",smallBtn:true,st:smallC)){
+     if(canGoldCoins){ChestSystem.DeductCost(ChestType.Golden,Save,false);StartOpeningChest(ChestType.Golden);}
+     else Sound("power_fail");
+    }
+    bool canGoldGems=ChestSystem.CanOpen(ChestType.Golden,Save,true);
+    GUI.color=canGoldGems?Color.white:new Color(1f,.45f,.45f);
+    if(MenuButton(new Rect(c2.x+22,c2.y+316,cw-44,46),$"OPEN: {ChestSystem.GoldenGemCost} GEMS",smallBtn:true,st:smallC)){
+     if(canGoldGems){ChestSystem.DeductCost(ChestType.Golden,Save,true);StartOpeningChest(ChestType.Golden);}
+     else Sound("power_fail");
+    }
+    GUI.color=Color.white;
+
+    // Card 3: Epic Chest
+    Rect c3=new Rect(800,cy,cw,ch);
+    BoxOutline(c3,new Color(.08f,.03f,.12f,.94f),new Color(.82f,.45f,1f,.95f),2f);
+    GUI.color=new Color(.88f,.6f,1f);
+    Text(c3.x+10,c3.y+14,cw-20,24,"EPIC CHEST",center);
+    GUI.color=Color.white;
+    Text(c3.x+10,c3.y+38,cw-20,18,"Astral Mythic Coffer",tinyC);
+    Rect slot3=new Rect(c3.x+82,c3.y+64,120,90);
+    BoxOutline(slot3,new Color(.14f,.05f,.20f,.9f),new Color(.82f,.45f,1f,.85f),1.5f);
+    Text(slot3.x,slot3.y+26,120,36,"✦",big);
+    Text(c3.x+14,c3.y+166,cw-28,20,"• 35% Special-Hold Weapons",tinyC);
+    GUI.color=new Color(.88f,.6f,1f);
+    Text(c3.x+14,c3.y+188,cw-28,20,"• 15% EPIC CHARACTER OUTFITS",tinyC);
+    GUI.color=Color.white;
+    Text(c3.x+14,c3.y+210,cw-28,20,"• 35% Standard Weapons / 15% Stash",tinyC);
+
+    bool canEpic=ChestSystem.CanOpen(ChestType.Epic,Save);
+    GUI.color=canEpic?Color.white:new Color(1f,.45f,.45f);
+    if(MenuButton(new Rect(c3.x+22,c3.y+288,cw-44,52),$"OPEN: {ChestSystem.EpicGemCost} GEMS",smallBtn:true,st:smallC)){
+     if(canEpic){ChestSystem.DeductCost(ChestType.Epic,Save);StartOpeningChest(ChestType.Epic);}
+     else Sound("power_fail");
+    }
+    GUI.color=Color.white;
+
+    if(MenuButton(new Rect(200,594,220,44),"PROBABILITIES",smallBtn:true,st:smallC)){showDropRates=true;Sound("power_select");}
+    if(MenuButton(new Rect(864,594,220,44),vaultReturn==GameScreen.Paused?"PAUSE":"SANCTUARY",iconBack,smallBtn:true,st:smallC)){showVault=false;Sound("power_select");}
+   }
+
+   void StartOpeningChest(ChestType type){
+    openingChestType=type;
+    vaultState=VaultState.Opening;
+    vaultAnimTimer=0f;
+    currentChestReward=ChestSystem.Open(type,Save);
+    Codex.Dirty=true;
+    Persist();
+    Sound("power_select");
    }
 
  }
