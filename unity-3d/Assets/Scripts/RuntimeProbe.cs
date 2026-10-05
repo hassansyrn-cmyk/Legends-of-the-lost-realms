@@ -10,6 +10,19 @@ namespace LostRealms {
   void Update(){var g=RealmGame.I;if(g&&g.Screen==GameScreen.Playing){g.MoveInput=move;g.JumpPressed=jump;jump=false;}}
   void Check(bool okay,string message){if(!okay){Debug.LogError("REALM_TEST_FAILED: "+message);Quit(1);throw new Exception(message);}assertions++;Debug.Log("PASS: "+message);}
   IEnumerator Start(){
+   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-weaponAudit")>=0){
+    yield return null;
+    IEnumerator it=null;
+    try{it=WeaponAudit.Run(Check);}catch(Exception e){Debug.LogError("WEAPON_AUDIT_EXCEPTION "+e);Quit(1);yield break;}
+    while(true){
+     bool more=false;
+     try{more=it.MoveNext();}catch(Exception e){Debug.LogError("WEAPON_AUDIT_STEP_EXCEPTION "+e);Quit(1);yield break;}
+     if(!more)break;
+     yield return it.Current;
+    }
+    Check(runtimeErrors==0,"Weapon audit emits no runtime errors");
+    Debug.Log("WEAPON_AUDIT_PASSED "+assertions);Quit(0);yield break;
+   }
    if(Array.IndexOf(Environment.GetCommandLineArgs(),"-staffFocused")>=0){
     yield return null;yield return StaffShotChecks.Run(Check);
     Check(runtimeErrors==0,"Staff checks emit no runtime errors");

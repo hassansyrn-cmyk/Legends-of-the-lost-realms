@@ -777,8 +777,14 @@ Panel(390,105,500,68);
 
      Rect slot=new Rect(218,ry+4,68,68);
      BoxOutline(slot,new Color(.03f,.07f,.12f,.95f),border,1.5f);
-     string badge=i==0?"⚔":i==1?"🗡":i==2?"🛡":i==3?"🏰":i==4?"🪓":"🏜";
-     Text(slot.x,slot.y+15,68,36,badge,big);
+     var portrait=SkinPortrait(def);
+     if(portrait){
+      GUI.color=Color.white;
+      GUI.DrawTexture(new Rect(slot.x+2,slot.y+2,slot.width-4,slot.height-4),portrait,ScaleMode.ScaleToFit,true);
+     }else{
+      string initial=string.IsNullOrEmpty(def.Name)?"?":def.Name.Substring(0,1);
+      Text(slot.x,slot.y+15,68,36,initial,big);
+     }
 
      GUI.color=eq?new Color(1f,.92f,.45f):Color.white;
      Text(298,ry+4,486,20,$"{def.Name.ToUpper()}  —  {def.Title}",small);
@@ -821,6 +827,13 @@ Panel(390,105,500,68);
     string key=def.Resource.Substring(def.Resource.LastIndexOf('/')+1);
     if(iconCache.TryGetValue(key,out var tex))return tex;
     tex=Resources.Load<Texture2D>("Weapons/Icons/"+key);
+    iconCache[key]=tex;return tex;
+   }
+   Texture2D SkinPortrait(SkinDefinition def){
+    string key="skin:"+def.PrefabName;
+    if(iconCache.TryGetValue(key,out var tex))return tex;
+    string path=def.Id==SkinId.Wanderer?"UI/Portraits/UI_Avatar_Aster_HP_Headshot":"Characters/Icons/"+def.PrefabName;
+    tex=Resources.Load<Texture2D>(path);
     iconCache[key]=tex;return tex;
    }
    void ArsenalView(){

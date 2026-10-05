@@ -170,22 +170,29 @@ public static class WeaponCatalog {
  }
 
  public sealed class EquippedWeapon:MonoBehaviour {
-  public static bool HasAuthoredGrip(WeaponId id)=>id==WeaponId.FantasyGreatsword||id==WeaponId.FierySword||id==WeaponId.OrnateCurvedBlade;
-  public static bool HasGripAnchor(WeaponId id)=>HasAuthoredGrip(id)||id==WeaponId.AstralStaff||id==WeaponId.GlacierMaul||id==WeaponId.VoidReaper||id==WeaponId.FrostHalberd||id==WeaponId.VerdantFang;
+  public static bool HasAuthoredGrip(WeaponId id)=>id==WeaponId.FantasyGreatsword||id==WeaponId.FierySword||id==WeaponId.OrnateCurvedBlade||id==WeaponId.VerdantFang;
+  public static bool HasGripAnchor(WeaponId id)=>HasAuthoredGrip(id)||id==WeaponId.AstralStaff||id==WeaponId.GlacierMaul||id==WeaponId.VoidReaper||id==WeaponId.FrostHalberd;
   // Mesh-local handle centers measured from the textured front views in WeaponPoseProbe.
-  public static Vector3 GripPoint(WeaponId id)=>id==WeaponId.FantasyGreatsword?new Vector3(.247f,.799f,0):id==WeaponId.FierySword?new Vector3(-.334f,.819f,0):new Vector3(.020f,.728f,0);
+  public static Vector3 GripPoint(WeaponId id)=>id==WeaponId.FantasyGreatsword?new Vector3(.247f,.799f,0):id==WeaponId.FierySword?new Vector3(-.334f,.819f,0):id==WeaponId.OrnateCurvedBlade?new Vector3(.020f,.728f,0):new Vector3(0.2370f,0.0961f,0.2156f);
   public static Vector3 GripAnchorPoint(WeaponId id,Bounds bounds){
    if(HasAuthoredGrip(id))return GripPoint(id);
    Vector3 size=bounds.size;
    int axis=size.x>=size.y&&size.x>=size.z?0:size.y>=size.z?1:2;
-   float fraction=id==WeaponId.VerdantFang?.16f:.5f;
+   float fraction=id==WeaponId.AstralStaff?.33f:id==WeaponId.GlacierMaul?.30f:id==WeaponId.VoidReaper?.38f:id==WeaponId.FrostHalberd?.28f:.5f;
    Vector3 point=bounds.center;
    if(axis==0)point.x=bounds.min.x+size.x*fraction;
    else if(axis==1)point.y=bounds.min.y+size.y*fraction;
    else point.z=bounds.min.z+size.z*fraction;
    return point;
   }
-  static Vector3 BladeAxis(WeaponId id)=>id==WeaponId.FantasyGreatsword?new Vector3(-.64f,-.768f,0):id==WeaponId.FierySword?new Vector3(.707f,-.707f,0):Vector3.down;
+  static Vector3 BladeAxis(WeaponId id)=>id==WeaponId.FantasyGreatsword?new Vector3(-.64f,-.768f,0):id==WeaponId.FierySword?new Vector3(.707f,-.707f,0):id==WeaponId.OrnateCurvedBlade?Vector3.down:new Vector3(-0.48027f,0.76787f,-0.42393f).normalized;
+  static Quaternion ModelCorrection(WeaponId id){
+   if(id==WeaponId.FantasyGreatsword)return Quaternion.Inverse(Quaternion.LookRotation(Vector3.forward,new Vector3(-.64f,-.768f,0)));
+   if(id==WeaponId.FierySword)return Quaternion.Inverse(Quaternion.LookRotation(Vector3.forward,new Vector3(.707f,-.707f,0)));
+   if(id==WeaponId.OrnateCurvedBlade)return Quaternion.Inverse(Quaternion.LookRotation(Vector3.forward,Vector3.down));
+   if(id==WeaponId.VerdantFang)return Quaternion.Inverse(Quaternion.LookRotation(new Vector3(-0.04481f,0.46121f,0.88616f).normalized,new Vector3(-0.48027f,0.76787f,-0.42393f).normalized));
+   return Quaternion.identity;
+  }
   public WeaponId Id;GameObject model;
   Hero hero;Transform hand;float drawnUntil,draw;
   Vector3 bladeDir=Vector3.up,flatDir=Vector3.forward,center;bool measured;
@@ -207,7 +214,7 @@ public static class WeaponCatalog {
    if(!equipped.model){UnityEngine.Object.Destroy(root);return;}
    equipped.model.transform.localPosition=Vector3.zero;equipped.model.transform.localRotation=Quaternion.Euler(definition.EquipEuler);
    if(HasAuthoredGrip(id)){
-    equipped.model.transform.localRotation=Quaternion.Euler(definition.EquipEuler)*Quaternion.Inverse(Quaternion.LookRotation(Vector3.forward,BladeAxis(id)));
+    equipped.model.transform.localRotation=Quaternion.Euler(definition.EquipEuler)*ModelCorrection(id);
    }
    if(HasGripAnchor(id)){
     var mesh=equipped.model.GetComponentInChildren<Renderer>();
@@ -250,7 +257,8 @@ public static class WeaponCatalog {
    bladeDir=transform.InverseTransformDirection(renderer.transform.TransformDirection(longAxis));
    if(HasAuthoredGrip(Id))bladeDir=transform.InverseTransformDirection(renderer.transform.TransformDirection(BladeAxis(Id))).normalized;
    Vector3 thinAxis=size.x<=size.y&&size.x<=size.z?Vector3.right:size.y<=size.z?Vector3.up:Vector3.forward;
-   flatDir=transform.InverseTransformDirection(renderer.transform.TransformDirection(thinAxis));
+   Vector3 flatVector=Id==WeaponId.VerdantFang?new Vector3(-0.04481f,0.46121f,0.88616f).normalized:thinAxis;
+   flatDir=transform.InverseTransformDirection(renderer.transform.TransformDirection(flatVector));
    if(Id==WeaponId.MoonChakram||Id==WeaponId.BrassFangs){
     flatDir=transform.InverseTransformDirection(renderer.transform.TransformDirection(thinAxis));
    }
@@ -263,22 +271,18 @@ public static class WeaponCatalog {
     // Handle above the right shoulder, blade down across the back, flat against the torso.
     Vector3 down=(-facing.up-facing.right*.28f).normalized;
     rot=Quaternion.LookRotation(-facing.forward,down)*Quaternion.Inverse(Quaternion.LookRotation(flatDir,bladeDir));
-    Vector3 back=facing.TransformPoint(new Vector3(0,Id==WeaponId.OrnateCurvedBlade?1.12f:1.02f,-.28f));
+    float y=Id==WeaponId.OrnateCurvedBlade?1.12f:Id==WeaponId.VerdantFang?1.10f:1.02f;
+    Vector3 back=facing.TransformPoint(new Vector3(0,y,Id==WeaponId.VerdantFang?-.35f:-.28f));
     pos=back-rot*Vector3.Scale(center,transform.lossyScale);return;
    }
-   Vector3 socket=facing.TransformPoint(new Vector3(0,1.2f,-BackGap-.08f));
-   // Longest local axis (the blade) stands up the spine; twist so the flat of
-   // the weapon lies against the back rather than its edge.
-   rot=Quaternion.FromToRotation(measured?bladeDir:Vector3.up,facing.up);
-   Vector3 flat=rot*flatDir;
-   if(Vector3.Dot(flat,facing.forward)>=0)rot=Quaternion.AngleAxis(180f,facing.up)*rot;
+   float zSocket=Id==WeaponId.GlacierMaul?-.33f:-.29f;
+   Vector3 socket=facing.TransformPoint(new Vector3(0,1.2f,zSocket));
+   rot=Quaternion.LookRotation(-facing.forward,facing.up)*Quaternion.Inverse(Quaternion.LookRotation(flatDir,bladeDir));
    if(Id==WeaponId.MoonChakram||Id==WeaponId.BrassFangs){
     rot=Quaternion.LookRotation(-facing.forward,Id==WeaponId.BrassFangs?facing.right:facing.up)*Quaternion.Inverse(Quaternion.LookRotation(flatDir,bladeDir));
-    // The imported chest bone carries a retargeting offset; use the capsule's
-    // torso height so this wide disc stays centered on the visible back.
-    socket=facing.TransformPoint(new Vector3(0,1.2f,-.28f));
+    socket=facing.TransformPoint(new Vector3(0,1.2f,Id==WeaponId.BrassFangs?-.35f:-.28f));
    }
-   pos=socket-rot*(Id==WeaponId.MoonChakram||Id==WeaponId.BrassFangs?Vector3.Scale(center,transform.lossyScale):center);
+   pos=socket-rot*Vector3.Scale(center,transform.lossyScale);
   }
   void LateUpdate(){
    var game=RealmGame.I;if(!game||game.Screen!=GameScreen.Playing)return;
