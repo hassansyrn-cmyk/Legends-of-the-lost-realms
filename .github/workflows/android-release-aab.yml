@@ -5,7 +5,7 @@ permissions:
   contents: read
 env:
   UNITY_VERSION: 6000.6.0f1
-  SOURCE_SHA: 8919744aca0f1fe63b40df95a071486e06bcb8a6
+  SOURCE_SHA: 29e7fff03f759bf0cae8bd4d46cd71e9bbb7dd3e
   ANDROID_VERSION_CODE: ${{ github.run_number }}
   ANDROID_VERSION_NAME: 0.1.${{ github.run_number }}
 jobs:
