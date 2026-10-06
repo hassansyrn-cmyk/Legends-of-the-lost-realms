@@ -422,9 +422,9 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    GUI.DrawTexture(new Rect(r.x+leftW+midW,r.y,rightW,r.height),bannerRightCap,ScaleMode.StretchToFill);
 
    if(icon!=null){
-    float isz=181f*s;
-    float cx=r.x+254.7f*s;
-    float cy=r.y+230f*s;
+    float isz=182f*s;
+    float cx=r.x+236f*s;
+    float cy=r.y+232f*s;
     GUI.DrawTexture(new Rect(cx-isz*0.5f,cy-isz*0.5f,isz,isz),icon,ScaleMode.ScaleToFit);
    }
    GUI.color=baseCol;
