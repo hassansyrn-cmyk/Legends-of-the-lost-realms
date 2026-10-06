@@ -100,7 +100,8 @@ namespace LostRealms {
    WeaponId.AstralStaff,
    WeaponId.GlacierMaul,
    WeaponId.VoidReaper,
-   WeaponId.FrostHalberd
+   WeaponId.FrostHalberd,
+   WeaponId.VerdantFang
   };
 
   // Unlockable skins (5 skins, skin 0 Wanderer is starter)
@@ -208,17 +209,19 @@ namespace LostRealms {
       return ChestReward.MakeWeapon(wid, false, 0, 0, RewardRarity.Common);
      }
     } else {
-     // Rare Special-Hold Weapon
+     // Rare / Epic Special-Hold Weapon
      var wid = RareHoldWeapons[rng.Next(0, RareHoldWeapons.Length)];
+     bool isEpic = wid == WeaponId.VerdantFang;
+     RewardRarity rar = isEpic ? RewardRarity.Epic : RewardRarity.Rare;
      bool has = save.weapons != null && save.weapons.Contains((int)wid);
      if (has) {
-      int dupGold = 350, dupGems = 4;
+      int dupGold = isEpic ? 600 : 350, dupGems = isEpic ? 8 : 4;
       save.coins += dupGold;
       save.gems += dupGems;
-      return ChestReward.MakeWeapon(wid, true, dupGold, dupGems, RewardRarity.Rare);
+      return ChestReward.MakeWeapon(wid, true, dupGold, dupGems, rar);
      } else {
       save.weapons.Add((int)wid);
-      return ChestReward.MakeWeapon(wid, false, 0, 0, RewardRarity.Rare);
+      return ChestReward.MakeWeapon(wid, false, 0, 0, rar);
      }
     }
    } else {
@@ -244,15 +247,17 @@ namespace LostRealms {
      }
     } else if (roll < 85) {
      var wid = RareHoldWeapons[rng.Next(0, RareHoldWeapons.Length)];
+     bool isEpic = wid == WeaponId.VerdantFang;
+     RewardRarity rar = isEpic ? RewardRarity.Epic : RewardRarity.Rare;
      bool has = save.weapons != null && save.weapons.Contains((int)wid);
      if (has) {
-      int dupGold = 450, dupGems = 5;
+      int dupGold = isEpic ? 700 : 450, dupGems = isEpic ? 10 : 5;
       save.coins += dupGold;
       save.gems += dupGems;
-      return ChestReward.MakeWeapon(wid, true, dupGold, dupGems, RewardRarity.Rare);
+      return ChestReward.MakeWeapon(wid, true, dupGold, dupGems, rar);
      } else {
       save.weapons.Add((int)wid);
-      return ChestReward.MakeWeapon(wid, false, 0, 0, RewardRarity.Rare);
+      return ChestReward.MakeWeapon(wid, false, 0, 0, rar);
      }
     } else {
      // Epic Character Skin

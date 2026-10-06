@@ -18,7 +18,7 @@ namespace LostRealms {
    for(int i=0;i<arr.arraySize;i++){var s=arr.GetArrayElementAtIndex(i).objectReferenceValue as Shader;if(s)have.Add(s);}
    int added=0;
    System.Action<Shader,string> pin=(sh,name)=>{if(sh&&!have.Contains(sh)){arr.InsertArrayElementAtIndex(arr.arraySize);arr.GetArrayElementAtIndex(arr.arraySize-1).objectReferenceValue=sh;have.Add(sh);added++;sb.AppendLine("pinned "+name);}};
-   foreach(var name in new[]{"Standard","Sprites/Default","Particles/Standard Unlit","Particles/Standard Surface","Mobile/Particles/Additive","Legacy Shaders/Particles/Additive","Unlit/Transparent","Unlit/Texture"})pin(Shader.Find(name),name);
+   foreach(var name in new[]{"Standard","Sprites/Default","Particles/Standard Unlit","Particles/Standard Surface","Mobile/Particles/Additive","Legacy Shaders/Particles/Additive","Unlit/Transparent","Unlit/Texture","LostRealms/VfxAdditive"})pin(Shader.Find(name),name);
    int mats=0;
    foreach(var guid in AssetDatabase.FindAssets("",new[]{"Assets/Resources"})){
     string path=AssetDatabase.GUIDToAssetPath(guid);

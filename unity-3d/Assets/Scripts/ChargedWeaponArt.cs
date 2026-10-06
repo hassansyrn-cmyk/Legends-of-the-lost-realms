@@ -11,7 +11,7 @@ namespace LostRealms {
    ribbonTexture.Apply();return ribbonTexture;
   }
   public static Material Build(Transform root,Vector3 forward,WeaponId weapon){
-   bool storm=weapon==WeaponId.WardenPike,claw=weapon==WeaponId.BrassFangs,gale=weapon==WeaponId.OrnateCurvedBlade,voidBlade=weapon==WeaponId.VoidReaper;
+   bool storm=weapon==WeaponId.WardenPike,claw=weapon==WeaponId.BrassFangs,gale=weapon==WeaponId.OrnateCurvedBlade||weapon==WeaponId.VerdantFang,voidBlade=weapon==WeaponId.VoidReaper;
    Color color=gale?new Color(.2f,1f,.8f):storm?new Color(.3f,.65f,1f):claw?new Color(1f,.7f,.3f):voidBlade?new Color(.75f,.3f,1f):new Color(.6f,.35f,1f);
    var material=new Material(Shader.Find("Sprites/Default")){name="Charged weapon ribbon",color=Color.white};
    material.mainTexture=RibbonTexture();

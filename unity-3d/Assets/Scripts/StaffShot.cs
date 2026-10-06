@@ -10,7 +10,7 @@ namespace LostRealms {
    var go=new GameObject(element==0?"Staff fireball":element==1?"Staff frost bolt":"Staff thunder bolt");go.transform.SetParent(g.World.transform,false);go.transform.position=origin;
    var shot=go.AddComponent<StaffShot>();shot.direction=forward.normalized;shot.damage=damage;shot.element=element;shot.weapon=weapon;
    if(shot.Slash||weapon==WeaponId.WardenPike){
-    go.name=weapon==WeaponId.OrnateCurvedBlade?"Gale crosscut":weapon==WeaponId.VoidReaper?"Void Reaper crescent":weapon==WeaponId.PureScythe?"Reaper crescent":weapon==WeaponId.BrassFangs?"Fang claw slash":"Warden storm lance";
+    go.name=weapon==WeaponId.OrnateCurvedBlade||weapon==WeaponId.VerdantFang?"Gale crosscut":weapon==WeaponId.VoidReaper?"Void Reaper crescent":weapon==WeaponId.PureScythe?"Reaper crescent":weapon==WeaponId.BrassFangs?"Fang claw slash":"Warden storm lance";
     shot.material=ChargedWeaponArt.Build(go.transform,forward,weapon);
     g.Sound(shot.Slash?"sword_slash":"gale_cast");return shot;
    }
@@ -48,7 +48,7 @@ namespace LostRealms {
   }
   void Impact(Enemy target){
    var g=RealmGame.I;Vector3 point=transform.position;
-   bool gale=weapon==WeaponId.OrnateCurvedBlade;
+   bool gale=weapon==WeaponId.OrnateCurvedBlade||weapon==WeaponId.VerdantFang;
    Vfx.Play(gale?"ga_vfx_Hyperdrive_01":Slash?"eric_FX_Purple_Hit_02":weapon==WeaponId.WardenPike?"ga_vfx_Lightning_02":element==0?"ga_vfx_Explosion_02":"ga_vfx_Electricity_01",point,Quaternion.identity,Slash?.4f:element==0?.65f:.55f);
    if(target)target.Hit(damage,gale?2:Slash?-1:element,gale||!Slash,direction);
    if(target&&!Slash){
