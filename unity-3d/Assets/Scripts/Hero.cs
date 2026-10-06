@@ -376,9 +376,7 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
      if(g.Elapsed<hitUntil||g.Elapsed<dodgeVisualUntil||g.Elapsed<parryUntil||plunging)break;
      if(g.Elapsed>=releaseAt){
       Vector3 origin=transform.position+Vector3.up*1.05f;
-      if(weapon==WeaponId.BrassFangs){
-       for(int i=-1;i<=1;i++)StaffShot.Fire(origin+transform.right*(i*.38f),Quaternion.AngleAxis(i*4f,Vector3.up)*transform.forward,damage*.45f,2,weapon);
-      }else if(weapon==WeaponId.GlacierMaul){
+      if(weapon==WeaponId.GlacierMaul){
        EarthQuakeSlam.Create(transform.position,transform.forward,damage,1);
       }else if(weapon==WeaponId.FantasyGreatsword){
        EarthQuakeSlam.Create(transform.position,transform.forward,damage);

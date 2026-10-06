@@ -13,7 +13,7 @@ namespace LostRealms {
  // penetration against Aster's baked skinned mesh. Report + contact sheets go
  // to Temp/weapon-audit (git-ignored); nothing is written to Validation/.
  public static class WeaponAudit {
-  public static readonly WeaponId[] Focus={WeaponId.AstralStaff,WeaponId.GlacierMaul,WeaponId.VoidReaper,WeaponId.FrostHalberd,WeaponId.VerdantFang,WeaponId.FantasyGreatsword,WeaponId.FierySword,WeaponId.OrnateCurvedBlade,WeaponId.BrassFangs};
+  public static readonly WeaponId[] Focus={WeaponId.AstralStaff,WeaponId.GlacierMaul,WeaponId.VoidReaper,WeaponId.FrostHalberd,WeaponId.FantasyGreatsword,WeaponId.FierySword,WeaponId.OrnateCurvedBlade};
   const BindingFlags Private=BindingFlags.Instance|BindingFlags.NonPublic;
   static string outDir;static StringBuilder report;
 
@@ -178,12 +178,12 @@ namespace LostRealms {
    Vector3 longAxis=size.x>=size.y&&size.x>=size.z?Vector3.right:size.y>=size.x&&size.y>=size.z?Vector3.up:Vector3.forward;
    bladeDir=eq.transform.InverseTransformDirection(renderer.transform.TransformDirection(longAxis));
    Vector3 thin=size.x<=size.y&&size.x<=size.z?Vector3.right:size.y<=size.z?Vector3.up:Vector3.forward;
-   bool disc=eq.Id==WeaponId.MoonChakram||eq.Id==WeaponId.BrassFangs;
+   bool disc=eq.Id==WeaponId.MoonChakram;
    Vector3 flatDir=eq.transform.InverseTransformDirection(renderer.transform.TransformDirection(disc?thin:Vector3.forward));
    var t=hero.transform;var chest=hero.Visual.animator.GetBoneTransform(HumanBodyBones.Chest);
    Vector3 socket=chest?chest.position:t.position+Vector3.up*1.3f;socket+=t.forward*-.15f+t.up*.04f;
    rot=Quaternion.FromToRotation(bladeDir,t.up);if(Vector3.Dot(rot*flatDir,t.forward)>=0)rot=Quaternion.AngleAxis(180f,t.up)*rot;
-   if(disc){rot=Quaternion.LookRotation(-t.forward,eq.Id==WeaponId.BrassFangs?t.right:t.up)*Quaternion.Inverse(Quaternion.LookRotation(flatDir,bladeDir));socket=t.position+t.up*1.2f-t.forward*.23f;}
+   if(disc){rot=Quaternion.LookRotation(-t.forward,t.up)*Quaternion.Inverse(Quaternion.LookRotation(flatDir,bladeDir));socket=t.position+t.up*1.2f-t.forward*.23f;}
    pos=socket-rot*(disc?Vector3.Scale(center,eq.transform.lossyScale):center);return 0;
   }
 

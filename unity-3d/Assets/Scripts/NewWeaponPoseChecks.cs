@@ -6,7 +6,7 @@ namespace LostRealms {
  public static class NewWeaponPoseChecks {
   public static IEnumerator Run(Action<bool,string> check){
    var g=RealmGame.I;var hero=g.Player;var flags=BindingFlags.Instance|BindingFlags.NonPublic;
-   foreach(var id in new[]{WeaponId.FantasyGreatsword,WeaponId.FierySword,WeaponId.OrnateCurvedBlade,WeaponId.AstralStaff,WeaponId.GlacierMaul,WeaponId.VoidReaper,WeaponId.FrostHalberd,WeaponId.VerdantFang}){
+   foreach(var id in new[]{WeaponId.FantasyGreatsword,WeaponId.FierySword,WeaponId.OrnateCurvedBlade,WeaponId.AstralStaff,WeaponId.GlacierMaul,WeaponId.VoidReaper,WeaponId.FrostHalberd}){
     g.EquipWeapon(id);hero.Visual.Play("idle");yield return new WaitForSeconds(1.5f);
     var eq=hero.GetComponentInChildren<EquippedWeapon>();var mesh=eq.GetComponentInChildren<Renderer>();
     var hand=hero.Visual.animator.GetBoneTransform(HumanBodyBones.RightHand);var finger=hero.Visual.animator.GetBoneTransform(HumanBodyBones.RightMiddleProximal);

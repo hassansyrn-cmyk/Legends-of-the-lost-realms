@@ -81,17 +81,16 @@ namespace LostRealms {
 
   // Curated list of in-level world drops
   public static readonly WeaponId[] WorldDrops = {
-   WeaponId.LongSword,
    WeaponId.Axe,
    WeaponId.CurvedSword,
-   WeaponId.AxeIron
+   WeaponId.AxeIron,
+   WeaponId.SwordShort
   };
 
-  // Special-hold weapons (12 weapons)
+  // Special-hold weapons (11 weapons)
   public static readonly WeaponId[] RareHoldWeapons = {
    WeaponId.PureScythe,
    WeaponId.WardenPike,
-   WeaponId.BrassFangs,
    WeaponId.EmberTorch,
    WeaponId.SageStaff,
    WeaponId.FantasyGreatsword,
@@ -100,8 +99,7 @@ namespace LostRealms {
    WeaponId.AstralStaff,
    WeaponId.GlacierMaul,
    WeaponId.VoidReaper,
-   WeaponId.FrostHalberd,
-   WeaponId.VerdantFang
+   WeaponId.FrostHalberd
   };
 
   // Unlockable skins (5 skins, skin 0 Wanderer is starter)
@@ -209,13 +207,12 @@ namespace LostRealms {
       return ChestReward.MakeWeapon(wid, false, 0, 0, RewardRarity.Common);
      }
     } else {
-     // Rare / Epic Special-Hold Weapon
+     // Rare Special-Hold Weapon
      var wid = RareHoldWeapons[rng.Next(0, RareHoldWeapons.Length)];
-     bool isEpic = wid == WeaponId.VerdantFang;
-     RewardRarity rar = isEpic ? RewardRarity.Epic : RewardRarity.Rare;
+     RewardRarity rar = RewardRarity.Rare;
      bool has = save.weapons != null && save.weapons.Contains((int)wid);
      if (has) {
-      int dupGold = isEpic ? 600 : 350, dupGems = isEpic ? 8 : 4;
+      int dupGold = 350, dupGems = 4;
       save.coins += dupGold;
       save.gems += dupGems;
       return ChestReward.MakeWeapon(wid, true, dupGold, dupGems, rar);
@@ -247,11 +244,10 @@ namespace LostRealms {
      }
     } else if (roll < 85) {
      var wid = RareHoldWeapons[rng.Next(0, RareHoldWeapons.Length)];
-     bool isEpic = wid == WeaponId.VerdantFang;
-     RewardRarity rar = isEpic ? RewardRarity.Epic : RewardRarity.Rare;
+     RewardRarity rar = RewardRarity.Rare;
      bool has = save.weapons != null && save.weapons.Contains((int)wid);
      if (has) {
-      int dupGold = isEpic ? 700 : 450, dupGems = isEpic ? 10 : 5;
+      int dupGold = 450, dupGems = 5;
       save.coins += dupGold;
       save.gems += dupGems;
       return ChestReward.MakeWeapon(wid, true, dupGold, dupGems, rar);
