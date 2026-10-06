@@ -31,7 +31,7 @@ public static readonly string[] Realms={"VERDANT KINGDOM","BURNING DUNES","FROZE
   public Vector2 MoveInput; public bool JumpPressed,DashPressed,AttackPressed,AttackReleased,CastPressed,ParryPressed,SpellPressed,SpellReleased,GrapplePressed; public bool AttackHeld,SpellHeld,JumpHeld;
   public readonly List<Enemy> Enemies=new List<Enemy>(); public AudioSource Music,Sfx;
   public RealmAudio Audio {get;private set;} public RealmTrials Trial {get;private set;}
-   Transform worldRoot; GUIStyle title,titleC,label,small,button,center,big,smallC,tinyC,btnText; Texture2D pixel,circleFill,circleRing,btnBlade,btnJump,btnDodge,btnPower,btnParry,btnSpell,btnPause,joyBase,joyKnob; Texture2D bgMainMenu,avatarAster,btnPrimaryNorm,btnPrimaryHigh,btnStdNorm,btnStdHigh,btnSecNorm,btnSecHigh,panelLarge,panelMedium,cardUnlocked,cardSelected,cardLocked,cardCompleted,headerOrnament,dividerLine,barFrame,barFill,resourceCapsule,iconArsenal,iconAtlas,iconBack,iconClose,iconCoin,iconGem,iconLock,iconMainMenu,iconNewJourney,iconContinue,iconResume,iconRestart,iconSanctuary,iconStar; readonly TouchRouter touch=new TouchRouter(); float yawInput,hitStopUntil,bossIntroUntil,heartbeatNext;bool showArsenal,showSkins,showCodex,showAchievements,showVault;int arsenalPage,skinPage,codexPage,achievementsPage;GameScreen arsenalReturn=GameScreen.Settings,skinReturn=GameScreen.Settings,codexReturn=GameScreen.Settings,achievementsReturn=GameScreen.Settings,vaultReturn=GameScreen.Settings;enum VaultState{Browse,Opening,Revealed};VaultState vaultState=VaultState.Browse;ChestType openingChestType=ChestType.Normal;float vaultAnimTimer=0f;ChestReward currentChestReward=null;bool showDropRates=false;readonly System.Collections.Generic.Dictionary<string,Texture2D> iconCache=new System.Collections.Generic.Dictionary<string,Texture2D>();
+   Transform worldRoot; GUIStyle title,titleC,label,small,button,center,big,smallC,tinyC,btnText; Texture2D pixel,circleFill,circleRing,btnBlade,btnJump,btnDodge,btnPower,btnParry,btnSpell,btnPause,joyBase,joyKnob; Texture2D bgMainMenu,avatarAster,btnPrimaryNorm,btnPrimaryHigh,btnStdNorm,btnStdHigh,btnSecNorm,btnSecHigh,panelLarge,panelMedium,cardUnlocked,cardSelected,cardLocked,cardCompleted,headerOrnament,dividerLine,barFrame,barFill,resourceCapsule,iconArsenal,iconAtlas,iconBack,iconClose,iconCoin,iconGem,iconLock,iconMainMenu,iconNewJourney,iconContinue,iconResume,iconRestart,iconSanctuary,iconStar; public bool useModularUI=true; Texture2D bannerLeftCap,bannerMiddle,bannerRightCap,bannerMaster,modIconPlay,modIconSwords,modIconTunic,modIconChest,modIconBestiary,modIconTrophy,modIconCompass,modIconCastle,modIconRestart,modIconSanctuary,modIconStar; GUIStyle bannerText,bannerCounter; readonly TouchRouter touch=new TouchRouter(); float yawInput,hitStopUntil,bossIntroUntil,heartbeatNext;bool showArsenal,showSkins,showCodex,showAchievements,showVault;int arsenalPage,skinPage,codexPage,achievementsPage;GameScreen arsenalReturn=GameScreen.Settings,skinReturn=GameScreen.Settings,codexReturn=GameScreen.Settings,achievementsReturn=GameScreen.Settings,vaultReturn=GameScreen.Settings;enum VaultState{Browse,Opening,Revealed};VaultState vaultState=VaultState.Browse;ChestType openingChestType=ChestType.Normal;float vaultAnimTimer=0f;ChestReward currentChestReward=null;bool showDropRates=false;readonly System.Collections.Generic.Dictionary<string,Texture2D> iconCache=new System.Collections.Generic.Dictionary<string,Texture2D>();
   public static readonly Color[] ElementColors={new Color(1f,.45f,.1f),new Color(.2f,.85f,1f),new Color(.2f,1f,.55f)};
   static int debugTurretCycle;
   [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Boot(){
@@ -312,6 +312,21 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    if(!iconRestart)iconRestart=LoadUITex("Icons","UI_Icon_Restart");
    if(!iconSanctuary)iconSanctuary=LoadUITex("Icons","UI_Icon_Sanctuary");
    if(!iconStar)iconStar=LoadUITex("Icons","UI_Icon_Star");
+   if(!bannerLeftCap)bannerLeftCap=LoadUITex("Modular","UI_Banner_LeftCap");
+   if(!bannerMiddle)bannerMiddle=LoadUITex("Modular","UI_Banner_Middle");
+   if(!bannerRightCap)bannerRightCap=LoadUITex("Modular","UI_Banner_RightCap");
+   if(!bannerMaster)bannerMaster=LoadUITex("Modular","UI_Banner_Master");
+   if(!modIconPlay)modIconPlay=LoadUITex("Modular/Icons","UI_Icon_Play");
+   if(!modIconSwords)modIconSwords=LoadUITex("Modular/Icons","UI_Icon_Swords");
+   if(!modIconTunic)modIconTunic=LoadUITex("Modular/Icons","UI_Icon_Tunic");
+   if(!modIconChest)modIconChest=LoadUITex("Modular/Icons","UI_Icon_Chest");
+   if(!modIconBestiary)modIconBestiary=LoadUITex("Modular/Icons","UI_Icon_Bestiary");
+   if(!modIconTrophy)modIconTrophy=LoadUITex("Modular/Icons","UI_Icon_Trophy");
+   if(!modIconCompass)modIconCompass=LoadUITex("Modular/Icons","UI_Icon_Compass");
+   if(!modIconCastle)modIconCastle=LoadUITex("Modular/Icons","UI_Icon_Castle");
+   if(!modIconRestart)modIconRestart=LoadUITex("Modular/Icons","UI_Icon_Restart");
+   if(!modIconSanctuary)modIconSanctuary=LoadUITex("Modular/Icons","UI_Icon_Sanctuary");
+   if(!modIconStar)modIconStar=LoadUITex("Modular/Icons","UI_Icon_Star");
   }
   void LoadButtonTextures() => LoadUITextures();
   void Styles(){
@@ -333,6 +348,12 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    big=new GUIStyle(center){fontSize=24};
    smallC=new GUIStyle(small){alignment=TextAnchor.MiddleCenter};
    tinyC=new GUIStyle(smallC){fontSize=13};tinyC.normal.textColor=new Color(.72f,.82f,.88f);
+   if(bannerText==null){
+    bannerText=new GUIStyle(GUI.skin.label){fontSize=20,fontStyle=FontStyle.Bold,alignment=TextAnchor.MiddleCenter,wordWrap=false};
+    bannerText.normal.textColor=new Color(1f,.96f,.88f);
+    bannerCounter=new GUIStyle(bannerText){fontSize=16,alignment=TextAnchor.MiddleRight};
+    bannerCounter.normal.textColor=new Color(1f,.86f,.42f);
+   }
    circleFill=CircleTexture(false);circleRing=CircleTexture(true);
   }
   // Anti-aliased filled circle / ring, tinted at draw time via GUI.color.
@@ -381,6 +402,62 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     GUI.Label(textRect,text,style);
     return GUI.Button(r,GUIContent.none,GUIStyle.none);
    }
+  }
+  bool ModularBannerButton(Rect r,string text,Texture2D icon=null,string counter=null,bool primary=false,GUIStyle st=null){
+   if(!bannerLeftCap||!bannerMiddle||!bannerRightCap){
+    return MenuButton(r,counter!=null?$"{text} {counter}":text,icon,primary);
+   }
+   Vector2 mpos=Event.current.mousePosition;
+   bool hover=r.Contains(mpos);
+   float s=r.height/456f;
+   float leftW=420f*s;
+   float rightW=168f*s;
+   float midW=r.width-leftW-rightW;
+   if(midW<10f)midW=10f;
+
+   Color baseCol=GUI.color;
+   if(hover)GUI.color=new Color(1.2f,1.2f,1.2f,1f);
+   GUI.DrawTexture(new Rect(r.x,r.y,leftW,r.height),bannerLeftCap,ScaleMode.StretchToFill);
+   GUI.DrawTexture(new Rect(r.x+leftW,r.y,midW,r.height),bannerMiddle,ScaleMode.StretchToFill);
+   GUI.DrawTexture(new Rect(r.x+leftW+midW,r.y,rightW,r.height),bannerRightCap,ScaleMode.StretchToFill);
+
+   if(icon!=null){
+    float isz=181f*s;
+    float cx=r.x+254.7f*s;
+    float cy=r.y+230f*s;
+    GUI.DrawTexture(new Rect(cx-isz*0.5f,cy-isz*0.5f,isz,isz),icon,ScaleMode.ScaleToFit);
+   }
+   GUI.color=baseCol;
+
+   Rect textArea=new Rect(r.x+leftW+4f,r.y,midW-8f,r.height);
+   GUIStyle style=st??bannerText;
+   int targetFontSize=Mathf.RoundToInt(r.height*0.37f);
+   if(r.width<300f){
+    targetFontSize=Mathf.RoundToInt(r.height*0.34f);
+    if(text.Length>=12&&!string.IsNullOrEmpty(counter))targetFontSize=Mathf.Min(targetFontSize,15);
+   }
+   style.fontSize=targetFontSize;
+
+   if(!string.IsNullOrEmpty(counter)){
+    float counterW=Mathf.Min(80f,textArea.width*0.38f);
+    Rect labelRect=new Rect(textArea.x,textArea.y,textArea.width-counterW,textArea.height);
+    Rect countRect=new Rect(textArea.xMax-counterW,textArea.y,counterW,textArea.height);
+    bannerCounter.fontSize=Mathf.RoundToInt(targetFontSize*0.82f);
+    GUI.color=new Color(0.2f,0.12f,0.04f,0.95f);
+    GUI.Label(new Rect(labelRect.x+1.2f,labelRect.y+1.2f,labelRect.width,labelRect.height),text,style);
+    GUI.Label(new Rect(countRect.x+1.2f,countRect.y+1.2f,countRect.width,countRect.height),counter,bannerCounter);
+    GUI.color=hover?Color.white:new Color(1f,.97f,.90f);
+    GUI.Label(labelRect,text,style);
+    GUI.color=hover?new Color(1f,.95f,.6f):new Color(1f,.86f,.42f);
+    GUI.Label(countRect,counter,bannerCounter);
+   }else{
+    GUI.color=new Color(0.2f,0.12f,0.04f,0.95f);
+    GUI.Label(new Rect(textArea.x+1.2f,textArea.y+1.2f,textArea.width,textArea.height),text,style);
+    GUI.color=hover?Color.white:(primary?new Color(1f,1f,.95f):new Color(1f,.97f,.90f));
+    GUI.Label(textArea,text,style);
+   }
+   GUI.color=baseCol;
+   return GUI.Button(r,GUIContent.none,GUIStyle.none);
   }
   bool Button(float x,float y,float w,float h,string s){
    return MenuButton(new Rect(x,y,w,h),s);
@@ -624,10 +701,17 @@ Panel(390,105,500,68);
     if(resourceCapsule)GUI.DrawTexture(new Rect(310,224,660,38),resourceCapsule,ScaleMode.StretchToFill);
     Text(310,232,660,22,$"JOURNEY  {Save.unlocked}/15 CHAPTERS    ✦    {TotalStars()}/45 STARS    ✦    {Save.coins} GOLD    ✦    {Save.gems} GEMS",tinyC);
 
-    if(MenuButton(new Rect(410,278,460,66),"CONTINUE JOURNEY",iconContinue,primary:true))LoadLevel(Save.unlocked);
-    if(MenuButton(new Rect(440,356,400,56),"REALM ATLAS",iconAtlas))Screen=GameScreen.Map;
-    if(MenuButton(new Rect(440,424,400,56),"SANCTUARY",iconSanctuary))Screen=GameScreen.Settings;
-    if(MenuButton(new Rect(440,492,400,56),"NEW JOURNEY",iconNewJourney)){Save=new Progress();Save.equippedWeapon=-1;Persist();Sound("upgrade");LoadLevel(1);}
+    if(useModularUI){
+     if(ModularBannerButton(new Rect(390,270,500,64),"CONTINUE JOURNEY",modIconPlay,primary:true))LoadLevel(Save.unlocked);
+     if(ModularBannerButton(new Rect(410,348,460,58),"REALM ATLAS",modIconCompass))Screen=GameScreen.Map;
+     if(ModularBannerButton(new Rect(410,418,460,58),"SANCTUARY",modIconSanctuary))Screen=GameScreen.Settings;
+     if(ModularBannerButton(new Rect(410,488,460,58),"NEW JOURNEY",modIconStar)){Save=new Progress();Save.equippedWeapon=-1;Persist();Sound("upgrade");LoadLevel(1);}
+    }else{
+     if(MenuButton(new Rect(410,278,460,66),"CONTINUE JOURNEY",iconContinue,primary:true))LoadLevel(Save.unlocked);
+     if(MenuButton(new Rect(440,356,400,56),"REALM ATLAS",iconAtlas))Screen=GameScreen.Map;
+     if(MenuButton(new Rect(440,424,400,56),"SANCTUARY",iconSanctuary))Screen=GameScreen.Settings;
+     if(MenuButton(new Rect(440,492,400,56),"NEW JOURNEY",iconNewJourney)){Save=new Progress();Save.equippedWeapon=-1;Persist();Sound("upgrade");LoadLevel(1);}
+    }
 
     Text(240,672,800,22,"UNITY 3D EDITION   *   TOUCH + KEYBOARD   *   JOURNEY AUTOSAVES",tinyC);
     return;
@@ -914,33 +998,65 @@ Panel(390,105,500,68);
      Text(355,220,570,36,new string('★',EarnedStars),titleC);
     }
     Text(355,270,570,44,$"TRIUMPH!   Elapsed: {Clock(Elapsed)}\nRewards: +{Coins+EarnedStars*10} Gold   +{Gems} Gems",smallC);
-    if(MenuButton(new Rect(355,340,570,58),Level==15?"RETURN TO REALM ATLAS":"NEXT CHAPTER",iconContinue,primary:true)){
-     if(Level==15)Screen=GameScreen.Map;else LoadLevel(Level+1);
+    if(useModularUI){
+     if(ModularBannerButton(new Rect(360,336,560,56),Level==15?"RETURN TO REALM ATLAS":"NEXT CHAPTER",modIconPlay,primary:true)){
+      if(Level==15)Screen=GameScreen.Map;else LoadLevel(Level+1);
+     }
+     if(ModularBannerButton(new Rect(360,408,560,52),"MAIN MENU",modIconCastle)){showArsenal=false;Audio.Suspend(false);Time.timeScale=1;Screen=GameScreen.Menu;}
+    }else{
+     if(MenuButton(new Rect(355,340,570,58),Level==15?"RETURN TO REALM ATLAS":"NEXT CHAPTER",iconContinue,primary:true)){
+      if(Level==15)Screen=GameScreen.Map;else LoadLevel(Level+1);
+     }
+     if(MenuButton(new Rect(355,412,570,52),"MAIN MENU",iconMainMenu)){showArsenal=false;Audio.Suspend(false);Time.timeScale=1;Screen=GameScreen.Menu;}
     }
-    if(MenuButton(new Rect(355,412,570,52),"MAIN MENU",iconMainMenu)){showArsenal=false;Audio.Suspend(false);Time.timeScale=1;Screen=GameScreen.Menu;}
    }else if(Screen==GameScreen.Paused){
-    Text(355,222,570,36,"Your journey is paused. All progress is safe.",smallC);
-    if(MenuButton(new Rect(355,270,570,56),"RESUME JOURNEY",iconResume,primary:true))Resume();
-    if(MenuButton(new Rect(355,324,280,44),"ARSENAL",iconArsenal)){showArsenal=true;arsenalPage=0;arsenalReturn=GameScreen.Paused;Sound("power_select");}
-    if(MenuButton(new Rect(645,324,280,44),"WARDROBE",smallBtn:true,st:smallC)){showSkins=true;skinPage=0;skinReturn=GameScreen.Paused;Sound("power_select");}
-    if(showSkins){WardrobeView();return;}
-    if(MenuButton(new Rect(355,372,570,44),"TREASURE VAULT & CHESTS",iconSanctuary,smallBtn:true,st:smallC)){showVault=true;vaultState=VaultState.Browse;vaultReturn=GameScreen.Paused;Sound("power_select");}
-    if(showVault){VaultView();return;}
-    if(MenuButton(new Rect(355,420,280,44),$"BESTIARY ({Codex.Discovered(Save)}/{Codex.Kinds})",smallBtn:true,st:smallC)){showCodex=true;codexPage=0;codexReturn=GameScreen.Paused;Sound("power_select");}
-    if(showCodex){BestiaryView();return;}
-    if(MenuButton(new Rect(645,420,280,44),$"ACHIEVEMENTS ({Codex.UnlockedCount(Save)}/{Codex.All.Length})",smallBtn:true,st:smallC)){showAchievements=true;achievementsPage=0;achievementsReturn=GameScreen.Paused;Sound("power_select");}
-    if(showAchievements){AchievementsView();return;}
-    if(MenuButton(new Rect(355,468,275,44),"ATLAS",iconAtlas))Screen=GameScreen.Map;
-    if(MenuButton(new Rect(650,468,275,44),"RESTART",iconRestart))LoadLevel(Level);
-    if(MenuButton(new Rect(355,516,570,46),"MAIN MENU",iconMainMenu)){showSkins=false;showArsenal=false;showCodex=false;showAchievements=false;showVault=false;Audio.Suspend(false);Time.timeScale=1;Screen=GameScreen.Menu;}
-    if(showArsenal){ArsenalView();return;}
-    return;
+    Text(355,212,570,30,"Your journey is paused. All progress is safe.",smallC);
+    if(useModularUI){
+     if(ModularBannerButton(new Rect(360,250,560,52),"RESUME JOURNEY",modIconPlay,primary:true))Resume();
+     if(ModularBannerButton(new Rect(360,310,275,48),"ARSENAL",modIconSwords)){showArsenal=true;arsenalPage=0;arsenalReturn=GameScreen.Paused;Sound("power_select");}
+     if(ModularBannerButton(new Rect(645,310,275,48),"WARDROBE",modIconTunic)){showSkins=true;skinPage=0;skinReturn=GameScreen.Paused;Sound("power_select");}
+     if(showSkins){WardrobeView();return;}
+     if(ModularBannerButton(new Rect(360,366,560,48),"TREASURE VAULT & CHESTS",modIconChest)){showVault=true;vaultState=VaultState.Browse;vaultReturn=GameScreen.Paused;Sound("power_select");}
+     if(showVault){VaultView();return;}
+     if(ModularBannerButton(new Rect(360,422,275,48),"BESTIARY",modIconBestiary,counter:$"({Codex.Discovered(Save)}/{Codex.Kinds})")){showCodex=true;codexPage=0;codexReturn=GameScreen.Paused;Sound("power_select");}
+     if(showCodex){BestiaryView();return;}
+     if(ModularBannerButton(new Rect(645,422,275,48),"ACHIEVEMENTS",modIconTrophy,counter:$"({Codex.UnlockedCount(Save)}/{Codex.All.Length})")){showAchievements=true;achievementsPage=0;achievementsReturn=GameScreen.Paused;Sound("power_select");}
+     if(showAchievements){AchievementsView();return;}
+     if(ModularBannerButton(new Rect(360,478,275,48),"ATLAS",modIconCompass))Screen=GameScreen.Map;
+     if(ModularBannerButton(new Rect(645,478,275,48),"RESTART",modIconRestart))LoadLevel(Level);
+     if(ModularBannerButton(new Rect(360,534,560,48),"MAIN MENU",modIconCastle)){showSkins=false;showArsenal=false;showCodex=false;showAchievements=false;showVault=false;Audio.Suspend(false);Time.timeScale=1;Screen=GameScreen.Menu;}
+     if(showArsenal){ArsenalView();return;}
+     return;
+    }else{
+     if(MenuButton(new Rect(355,270,570,56),"RESUME JOURNEY",iconResume,primary:true))Resume();
+     if(MenuButton(new Rect(355,324,280,44),"ARSENAL",iconArsenal)){showArsenal=true;arsenalPage=0;arsenalReturn=GameScreen.Paused;Sound("power_select");}
+     if(MenuButton(new Rect(645,324,280,44),"WARDROBE",smallBtn:true,st:smallC)){showSkins=true;skinPage=0;skinReturn=GameScreen.Paused;Sound("power_select");}
+     if(showSkins){WardrobeView();return;}
+     if(MenuButton(new Rect(355,372,570,44),"TREASURE VAULT & CHESTS",iconSanctuary,smallBtn:true,st:smallC)){showVault=true;vaultState=VaultState.Browse;vaultReturn=GameScreen.Paused;Sound("power_select");}
+     if(showVault){VaultView();return;}
+     if(MenuButton(new Rect(355,420,280,44),$"BESTIARY ({Codex.Discovered(Save)}/{Codex.Kinds})",smallBtn:true,st:smallC)){showCodex=true;codexPage=0;codexReturn=GameScreen.Paused;Sound("power_select");}
+     if(showCodex){BestiaryView();return;}
+     if(MenuButton(new Rect(645,420,280,44),$"ACHIEVEMENTS ({Codex.UnlockedCount(Save)}/{Codex.All.Length})",smallBtn:true,st:smallC)){showAchievements=true;achievementsPage=0;achievementsReturn=GameScreen.Paused;Sound("power_select");}
+     if(showAchievements){AchievementsView();return;}
+     if(MenuButton(new Rect(355,468,275,44),"ATLAS",iconAtlas))Screen=GameScreen.Map;
+     if(MenuButton(new Rect(650,468,275,44),"RESTART",iconRestart))LoadLevel(Level);
+     if(MenuButton(new Rect(355,516,570,46),"MAIN MENU",iconMainMenu)){showSkins=false;showArsenal=false;showCodex=false;showAchievements=false;showVault=false;Audio.Suspend(false);Time.timeScale=1;Screen=GameScreen.Menu;}
+     if(showArsenal){ArsenalView();return;}
+     return;
+    }
    }else{
     Text(355,222,570,36,"Rise again at your last shrine checkpoint.",smallC);
-    if(MenuButton(new Rect(355,280,570,56),"TRY AGAIN",iconResume,primary:true)){Respawn();Resume();}
-    if(MenuButton(new Rect(355,348,275,50),"ATLAS",iconAtlas))Screen=GameScreen.Map;
-    if(MenuButton(new Rect(650,348,275,50),"RESTART",iconRestart))LoadLevel(Level);
-    if(MenuButton(new Rect(355,410,570,50),"MAIN MENU",iconMainMenu))Screen=GameScreen.Menu;
+    if(useModularUI){
+     if(ModularBannerButton(new Rect(360,274,560,54),"TRY AGAIN",modIconPlay,primary:true)){Respawn();Resume();}
+     if(ModularBannerButton(new Rect(360,340,275,48),"ATLAS",modIconCompass))Screen=GameScreen.Map;
+     if(ModularBannerButton(new Rect(645,340,275,48),"RESTART",modIconRestart))LoadLevel(Level);
+     if(ModularBannerButton(new Rect(360,402,560,48),"MAIN MENU",modIconCastle))Screen=GameScreen.Menu;
+    }else{
+     if(MenuButton(new Rect(355,280,570,56),"TRY AGAIN",iconResume,primary:true)){Respawn();Resume();}
+     if(MenuButton(new Rect(355,348,275,50),"ATLAS",iconAtlas))Screen=GameScreen.Map;
+     if(MenuButton(new Rect(650,348,275,50),"RESTART",iconRestart))LoadLevel(Level);
+     if(MenuButton(new Rect(355,410,570,50),"MAIN MENU",iconMainMenu))Screen=GameScreen.Menu;
+    }
    }
   }
   // Top-down realm map: route trail, gate, enemies and the heading player.
