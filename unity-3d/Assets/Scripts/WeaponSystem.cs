@@ -26,10 +26,10 @@ public static class WeaponCatalog {
     }
     static readonly WeaponDefinition Fists=new WeaponDefinition(WeaponId.AstersBlade,"FISTS","",.85f,.92f,1.12f,1f,Vector3.zero,"fists and kicks — find a weapon to draw arms");
     static readonly WeaponDefinition[] Definitions={
-    new WeaponDefinition(WeaponId.AstersBlade,"ASTER'S BLADE","Weapons/Aster_LongSword",1f,1f,1f,1f,Vector3.zero,"Balanced starter blade"),
-    new WeaponDefinition(WeaponId.LongSword,"LONGSWORD","Weapons/Aster_LongSword",1.25f,1.28f,.9f,1.15f,new Vector3(10,90,-90),"+25% damage  •  +28% reach  •  measured tempo"),
-    new WeaponDefinition(WeaponId.Axe,"WAR AXE","Weapons/Aster_Axe",1.6f,.88f,.76f,.95f,new Vector3(8,0,0),"+60% damage  •  heavy recovery  •  close range"),
-    new WeaponDefinition(WeaponId.CurvedSword,"CURVED SWORD","Weapons/Aster_CurvedSword",.98f,.94f,1.22f,1.05f,new Vector3(12,90,-90),"rapid strikes  •  swift recovery  •  agile reach"),
+    new WeaponDefinition(WeaponId.AstersBlade,"ASTER'S BLADE","Weapons/Aster_LongSword",1f,1f,1f,1f,new Vector3(10,180,0),"Balanced starter blade"),
+    new WeaponDefinition(WeaponId.LongSword,"LONGSWORD","Weapons/Aster_LongSword",1.25f,1.28f,.9f,1.15f,new Vector3(10,180,0),"+25% damage  •  +28% reach  •  measured tempo"),
+    new WeaponDefinition(WeaponId.Axe,"WAR AXE","Weapons/Aster_Axe",1.6f,.88f,.76f,.95f,new Vector3(-82,0,0),"+60% damage  •  heavy recovery  •  close range"),
+    new WeaponDefinition(WeaponId.CurvedSword,"CURVED SWORD","Weapons/Aster_CurvedSword",.98f,.94f,1.22f,1.05f,new Vector3(12,180,0),"rapid strikes  •  swift recovery  •  agile reach"),
     new WeaponDefinition(WeaponId.BlinkAxe,"GREATAXE","Weapons/BlinkAxe",1.45f,.92f,.82f,1.2f,new Vector3(8,0,0),"heavy strikes  •  wide cleave  •  slow recovery"),
     new WeaponDefinition(WeaponId.BlinkMace,"WARHAMMER","Weapons/BlinkMace",1.72f,.86f,.72f,1.15f,new Vector3(8,0,0),"crushing blows  •  high damage  •  slow recovery"),
     new WeaponDefinition(WeaponId.BlinkSpear,"PIKE","Weapons/BlinkSpear",1.15f,1.4f,.96f,1.55f,new Vector3(10,0,0),"long reach  •  measured damage  •  piercing"),
@@ -43,7 +43,7 @@ public static class WeaponCatalog {
     new WeaponDefinition(WeaponId.SwordClaymore,"CLAYMORE","Weapons/SwordClaymore",1.5f,1.3f,.78f,1.35f,new Vector3(10,90,-90),"great blade  •  long reach  •  heavy"),
     new WeaponDefinition(WeaponId.SwordZweihander,"ZWELHANDER","Weapons/SwordZweihander",1.6f,1.35f,.72f,1.4f,new Vector3(10,90,-90),"massive damage  •  very slow"),
     new WeaponDefinition(WeaponId.SwordGreat,"GREATSWORD","Weapons/SwordGreat",1.45f,1.28f,.8f,1.32f,new Vector3(10,90,-90),"wide sweeps  •  strong reach"),
-    new WeaponDefinition(WeaponId.HovlMagic,"ARCANE BLADE","Weapons/HovlMagic",1.4f,1.2f,.9f,1.3f,new Vector3(10,90,-90),"glowing edge  •  strong reach"),
+    new WeaponDefinition(WeaponId.HovlMagic,"ARCANE BLADE","Weapons/HovlMagic",1.4f,1.2f,.9f,1.3f,new Vector3(10,180,0),"glowing edge  •  strong reach"),
     new WeaponDefinition(WeaponId.HovlMoon,"MOON SWORD","Weapons/HovlMoon",1.25f,1.1f,1.05f,1.2f,new Vector3(12,90,-90),"crescent strikes  •  quick tempo"),
     new WeaponDefinition(WeaponId.HovlMoon2,"LUNAR TALON","Weapons/HovlMoon2",1.3f,1.15f,1f,1.25f,new Vector3(12,90,-90),"curved blade  •  steady arcs"),
     new WeaponDefinition(WeaponId.PureAxe2H,"TITAN AXE","Weapons/PureAxe2H",1.5f,.92f,.78f,1.32f,new Vector3(8,0,0),"two-handed cleave  •  heavy"),
@@ -82,12 +82,18 @@ public static class WeaponCatalog {
   // every weapon swings like its shape: overhead grips chop, pole grips poke
   // and slam, blades slash, fists brawl. Unknown grips fall back to slash.
   public static string AttackStyle(WeaponDefinition def){
-   if(string.IsNullOrEmpty(def.Resource))return "unarmed";
-   if(def.Id==WeaponId.BrassFangs)return "unarmed";
-   var e=def.EquipEuler;
-   if(e==new Vector3(8,0,0))return "chop";
-   if(e==new Vector3(10,0,0))return "spear";
-   return "slash";
+   if(string.IsNullOrEmpty(def.Resource)||def.Id==WeaponId.BrassFangs)return "unarmed";
+   switch(def.Id){
+    case WeaponId.Axe:case WeaponId.BlinkAxe:case WeaponId.BlinkMace:case WeaponId.AxeIron:case WeaponId.AxeBattle:
+    case WeaponId.AxeBearded:case WeaponId.AxeCleaver:case WeaponId.PureAxe2H:case WeaponId.PureHammer:
+    case WeaponId.RangerAxe:case WeaponId.Executioner:case WeaponId.Maul:case WeaponId.EmberTorch:case WeaponId.GlacierMaul:
+     return "chop";
+    case WeaponId.BlinkSpear:case WeaponId.PureSpear:case WeaponId.HalberdA:case WeaponId.HalberdB:case WeaponId.HalberdC:
+    case WeaponId.HuntsmanSpear:case WeaponId.WardenPike:case WeaponId.SageStaff:case WeaponId.AstralStaff:case WeaponId.FrostHalberd:
+     return "spear";
+    default:
+     return "slash";
+   }
   }
   // Elemental infusion: weapons hit harder against foes weak to their element
   // (Hero.Attack applies the bonus). -1 = mundane.
@@ -171,19 +177,43 @@ public static class WeaponCatalog {
 
  public sealed class EquippedWeapon:MonoBehaviour {
   public static bool HasAuthoredGrip(WeaponId id)=>id==WeaponId.FantasyGreatsword||id==WeaponId.FierySword||id==WeaponId.OrnateCurvedBlade||id==WeaponId.VerdantFang;
-  public static bool HasGripAnchor(WeaponId id)=>HasAuthoredGrip(id)||id==WeaponId.AstralStaff||id==WeaponId.GlacierMaul||id==WeaponId.VoidReaper||id==WeaponId.FrostHalberd;
+  public static bool HasGripAnchor(WeaponId id)=>true;
   // Mesh-local handle centers measured from the textured front views in WeaponPoseProbe.
   public static Vector3 GripPoint(WeaponId id)=>id==WeaponId.FantasyGreatsword?new Vector3(.247f,.799f,0):id==WeaponId.FierySword?new Vector3(-.334f,.819f,0):id==WeaponId.OrnateCurvedBlade?new Vector3(.020f,.728f,0):new Vector3(0.2370f,0.0961f,0.2156f);
   public static Vector3 GripAnchorPoint(WeaponId id,Bounds bounds){
    if(HasAuthoredGrip(id))return GripPoint(id);
-   Vector3 size=bounds.size;
-   int axis=size.x>=size.y&&size.x>=size.z?0:size.y>=size.z?1:2;
-   float fraction=id==WeaponId.AstralStaff?.33f:id==WeaponId.GlacierMaul?.30f:id==WeaponId.VoidReaper?.38f:id==WeaponId.FrostHalberd?.28f:.5f;
-   Vector3 point=bounds.center;
-   if(axis==0)point.x=bounds.min.x+size.x*fraction;
-   else if(axis==1)point.y=bounds.min.y+size.y*fraction;
-   else point.z=bounds.min.z+size.z*fraction;
-   return point;
+   if(id==WeaponId.AstersBlade||id==WeaponId.LongSword)return new Vector3(0f,0f,.12f);
+   if(id==WeaponId.Axe)return new Vector3(0f,0f,.18f);
+   if(id==WeaponId.CurvedSword)return new Vector3(0f,0f,.10f);
+   if(id==WeaponId.HovlMagic)return new Vector3(0f,0f,-.15f);
+   if(id==WeaponId.MoonChakram||id==WeaponId.BrassFangs)return bounds.center;
+   float fraction;
+   switch(id){
+    case WeaponId.BlinkSpear:case WeaponId.PureSpear:case WeaponId.HuntsmanSpear:fraction=.25f;break;
+    case WeaponId.HalberdA:fraction=.26f;break;
+    case WeaponId.HalberdB:case WeaponId.FrostHalberd:fraction=.28f;break;
+    case WeaponId.HalberdC:case WeaponId.WardenPike:fraction=.27f;break;
+    case WeaponId.SageStaff:fraction=.31f;break;
+    case WeaponId.AstralStaff:fraction=.33f;break;
+    case WeaponId.PureAxe2H:case WeaponId.Executioner:case WeaponId.RangerAxe:fraction=.23f;break;
+    case WeaponId.PureHammer:case WeaponId.Maul:fraction=.26f;break;
+    case WeaponId.GlacierMaul:case WeaponId.PureScythe:fraction=.30f;break;
+    case WeaponId.BlinkAxe:case WeaponId.AxeCleaver:fraction=.18f;break;
+    case WeaponId.BlinkMace:fraction=.16f;break;
+    case WeaponId.AxeIron:case WeaponId.EmberTorch:fraction=.22f;break;
+    case WeaponId.AxeBattle:fraction=.21f;break;
+    case WeaponId.AxeBearded:fraction=.20f;break;
+    case WeaponId.VoidReaper:fraction=.38f;break;
+    case WeaponId.PureSword2H:case WeaponId.Juggernaut:fraction=.11f;break;
+    case WeaponId.SwordZweihander:case WeaponId.SwordGreat:fraction=.10f;break;
+    case WeaponId.SwordClaymore:fraction=.09f;break;
+    case WeaponId.SwordShort:case WeaponId.SwordSabre:fraction=.08f;break;
+    case WeaponId.SwordFalchion:case WeaponId.PureSword1H:case WeaponId.SquireBlade:fraction=.07f;break;
+    case WeaponId.HovlMoon:case WeaponId.HovlMoon2:fraction=.06f;break;
+    case WeaponId.RiftDagger:fraction=.12f;break;
+    default:fraction=.25f;break;
+   }
+   return new Vector3(0f,bounds.min.y+bounds.size.y*fraction,0f);
   }
   static Vector3 BladeAxis(WeaponId id)=>id==WeaponId.FantasyGreatsword?new Vector3(-.64f,-.768f,0):id==WeaponId.FierySword?new Vector3(.707f,-.707f,0):id==WeaponId.OrnateCurvedBlade?Vector3.down:new Vector3(-0.48027f,0.76787f,-0.42393f).normalized;
   static Quaternion ModelCorrection(WeaponId id){
