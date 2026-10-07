@@ -27,7 +27,8 @@ public static class WeaponCatalog {
     static readonly WeaponDefinition Fists=new WeaponDefinition(WeaponId.AstersBlade,"FISTS","",.85f,.92f,1.12f,1f,Vector3.zero,"fists and kicks — find a weapon to draw arms");
     static readonly WeaponDefinition[] Definitions={
     new WeaponDefinition(WeaponId.AstersBlade,"ASTER'S BLADE","Weapons/Aster_LongSword",1f,1f,1f,1f,new Vector3(10,0,0),"Balanced starter blade"),
-    new WeaponDefinition(WeaponId.Axe,"WAR AXE","Weapons/Aster_Axe",1.6f,.88f,.76f,.95f,new Vector3(-82,0,0),"+60% damage  •  heavy recovery  •  close range"),
+    // Roll around the mesh's Z handle axis so the cutting edge, not the counterweight, leads.
+    new WeaponDefinition(WeaponId.Axe,"WAR AXE","Weapons/Aster_Axe",1.6f,.88f,.76f,.95f,new Vector3(-82,0,180),"+60% damage  •  heavy recovery  •  close range"),
     new WeaponDefinition(WeaponId.CurvedSword,"CURVED SWORD","Weapons/Aster_CurvedSword",.98f,.94f,1.22f,1.05f,new Vector3(12,0,0),"rapid strikes  •  swift recovery  •  agile reach"),
     new WeaponDefinition(WeaponId.BlinkAxe,"GREATAXE","Weapons/BlinkAxe",1.45f,.92f,.82f,1.2f,new Vector3(8,0,0),"heavy strikes  •  wide cleave  •  slow recovery"),
     new WeaponDefinition(WeaponId.BlinkMace,"WARHAMMER","Weapons/BlinkMace",1.72f,.86f,.72f,1.15f,new Vector3(8,0,0),"crushing blows  •  high damage  •  slow recovery"),
@@ -174,7 +175,7 @@ public static class WeaponCatalog {
 
  public sealed class EquippedWeapon:MonoBehaviour {
   public static bool HasAuthoredGrip(WeaponId id)=>id==WeaponId.FantasyGreatsword||id==WeaponId.FierySword||id==WeaponId.OrnateCurvedBlade||id==WeaponId.AstersBlade||id==WeaponId.SwordShort;
-  public static bool HasGripAnchor(WeaponId id)=>HasAuthoredGrip(id)||id==WeaponId.AstralStaff||id==WeaponId.GlacierMaul||id==WeaponId.VoidReaper||id==WeaponId.FrostHalberd;
+  public static bool HasGripAnchor(WeaponId id)=>HasAuthoredGrip(id)||id==WeaponId.Axe||id==WeaponId.AstralStaff||id==WeaponId.GlacierMaul||id==WeaponId.VoidReaper||id==WeaponId.FrostHalberd;
   public static bool DiagonalSheath(WeaponId id)=>id==WeaponId.FantasyGreatsword||id==WeaponId.FierySword||id==WeaponId.OrnateCurvedBlade;
   // Mesh-local handle centers measured from the textured front views and geometry census.
   public static Vector3 GripPoint(WeaponId id){

@@ -85,7 +85,7 @@ if(realm==1){if(!island.Find("BossArenaMarker"))PlaceDesertBuildings(island,widt
   // travel lane (same lane-safe philosophy as the desert buildings), plus a few
   // crates/barrels/benches and small clutter near the edges.
   static readonly string[] VillageStructures={"rpgpp_lt_shed_wood_01","rpgpp_lt_shed_wood_02","rpgpp_lt_well_01","rpgpp_lt_wagon_01"};
-  static readonly string[] VillageMedium={"rpgpp_lt_barrel_01","rpgpp_lt_barrel_02","rpgpp_lt_crate_01","rpgpp_lt_crate_02","rpgpp_lt_bench_wood_01","rpgpp_lt_box_wood_01","rpgpp_lt_log_wood_01","rpgpp_lt_rock_01","rpgpp_lt_rock_02","rpgpp_lt_rock_03","rpgpp_lt_ladder_01"};
+  static readonly string[] VillageMedium={"rpgpp_lt_barrel_01","rpgpp_lt_barrel_02","rpgpp_lt_crate_01","rpgpp_lt_crate_02","rpgpp_lt_bench_wood_01","rpgpp_lt_box_wood_01","rpgpp_lt_log_wood_01","rpgpp_lt_rock_01","rpgpp_lt_rock_02","rpgpp_lt_rock_03"};
   static readonly string[] VillageSmall={"rpgpp_lt_sack_01","rpgpp_lt_bucket_01","rpgpp_lt_vase_01","rpgpp_lt_rock_small_01","rpgpp_lt_rock_small_02","rpgpp_lt_bush_02"};
 static void PlaceVillage(Transform island,int realm,float width,float length,System.Random rng){
     if(realm==3)return;
