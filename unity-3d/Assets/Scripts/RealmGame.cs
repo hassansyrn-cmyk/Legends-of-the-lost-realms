@@ -22,7 +22,7 @@ namespace LostRealms {
    public int[] bestiary=new int[22]; public List<string> achievements=new List<string>(); public int bossKills, lifetimeParries, lifetimeDodges, bestCombo;
   }
  public class RealmGame : MonoBehaviour {
-  public static RealmGame I; public static bool Testing=>Array.IndexOf(Environment.GetCommandLineArgs(),"-realmTest")>=0; public static readonly string[] Titles={"Mosslight Trail","Whispering Falls","Rootbound Ruins","The Elder Grove","Sunscorched Pass","Temple of Keys","Sandstone Colossus","Frostwind Climb","Crystal Hollow","Crown of Winter","Ember Foothills","Brimstone Rampart","Cindervein Gorge","Obsidian Ascent","Emberfall Summit"};
+  public static RealmGame I; public static bool Testing=>Array.IndexOf(Environment.GetCommandLineArgs(),"-realmTest")>=0||Array.IndexOf(Environment.GetCommandLineArgs(),"-menuVisualProbe")>=0; public static readonly string[] Titles={"Mosslight Trail","Whispering Falls","Rootbound Ruins","The Elder Grove","Sunscorched Pass","Temple of Keys","Sandstone Colossus","Frostwind Climb","Crystal Hollow","Crown of Winter","Ember Foothills","Brimstone Rampart","Cindervein Gorge","Obsidian Ascent","Emberfall Summit"};
 public static readonly string[] Realms={"VERDANT KINGDOM","BURNING DUNES","FROZEN PEAKS","EMBERFALL"};
    public static readonly Color[] Accents={new Color(.38f,.95f,.7f),new Color(1,.67f,.28f),new Color(.4f,.83f,1),new Color(1f,.35f,.28f)};
   public GameScreen Screen=GameScreen.Menu; public Progress Save=new Progress(); public Hero Player; public RealmWorld World; public FollowCamera CameraRig;
@@ -31,7 +31,7 @@ public static readonly string[] Realms={"VERDANT KINGDOM","BURNING DUNES","FROZE
   public Vector2 MoveInput; public bool JumpPressed,DashPressed,AttackPressed,AttackReleased,CastPressed,ParryPressed,SpellPressed,SpellReleased,GrapplePressed; public bool AttackHeld,SpellHeld,JumpHeld;
   public readonly List<Enemy> Enemies=new List<Enemy>(); public AudioSource Music,Sfx;
   public RealmAudio Audio {get;private set;} public RealmTrials Trial {get;private set;}
-   Transform worldRoot; GUIStyle title,titleC,label,small,button,center,big,smallC,tinyC,btnText; Texture2D pixel,circleFill,circleRing,btnBlade,btnJump,btnDodge,btnPower,btnParry,btnSpell,btnPause,joyBase,joyKnob; Texture2D bgMainMenu,avatarAster,btnPrimaryNorm,btnPrimaryHigh,btnStdNorm,btnStdHigh,btnSecNorm,btnSecHigh,panelLarge,panelMedium,cardUnlocked,cardSelected,cardLocked,cardCompleted,headerOrnament,dividerLine,barFrame,barFill,resourceCapsule,iconArsenal,iconAtlas,iconBack,iconClose,iconCoin,iconGem,iconLock,iconMainMenu,iconNewJourney,iconContinue,iconResume,iconRestart,iconSanctuary,iconStar; readonly TouchRouter touch=new TouchRouter(); float yawInput,hitStopUntil,bossIntroUntil,heartbeatNext;bool showArsenal,showSkins,showCodex,showAchievements,showVault;int arsenalPage,skinPage,codexPage,achievementsPage;GameScreen arsenalReturn=GameScreen.Settings,skinReturn=GameScreen.Settings,codexReturn=GameScreen.Settings,achievementsReturn=GameScreen.Settings,vaultReturn=GameScreen.Settings;enum VaultState{Browse,Opening,Revealed};VaultState vaultState=VaultState.Browse;ChestType openingChestType=ChestType.Normal;float vaultAnimTimer=0f;ChestReward currentChestReward=null;bool showDropRates=false;readonly System.Collections.Generic.Dictionary<string,Texture2D> iconCache=new System.Collections.Generic.Dictionary<string,Texture2D>();
+   Transform worldRoot; GUIStyle title,titleC,label,small,button,center,big,smallC,tinyC,btnText; Texture2D pixel,circleFill,circleRing,btnBlade,btnJump,btnDodge,btnPower,btnParry,btnSpell,btnPause,joyBase,joyKnob; static readonly Color MenuGold=new Color(.82f,.65f,.32f), MenuBlue=new Color(.38f,.68f,.94f); Font fantasyHeading,fantasyButton,fantasyBody; Texture2D iconWardrobe,iconAchievements,iconBestiary,iconVault,chestNormal,chestGolden,chestEpic,rewardHalo; Texture2D bgMainMenu,avatarAster,btnPrimaryNorm,btnPrimaryHigh,btnStdNorm,btnStdHigh,btnSecNorm,btnSecHigh,panelLarge,panelMedium,cardUnlocked,cardSelected,cardLocked,cardCompleted,headerOrnament,dividerLine,barFrame,barFill,resourceCapsule,iconArsenal,iconAtlas,iconBack,iconClose,iconCoin,iconGem,iconLock,iconMainMenu,iconNewJourney,iconContinue,iconResume,iconRestart,iconSanctuary,iconStar; readonly TouchRouter touch=new TouchRouter(); float yawInput,hitStopUntil,bossIntroUntil,heartbeatNext;bool showArsenal,showSkins,showCodex,showAchievements,showVault;int arsenalPage,skinPage,codexPage,achievementsPage;GameScreen arsenalReturn=GameScreen.Settings,skinReturn=GameScreen.Settings,codexReturn=GameScreen.Settings,achievementsReturn=GameScreen.Settings,vaultReturn=GameScreen.Settings;enum VaultState{Browse,Opening,Revealed};VaultState vaultState=VaultState.Browse;ChestType openingChestType=ChestType.Normal;float vaultAnimTimer=0f,rewardRevealStarted=-100f;ChestReward currentChestReward=null;bool showDropRates=false;readonly System.Collections.Generic.Dictionary<string,Texture2D> iconCache=new System.Collections.Generic.Dictionary<string,Texture2D>();
   public static readonly Color[] ElementColors={new Color(1f,.45f,.1f),new Color(.2f,.85f,1f),new Color(.2f,1f,.55f)};
   static int debugTurretCycle;
   [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Boot(){
@@ -89,6 +89,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     vaultAnimTimer+=Time.unscaledDeltaTime;
     if(vaultAnimTimer>=0.7f){
      vaultState=VaultState.Revealed;
+     rewardRevealStarted=Time.unscaledTime;
      Sound(currentChestReward!=null&&currentChestReward.Rarity==RewardRarity.Epic?"level_clear":"upgrade");
      if(CameraRig)CameraRig.Shake=currentChestReward!=null&&currentChestReward.Rarity==RewardRarity.Epic?.35f:.15f;
     }
@@ -237,6 +238,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
   public static string Clock(float seconds)=>$"{(int)seconds/60:00}:{(int)seconds%60:00}";
   float healthLag = 1f;
   void BoxOutline(Rect r,Color bg,Color border,float bw=2f){
+   if(Screen!=GameScreen.Playing){ border=new Color(MenuGold.r,MenuGold.g,MenuGold.b,Mathf.Max(.55f,border.a)); bg=new Color(.015f,.035f,.075f,bg.a); }
    Box(r,bg);
    Box(new Rect(r.x,r.y,r.width,bw),border);
    Box(new Rect(r.x,r.yMax-bw,r.width,bw),border);
@@ -270,6 +272,14 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
   }
   Texture2D LoadButtonTex(string name) => LoadUITex("Buttons", name);
   void LoadUITextures(){
+   if(!iconWardrobe)iconWardrobe=LoadUITex("Icons","UI_Icon_Wardrobe");
+   if(!iconAchievements)iconAchievements=LoadUITex("Icons","UI_Icon_Achievements");
+   if(!iconBestiary)iconBestiary=LoadUITex("Icons","UI_Icon_Bestiary");
+   if(!iconVault)iconVault=LoadUITex("Icons","UI_Icon_Vault");
+   if(!chestNormal)chestNormal=LoadUITex("Icons","UI_Chest_Normal");
+   if(!chestGolden)chestGolden=LoadUITex("Icons","UI_Chest_Golden");
+   if(!chestEpic)chestEpic=LoadUITex("Icons","UI_Chest_Epic");
+   if(!rewardHalo)rewardHalo=LoadUITex("Icons","UI_Reward_Halo");
    if(!btnBlade)btnBlade=LoadButtonTex("UI_Action_Blade_Attack_HoldToCharge");
    if(!btnJump)btnJump=LoadButtonTex("UI_Action_Jump_DoubleJump_x2");
    if(!btnDodge)btnDodge=LoadButtonTex("UI_Action_Dodge_Evade");
@@ -333,6 +343,13 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    big=new GUIStyle(center){fontSize=24};
    smallC=new GUIStyle(small){alignment=TextAnchor.MiddleCenter};
    tinyC=new GUIStyle(smallC){fontSize=13};tinyC.normal.textColor=new Color(.72f,.82f,.88f);
+   fantasyHeading=Resources.Load<Font>("UI/Fonts/CinzelDecorative-Bold");
+   fantasyButton=Resources.Load<Font>("UI/Fonts/Cinzel-Bold");
+   fantasyBody=Resources.Load<Font>("UI/Fonts/CrimsonText-Regular");
+   foreach(var heading in new[]{title,titleC}){if(fantasyHeading)heading.font=fantasyHeading;heading.fontStyle=FontStyle.Normal;heading.alignment=TextAnchor.MiddleCenter;}
+   foreach(var action in new[]{button,center,btnText,big}){if(fantasyButton)action.font=fantasyButton;action.fontStyle=FontStyle.Normal;}
+   foreach(var body in new[]{label,small,smallC,tinyC}){if(fantasyBody)body.font=fantasyBody;body.fontStyle=FontStyle.Normal;}
+   titleC.fontSize=40;title.fontSize=36;small.fontSize=18;smallC.fontSize=18;tinyC.fontSize=16;
    circleFill=CircleTexture(false);circleRing=CircleTexture(true);
   }
   // Anti-aliased filled circle / ring, tinted at draw time via GUI.color.
@@ -347,52 +364,55 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    t.SetPixels(c);t.Apply();t.wrapMode=TextureWrapMode.Clamp;return t;
   }
   void Box(Rect r,Color color){GUI.color=color;GUI.DrawTexture(r,pixel);GUI.color=Color.white;}
-  void Text(float x,float y,float w,float h,string s,GUIStyle st=null){GUI.Label(new Rect(x,y,w,h),s,st??label);
+  GUIStyle FitText(GUIStyle source,Rect r,string value,bool wrap=false){
+   var fitted=new GUIStyle(source){wordWrap=wrap,clipping=TextClipping.Clip,padding=new RectOffset(0,0,0,0)};
+   fitted.fontSize=Mathf.Min(source.fontSize,Mathf.Max(12,Mathf.FloorToInt(r.height*.82f)));
+   var content=new GUIContent(value);
+   while(fitted.fontSize>11&&(wrap?fitted.CalcHeight(content,r.width)>r.height:fitted.CalcSize(content).x>r.width))fitted.fontSize--;
+   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-menuVisualProbe")>=0&&Event.current.type==EventType.Repaint&&(wrap?fitted.CalcHeight(content,r.width)>r.height+1:fitted.CalcSize(content).x>r.width+1))Debug.LogWarning("MENU_TEXT_OVERFLOW "+value);
+   return fitted;
+  }
+  void Text(float x,float y,float w,float h,string value,GUIStyle st=null){
+   var rect=new Rect(x,y,w,h);var source=st??label;
+   GUI.Label(rect,value,FitText(source,rect,value,source.wordWrap&&(value.Contains("\n")||h>=source.fontSize*1.6f)));
   }
   bool MenuButton(Rect r,string text,Texture2D icon=null,bool primary=false,bool smallBtn=false,GUIStyle st=null){
-   Vector2 mpos=Event.current.mousePosition;
-   bool hover=r.Contains(mpos);
-   Texture2D normTex=primary?btnPrimaryNorm:(smallBtn?btnSecNorm:btnStdNorm);
-   Texture2D highTex=primary?btnPrimaryHigh:(smallBtn?btnSecHigh:btnStdHigh);
-   Texture2D tex=hover?(highTex??normTex):normTex;
-   GUIStyle style=st??(primary?big:(smallBtn?smallC:btnText));
-
-   if(tex!=null){
-    GUI.color=hover?new Color(1.15f,1.15f,1.15f,1f):Color.white;
-    GUI.DrawTexture(r,tex,ScaleMode.StretchToFill);
-    GUI.color=Color.white;
-    if(icon!=null){
-     float isz=Mathf.Min(r.height-14,30);
-     float iy=r.y+(r.height-isz)*0.5f;
-     GUI.DrawTexture(new Rect(r.x+14,iy,isz,isz),icon,ScaleMode.ScaleToFit);
-    }
-    Rect textRect=icon!=null?new Rect(r.x+36,r.y,r.width-48,r.height):r;
-    GUI.Label(textRect,text,style);
-    return GUI.Button(r,GUIContent.none,GUIStyle.none);
-   }else{
-    Color bg=hover?new Color(.12f,.22f,.28f,.98f):new Color(.05f,.11f,.16f,.94f);
-    Color border=hover?Color.Lerp(Accent,Color.white,.4f):Accent*.85f;
-    BoxOutline(r,bg,border,hover?2.5f:1.8f);
-    if(icon!=null){
-     float isz=Mathf.Min(r.height-14,28);
-     GUI.DrawTexture(new Rect(r.x+14,r.y+(r.height-isz)*0.5f,isz,isz),icon,ScaleMode.ScaleToFit);
-    }
-    Rect textRect=icon!=null?new Rect(r.x+36,r.y,r.width-48,r.height):r;
-    GUI.Label(textRect,text,style);
-    return GUI.Button(r,GUIContent.none,GUIStyle.none);
-   }
+   bool hover=r.Contains(Event.current.mousePosition);
+   var tex=hover?(primary?btnPrimaryHigh:smallBtn?btnSecHigh:btnStdHigh):(primary?btnPrimaryNorm:smallBtn?btnSecNorm:btnStdNorm);
+   Color previous=GUI.color;
+   GUI.color=GUI.enabled?Color.white:new Color(.6f,.6f,.6f,1);
+   if(tex)GUI.DrawTexture(r,tex,ScaleMode.StretchToFill);
+   else BoxOutline(r,new Color(.02f,.05f,.1f,.98f),MenuGold);
+   float inset=r.width*.115f;
+   float iconSize=Mathf.Min(primary?30f:26f,r.height*.48f);
+   if(icon)GUI.DrawTexture(new Rect(r.x+inset,r.center.y-iconSize*.5f,iconSize,iconSize),icon,ScaleMode.ScaleToFit);
+   float textLeft=inset+(icon?iconSize+9f:0f);
+   Rect textRect=new Rect(r.x+textLeft,r.y+r.height*.22f,r.width-textLeft-inset,r.height*.56f);
+   var style=new GUIStyle(st??(primary?big:smallBtn?smallC:btnText)){alignment=TextAnchor.MiddleCenter,wordWrap=false,font=fantasyButton?fantasyButton:btnText.font,fontStyle=FontStyle.Normal};
+   style.fontSize=primary?23:smallBtn?16:19;
+   if(st==tinyC)style.fontSize=14;
+   style.normal.textColor=new Color(1f,.94f,.79f);
+   GUI.Label(textRect,text,FitText(style,textRect,text));
+   GUI.color=previous;
+   return GUI.Button(r,GUIContent.none,GUIStyle.none);
+  }
+  void ImageFrame(Rect r,Texture2D texture,float edge=14f){
+   if(!texture)return;
+   float sx=.12f,sy=.24f;
+   float[] dx={r.x,r.x+edge,r.xMax-edge,r.xMax};float[] dy={r.y,r.y+edge,r.yMax-edge,r.yMax};
+   float[] ux={0,sx,1-sx,1};float[] uy={1,1-sy,sy,0};
+   for(int y=0;y<3;y++)for(int x=0;x<3;x++)GUI.DrawTextureWithTexCoords(new Rect(dx[x],dy[y],dx[x+1]-dx[x],dy[y+1]-dy[y]),texture,new Rect(ux[x],uy[y+1],ux[x+1]-ux[x],uy[y]-uy[y+1]));
+  }
+  void MenuCard(Rect r,bool selected=false){
+   GUI.color=Color.white;ImageFrame(r,selected?cardSelected:cardUnlocked,12f);
   }
   bool Button(float x,float y,float w,float h,string s){
    return MenuButton(new Rect(x,y,w,h),s);
   }
   void Panel(float x,float y,float w,float h){
    Rect r=new Rect(x,y,w,h);
-   // A restrained shadow and small rune-corner accents separate HUD groups
-   // from the scene without burying the mobile playfield in opaque panels.
-   Box(new Rect(x+4,y+5,w,h),new Color(.005f,.012f,.02f,.38f));
-   BoxOutline(r,new Color(.028f,.06f,.09f,.74f),Accent,2f);
-   Box(new Rect(x+8,y+7,w-16,2),new Color(Accent.r,Accent.g,Accent.b,.34f));
-   Box(new Rect(x+8,y+h-8,w-16,1),new Color(Accent.r,Accent.g,Accent.b,.15f));
+   if(Screen!=GameScreen.Playing&&w>400&&h>150&&panelLarge){GUI.color=Color.white;ImageFrame(r,w<700?panelMedium:panelLarge,20f);return;}
+   BoxOutline(r,new Color(.028f,.06f,.09f,.86f),Screen==GameScreen.Playing?Accent:MenuGold,1.5f);
   }
   void OnGUI(){
    LoadButtonTextures();
@@ -616,7 +636,7 @@ Panel(390,105,500,68);
 
    if(Screen==GameScreen.Menu){
     Text(240,48,800,24,"✦  A  3 D  A D V E N T U R E  ✦",tinyC);
-    GUI.Label(new Rect(140,74,1000,68),"LEGENDS OF THE LOST REALMS",titleC);
+    Text(140,74,1000,68,"LEGENDS OF THE LOST REALMS",titleC);
     if(headerOrnament)GUI.DrawTexture(new Rect(440,144,400,26),headerOrnament,ScaleMode.ScaleToFit);
     else{Box(new Rect(440,154,400,2),new Color(Accent.r,Accent.g,Accent.b,.55f));Box(new Rect(628,151,24,8),Accent);}
     Text(240,174,800,44,"Four realms. One lost heart.\nCross the floating isles, master elemental blades, restore the ancient portals.",smallC);
@@ -641,12 +661,12 @@ Panel(390,105,500,68);
 
     if(resourceCapsule)GUI.DrawTexture(new Rect(720,52,480,42),resourceCapsule,ScaleMode.StretchToFill);
     if(iconCoin&&iconGem&&iconStar){
-     GUI.DrawTexture(new Rect(740,61,24,24),iconCoin,ScaleMode.ScaleToFit);
-     Text(768,62,80,24,$"{Save.coins}",small);
-     GUI.DrawTexture(new Rect(860,61,22,24),iconGem,ScaleMode.ScaleToFit);
-     Text(886,62,80,24,$"{Save.gems}",small);
-     GUI.DrawTexture(new Rect(980,61,24,24),iconStar,ScaleMode.ScaleToFit);
-     Text(1008,62,120,24,$"{TotalStars()}/45 Stars",small);
+     GUI.DrawTexture(new Rect(770,62,22,22),iconCoin,ScaleMode.ScaleToFit);
+     Text(800,62,80,24,$"{Save.coins}",small);
+     GUI.DrawTexture(new Rect(900,62,22,22),iconGem,ScaleMode.ScaleToFit);
+     Text(930,62,80,24,$"{Save.gems}",small);
+     GUI.DrawTexture(new Rect(1030,62,22,22),iconStar,ScaleMode.ScaleToFit);
+     Text(1060,62,110,24,$"{TotalStars()}/45 Stars",small);
     }else{
      Text(740,62,440,24,$"Treasury: {Save.coins} Gold  •  {Save.gems} Gems  •  {TotalStars()}/45 Stars",small);
     }
@@ -657,7 +677,7 @@ Panel(390,105,500,68);
     bool prevEnabled=GUI.enabled;
     for(int i=0;i<15;i++){
      float x=80+(i%5)*228,y=150+(i/5)*150;
-     bool unlocked=Application.isEditor||i+1<=Save.unlocked;
+     bool unlocked=(Application.isEditor&&Array.IndexOf(Environment.GetCommandLineArgs(),"-menuVisualProbe")<0)||i+1<=Save.unlocked;
      bool completed=unlocked&&Save.stars[i]>=3;
      bool selected=unlocked&&i+1==Save.unlocked&&!completed;
 
@@ -679,15 +699,15 @@ Panel(390,105,500,68);
       Text(x+10,y+70,196,20,$"CHAPTER {i+1:00}",tinyC);
       Text(x+10,y+94,196,20,"LOCKED",tinyC);
      }else{
-      Text(x+10,y+16,196,22,$"CHAPTER {i+1:00}",tinyC);
-      Text(x+10,y+42,196,44,Titles[i],center);
+      Text(x+14,y+31,188,20,$"CHAPTER {i+1:00}",tinyC);
+      Text(x+14,y+53,188,38,Titles[i],center);
       int stars=Save.stars[i];
       if(stars>0&&iconStar){
        float sw=20f,sp=6f;
        float sx=x+(216-(stars*sw+(stars-1)*sp))*0.5f;
-       for(int s=0;s<stars;s++)GUI.DrawTexture(new Rect(sx+s*(sw+sp),y+96,sw,sw),iconStar,ScaleMode.ScaleToFit);
+       for(int s=0;s<stars;s++)GUI.DrawTexture(new Rect(sx+s*(sw+sp),y+100,sw,sw),iconStar,ScaleMode.ScaleToFit);
       }else{
-       Text(x+10,y+96,196,22,stars>0?new string('★',stars):"—",tinyC);
+       Text(x+14,y+100,188,20,stars>0?new string('★',stars):"—",tinyC);
       }
      }
 
@@ -708,23 +728,23 @@ Panel(390,105,500,68);
     if(dividerLine)GUI.DrawTexture(new Rect(240,122,800,12),dividerLine,ScaleMode.StretchToFill);
     else Box(new Rect(240,126,800,2),new Color(Accent.r,Accent.g,Accent.b,.35f));
 
-    Text(240,138,800,24,$"Available Resources:  {Save.coins} Gold   •   {Save.gems} Gems",smallC);
+    Text(240,138,800,24,$"Available:  {Save.coins} Gold   •   {Save.gems} Gems    |    * Recommended",smallC);
 
     // Recommended next upgrade (cheapest unmaxed track)
     int bestRecTrack = Save.healthRank<3 ? 0 : Save.arsenalRank<3 ? 1 : Save.powerRank<3 ? 2 : Save.aetherRank<3 ? 3 : Save.moxieRank<3 ? 4 : Save.tempoRank<3 ? 5 : Save.windRank<3 ? 6 : -1;
-    string recTag(int track)=>track==bestRecTrack?"  ★ RECOMMENDED":"";
+    string recTag(int track)=>track==bestRecTrack?" *":"";
 
     // Primary Upgrades (Gold) & Wardrobe
     string vitCost=Save.healthRank<3?(50+Save.healthRank*40)+" Gold":"MAXED";
-    if(MenuButton(new Rect(240,170,520,44),$"VITALITY RANK {Save.healthRank}/3  (+{Save.healthRank} Max HP)   —   Cost: {vitCost}{recTag(0)}",smallBtn:true,st:smallC)){
+    if(MenuButton(new Rect(240,170,520,44),$"VITALITY {Save.healthRank}/3  |  +{Save.healthRank} HP  |  {vitCost}{recTag(0)}",smallBtn:true,st:smallC)){
      int cost=50+Save.healthRank*40;
      if(Save.healthRank<3){if(Save.coins>=cost){Save.coins-=cost;Save.healthRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
-    if(MenuButton(new Rect(770,170,270,44),"TREASURE VAULT",iconSanctuary,smallBtn:true,st:smallC)){showVault=true;vaultState=VaultState.Browse;vaultReturn=GameScreen.Settings;Sound("power_select");}
+    if(MenuButton(new Rect(770,170,270,44),"TREASURE VAULT",iconVault,smallBtn:true,st:smallC)){showVault=true;vaultState=VaultState.Browse;vaultReturn=GameScreen.Settings;Sound("power_select");}
     if(showVault){VaultView();return;}
 
     string arsCost=Save.arsenalRank<3?(80+Save.arsenalRank*60)+" Gold":"MAXED";
-    if(MenuButton(new Rect(240,222,520,44),$"ARSENAL RANK {Save.arsenalRank}/3  (+{Save.arsenalRank*8}% DMG)   —   {arsCost}{recTag(1)}",smallBtn:true,st:smallC)){
+    if(MenuButton(new Rect(240,222,520,44),$"ARSENAL {Save.arsenalRank}/3  |  +{Save.arsenalRank*8}% DMG  |  {arsCost}{recTag(1)}",smallBtn:true,st:smallC)){
      int cost=80+Save.arsenalRank*60;
      if(Save.arsenalRank<3){if(Save.coins>=cost){Save.coins-=cost;Save.arsenalRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
@@ -733,37 +753,37 @@ Panel(390,105,500,68);
 
     // Divine Blessings (Gems)
     string powCost=Save.powerRank<3?(3+Save.powerRank*2)+" Gems":"MAXED";
-    if(MenuButton(new Rect(240,274,520,44),$"ELEMENTAL POWER RANK {Save.powerRank}/3  (+{Save.powerRank*20}% Power)   —   Cost: {powCost}{recTag(2)}",smallBtn:true,st:smallC)){
+    if(MenuButton(new Rect(240,274,520,44),$"POWER {Save.powerRank}/3  |  +{Save.powerRank*20}% POWER  |  {powCost}{recTag(2)}",smallBtn:true,st:smallC)){
      int cost=3+Save.powerRank*2;
      if(Save.powerRank<3){if(Save.gems>=cost){Save.gems-=cost;Save.powerRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
-    if(MenuButton(new Rect(770,274,270,44),$"WARDROBE ({Save.skins.Count}/5)",smallBtn:true,st:smallC)){showSkins=true;skinPage=0;skinReturn=GameScreen.Settings;Sound("power_select");}
+    if(MenuButton(new Rect(770,274,270,44),$"WARDROBE ({Save.skins.Count}/{SkinCatalog.Count})",iconWardrobe,smallBtn:true,st:smallC)){showSkins=true;skinPage=0;skinReturn=GameScreen.Settings;Sound("power_select");}
     if(showSkins){WardrobeView();return;}
 
     string aethCost=Save.aetherRank<3?(4+Save.aetherRank*2)+" Gems":"MAXED";
-    if(MenuButton(new Rect(240,326,255,44),$"AETHER {Save.aetherRank}/3 (+{Save.aetherRank*25}% Reg)  —  {aethCost}",smallBtn:true,st:tinyC)){
+    if(MenuButton(new Rect(240,326,255,44),$"AETHER {Save.aetherRank}/3 | +{Save.aetherRank*25}% | {aethCost}",smallBtn:true,st:tinyC)){
      int cost=4+Save.aetherRank*2;
      if(Save.aetherRank<3){if(Save.gems>=cost){Save.gems-=cost;Save.aetherRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
     string moxCost=Save.moxieRank<3?(5+Save.moxieRank*2)+" Gems":"MAXED";
-    if(MenuButton(new Rect(505,326,255,44),$"MOXIE {Save.moxieRank}/3 (+{Save.moxieRank} Dash)  —  {moxCost}",smallBtn:true,st:tinyC)){
+    if(MenuButton(new Rect(505,326,255,44),$"MOXIE {Save.moxieRank}/3 | +{Save.moxieRank} DASH | {moxCost}",smallBtn:true,st:tinyC)){
      int cost=5+Save.moxieRank*2;
      if(Save.moxieRank<3){if(Save.gems>=cost){Save.gems-=cost;Save.moxieRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
-    if(MenuButton(new Rect(770,326,270,44),$"BESTIARY ({Codex.Discovered(Save)}/{Codex.Kinds})",smallBtn:true,st:smallC)){showCodex=true;codexPage=0;codexReturn=GameScreen.Settings;Sound("power_select");}
+    if(MenuButton(new Rect(770,326,270,44),$"BESTIARY ({Codex.Discovered(Save)}/{Codex.Kinds})",iconBestiary,smallBtn:true,st:smallC)){showCodex=true;codexPage=0;codexReturn=GameScreen.Settings;Sound("power_select");}
     if(showCodex){BestiaryView();return;}
 
     string tempoCost=Save.tempoRank<3?(5+Save.tempoRank*2)+" Gems":"MAXED";
-    if(MenuButton(new Rect(240,378,255,44),$"TEMPO {Save.tempoRank}/3 (+{Save.tempoRank*15}% Ctr)  —  {tempoCost}",smallBtn:true,st:tinyC)){
+    if(MenuButton(new Rect(240,378,255,44),$"TEMPO {Save.tempoRank}/3 | +{Save.tempoRank*15}% | {tempoCost}",smallBtn:true,st:tinyC)){
      int cost=5+Save.tempoRank*2;
      if(Save.tempoRank<3){if(Save.gems>=cost){Save.gems-=cost;Save.tempoRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
     string windCost=Save.windRank<3?(7+Save.windRank*3)+" Gems":"MAXED";
-    if(MenuButton(new Rect(505,378,255,44),$"SECOND WIND {Save.windRank}/3 ({Save.windRank} Rev)  —  {windCost}",smallBtn:true,st:tinyC)){
+    if(MenuButton(new Rect(505,378,255,44),$"REVIVE {Save.windRank}/3 | {Save.windRank} USES | {windCost}",smallBtn:true,st:tinyC)){
      int cost=7+Save.windRank*3;
      if(Save.windRank<3){if(Save.gems>=cost){Save.gems-=cost;Save.windRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
-    if(MenuButton(new Rect(770,378,270,44),$"ACHIEVEMENTS ({Codex.UnlockedCount(Save)}/{Codex.All.Length})",smallBtn:true,st:smallC)){showAchievements=true;achievementsPage=0;achievementsReturn=GameScreen.Settings;Sound("power_select");}
+    if(MenuButton(new Rect(770,378,270,44),$"ACHIEVEMENTS ({Codex.UnlockedCount(Save)}/{Codex.All.Length})",iconAchievements,smallBtn:true,st:smallC)){showAchievements=true;achievementsPage=0;achievementsReturn=GameScreen.Settings;Sound("power_select");}
     if(showAchievements){AchievementsView();return;}
 
     // Audio & Preferences
@@ -783,8 +803,8 @@ Panel(390,105,500,68);
 
    void WardrobeView(){
     Panel(170,32,940,656);
-    Text(210,40,860,32,"Wardrobe & Outfits",titleC);
-    if(headerOrnament)GUI.DrawTexture(new Rect(440,74,400,18),headerOrnament,ScaleMode.ScaleToFit);
+    Text(210,50,860,28,"Wardrobe & Outfits",titleC);
+    if(headerOrnament)GUI.DrawTexture(new Rect(440,82,400,12),headerOrnament,ScaleMode.ScaleToFit);
     if(dividerLine)GUI.DrawTexture(new Rect(210,95,860,8),dividerLine,ScaleMode.StretchToFill);
     else Box(new Rect(210,98,860,2),new Color(Accent.r,Accent.g,Accent.b,.35f));
 
@@ -796,8 +816,8 @@ Panel(390,105,500,68);
      bool eq=Save.equippedSkin==i;
      float ry=128+i*81;
 
-     Color border=eq?new Color(1f,.85f,.35f):owned?new Color(.38f,.95f,.7f,.7f):new Color(.35f,.4f,.5f,.5f);
-     BoxOutline(new Rect(210,ry,860,76),new Color(.02f,.05f,.08f,.88f),border,eq?2f:1.2f);
+     Color border=eq?new Color(1f,.85f,.35f):owned?new Color(.38f,.68f,.94f,.7f):new Color(.35f,.4f,.5f,.5f);
+     MenuCard(new Rect(210,ry,860,76),eq);
 
      Rect slot=new Rect(218,ry+4,68,68);
      BoxOutline(slot,new Color(.03f,.07f,.12f,.95f),border,1.5f);
@@ -811,14 +831,14 @@ Panel(390,105,500,68);
      }
 
      GUI.color=eq?new Color(1f,.92f,.45f):Color.white;
-     Text(298,ry+4,486,20,$"{def.Name.ToUpper()}  —  {def.Title}",small);
+     Text(298,ry+10,486,18,$"{def.Name.ToUpper()}  —  {def.Title}",small);
      GUI.color=Color.white;
 
-     GUI.color=new Color(.38f,.95f,.7f);
-     Text(298,ry+24,486,18,def.StatSummary,tinyC);
+     GUI.color=new Color(.38f,.68f,.94f);
+     Text(298,ry+29,486,18,def.StatSummary,tinyC);
      GUI.color=Color.white;
 
-     Text(298,ry+42,486,30,def.Description,tinyC);
+     Text(298,ry+45,486,30,def.Description,tinyC);
 
      if(eq){
       GUI.color=new Color(1f,.9f,.35f);
@@ -846,7 +866,7 @@ Panel(390,105,500,68);
 
    void ArsenalView(){
     Panel(200,50,880,625);
-    Text(240,60,800,48,$"Arsenal  —  {Save.weapons.Count} Collected",titleC);
+    Text(240,70,800,38,$"Arsenal  —  {Save.weapons.Count} Collected",titleC);
     if(headerOrnament)GUI.DrawTexture(new Rect(440,110,400,24),headerOrnament,ScaleMode.ScaleToFit);
     if(dividerLine)GUI.DrawTexture(new Rect(240,136,800,12),dividerLine,ScaleMode.StretchToFill);
     else Box(new Rect(240,145,800,2),new Color(Accent.r,Accent.g,Accent.b,.35f));
@@ -863,27 +883,28 @@ Panel(390,105,500,68);
      var def=WeaponCatalog.Get(list[idx]);
      bool eq=Save.equippedWeapon==list[idx];
      float ry=208+k*56;
-     if(MenuButton(new Rect(240,ry,800,50),"")){
+     MenuCard(new Rect(240,ry,800,50),eq);
+     if(GUI.Button(new Rect(240,ry,800,50),GUIContent.none,GUIStyle.none)){
       if(eq)UnequipWeapon();else EquipWeapon((WeaponId)list[idx]);
      }
      // Dedicated illuminated weapon icon slot
-     Rect slot=new Rect(246,ry+4,42,42);
-     BoxOutline(slot,new Color(.02f,.06f,.10f,.92f),eq?new Color(1f,.85f,.35f):new Color(.38f,.95f,.7f,.6f),1.5f);
+     Rect slot=new Rect(252,ry+9,34,34);
+     BoxOutline(slot,new Color(.02f,.06f,.10f,.92f),eq?new Color(1f,.85f,.35f):new Color(.38f,.68f,.94f,.6f),1.5f);
      var icon=WeaponIcon(def);
-     if(icon)GUI.DrawTexture(new Rect(slot.x+2,slot.y+2,38,38),icon,ScaleMode.ScaleToFit);
+     if(icon)GUI.DrawTexture(new Rect(slot.x+2,slot.y+2,30,30),icon,ScaleMode.ScaleToFit);
      else Text(slot.x,slot.y+8,42,24,"⚔",smallC);
 
      // Name & Stats
-     Text(302,ry+6,530,20,def.Name.ToUpper(),small);
-     Text(302,ry+26,530,18,$"Damage ×{def.Damage:0.00}   •   Reach ×{def.Reach:0.00}   •   Speed ×{def.Tempo:0.00}",tinyC);
+     Text(302,ry+12,530,18,def.Name.ToUpper(),center);
+     Text(302,ry+31,530,16,$"Damage ×{def.Damage:0.00}   •   Reach ×{def.Reach:0.00}   •   Speed ×{def.Tempo:0.00}",tinyC);
 
      // Equip status badge on right
      if(eq){
       GUI.color=new Color(1f,.9f,.35f);
-      Text(850,ry+14,175,22,"✓ EQUIPPED",smallC);
+      Text(852,ry+15,166,22,"✓ EQUIPPED",smallC);
       GUI.color=Color.white;
      }else{
-      Text(850,ry+14,175,22,"EQUIP",tinyC);
+      Text(852,ry+15,166,22,"EQUIP",tinyC);
      }
     }
     if(pages>1){
@@ -897,7 +918,7 @@ Panel(390,105,500,68);
    }
 
    // Pause / Complete / Defeat Screens
-   Panel(320,90,640,535);
+   Panel(320,80,640,560);
 
    string heading=Screen==GameScreen.Paused?"A Moment of Rest":Screen==GameScreen.Complete?(Level==15?"The Lost Realms Restored!":"Chapter Cleared!"):"The Light Remains";
    Text(340,115,600,50,heading,titleC);
@@ -920,19 +941,19 @@ Panel(390,105,500,68);
     if(MenuButton(new Rect(355,412,570,52),"MAIN MENU",iconMainMenu)){showArsenal=false;Audio.Suspend(false);Time.timeScale=1;Screen=GameScreen.Menu;}
    }else if(Screen==GameScreen.Paused){
     Text(355,222,570,36,"Your journey is paused. All progress is safe.",smallC);
-    if(MenuButton(new Rect(355,270,570,56),"RESUME JOURNEY",iconResume,primary:true))Resume();
-    if(MenuButton(new Rect(355,324,280,44),"ARSENAL",iconArsenal)){showArsenal=true;arsenalPage=0;arsenalReturn=GameScreen.Paused;Sound("power_select");}
-    if(MenuButton(new Rect(645,324,280,44),"WARDROBE",smallBtn:true,st:smallC)){showSkins=true;skinPage=0;skinReturn=GameScreen.Paused;Sound("power_select");}
+    if(MenuButton(new Rect(355,262,570,58),"RESUME JOURNEY",iconResume,primary:true))Resume();
+    if(MenuButton(new Rect(355,332,280,46),"ARSENAL",iconArsenal)){showArsenal=true;arsenalPage=0;arsenalReturn=GameScreen.Paused;Sound("power_select");}
+    if(MenuButton(new Rect(645,332,280,46),"WARDROBE",iconWardrobe,smallBtn:true,st:smallC)){showSkins=true;skinPage=0;skinReturn=GameScreen.Paused;Sound("power_select");}
     if(showSkins){WardrobeView();return;}
-    if(MenuButton(new Rect(355,372,570,44),"TREASURE VAULT & CHESTS",iconSanctuary,smallBtn:true,st:smallC)){showVault=true;vaultState=VaultState.Browse;vaultReturn=GameScreen.Paused;Sound("power_select");}
+    if(MenuButton(new Rect(355,390,570,46),"TREASURE VAULT & CHESTS",iconVault,smallBtn:true,st:smallC)){showVault=true;vaultState=VaultState.Browse;vaultReturn=GameScreen.Paused;Sound("power_select");}
     if(showVault){VaultView();return;}
-    if(MenuButton(new Rect(355,420,280,44),$"BESTIARY ({Codex.Discovered(Save)}/{Codex.Kinds})",smallBtn:true,st:smallC)){showCodex=true;codexPage=0;codexReturn=GameScreen.Paused;Sound("power_select");}
+    if(MenuButton(new Rect(355,448,280,46),$"BESTIARY ({Codex.Discovered(Save)}/{Codex.Kinds})",iconBestiary,smallBtn:true,st:smallC)){showCodex=true;codexPage=0;codexReturn=GameScreen.Paused;Sound("power_select");}
     if(showCodex){BestiaryView();return;}
-    if(MenuButton(new Rect(645,420,280,44),$"ACHIEVEMENTS ({Codex.UnlockedCount(Save)}/{Codex.All.Length})",smallBtn:true,st:smallC)){showAchievements=true;achievementsPage=0;achievementsReturn=GameScreen.Paused;Sound("power_select");}
+    if(MenuButton(new Rect(645,448,280,46),$"ACHIEVEMENTS ({Codex.UnlockedCount(Save)}/{Codex.All.Length})",iconAchievements,smallBtn:true,st:smallC)){showAchievements=true;achievementsPage=0;achievementsReturn=GameScreen.Paused;Sound("power_select");}
     if(showAchievements){AchievementsView();return;}
-    if(MenuButton(new Rect(355,468,275,44),"ATLAS",iconAtlas))Screen=GameScreen.Map;
-    if(MenuButton(new Rect(650,468,275,44),"RESTART",iconRestart))LoadLevel(Level);
-    if(MenuButton(new Rect(355,516,570,46),"MAIN MENU",iconMainMenu)){showSkins=false;showArsenal=false;showCodex=false;showAchievements=false;showVault=false;Audio.Suspend(false);Time.timeScale=1;Screen=GameScreen.Menu;}
+    if(MenuButton(new Rect(355,506,280,46),"ATLAS",iconAtlas))Screen=GameScreen.Map;
+    if(MenuButton(new Rect(645,506,280,46),"RESTART",iconRestart))LoadLevel(Level);
+    if(MenuButton(new Rect(355,564,570,46),"MAIN MENU",iconMainMenu)){showSkins=false;showArsenal=false;showCodex=false;showAchievements=false;showVault=false;Audio.Suspend(false);Time.timeScale=1;Screen=GameScreen.Menu;}
     if(showArsenal){ArsenalView();return;}
     return;
    }else{
@@ -1012,12 +1033,12 @@ Panel(390,105,500,68);
 
    void BestiaryView(){
     Panel(180,36,920,648);
-    Text(220,44,840,32,$"Bestiary  —  {Codex.Discovered(Save)}/{Codex.Kinds} Discovered",titleC);
-    if(headerOrnament)GUI.DrawTexture(new Rect(440,76,400,18),headerOrnament,ScaleMode.ScaleToFit);
-    if(dividerLine)GUI.DrawTexture(new Rect(220,96,840,8),dividerLine,ScaleMode.StretchToFill);
+    Text(220,54,840,28,$"Bestiary  —  {Codex.Discovered(Save)}/{Codex.Kinds} Discovered",titleC);
+    if(headerOrnament)GUI.DrawTexture(new Rect(440,84,400,12),headerOrnament,ScaleMode.ScaleToFit);
+    if(dividerLine)GUI.DrawTexture(new Rect(220,102,840,6),dividerLine,ScaleMode.StretchToFill);
     else Box(new Rect(220,98,840,2),new Color(Accent.r,Accent.g,Accent.b,.35f));
 
-    Text(220,106,840,20,$"Total Slain: {Codex.TotalKills(Save)}    |    Guardians Felled: {Save.bossKills}",smallC);
+    Text(220,112,840,18,$"Total Slain: {Codex.TotalKills(Save)}    |    Guardians Felled: {Save.bossKills}",smallC);
 
     int perPage=5;
     int pages=(Codex.Kinds+perPage-1)/perPage;
@@ -1031,21 +1052,21 @@ Panel(390,105,500,68);
      bool boss=Codex.IsBoss(idx);
      float ry=134+i*90;
 
-     Color border=boss?(seen?new Color(1f,.85f,.35f,.9f):new Color(.6f,.5f,.2f,.6f)):(seen?new Color(.38f,.95f,.7f,.7f):new Color(.3f,.35f,.42f,.6f));
-     BoxOutline(new Rect(220,ry,840,84),new Color(.02f,.05f,.08f,.88f),border,boss?2f:1.2f);
+     Color border=boss?(seen?new Color(1f,.85f,.35f,.9f):new Color(.6f,.5f,.2f,.6f)):(seen?new Color(.38f,.68f,.94f,.7f):new Color(.3f,.35f,.42f,.6f));
+     MenuCard(new Rect(220,ry,840,84),boss&&seen);
 
      Rect slot=new Rect(228,ry+6,72,72);
      BoxOutline(slot,new Color(.03f,.07f,.12f,.95f),border,1.5f);
-     string badge=boss?"👑":seen?"⚔":"?";
-     Text(slot.x,slot.y+18,72,36,badge,big);
+     var badge=boss?iconAchievements:seen?iconBestiary:iconLock;
+     if(badge)GUI.DrawTexture(new Rect(slot.x+16,slot.y+16,40,40),badge,ScaleMode.ScaleToFit);
 
      if(seen){
       GUI.color=boss?new Color(1f,.92f,.45f):Color.white;
-      Text(312,ry+6,430,20,entry.Name.ToUpper()+(boss?"  [GUARDIAN]":""),small);
-      GUI.color=new Color(.38f,.95f,.7f);
-      Text(312,ry+26,430,18,$"Habitat: {entry.Habitat}    •    Slain: {kills}",tinyC);
+      Text(312,ry+12,430,18,entry.Name.ToUpper()+(boss?"  [GUARDIAN]":""),small);
+      GUI.color=new Color(.38f,.68f,.94f);
+      Text(312,ry+32,430,16,$"Habitat: {entry.Habitat}    •    Slain: {kills}",tinyC);
       GUI.color=Color.white;
-      Text(312,ry+44,430,34,entry.Behavior,tinyC);
+      Text(312,ry+50,430,28,entry.Behavior,tinyC);
 
       // Weakness badge on the right
       int weakElem=Enemy.WeaknessOf(idx);
@@ -1057,10 +1078,10 @@ Panel(390,105,500,68);
       GUI.color=Color.white;
      }else{
       GUI.color=new Color(.6f,.65f,.7f);
-      Text(312,ry+6,520,20,"???  [UNDISCOVERED]",small);
-      Text(312,ry+26,520,18,$"Habitat: {entry.Habitat}",tinyC);
+      Text(312,ry+12,520,18,"???  [UNDISCOVERED]",small);
+      Text(312,ry+32,520,16,$"Habitat: {entry.Habitat}",tinyC);
       GUI.color=new Color(.5f,.55f,.6f);
-      Text(312,ry+44,520,34,"Encounter and defeat this creature in the realms to unlock lore and elemental weaknesses.",tinyC);
+      Text(312,ry+50,520,28,"Encounter and defeat this creature in the realms to unlock lore and elemental weaknesses.",tinyC);
       GUI.color=Color.white;
      }
     }
@@ -1079,12 +1100,12 @@ Panel(390,105,500,68);
    void AchievementsView(){
     Panel(180,36,920,648);
     int unlocked=Codex.UnlockedCount(Save);
-    Text(220,44,840,32,$"Achievements  —  {unlocked}/{Codex.All.Length} Complete",titleC);
-    if(headerOrnament)GUI.DrawTexture(new Rect(440,76,400,18),headerOrnament,ScaleMode.ScaleToFit);
-    if(dividerLine)GUI.DrawTexture(new Rect(220,96,840,8),dividerLine,ScaleMode.StretchToFill);
+    Text(220,54,840,28,$"Achievements  —  {unlocked}/{Codex.All.Length} Complete",titleC);
+    if(headerOrnament)GUI.DrawTexture(new Rect(440,84,400,12),headerOrnament,ScaleMode.ScaleToFit);
+    if(dividerLine)GUI.DrawTexture(new Rect(220,102,840,6),dividerLine,ScaleMode.StretchToFill);
     else Box(new Rect(220,98,840,2),new Color(Accent.r,Accent.g,Accent.b,.35f));
 
-    Text(220,106,840,20,"Accomplish milestones to earn Gold and Gems for your journey.",smallC);
+    Text(220,112,840,18,"Accomplish milestones to earn Gold and Gems for your journey.",smallC);
 
     int perPage=5;
     int pages=(Codex.All.Length+perPage-1)/perPage;
@@ -1098,27 +1119,27 @@ Panel(390,105,500,68);
      float ry=134+i*90;
 
      Color border=done?new Color(1f,.85f,.35f,.9f):new Color(.35f,.4f,.5f,.6f);
-     BoxOutline(new Rect(220,ry,840,84),new Color(.02f,.05f,.08f,.88f),border,done?2f:1.2f);
+     MenuCard(new Rect(220,ry,840,84),done);
 
      Rect slot=new Rect(228,ry+6,72,72);
      BoxOutline(slot,new Color(.03f,.07f,.12f,.95f),border,1.5f);
-     string icon=done?"★":"☆";
+     Texture2D achievementIcon=done?iconAchievements:iconStar;
      GUI.color=done?new Color(1f,.9f,.35f):new Color(.6f,.65f,.7f);
-     Text(slot.x,slot.y+18,72,36,icon,big);
+     if(achievementIcon)GUI.DrawTexture(new Rect(slot.x+16,slot.y+16,40,40),achievementIcon,ScaleMode.ScaleToFit);
      GUI.color=Color.white;
 
-     Text(312,ry+6,430,20,ach.Title.ToUpper(),small);
+     Text(312,ry+12,430,18,ach.Title.ToUpper(),small);
      GUI.color=new Color(.75f,.8f,.85f);
-     Text(312,ry+26,430,20,ach.Description,tinyC);
+     Text(312,ry+32,430,18,ach.Description,tinyC);
      GUI.color=Color.white;
 
      // Progress bar
      float pct=Mathf.Clamp01((float)cur/Mathf.Max(1,ach.Target));
-     Rect barBg=new Rect(312,ry+52,320,12);
+     Rect barBg=new Rect(312,ry+58,320,10);
      Box(barBg,new Color(.08f,.12f,.18f,.9f));
-     if(pct>0f)Box(new Rect(barBg.x,barBg.y,barBg.width*pct,barBg.height),done?new Color(1f,.85f,.3f):new Color(.38f,.95f,.7f));
+     if(pct>0f)Box(new Rect(barBg.x,barBg.y,barBg.width*pct,barBg.height),done?new Color(1f,.85f,.3f):new Color(.38f,.68f,.94f));
      BoxOutline(barBg,new Color(0,0,0,0),new Color(.3f,.35f,.45f,.6f),1f);
-     Text(642,ry+48,90,18,$"{cur}/{ach.Target}",tinyC);
+     Text(642,ry+54,90,18,$"{cur}/{ach.Target}",tinyC);
 
      // Status / Rewards on right
      if(done){
@@ -1128,7 +1149,7 @@ Panel(390,105,500,68);
       Text(750,ry+30,140,20,"✓ COMPLETED",smallC);
       GUI.color=Color.white;
      }else{
-      string rew=(ach.RewardGold>0?$"{ach.RewardGold}G ":"")+(ach.RewardGems>0?$"{ach.RewardGems}💎":"");
+      string rew=(ach.RewardGold>0?$"{ach.RewardGold} Gold ":"")+(ach.RewardGems>0?$"{ach.RewardGems} Gems":"");
       GUI.color=new Color(.4f,.9f,1f);
       Text(750,ry+30,140,20,rew,smallC);
       GUI.color=Color.white;
@@ -1149,12 +1170,12 @@ Panel(390,105,500,68);
 
    void VaultView(){
     Panel(160,36,960,648);
-    Text(200,44,880,32,"Treasure Vault & Chests",titleC);
-    if(headerOrnament)GUI.DrawTexture(new Rect(440,76,400,18),headerOrnament,ScaleMode.ScaleToFit);
-    if(dividerLine)GUI.DrawTexture(new Rect(200,96,880,8),dividerLine,ScaleMode.StretchToFill);
+    Text(200,54,880,28,"Treasure Vault & Chests",titleC);
+    if(headerOrnament)GUI.DrawTexture(new Rect(440,84,400,12),headerOrnament,ScaleMode.ScaleToFit);
+    if(dividerLine)GUI.DrawTexture(new Rect(200,102,880,6),dividerLine,ScaleMode.StretchToFill);
     else Box(new Rect(200,98,880,2),new Color(Accent.r,Accent.g,Accent.b,.35f));
 
-    Text(200,105,880,20,$"Treasury:  {Save.coins} Gold    •    {Save.gems} Gems    |    Weapons: {Save.weapons.Count}/49    •    Outfits: {Save.skins.Count}/6",smallC);
+    Text(200,112,880,18,$"Treasury:  {Save.coins} Gold    •    {Save.gems} Gems    |    Weapons: {Save.weapons.Count}/{WeaponCatalog.MaxId+1}    •    Outfits: {Save.skins.Count}/6",smallC);
 
     if(showDropRates){
      Rect modal=new Rect(320,130,640,460);
@@ -1197,7 +1218,7 @@ Panel(390,105,500,68);
 
     if(vaultState==VaultState.Revealed&&currentChestReward!=null){
      Rect rev=new Rect(340,130,600,460);
-     Color rBorder=currentChestReward.Rarity==RewardRarity.Epic?new Color(.82f,.45f,1f):currentChestReward.Rarity==RewardRarity.Rare?new Color(1f,.85f,.35f):new Color(.38f,.95f,.7f);
+     Color rBorder=currentChestReward.Rarity==RewardRarity.Epic?new Color(.82f,.45f,1f):currentChestReward.Rarity==RewardRarity.Rare?new Color(1f,.85f,.35f):new Color(.38f,.68f,.94f);
      BoxOutline(rev,new Color(.03f,.06f,.10f,.98f),rBorder,2.5f);
 
      string rarTag=currentChestReward.Rarity==RewardRarity.Epic?"✦ EPIC REWARD ✦":currentChestReward.Rarity==RewardRarity.Rare?"★ RARE REWARD ★":"• COMMON REWARD •";
@@ -1207,6 +1228,7 @@ Panel(390,105,500,68);
 
      Rect iconBox=new Rect(580,182,120,120);
      BoxOutline(iconBox,new Color(.05f,.10f,.16f,.9f),rBorder,1.5f);
+     DrawRareRewardReveal(new Vector2(640,242));
      if(currentChestReward.Type==ChestRewardType.Weapon){
       var wdef=WeaponCatalog.Get(currentChestReward.Weapon);
       var wicon=WeaponIcon(wdef);
@@ -1257,10 +1279,7 @@ Panel(390,105,500,68);
     BoxOutline(c1,new Color(.03f,.07f,.11f,.92f),new Color(.55f,.65f,.75f,.8f),1.5f);
     Text(c1.x+10,c1.y+14,cw-20,24,"NORMAL CHEST",center);
     Text(c1.x+10,c1.y+38,cw-20,18,"Iron & Bronze Cache",tinyC);
-    Rect slot1=new Rect(c1.x+82,c1.y+64,120,90);
-    BoxOutline(slot1,new Color(.05f,.10f,.16f,.9f),new Color(.55f,.65f,.75f,.6f),1.2f);
-    if(iconArsenal)GUI.DrawTexture(new Rect(slot1.x+36,slot1.y+22,48,48),iconArsenal,ScaleMode.ScaleToFit);
-    else Text(slot1.x,slot1.y+26,120,36,"📦",big);
+    DrawVaultChest(c1,chestNormal);
     Text(c1.x+14,c1.y+166,cw-28,20,"• 65% Common Resources",tinyC);
     Text(c1.x+14,c1.y+188,cw-28,20,"• 35% Standard Weapons",tinyC);
     Text(c1.x+14,c1.y+210,cw-28,20,"• Duplicate conversion refunds",tinyC);
@@ -1271,7 +1290,7 @@ Panel(390,105,500,68);
      if(canNorm){ChestSystem.DeductCost(ChestType.Normal,Save);StartOpeningChest(ChestType.Normal);}
      else Sound("power_fail");
     }
-    GUI.color=new Color(.38f,.95f,.7f);
+    GUI.color=new Color(.38f,.68f,.94f);
     if(MenuButton(new Rect(c1.x+22,c1.y+316,cw-44,46),"WATCH AD (FREE)",iconContinue,smallBtn:true,st:smallC)){
      RewardedAdManager.ShowRewardedAd(()=>{StartOpeningChest(ChestType.Normal);});
     }
@@ -1284,9 +1303,7 @@ Panel(390,105,500,68);
     Text(c2.x+10,c2.y+14,cw-20,24,"GOLDEN CHEST",center);
     GUI.color=Color.white;
     Text(c2.x+10,c2.y+38,cw-20,18,"Gilded Sunscar Vault",tinyC);
-    Rect slot2=new Rect(c2.x+82,c2.y+64,120,90);
-    BoxOutline(slot2,new Color(.12f,.09f,.03f,.9f),new Color(1f,.82f,.3f,.8f),1.5f);
-    Text(slot2.x,slot2.y+26,120,36,"⚜",big);
+    DrawVaultChest(c2,chestGolden);
     Text(c2.x+14,c2.y+166,cw-28,20,"• 30% Rich Resources",tinyC);
     Text(c2.x+14,c2.y+188,cw-28,20,"• 50% Standard Weapons",tinyC);
     GUI.color=new Color(1f,.88f,.45f);
@@ -1314,9 +1331,7 @@ Panel(390,105,500,68);
     Text(c3.x+10,c3.y+14,cw-20,24,"EPIC CHEST",center);
     GUI.color=Color.white;
     Text(c3.x+10,c3.y+38,cw-20,18,"Astral Mythic Coffer",tinyC);
-    Rect slot3=new Rect(c3.x+82,c3.y+64,120,90);
-    BoxOutline(slot3,new Color(.14f,.05f,.20f,.9f),new Color(.82f,.45f,1f,.85f),1.5f);
-    Text(slot3.x,slot3.y+26,120,36,"✦",big);
+    DrawVaultChest(c3,chestEpic);
     Text(c3.x+14,c3.y+166,cw-28,20,"• 35% Special-Hold Weapons",tinyC);
     GUI.color=new Color(.88f,.6f,1f);
     Text(c3.x+14,c3.y+188,cw-28,20,"• 15% EPIC CHARACTER OUTFITS",tinyC);
@@ -1333,6 +1348,46 @@ Panel(390,105,500,68);
 
     if(MenuButton(new Rect(200,594,220,44),"PROBABILITIES",smallBtn:true,st:smallC)){showDropRates=true;Sound("power_select");}
     if(MenuButton(new Rect(864,594,220,44),vaultReturn==GameScreen.Paused?"PAUSE":"SANCTUARY",iconBack,smallBtn:true,st:smallC)){showVault=false;Sound("power_select");}
+   }
+
+   void DrawVaultChest(Rect card,Texture2D artwork){
+    // All three tiers share one art area, scale and baseline.
+    Rect artArea=new Rect(card.x+42,card.y+62,200,96);
+    if(artwork)GUI.DrawTexture(artArea,artwork,ScaleMode.ScaleToFit);
+    else if(iconVault)GUI.DrawTexture(artArea,iconVault,ScaleMode.ScaleToFit);
+   }
+
+   // Animate generated artwork in menu coordinates; unscaled time also works while paused.
+   bool HasRareItemReveal()=>currentChestReward!=null&&!currentChestReward.IsDuplicate
+    &&currentChestReward.Type!=ChestRewardType.Resources&&currentChestReward.Rarity>=RewardRarity.Rare;
+   void DrawRareRewardReveal(Vector2 origin){
+    if(!HasRareItemReveal()||!rewardHalo)return;
+    float age=Mathf.Max(0f,Time.unscaledTime-rewardRevealStarted);
+    bool epic=currentChestReward.Rarity==RewardRarity.Epic;
+    float duration=epic?2.8f:2.1f;
+    if(age>=duration)return;
+    float phase=Mathf.Clamp01(age/duration);
+    float fade=Mathf.SmoothStep(0f,1f,age/.16f)*(1f-Mathf.SmoothStep(.55f,1f,phase));
+    Color priorColor=GUI.color;Matrix4x4 priorMatrix=GUI.matrix;
+    Color tint=epic?new Color(.80f,.53f,1f):new Color(1f,.83f,.37f);
+    // Wide, shallow halo keeps the burst clear of the title and reward buttons.
+    float size=Mathf.Lerp(150f,epic?230f:210f,1f-Mathf.Pow(1f-phase,3f));
+    GUI.color=new Color(tint.r,tint.g,tint.b,fade*.95f);
+    GUI.DrawTexture(new Rect(origin.x-size/2,origin.y-64,size,128),rewardHalo,ScaleMode.StretchToFill);
+    if(iconStar){
+     int count=epic?16:10;
+     for(int i=0;i<count;i++){
+      float angle=(i*360f/count+age*(epic?22f:12f))*Mathf.Deg2Rad;
+      float radius=76f+phase*(epic?48f:32f);
+      Vector2 point=origin+new Vector2(Mathf.Cos(angle)*radius,Mathf.Sin(angle)*radius*.47f);
+      float sparkle=(i%3==0?12f:8f)*(1f-phase*.45f);
+      GUI.color=new Color(1f,epic?.8f:.94f,epic?1f:.62f,fade);
+      GUIUtility.RotateAroundPivot(age*45f+i*24f,point);
+      GUI.DrawTexture(new Rect(point.x-sparkle/2,point.y-sparkle/2,sparkle,sparkle),iconStar,ScaleMode.ScaleToFit);
+      GUI.matrix=priorMatrix;
+     }
+    }
+    GUI.matrix=priorMatrix;GUI.color=priorColor;
    }
 
    void StartOpeningChest(ChestType type){
