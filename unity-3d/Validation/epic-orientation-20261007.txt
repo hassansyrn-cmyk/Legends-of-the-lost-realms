@@ -1,0 +1,9 @@
+Epic chest orientation correction — 2026-10-07.
+Edited with built-in imagegen. Epic artwork was the edit target; Golden artwork was the orientation reference.
+Installed: Assets/Resources/UI/Icons/UI_Chest_Epic.png, 768 x 512, transparent alpha. Existing Unity importer/GUID retained. No menu code changed.
+Visual inspection confirms the narrow visible side is now on the right, matching Normal and Golden. The lock, dragon finials, crown and amethyst accents are retained. All tiers continue to use the same shared art area.
+Final Unity Vault capture was performed before publishing Sol-New-Design; visual inspection confirmed the corrected facing direction at the actual menu size. See Temp/opencode/sol-new-design-final-review.log and Validation/MenuReview/vault.png (local generated preview).
+Rollback: Temp/opencode/revert-epic-orientation-20261007.ps1. Backup: Temp/opencode/epic-orientation-20261007-backup/UI_Chest_Epic.png.
+
+Exact prompt:
+Precise-object-edit. Image 1 is the EPIC CHEST EDIT TARGET. Image 2 is an ORIENTATION REFERENCE ONLY, the Golden chest. Correct the Epic chest orientation by mirroring it horizontally so its broad FRONT and its RIGHT SIDE are visible, matching Image2's camera angle and facing direction. The front lock must sit slightly LEFT of image center, and the narrower visible side panel must be on the RIGHT. Preserve the Epic design: amethyst crystal lock, royal-blue enamel, gilded dragon-wing finials, crown-shaped lid, platinum filigree, purple luminous seams, original painted fantasy style. Preserve all decorations and proportions; this is a viewpoint/orientation correction, not a redesign. Keep the chest centered at the same scale, wide landscape3:2 composition, complete feet and finials, actual transparent alpha background. No text, no frame, no floor or scene, no extra objects. Match the Golden chest's downward-to-the-right perspective of horizontal front panel edges.

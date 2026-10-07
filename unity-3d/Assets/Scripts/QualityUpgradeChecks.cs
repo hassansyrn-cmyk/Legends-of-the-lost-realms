@@ -6,9 +6,11 @@ namespace LostRealms {
  public static class QualityUpgradeChecks {
   public static IEnumerator Run(Action<bool,string> check){
    var g=RealmGame.I;
-   var collection=new Progress();for(int id=1;id<=40;id++)if(id!=37)collection.weapons.Add(id);
-   for(int roll=1;roll<=40;roll++)check(WeaponCatalog.DiscoveryDrop(roll,collection)==WeaponId.Maul,"Discovery drop finds remaining weapon: "+roll);
-   collection.weapons.Add(37);check(WeaponCatalog.DiscoveryDrop(40,collection)==WeaponId.SageStaff,"Full collection still gets a valid chapter weapon");
+   var collection=new Progress();for(int id=1;id<=WeaponCatalog.MaxId;id++)if(id!=(int)WeaponId.Maul)collection.weapons.Add(id);
+   for(int roll=1;roll<=WeaponCatalog.MaxId;roll++)check(WeaponCatalog.DiscoveryDrop(roll,collection)==WeaponId.Maul,"Discovery drop finds remaining weapon: "+roll);
+   collection.weapons.Add((int)WeaponId.Maul);
+   check(WeaponCatalog.DiscoveryDrop((int)WeaponId.SageStaff,collection)==WeaponId.SageStaff,"Full collection still gets a valid chapter weapon");
+   check(WeaponCatalog.DiscoveryDrop(WeaponCatalog.MaxId,collection)==WeaponId.FrostHalberd,"Full collection fallback includes the newest weapon");
    g.LoadLevel(1);yield return new WaitForSeconds(.3f);g.Trial.Begin();
    check(RealmTrials.ShrineClear(g.Trial.ShrinePosition,g.World.transform),"Trial shrine has clear activation space");
    var ledge=new GameObject("Regression landing deck");ledge.transform.SetParent(g.World.transform);ledge.transform.position=new Vector3(1000,30,0);

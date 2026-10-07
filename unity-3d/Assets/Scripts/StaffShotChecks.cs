@@ -47,14 +47,14 @@ namespace LostRealms {
     check(blocked.Health==100,"Solid scenery blocks staff element "+element);
    }
    UnityEngine.Object.Destroy(wall);UnityEngine.Object.Destroy(blocked.gameObject);yield return null;
-   foreach(var id in new[]{WeaponId.PureScythe,WeaponId.BrassFangs}){
+   foreach(var id in new[]{WeaponId.PureScythe,WeaponId.OrnateCurvedBlade}){
     g.EquipWeapon(id);ready.SetValue(g.Player,0f);var victim=Target(g.Player.transform.position+Vector3.forward*8);
     attack.Invoke(g.Player,new object[]{true});
     check(victim.Health==100,"Slash charge replaces immediate melee damage");
     check(!UnityEngine.Object.FindAnyObjectByType<StaffShot>(),id+" delays its slash volley until the motion ends");
     yield return new WaitForSeconds(Mathf.Max(0,(float)ready.GetValue(g.Player)-g.Elapsed)*.85f);yield return null;
     var shots=UnityEngine.Object.FindObjectsByType<StaffShot>(FindObjectsSortMode.None);
-    check(shots.Length==(id==WeaponId.BrassFangs?3:1),id+" emits the correct slash count");
+    check(shots.Length==(id==WeaponId.OrnateCurvedBlade?2:1),id+" emits the correct slash count");
     yield return new WaitForSeconds(.08f);Capture(shots,id);
     yield return new WaitForSeconds(.75f);check(victim.Health<100,id+" traveling slashes damage a target");
     UnityEngine.Object.Destroy(victim.gameObject);yield return new WaitForSeconds(.4f);
@@ -68,15 +68,7 @@ namespace LostRealms {
    g.EquipWeapon(WeaponId.WardenPike);ready.SetValue(g.Player,0f);attack.Invoke(g.Player,new object[]{true});
    g.EquipWeapon(WeaponId.Axe);yield return new WaitForSeconds(1.5f);
    check(!UnityEngine.Object.FindAnyObjectByType<StaffShot>(),"Switching weapons cancels an unreleased charged shot");
-   g.EquipWeapon(WeaponId.BrassFangs);g.Player.Visual.Play("idle");yield return new WaitForSeconds(1.5f);
-   var equipped=g.Player.GetComponentInChildren<EquippedWeapon>();var renderer=equipped.GetComponentInChildren<MeshRenderer>();
-   Vector3 localCenter=Vector3.zero,localNormal=Vector3.zero;
-   for(int i=0;i<4;i++){
-    g.Player.transform.rotation=Quaternion.Euler(0,i*90,0);yield return null;yield return null;
-    var c=g.Player.transform.InverseTransformPoint(renderer.bounds.center);var n=g.Player.transform.InverseTransformDirection(renderer.transform.forward);
-    if(i==0){localCenter=c;localNormal=n;}
-    check(Vector3.Distance(c,localCenter)<.02f&&Vector3.Distance(n,localNormal)<.02f,"Brass Fangs keeps its relative resting pose at yaw "+i*90);
-   }
+   yield return NewWeaponPoseChecks.Run(check);
    g.Player.enabled=true;Time.maximumDeltaTime=originalMaximumDelta;
   }
   static void Capture(StaffShot[] shots,WeaponId id){

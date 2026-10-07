@@ -25,6 +25,7 @@ Temp/
 [Tt]emp/
 unity-3d/.utmp/
 unity-3d/Validation/*.log
+unity-3d/Validation/MenuReview/
 
 # dependencies
 node_modules

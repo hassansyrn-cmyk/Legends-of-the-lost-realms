@@ -10,6 +10,19 @@ namespace LostRealms {
   void Update(){var g=RealmGame.I;if(g&&g.Screen==GameScreen.Playing){g.MoveInput=move;g.JumpPressed=jump;jump=false;}}
   void Check(bool okay,string message){if(!okay){Debug.LogError("REALM_TEST_FAILED: "+message);Quit(1);throw new Exception(message);}assertions++;Debug.Log("PASS: "+message);}
   IEnumerator Start(){
+   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-weaponAudit")>=0){
+    yield return null;
+    IEnumerator it=null;
+    try{it=WeaponAudit.Run(Check);}catch(Exception e){Debug.LogError("WEAPON_AUDIT_EXCEPTION "+e);Quit(1);yield break;}
+    while(true){
+     bool more=false;
+     try{more=it.MoveNext();}catch(Exception e){Debug.LogError("WEAPON_AUDIT_STEP_EXCEPTION "+e);Quit(1);yield break;}
+     if(!more)break;
+     yield return it.Current;
+    }
+    Check(runtimeErrors==0,"Weapon audit emits no runtime errors");
+    Debug.Log("WEAPON_AUDIT_PASSED "+assertions);Quit(0);yield break;
+   }
    if(Array.IndexOf(Environment.GetCommandLineArgs(),"-staffFocused")>=0){
     yield return null;yield return StaffShotChecks.Run(Check);
     Check(runtimeErrors==0,"Staff checks emit no runtime errors");
@@ -159,6 +172,34 @@ target.Hit(999,0,true);Check(target.Health==0,"Combat can defeat enemies");
     g.Respawn();g.Resume();g.Player.Energy=40;float e0=g.Player.Energy;yield return new WaitForSeconds(1f);
     Check(g.Player.Energy>e0+14f,"Aether rank boosts energy regen above base 12/s rate");
     string v2=JsonUtility.ToJson(g.Save);Check(v2.Contains("\"version\":2"),"Save payload retains v2 version without changing user preferences in tests");
+    Check(Codex.Entries.Length==22,"Codex defines entries for all 22 enemy kinds");
+    for(int k=0;k<22;k++){Check(!string.IsNullOrEmpty(Codex.Entries[k].Name)&&!string.IsNullOrEmpty(Codex.Entries[k].Habitat)&&!string.IsNullOrEmpty(Codex.Entries[k].Behavior),"Codex entry valid: "+k);Check(Enemy.WeaknessOf(k)>=0&&Enemy.WeaknessOf(k)<=2,"Elemental weakness valid: "+k);}
+    Check(Codex.All.Length==28,"28 achievements defined");
+    Codex.Record(g.Save,0,false);
+    Check(g.Save.bestiary[0]>0&&Codex.Discovered(g.Save)>=1,"Bestiary records enemy defeat");
+    Codex.Unlock(g.Save);
+    Check(Codex.UnlockedCount(g.Save)>=1,"First Blood achievement unlocked on enemy kill");
+    Vector3 hPos=Vector3.zero,hFwd=Vector3.forward;
+    float sFront=SoftLock.Score(hPos,hFwd,new Vector3(0,0,5f),false);
+    float sAngled=SoftLock.Score(hPos,hFwd,new Vector3(2f,0,5f),false);
+    float sBack=SoftLock.Score(hPos,hFwd,new Vector3(0,0,-5f),false);
+    float sSticky=SoftLock.Score(hPos,hFwd,new Vector3(0,0,5f),true);
+    Check(sFront<sAngled&&sBack==float.MaxValue&&sSticky<sFront,"SoftLock scoring prefers forward targets, gives sticky bonus, rejects behind");
+    // Chest system & Ad rewards validation
+    Check(ChestSystem.WorldDrops.Length==4,"Curated 4 standard world drops defined");
+    foreach(var wd in ChestSystem.WorldDrops)Check(WeaponCatalog.Get(wd).Id==wd,"World drop weapon definition exists: "+wd);
+    var dummySave=new Progress{coins=1000,gems=100};
+    Check(ChestSystem.CanOpen(ChestType.Normal,dummySave)&&ChestSystem.CanOpen(ChestType.Golden,dummySave)&&ChestSystem.CanOpen(ChestType.Epic,dummySave),"Chest cost affordability evaluates correctly");
+    var testRng=new System.Random(42);
+    var normReward=ChestSystem.Open(ChestType.Normal,dummySave,testRng);
+    Check(normReward!=null&&normReward.Type!=ChestRewardType.Skin,"Normal chest yields resources or standard weapons, never skins");
+    var epicReward=ChestSystem.Open(ChestType.Epic,dummySave,new System.Random(99));
+    Check(epicReward!=null&&!string.IsNullOrEmpty(epicReward.Title),"Epic chest opens and yields a titled reward");
+    bool adRewardFired=false;
+    RewardedAdManager.ShowRewardedAd(()=>{adRewardFired=true;});
+    Check(RewardedAdManager.IsShowing,"Rewarded ad starts in showing state");
+    RewardedAdManager.Claim();
+    Check(!RewardedAdManager.IsShowing&&adRewardFired,"Claiming rewarded ad fires reward callback and closes overlay");
     float clock=g.Elapsed;g.Pause();yield return new WaitForSeconds(.3f);Check(Mathf.Approximately(clock,g.Elapsed),"Pause stops gameplay time");g.Resume();g.ActivateCheckpoint(g.World.Spawn+Vector3.forward);g.Player.Warp(g.World.Spawn+Vector3.forward*2);g.Respawn();Check(Vector3.Distance(g.Player.transform.position,g.Checkpoint)<.1f,"Respawn restores checkpoint position");
    yield return ArsenalChecks.Run(Check);
    yield return ChapterCleanupChecks.Run(Check);

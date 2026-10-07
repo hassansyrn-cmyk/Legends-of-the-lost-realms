@@ -11,12 +11,13 @@ namespace LostRealms {
    ribbonTexture.Apply();return ribbonTexture;
   }
   public static Material Build(Transform root,Vector3 forward,WeaponId weapon){
-   bool storm=weapon==WeaponId.WardenPike,claw=weapon==WeaponId.BrassFangs;
-   Color color=storm?new Color(.3f,.65f,1f):claw?new Color(1f,.7f,.3f):new Color(.6f,.35f,1f);
+   bool storm=weapon==WeaponId.WardenPike,gale=weapon==WeaponId.OrnateCurvedBlade,voidBlade=weapon==WeaponId.VoidReaper;
+   Color color=gale?new Color(.2f,1f,.8f):storm?new Color(.3f,.65f,1f):voidBlade?new Color(.75f,.3f,1f):new Color(.6f,.35f,1f);
    var material=new Material(Shader.Find("Sprites/Default")){name="Charged weapon ribbon",color=Color.white};
    material.mainTexture=RibbonTexture();
    var pivot=new GameObject("Charged visual").transform;pivot.SetParent(root,false);pivot.rotation=Quaternion.LookRotation(forward);
-   var fx=Vfx.Attach(storm?"mayker_Slash Projectile VFX Eletric":claw?"mayker_Slash VFX":"mayker_Slash Projectile VFX Water",pivot,Vector3.zero,Vector3.one*(claw?.32f:.55f));
+   if(gale)pivot.Rotate(0,0,Vector3.Dot(forward,RealmGame.I.Player.transform.right)<0?-38f:38f,Space.Self);
+   var fx=Vfx.Attach(storm?"mayker_Slash Projectile VFX Eletric":voidBlade?"mayker_Slash VFX":"mayker_Slash Projectile VFX Water",pivot,Vector3.zero,Vector3.one*.55f);
    if(fx){
     // Store demos can contain movement scripts and screen distortion planes.
     foreach(var script in fx.GetComponentsInChildren<MonoBehaviour>(true))if(script&&!(script is VfxKill))script.enabled=false;
@@ -30,7 +31,7 @@ namespace LostRealms {
     line.startColor=line.endColor=layer==0?Color.Lerp(color,Color.white,.8f):new Color(color.r,color.g,color.b,.65f);
     for(int i=0;i<25;i++){
      float t=i/24f;float a=Mathf.Lerp(-1.3f,1.3f,t);
-     Vector3 p=storm?new Vector3(Mathf.Sin(t*36f)*.12f,Mathf.Sin(t*27f)*.08f,(t-.5f)*2f):claw?new Vector3(Mathf.Cos(a)*.32f-.2f,Mathf.Sin(a)*.65f,0):new Vector3(Mathf.Sin(a)*1.15f,Mathf.Cos(a)*.5f-.3f,0);
+     Vector3 p=storm?new Vector3(Mathf.Sin(t*36f)*.12f,Mathf.Sin(t*27f)*.08f,(t-.5f)*2f):new Vector3(Mathf.Sin(a)*1.15f,Mathf.Cos(a)*.5f-.3f,0);
      line.SetPosition(i,p);
     }
    }

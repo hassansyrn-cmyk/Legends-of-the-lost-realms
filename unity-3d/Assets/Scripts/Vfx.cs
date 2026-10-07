@@ -50,12 +50,22 @@ namespace LostRealms {
    foreach(var r in go.GetComponentsInChildren<Renderer>(true)){
     var m=r.sharedMaterial;if(!m)continue;
     var sh=m.shader;string n=sh?sh.name:"";
-    if(n.StartsWith("Sprites/")||n.StartsWith("Unlit/"))continue;
+    if(n.StartsWith("Sprites/")||n.StartsWith("Unlit/")||n.StartsWith("LostRealms/VfxAdditive"))continue;
     Texture tex=m.HasProperty("_MainTex")?m.GetTexture("_MainTex"):(m.HasProperty("_BaseMap")?m.GetTexture("_BaseMap"):null);
-    Color col=m.HasProperty("_Color")?m.GetColor("_Color"):(m.HasProperty("_BaseColor")?m.GetColor("_BaseColor"):Color.white);
+    Color col=m.HasProperty("_TintColor")?m.GetColor("_TintColor"):(m.HasProperty("_Color")?m.GetColor("_Color"):(m.HasProperty("_BaseColor")?m.GetColor("_BaseColor"):Color.white));
+    bool isAdd=n.IndexOf("Additive",System.StringComparison.OrdinalIgnoreCase)>=0||n.IndexOf("Add",System.StringComparison.OrdinalIgnoreCase)>=0||m.name.IndexOf("Additive",System.StringComparison.OrdinalIgnoreCase)>=0||m.name.IndexOf("glow",System.StringComparison.OrdinalIgnoreCase)>=0||m.name.IndexOf("beam",System.StringComparison.OrdinalIgnoreCase)>=0||m.name.IndexOf("flame",System.StringComparison.OrdinalIgnoreCase)>=0||m.name.IndexOf("decal",System.StringComparison.OrdinalIgnoreCase)>=0||m.name.IndexOf("ring",System.StringComparison.OrdinalIgnoreCase)>=0||n.StartsWith("Eric/");
     if(!repairedMaterials.TryGetValue(m,out var nm)||!nm){
-     nm=new Material(Shader.Find("Sprites/Default")){name=n+" -> sprite"};
-     nm.mainTexture=tex;nm.color=col;repairedMaterials[m]=nm;
+     var addShader=Shader.Find("LostRealms/VfxAdditive")??Shader.Find("Mobile/Particles/Additive");
+     if(isAdd&&addShader){
+      nm=new Material(addShader){name=n+" -> additive"};
+      nm.mainTexture=tex;
+      if(nm.HasProperty("_TintColor"))nm.SetColor("_TintColor",col);
+      else nm.color=col;
+     }else{
+      nm=new Material(Shader.Find("Sprites/Default")){name=n+" -> sprite"};
+      nm.mainTexture=tex;nm.color=col;
+     }
+     repairedMaterials[m]=nm;
     }
     r.sharedMaterial=nm;
    }

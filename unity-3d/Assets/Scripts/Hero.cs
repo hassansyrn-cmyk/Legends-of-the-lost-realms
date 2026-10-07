@@ -289,7 +289,8 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
 
     // Small facing assist keeps nearby targets usable with a phone stick.
     // Partial turn only: an instant snap reads as a teleport pop.
-    Enemy closest=null;float nearest=3.5f;foreach(var foe in g.Enemies){if(!foe||foe.Health<=0)continue;Vector3 d=foe.transform.position-transform.position;d.y=0;if(d.magnitude<nearest&&Vector3.Dot(transform.forward,d.normalized)>.35f){closest=foe;nearest=d.magnitude;}}
+    Enemy closest=SoftLock.Assist(this);
+    if(!closest){float nearest=3.5f;foreach(var foe in g.Enemies){if(!foe||foe.Health<=0)continue;Vector3 d=foe.transform.position-transform.position;d.y=0;if(d.magnitude<nearest&&Vector3.Dot(transform.forward,d.normalized)>.35f){closest=foe;nearest=d.magnitude;}}}
     if(closest){Vector3 aim=closest.transform.position-transform.position;aim.y=0;if(aim.sqrMagnitude>.01f)transform.rotation=Quaternion.Slerp(transform.rotation,Quaternion.LookRotation(aim.normalized),.65f);}
     // Forward attack step blended with current momentum (never a teleport
     // pop), softened in air so jump arcs survive the swing.
@@ -328,7 +329,7 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
      DamageTip.Show(transform.position+Vector3.up*2.2f,"CRITICAL RIPOSTE!",new Color(1f,.92f,.25f));
     }
     int staffElement=WeaponCatalog.ChargedShot(weapon.Id);
-    if(charged&&(staffElement>=0||WeaponCatalog.ChargedSlash(weapon.Id))){
+    if(charged&&(staffElement>=0||WeaponCatalog.ChargedSlash(weapon.Id)||WeaponCatalog.HasSpecialHold(weapon.Id))){
      pendingCharge=true;int version=++chargeReleaseVersion;
      // Release before the recovery tail; normalized timing follows weapon playback speed.
      float releaseAt=g.Elapsed+attackDuration*.85f;
@@ -375,8 +376,15 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
      if(g.Elapsed<hitUntil||g.Elapsed<dodgeVisualUntil||g.Elapsed<parryUntil||plunging)break;
      if(g.Elapsed>=releaseAt){
       Vector3 origin=transform.position+Vector3.up*1.05f;
-      if(weapon==WeaponId.BrassFangs){
-       for(int i=-1;i<=1;i++)StaffShot.Fire(origin+transform.right*(i*.38f),Quaternion.AngleAxis(i*4f,Vector3.up)*transform.forward,damage*.45f,2,weapon);
+      if(weapon==WeaponId.GlacierMaul){
+       EarthQuakeSlam.Create(transform.position,transform.forward,damage,1);
+      }else if(weapon==WeaponId.FantasyGreatsword){
+       EarthQuakeSlam.Create(transform.position,transform.forward,damage);
+      }else if(weapon==WeaponId.FierySword){
+       InfernoWave.Fire(origin,transform.forward,damage);
+      }else if(weapon==WeaponId.OrnateCurvedBlade){
+       for(int side=-1;side<=1;side+=2)
+        StaffShot.Fire(origin+transform.right*(side*.10f),Quaternion.AngleAxis(side*4f,Vector3.up)*transform.forward,damage*.7f,2,weapon);
       }else StaffShot.Fire(origin,transform.forward,damage,WeaponCatalog.ChargedSlash(weapon)?2:WeaponCatalog.ChargedShot(weapon),weapon);
       break;
      }
@@ -448,6 +456,7 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
   void ParrySuccess(Vector3 source){
    var g=RealmGame.I;parryUntil=0;parryReady=g.Elapsed+.55f;
    if(g.Trial)g.Trial.PerfectDefense();
+   if(g.Save!=null)g.Save.lifetimeParries++;
    g.HitStop(.14f,.08f);g.CameraRig.Shake=.35f;g.Sound("impact");g.Haptic();
    Energy=Mathf.Min(100,Energy+25+RealmGame.I.Save.tempoRank*5);counterUntil=g.Elapsed+1.8f;
    HitSpark.Burst(transform.position+Vector3.up*.95f,-transform.forward,new Color(1f,.96f,.72f),32);
@@ -475,6 +484,7 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
    if(dodgeRewarded)return;dodgeRewarded=true;
    var g=RealmGame.I;g.HitStop(.1f,.1f);g.CameraRig.Shake=.2f;g.Sound("player_dash");g.Haptic();
    if(g.Trial)g.Trial.PerfectDefense();
+   if(g.Save!=null)g.Save.lifetimeDodges++;
    Energy=Mathf.Min(100,Energy+30);counterUntil=g.Elapsed+1.4f;
    DamageTip.Show(transform.position+Vector3.up*1.95f,"PERFECT DODGE",new Color(.65f,.95f,1f));
   }

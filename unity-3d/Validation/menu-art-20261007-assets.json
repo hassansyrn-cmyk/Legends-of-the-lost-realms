@@ -1,0 +1,212 @@
+[
+  {
+    "Asset": "Buttons/UI_Button_Primary_Normal.png",
+    "Width": 709,
+    "Height": 183,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Buttons/UI_Button_Primary_Highlighted.png",
+    "Width": 724,
+    "Height": 184,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Buttons/UI_Button_Standard_Normal.png",
+    "Width": 702,
+    "Height": 173,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Buttons/UI_Button_Standard_Highlighted.png",
+    "Width": 719,
+    "Height": 173,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 1
+  },
+  {
+    "Asset": "Buttons/UI_Button_Secondary_Small_Normal.png",
+    "Width": 699,
+    "Height": 158,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Buttons/UI_Button_Secondary_Small_Highlighted.png",
+    "Width": 716,
+    "Height": 159,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Frames/UI_Panel_Large_MenuFrame.png",
+    "Width": 1008,
+    "Height": 448,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Frames/UI_Panel_Medium_DialogFrame.png",
+    "Width": 779,
+    "Height": 382,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Frames/UI_ChapterCard_Unlocked.png",
+    "Width": 670,
+    "Height": 378,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Frames/UI_ChapterCard_Locked.png",
+    "Width": 670,
+    "Height": 378,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Frames/UI_ChapterCard_Selected.png",
+    "Width": 672,
+    "Height": 379,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Frames/UI_ChapterCard_Completed.png",
+    "Width": 672,
+    "Height": 379,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Icons/UI_Icon_Arsenal.png",
+    "Width": 257,
+    "Height": 266,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Icons/UI_Icon_Atlas.png",
+    "Width": 296,
+    "Height": 275,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Icons/UI_Icon_Back.png",
+    "Width": 259,
+    "Height": 211,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Icons/UI_Icon_Close.png",
+    "Width": 242,
+    "Height": 245,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Icons/UI_Icon_Coin.png",
+    "Width": 250,
+    "Height": 253,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Icons/UI_Icon_Gem.png",
+    "Width": 252,
+    "Height": 220,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Icons/UI_Icon_Lock.png",
+    "Width": 272,
+    "Height": 260,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Icons/UI_Icon_MainMenu.png",
+    "Width": 286,
+    "Height": 263,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Icons/UI_Icon_NewJourney.png",
+    "Width": 325,
+    "Height": 265,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Icons/UI_Icon_Play_Continue.png",
+    "Width": 198,
+    "Height": 242,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Icons/UI_Icon_Play_Resume.png",
+    "Width": 276,
+    "Height": 286,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Icons/UI_Icon_Restart.png",
+    "Width": 246,
+    "Height": 257,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Icons/UI_Icon_Sanctuary.png",
+    "Width": 294,
+    "Height": 265,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Icons/UI_Icon_Star.png",
+    "Width": 286,
+    "Height": 281,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Icons/UI_Icon_CompletionBadge.png",
+    "Width": 307,
+    "Height": 234,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Frames/UI_Header_Ornament.png",
+    "Width": 1552,
+    "Height": 213,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Frames/UI_Divider_Line.png",
+    "Width": 1492,
+    "Height": 69,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  },
+  {
+    "Asset": "Frames/UI_Resource_Capsule.png",
+    "Width": 1551,
+    "Height": 146,
+    "AlphaPixelFormat": "Format32bppArgb",
+    "CornerAlpha": 0
+  }
+]
