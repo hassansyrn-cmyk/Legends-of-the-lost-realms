@@ -35,7 +35,8 @@ namespace LostRealms {
    // Charge in progress: bulldoze toward the locked direction.
    if(chargeUntil>g.Elapsed){
     Visual.Play("run_fast");
-    transform.position=Clamp(transform.position+chargeDir*7.8f*dt);
+    if(!DeckAhead(chargeDir)){chargeUntil=0;state=State.Recover;timer=1f;return;}
+    MoveBodyTo(Clamp(transform.position+chargeDir*7.8f*dt),7.8f,dt);
     if(distance<1.9f&&!golemHitThisCharge){
       golemHitThisCharge=true;
       if(g.Player.Damage(2+(g.Realm>=2?1:0),transform.position))g.Player.ApplyForce(delta.normalized*8f+Vector3.up*2.5f);

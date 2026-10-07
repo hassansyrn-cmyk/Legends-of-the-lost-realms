@@ -137,7 +137,7 @@ namespace LostRealms {
       if(g.Enemies!=null)foreach(var foe in g.Enemies){
        if(!foe||foe.Health<=0)continue;
        Vector3 fd=foe.transform.position-transform.position;fd.y=0;
-       if(fd.magnitude<1.7f&&!foe.Boss)foe.Hit(4f,0,false,Vector3.down);
+       if(fd.magnitude<1.7f&&!foe.Boss)foe.HitByTrap(4f,0,false,Vector3.down);
       }
      }
      break;
@@ -336,7 +336,7 @@ namespace LostRealms {
       }else if(g.Enemies!=null)foreach(var foe in g.Enemies){
        if(!foe||foe.Health<=0||foe.transform.IsChildOf(transform))continue;
        if(!foe.Boss&&Vector3.Distance(d.go.position,foe.transform.position+Vector3.up*.9f)<.75f){
-        foe.Hit(2f,0,false,d.dir);
+        foe.HitByTrap(2f,0,false,d.dir);
         dead=true;
         Vfx.Play("ga_vfx_Impact_01",next,Quaternion.identity,.7f);
         KenneyPuff.Burst(next,accent,4,.5f);
@@ -403,7 +403,7 @@ namespace LostRealms {
     }
     if(g.Enemies!=null)foreach(var foe in g.Enemies){
      if(!foe||foe.Health<=0)continue;
-     if(!foe.Boss&&Vector3.Distance(rock.position,foe.transform.position+Vector3.up*.9f)<Radius+.5f)foe.Hit(5f,0,false,dir);
+     if(!foe.Boss&&Vector3.Distance(rock.position,foe.transform.position+Vector3.up*.9f)<Radius+.5f)foe.HitByTrap(5f,0,false,dir);
     }
     if(traveled>maxTravel){rolling=false;timer=0;rock.localPosition=start;KenneyPuff.Burst(rock.position+Vector3.down*(Radius-.2f),new Color(.62f,.56f,.46f),8,1f);}
    }

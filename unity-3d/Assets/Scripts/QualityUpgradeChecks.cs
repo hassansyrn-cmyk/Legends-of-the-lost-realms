@@ -18,7 +18,7 @@ namespace LostRealms {
    var fallingEnemy=new GameObject("Regression falling enemy");fallingEnemy.transform.SetParent(g.World.transform);fallingEnemy.transform.position=new Vector3(1000,40,0);
    var falling=fallingEnemy.AddComponent<Enemy>();falling.Configure(0,false,ledge.transform.position,new Vector2(8,8));falling.Stun(5);
    Physics.SyncTransforms();yield return new WaitForSeconds(.2f);
-   check(!falling.GetComponent<Collider>().enabled,"Airborne enemy temporarily disables blocking collision");
+   check(falling.GetComponent<Collider>().enabled&&falling.VerticalVelocity<0,"Airborne enemy retains collision while falling");
    yield return new WaitForSeconds(1.2f);
    check(falling&&falling.Health>0&&falling.GetComponent<Collider>().enabled&&Mathf.Abs(falling.transform.position.y-30)<.1f,"Enemy landing restores blocking collision");
    int cliffKills=g.Kills,trialCount=g.Trial.Count;falling.transform.position=new Vector3(1020,30,0);

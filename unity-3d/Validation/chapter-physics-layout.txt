@@ -1,0 +1,16 @@
+CHAPTER 01 props=188 enemies=9 failures=0
+CHAPTER 02 props=126 enemies=9 failures=0
+CHAPTER 03 props=110 enemies=9 failures=0
+CHAPTER 04 props=65 enemies=6 failures=0
+CHAPTER 05 props=86 enemies=11 failures=0
+CHAPTER 06 props=108 enemies=11 failures=0
+CHAPTER 07 props=46 enemies=6 failures=0
+CHAPTER 08 props=114 enemies=14 failures=0
+CHAPTER 09 props=116 enemies=15 failures=0
+CHAPTER 10 props=66 enemies=8 failures=0
+CHAPTER 11 props=102 enemies=17 failures=0
+CHAPTER 12 props=104 enemies=19 failures=0
+CHAPTER 13 props=120 enemies=20 failures=0
+CHAPTER 14 props=132 enemies=20 failures=0
+CHAPTER 15 props=50 enemies=11 failures=0
+SUMMARY chapters=15 props=1533 overlaps=0 unsupported_or_floating=0 missing_collision=0 blocked_lanes=0 blocked_trap_sweeps=0 failures=0

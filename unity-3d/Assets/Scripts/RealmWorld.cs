@@ -286,17 +286,13 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     // chapter are physically clear â€” oversized prop colliders, crates and any
     // stray box near the spawn get removed so Aster can never be wedged in.
     Physics.SyncTransforms();
-    foreach(var col in Physics.OverlapSphere(Spawn+Vector3.up*.4f,2.1f,~0,QueryTriggerInteraction.Collide)){
-     if(!col)continue;
-     if(col is MeshCollider)continue;                              // island floor visuals
-     if(col.name.StartsWith("Walkable"))continue;                  // island floor slab
-     if(!(col.transform.IsChildOf(transform)))continue;            // world-owned only
-     var propRoot=col.transform.parent&&col.transform.parent.name.StartsWith("Prop ")?col.transform.parent.gameObject:col.gameObject;
-     if(propRoot.name.StartsWith("Prop ")||propRoot.name.StartsWith("Breakable")){
-      Object.Destroy(propRoot);continue;                           // remove the whole prop
+    foreach(var col in Physics.OverlapSphere(Spawn+Vector3.up*.4f,2.1f,~0,QueryTriggerInteraction.Ignore)){
+     Transform root=col.transform;
+     while(root&&root!=transform&&!ChapterLayout.IsProp(root))root=root.parent;
+     if(root&&root!=transform&&ChapterLayout.IsProp(root)){
+      root.gameObject.SetActive(false);Object.Destroy(root.gameObject);
      }
-      col.enabled=false;                                            // stray collider: just defuse it
-     }
+    }
       // Settle pass: snap clear outlier props straight onto the deck, either
       // direction within tolerance. Planted bases and deep pits are untouched.
       RealmProps.SettleProps(transform);
@@ -304,6 +300,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
       // Final arbiter: remove anything deeply overlapping a trap footprint, by
       // real positions (not reservations) â€” backstop for every placement path.
       ResolveOverlaps();
+      ChapterLayout.SettleEnemies(transform);
       ChapterLayout.Clean(transform);
       InteractionClearance.Clear(this,stage);
      }
@@ -930,26 +927,21 @@ void WeaponDrop(Vector3 p,WeaponId id){
    // Spawn validation: irregular island meshes (volcanic calderas, serpentine
    // extensions) can leave an offset point over a hole â€” probe candidates and
    // snap to the first solid surface so no enemy is born over the void.
-   Vector3 spawnP=p;float bestDeckDelta=float.MaxValue;
-   // Island colliders are created this same frame â€” without a sync the
-   // probes below see an empty physics world and every enemy spawns falling.
-   Physics.SyncTransforms();
-   var probes=new Vector3[]{p,center+new Vector3(0,.05f,0),center+new Vector3(-1.2f,.05f,.8f),center+new Vector3(1.2f,.05f,-.8f),center+new Vector3(-.9f,.05f,-1f),center+new Vector3(.9f,.05f,1.1f),center+new Vector3(-2.2f,.05f,0),center+new Vector3(2.2f,.05f,0)};
-   foreach(var c in probes){
-    // Take the topmost upward-facing surface within 12 m below the route deck
-    // (tall cliff meshes put their deck far below the anchor), then prefer the
-    // candidate whose surface sits closest to the deck â€” crater floors lose to
-    // the main deck, so nobody spawns in a pit or over a mesh hole.
-    var hits=Physics.RaycastAll(c+Vector3.up*6f,Vector3.down,20f,~0,QueryTriggerInteraction.Ignore);
-    float bestY=float.NegativeInfinity;
-    foreach(var h in hits){
-     if(h.normal.y<.5f)continue;
-     if(h.point.y>c.y+1.5f||h.point.y<c.y-12f)continue;
-     if(h.point.y>bestY)bestY=h.point.y;
-    }
-    if(bestY>float.NegativeInfinity){
-     float deckDelta=Mathf.Abs(bestY-c.y);
-     if(deckDelta<bestDeckDelta){bestDeckDelta=deckDelta;spawnP=new Vector3(c.x,bestY+.05f,c.z);}
+   Vector3 spawnP=p;float bestScore=float.MaxValue;
+   Physics.SyncTransforms();var island=FindIsland(center);
+   if(island){
+    // Only the real deck can support a spawn; never another foe or a trap roof.
+    for(int x=-6;x<=6;x++)for(int z=-6;z<=6;z++){
+     Vector3 c=p+new Vector3(x*.5f,0,z*.5f);
+     var local=island.transform.InverseTransformPoint(c);
+     if(!RealmProps.TryDeckSurface(island.transform,local.x,local.z,null,out float y))continue;
+     var surface=island.transform.TransformPoint(new Vector3(local.x,y,local.z));
+     if(!ChapterLayout.Supported(island.transform,null,new Bounds(surface,new Vector3(boss?2.3f:1f,.1f,boss?2.3f:1f)),out _))continue;
+     bool occupied=false;
+     foreach(var foe in RealmGame.I.Enemies)if(foe&&Vector3.Distance(foe.transform.position,surface)<(boss?2.5f:1.2f)){occupied=true;break;}
+     if(occupied)continue;
+     float score=(c-p).sqrMagnitude+Mathf.Abs(surface.y-center.y)*4f;
+     if(score<bestScore){bestScore=score;spawnP=surface+Vector3.up*.03f;}
     }
    }
    var go=new GameObject(boss?"Realm guardian":"Realm enemy");go.transform.SetParent(transform);go.transform.position=spawnP;
@@ -1117,6 +1109,16 @@ public class RealmPickup:MonoBehaviour {
   void FixedUpdate(){
    var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
    bool riding=IsPlayerRiding(g.Player);
+   enemyRiders.Clear();
+   foreach(var foe in g.Enemies){
+    if(!foe||foe.Health<=0||foe.VerticalVelocity>1.2f)continue;
+    foreach(var hit in Physics.RaycastAll(foe.transform.position+Vector3.up*.4f,Vector3.down,.65f,~0,QueryTriggerInteraction.Ignore)){
+     if(!hit.transform.IsChildOf(transform)&&hit.transform!=transform)continue;
+     if(foe.Controller&&Physics.GetIgnoreCollision(foe.Controller,hit.collider))continue;
+     float height=foe.transform.position.y-hit.point.y;
+     if(height>=-.1f&&height<=.15f){enemyRiders.Add(foe);break;}
+    }
+   }
    Vector3 prior=transform.position;
    float priorTimer=cycleTimer;
    float totalCycle=Mathf.Max(1f,TravelTime*2f+DwellTime*2f);
@@ -1167,16 +1169,9 @@ public class RealmPickup:MonoBehaviour {
      g.Player.CarryByPlatform(delta);
     }
    }
-   if(g.Enemies!=null){
-    foreach(var foe in g.Enemies){
-     if(!foe||foe.Health<=0)continue;
-     if(Physics.Raycast(foe.transform.position+Vector3.up*.5f,Vector3.down,out var fhit,1.6f,~0,QueryTriggerInteraction.Ignore)&&fhit.transform.IsChildOf(transform)){
-      foe.transform.position+=delta;
-      foe.ShiftCenter(delta);
-     }
-    }
-   }
+   foreach(var foe in enemyRiders)if(foe)foe.CarryByPlatform(delta);
   }
+  readonly System.Collections.Generic.List<Enemy> enemyRiders=new System.Collections.Generic.List<Enemy>();
   bool IsPlayerRiding(Hero player){
    if(!player||!player.Controller)return false;
    if(!player.Grounded&&player.VerticalVelocity>1.2f)return false;

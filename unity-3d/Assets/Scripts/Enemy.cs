@@ -3,7 +3,7 @@ namespace LostRealms {
  public partial class Enemy:MonoBehaviour {
   public int Kind;public bool Boss;public float Health,MaxHealth,Radius;public string DisplayName;public CharacterVisual Visual;
    Vector3 center,target,attackOrigin;Vector2 area;float timer,burnUntil,freezeUntil,burnTick;int phase=1,attackCount;float bossAddAt;enum State{Patrol,Notice,Windup,Attack,Recover,Dead}State state;GameObject warning;float baseY;
-   float fallSpeed;bool falling;Vector3 pushDir;float pushSpeed,pushRemaining;
+   bool falling;Vector3 pushDir;float pushSpeed,pushRemaining;
    public void ShiftCenter(Vector3 delta){center+=delta;baseY+=delta.y;}
    // Attack Token system: at most MaxMeleeTokens melee enemies press the attack
    // at once; the rest hold a ring around the player and strafe instead of
@@ -29,8 +29,7 @@ namespace LostRealms {
     static readonly int[] Weakness={2,1,0,0,1,0,2,2,0,1,0,2,0,1,0,1,0,1,1,0,2,2};
    public static int WeaknessOf(int kind)=>Weakness[Mathf.Clamp(kind,0,21)];
    public int WeakElement=>Weakness[Mathf.Clamp(Kind,0,21)];
-  // Kind 11 (Flyer) hovers: it ignores the ground clamp and bobs in the air.
-  bool aerial;
+  // Winged families use the same grounded collision body as other enemies.
   // Elite affixes (non-boss, stage>=3): 1 Shielded, 2 Burning, 4 Swift, 8 Vampiric, 16 Armored.
   public int Affix;float shield;float speedMul=1f;float comboNext;int comboLeft;bool Ranged=>Kind==7||Kind==13||Kind==17;
    public int BossPhase=>phase;
@@ -42,7 +41,6 @@ namespace LostRealms {
    if(boss&&RealmGame.I.Realm==3)role="LavaBoss";
    Visual=CharacterVisual.Create(role,transform,boss?3.6f:kind==6?2.5f:kind==14?2.2f:kind==15?1.7f:kind==16?1.35f:kind==17?1.85f:kind==18?0.6f:kind==19?1.75f:kind==20?1.4f:1.65f,RealmGame.I.Accent);RealmGame.I.Enemies.Add(this);state=State.Patrol;timer=.5f;target=center;
    if(IsLavaBoss)LavaBossWeapon.Attach(Visual);
-    aerial=kind==11;if(aerial){transform.position+=Vector3.up*2.3f;baseY=transform.position.y;}
     skin=Visual?Visual.GetComponentsInChildren<Renderer>(true):null;
     if(skin!=null&&skin.Length>0)bodyMat=skin[0].material;
     gameObject.AddComponent<EnemyAura>().Setup(Weakness[Mathf.Clamp(kind,0,21)],boss);
@@ -66,59 +64,13 @@ namespace LostRealms {
      if(kind==16&&Visual)gameObject.AddComponent<SkeletonLimbMotion>().Setup(Visual,"upper_arm.L","upper_arm.R",null,null,null,null);
      if(kind==17&&Visual)gameObject.AddComponent<SkeletonLimbMotion>().Setup(Visual,"upper_arm.L","upper_arm.R","wing_upper.L","wing_lower.L","wing_upper.R","wing_lower.R");
      if(kind==18&&Visual)gameObject.AddComponent<SpiderLimbMotion>().Setup(Visual);
-    if(aerial)return;
     // Block Aster: a real (non-trigger) capsule so the CharacterController
     // cannot walk through the enemy. Damage stays manual (no contact damage).
-    var body=gameObject.AddComponent<CapsuleCollider>();
-    body.height=boss?3.6f:kind==6?2.5f:kind==14?2.2f:kind==15?1.7f:kind==16?1.35f:kind==17?1.85f:kind==18?0.6f:kind==19?1.75f:kind==20?1.4f:1.65f;body.radius=boss?1.15f:kind==18?.45f:kind>=14?.75f:.55f;body.center=Vector3.up*(body.height*.5f);
+    BuildBody(boss?3.6f:kind==6?2.5f:kind==14?2.2f:kind==15?1.7f:kind==16?1.35f:kind==17?1.85f:kind==18?.9f:kind==19?1.75f:kind==20?1.4f:1.65f,boss?1.15f:kind==18?.4f:kind>=14?.55f:.5f);
+
    }
    void Update(){var game=RealmGame.I;if(game.Screen!=GameScreen.Playing)return;float dt=Time.deltaTime;
-   if(pushRemaining>0f){
-    float step=Mathf.Min(pushRemaining,dt);
-    Vector3 pushMove=pushDir*(pushSpeed*step);
-    if(Physics.Raycast(transform.position+Vector3.up*.6f,pushDir,out var wallHit,pushMove.magnitude+.35f,~0,QueryTriggerInteraction.Ignore)){
-     if(!wallHit.collider.isTrigger&&wallHit.normal.y<.4f){
-      pushRemaining=0f;
-     }else{
-      transform.position+=pushMove;
-     }
-    }else{
-     transform.position+=pushMove;
-    }
-    pushRemaining-=step;
-   }
-   if(aerial&&state!=State.Dead)transform.position=new Vector3(transform.position.x,baseY+Mathf.Sin(RealmGame.I.Elapsed*1.2f+Kind)*.25f,transform.position.z);
-   else{
-    RaycastHit gHit;
-    bool grounded=Physics.Raycast(transform.position+Vector3.up*.8f,Vector3.down,out gHit,2.6f,~0,QueryTriggerInteraction.Ignore);
-    if(grounded&&state!=State.Dead){
-     var landedBody=GetComponent<Collider>();if(landedBody)landedBody.enabled=true;
-     fallSpeed=0f;falling=false;baseY=gHit.point.y;
-     Vector3 cp=transform.position;
-     if(Mathf.Abs(cp.y-baseY)>0.02f){cp.y=Mathf.MoveTowards(cp.y,baseY,14f*dt);transform.position=cp;}
-    }else if(grounded&&state==State.Dead&&!falling){
-     baseY=gHit.point.y;
-     Vector3 cp=transform.position;
-     if(Mathf.Abs(cp.y-baseY)>0.02f){cp.y=Mathf.MoveTowards(cp.y,baseY,14f*dt);transform.position=cp;}
-    }else{
-     falling=true;fallSpeed+=24f*dt;
-     transform.position+=Vector3.down*(fallSpeed*dt);
-     var col=GetComponent<Collider>();if(col)col.enabled=false;
-     if(transform.position.y<baseY-11f){
-      ReleaseToken();
-      if(warning)Destroy(warning);
-      if(state!=State.Dead){
-       Health=0;state=State.Dead;comboLeft=0;ClearGlow();Visual.Restart("death");
-       if(game.Trial)game.Trial.EnemyDefeated();
-       AshPuff.Burst(transform.position+Vector3.up*.5f,new Color(.36f,.3f,.27f),14,1f,false);
-       game.Coins+=Boss?20:3;game.Kills++;game.Sound("enemy_defeat");
-       CombatFeel.OnEnemyKilled(this);
-      }
-      Destroy(gameObject,0.1f);
-      return;
-     }
-    }
-   }
+   desiredMotion=Vector3.zero;
    if(state==State.Dead||falling)return;
    if(RealmGame.I.Elapsed<burnUntil&&RealmGame.I.Elapsed>=burnTick){burnTick=RealmGame.I.Elapsed+.7f;ApplyDamage(.5f);if(Health<=0)return;}
    if(RealmGame.I.Elapsed<freezeUntil){Visual.Play("idle");return;}
@@ -147,7 +99,7 @@ namespace LostRealms {
       if(advancing)Visual.SetCurrentSpeed(Mathf.Clamp(chase/2.4f,.7f,1.25f));
       if(Ranged){
        // Ranged families keep their distance instead of closing in.
-       if(distance<3.4f){Vector3 away=transform.position-game.Player.transform.position;away.y=0;if(away.sqrMagnitude<.01f)away=-transform.forward;transform.position=Vector3.MoveTowards(transform.position,Clamp(transform.position+away.normalized*2f),chase*dt);}
+       if(distance<3.4f){Vector3 away=transform.position-game.Player.transform.position;away.y=0;if(away.sqrMagnitude<.01f)away=-transform.forward;MoveBodyTo(Clamp(transform.position+away.normalized*2f),chase,dt);}
        else if(distance>3.6f)MoveTo(game.Player.transform.position,chase,dt);
       }else if(!tokened){
        // No token: hold a ~3.1m ring around the player and strafe tangentially
@@ -184,7 +136,7 @@ namespace LostRealms {
    if(Boss){int attack=(attackCount+Kind)%3;
     if(attack==0){StrikeZone.Create(target,2.2f+phase*.3f,2,.05f);if(phase>=2)StrikeZone.Create(target+Vector3.right*3.5f,1.5f,1,.8f);if(phase==3)StrikeZone.Create(target-Vector3.right*3.5f,1.5f,1,1.2f);}
     else if(attack==1){if(phase==3){RealmGame.I.Tell(RealmGame.I.Realm==0?"THORN WHEEL":RealmGame.I.Realm==1?"CINDER NOVA":RealmGame.I.Realm==2?"TEMPEST BURST":"EMBERFALL FLOOD",1.5f);int bolts=10+RealmGame.I.Realm;for(int i=0;i<bolts;i++){float angle=i*360f/bolts;EnemyBolt.Create(transform.position+Vector3.up*1.5f,Quaternion.Euler(0,angle,0)*Vector3.forward,6f,2,true);}}else{for(int i=0;i<phase+1;i++){float angle=(i-phase*.5f)*13;Vector3 dir=Quaternion.Euler(0,angle,0)*(target-transform.position).normalized;EnemyBolt.Create(transform.position+Vector3.up*1.2f,dir,5.5f,2,true);}}}
-    else{Vector3 direction=(target-transform.position).normalized;Vector3 destination=Clamp(transform.position+direction*5);StrikeZone.Create(destination,2,2,.25f);transform.position=destination;}
+    else{Vector3 direction=(target-transform.position).normalized;Vector3 destination=Clamp(transform.position+direction*5);StrikeZone.Create(destination,2,2,.25f);MoveBodyTo(destination,20f,Time.deltaTime);}
    }
    else if(Kind==12){StrikeZone.Create(transform.position,2.7f,2,.05f);KenneyPuff.Burst(transform.position+Vector3.up*.6f,new Color(1f,.45f,.15f),18,1.4f);ApplyDamage(Health);}
    else if(Kind==13){int alive=0;foreach(var e in g.Enemies)if(e&&!e.Boss&&e.Health>0)alive++;if(alive<16){var minion=new GameObject("Summoned minion");minion.transform.SetParent(transform.parent);minion.transform.position=transform.position+transform.forward*1.6f;minion.AddComponent<Enemy>().Configure(RealmGame.I.Level>=7?16:0,false,center,area);Vfx.Play("ga_vfx_Implosion_01",transform.position+Vector3.up*.8f,Quaternion.identity,.9f);}}
@@ -219,15 +171,12 @@ namespace LostRealms {
      Face(p,dt);Vector3 goal=Clamp(p);var player=RealmGame.I.Player;
      if(!Boss&&player){Vector3 axis=player.transform.position-transform.position;axis.y=0;if(axis.sqrMagnitude>.01f){Vector3 perp=Vector3.Cross(axis.normalized,Vector3.up);goal+=perp*Mathf.Sin(Kind*2.3f+RealmGame.I.Elapsed*.5f)*.85f;}}
      if(player){Vector3 d=goal-player.transform.position;d.y=0;float minDist=Mathf.Max(Radius,.5f)+.34f;if(d.sqrMagnitude<minDist*minDist){d=d.sqrMagnitude>.0001f?d.normalized*minDist:Vector3.right*minDist;goal=player.transform.position+d;goal.y=baseY;goal=Clamp(goal);}}
-     Vector3 stepDir=goal-transform.position;stepDir.y=0;
-     if(Boss||Physics.Raycast(transform.position+stepDir.normalized*.6f+Vector3.up*.5f,Vector3.down,1.8f,~0,QueryTriggerInteraction.Ignore)){
-      transform.position=Vector3.MoveTowards(transform.position,goal,speed*dt);
-     }
+     MoveBodyTo(goal,speed,dt);
     }
    Vector3 Clamp(Vector3 p)=>new Vector3(Mathf.Clamp(p.x,center.x-area.x*.5f+Radius+.2f,center.x+area.x*.5f-Radius-.2f),baseY,Mathf.Clamp(p.z,center.z-area.y*.5f+Radius+.2f,center.z+area.y*.5f-Radius-.2f));
    public void PushBack(Vector3 dir,float distance,float duration=0.2f){
     if(Boss)distance*=.45f;
-    pushDir=dir.sqrMagnitude>.001f?dir.normalized:transform.forward;
+    dir.y=0;pushDir=dir.sqrMagnitude>.001f?dir.normalized:transform.forward;
     float currentDist=pushRemaining*pushSpeed;
     float totalDist=Mathf.Max(currentDist,distance);
     float totalDur=Mathf.Max(pushRemaining,duration);
@@ -752,7 +701,7 @@ visual.localPosition=new Vector3(0,Mathf.Sin(t*1.1f)*.02f,0);
    var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!master||master.Health<=0)return;
    if(cooldown>0f){cooldown-=Time.deltaTime;return;}
    if(Vector3.Distance(transform.position,master.transform.position)>14f){
-    transform.position=master.transform.position+(Quaternion.Euler(0,Random.Range(0,360),0)*Vector3.forward*2.5f)+Vector3.up*.2f;
+    var body=GetComponent<Enemy>();if(body&&body.Health>0&&body.Grounded)body.WarpBody(master.transform.position+(Quaternion.Euler(0,Random.Range(0,360),0)*Vector3.forward*2.5f)+Vector3.up*.05f);
     cooldown=.5f;
    }
   }

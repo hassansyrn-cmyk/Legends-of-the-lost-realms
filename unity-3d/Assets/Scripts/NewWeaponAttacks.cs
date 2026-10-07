@@ -219,7 +219,7 @@ namespace LostRealms {
 
     if (dist < 3.8f) {
      if (!enemy.Boss) {
-      enemy.transform.position += toVortex.normalized * Mathf.Min(3.5f * Time.deltaTime, dist);
+      enemy.PushBack(toVortex,Mathf.Min(3.5f*.08f,dist),.08f);
      }
 
      if (canTick && dist < 2.5f) {
