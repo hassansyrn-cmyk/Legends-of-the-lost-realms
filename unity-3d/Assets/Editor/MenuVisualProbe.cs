@@ -9,10 +9,11 @@ namespace LostRealms {
   const string Key="LostRealms.MenuVisualProbe";
   static double next;static int index=-1,waitFrames;static bool waiting;
   static readonly string[] AllViews={"main","atlas","atlas-locked","sanctuary","pause","arsenal","arsenal-page2","arsenal-empty","wardrobe","wardrobe-locked","bestiary","bestiary-page5","achievements","achievements-page6","vault","probabilities","vault-opening","vault-reward","vault-duplicate","complete","complete-final","defeated"};
-  static string[] Views=>SessionState.GetBool(Key+".hud",false)?new[]{"hud-idle","hud-frost","hud-gale","hud-low-health","hud-long-title","hud-boss"}:SessionState.GetBool(Key+".alignment",false)?new[]{"atlas","atlas-locked","vault"}:SessionState.GetBool(Key+".chests",false)?new[]{"atlas","vault","vault-rare","vault-reward","vault-duplicate","vault-common","vault-settled"}:AllViews;
+  static string[] Views=>SessionState.GetBool(Key+".wardrobe",false)?new[]{"wardrobe-preview-0","wardrobe-preview-1","wardrobe-preview-2","wardrobe-preview-3","wardrobe-preview-4","wardrobe-preview-5","wardrobe-closed"}:SessionState.GetBool(Key+".hud",false)?new[]{"hud-idle","hud-frost","hud-gale","hud-low-health","hud-long-title","hud-boss"}:SessionState.GetBool(Key+".alignment",false)?new[]{"atlas","atlas-locked","vault"}:SessionState.GetBool(Key+".chests",false)?new[]{"atlas","vault","vault-rare","vault-reward","vault-duplicate","vault-common","vault-settled"}:AllViews;
   static MenuVisualProbe(){if(SessionState.GetBool(Key,false))EditorApplication.update+=Tick;}
   public static void RunAlignment(){SessionState.SetBool(Key+".alignment",true);Run();}
   public static void RunChests(){SessionState.SetBool(Key+".chests",true);Run();}
+  public static void RunWardrobe(){SessionState.SetBool(Key+".wardrobe",true);Run();}
   public static void RunHUD(){
    // Exercise the unchanged input routing as well as the generated visuals.
    var t=new TouchRouter();
@@ -63,6 +64,14 @@ namespace LostRealms {
    if(EditorApplication.timeSinceStartup<next)return;
    if(waiting){
     if(++waitFrames<12)return;
+    if(Views[index].StartsWith("wardrobe-preview-")){
+     var preview=g.GetComponent<WardrobePreview>();
+     if(!preview||!preview.Frame||preview.Error!=null||preview.IdleTime<=0||preview.Skin!=int.Parse(Views[index].Substring("wardrobe-preview-".Length))||g.Save.equippedSkin!=0){
+      Debug.LogError("WARDROBE_PREVIEW_FAILED "+Views[index]);Finish(6);return;
+     }
+     Debug.Log("WARDROBE_PREVIEW_PASSED "+preview.Skin+" idle="+preview.IdleTime);
+    }
+    if(Views[index]=="wardrobe-closed"&&(g.GetComponent<WardrobePreview>()||GameObject.Find("Wardrobe display stage"))){Debug.LogError("WARDROBE_PREVIEW_CLEANUP_FAILED");Finish(7);return;}
     if(UnityEngine.Screen.width!=1280||UnityEngine.Screen.height!=720){Debug.LogError("MENU_CAPTURE_WRONG_SIZE");Finish(3);return;}
     Debug.Log("MENU_CAPTURE_SIZE "+UnityEngine.Screen.width+"x"+UnityEngine.Screen.height+" "+Views[index]);
     ScreenCapture.CaptureScreenshot(Path.GetFullPath("Validation/MenuReview/"+Views[index]+".png"));
@@ -100,7 +109,12 @@ namespace LostRealms {
    else if(v=="sanctuary")g.Screen=GameScreen.Settings;
    else if(v=="pause")g.Screen=GameScreen.Paused;
    else if(v.StartsWith("arsenal")){g.Screen=GameScreen.Paused;Field(g,"showArsenal",true);Field(g,"arsenalPage",v.EndsWith("2")?1:0);if(v.EndsWith("empty")){g.Save.weapons.Clear();g.Save.equippedWeapon=-1;}}
-   else if(v.StartsWith("wardrobe")){g.Screen=GameScreen.Paused;Field(g,"showSkins",true);if(v.EndsWith("locked"))g.Save.skins=new System.Collections.Generic.List<int>{0};}
+   else if(v=="wardrobe-closed")g.Screen=GameScreen.Map;
+   else if(v.StartsWith("wardrobe")){
+    g.Screen=GameScreen.Paused;Field(g,"showSkins",true);
+    if(v.EndsWith("locked")||v=="wardrobe-preview-5")g.Save.skins=new System.Collections.Generic.List<int>{0};
+    if(v.StartsWith("wardrobe-preview-"))g.SelectWardrobePreview(int.Parse(v.Substring("wardrobe-preview-".Length)));
+   }
    else if(v.StartsWith("bestiary")){g.Screen=GameScreen.Paused;Field(g,"showCodex",true);Field(g,"codexPage",v.EndsWith("5")?4:0);}
    else if(v.StartsWith("achievements")){g.Screen=GameScreen.Paused;Field(g,"showAchievements",true);Field(g,"achievementsPage",v.EndsWith("6")?5:0);}
    else if(v.StartsWith("vault")||v=="probabilities"){

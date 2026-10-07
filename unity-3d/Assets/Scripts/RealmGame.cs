@@ -31,6 +31,7 @@ public static readonly string[] Realms={"VERDANT KINGDOM","BURNING DUNES","FROZE
   public Vector2 MoveInput; public bool JumpPressed,DashPressed,AttackPressed,AttackReleased,CastPressed,ParryPressed,SpellPressed,SpellReleased,GrapplePressed; public bool AttackHeld,SpellHeld,JumpHeld;
   public readonly List<Enemy> Enemies=new List<Enemy>(); public AudioSource Music,Sfx;
   public RealmAudio Audio {get;private set;} public RealmTrials Trial {get;private set;}
+   WardrobePreview wardrobePreview; int wardrobePreviewSkin=-1;
    Transform worldRoot; GUIStyle title,titleC,label,small,button,center,big,smallC,tinyC,btnText; Texture2D hudPanel; Texture2D pixel,circleFill,circleRing,btnBlade,btnJump,btnDodge,btnPower,btnParry,btnSpell,btnPause,joyBase,joyKnob; static readonly Color MenuGold=new Color(.82f,.65f,.32f), MenuBlue=new Color(.38f,.68f,.94f); Font fantasyHeading,fantasyButton,fantasyBody; Texture2D iconWardrobe,iconAchievements,iconBestiary,iconVault,chestNormal,chestGolden,chestEpic,rewardHalo; Texture2D bgMainMenu,avatarAster,btnPrimaryNorm,btnPrimaryHigh,btnStdNorm,btnStdHigh,btnSecNorm,btnSecHigh,panelLarge,panelMedium,cardUnlocked,cardSelected,cardLocked,cardCompleted,headerOrnament,dividerLine,barFrame,barFill,resourceCapsule,iconArsenal,iconAtlas,iconBack,iconClose,iconCoin,iconGem,iconLock,iconMainMenu,iconNewJourney,iconContinue,iconResume,iconRestart,iconSanctuary,iconStar; readonly TouchRouter touch=new TouchRouter(); float yawInput,hitStopUntil,bossIntroUntil,heartbeatNext;bool showArsenal,showSkins,showCodex,showAchievements,showVault;int arsenalPage,skinPage,codexPage,achievementsPage;GameScreen arsenalReturn=GameScreen.Settings,skinReturn=GameScreen.Settings,codexReturn=GameScreen.Settings,achievementsReturn=GameScreen.Settings,vaultReturn=GameScreen.Settings;enum VaultState{Browse,Opening,Revealed};VaultState vaultState=VaultState.Browse;ChestType openingChestType=ChestType.Normal;float vaultAnimTimer=0f,rewardRevealStarted=-100f;ChestReward currentChestReward=null;bool showDropRates=false;readonly System.Collections.Generic.Dictionary<string,Texture2D> iconCache=new System.Collections.Generic.Dictionary<string,Texture2D>();
   public static readonly Color[] ElementColors={new Color(1f,.45f,.1f),new Color(.2f,.85f,1f),new Color(.2f,1f,.55f)};
   static int debugTurretCycle;
@@ -82,6 +83,8 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     Screen=GameScreen.Playing; Tell(Level==1?"WASD / left stick to move. Jump twice to reach the next island.":World.IsBoss?"Break the guardian's corruption. Dodge red warnings, strike during recovery.":Titles[Level-1]+"  /  Follow the golden trail to the realm gate.",6);
   }
   void Update(){
+   if(wardrobePreview&&(!showSkins||showVault||(Screen!=GameScreen.Settings&&Screen!=GameScreen.Paused))){Destroy(wardrobePreview);wardrobePreview=null;wardrobePreviewSkin=-1;}
+
    JumpPressed=DashPressed=AttackPressed=AttackReleased=CastPressed=ParryPressed=SpellPressed=SpellReleased=GrapplePressed=false; MoveInput=Vector2.zero; yawInput=0;
    if(hitStopUntil>0f&&Time.unscaledTime>=hitStopUntil){hitStopUntil=0f;Time.timeScale=1f;}
    RewardedAdManager.Update(Time.unscaledDeltaTime);
@@ -431,6 +434,11 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    GUI.Label(content,caption,FitText(style,content,caption));
    return GUI.Button(r,GUIContent.none,GUIStyle.none);
   }
+  public void SelectWardrobePreview(int id){
+   wardrobePreviewSkin=Mathf.Clamp(id,0,SkinCatalog.Count-1);
+   if(!wardrobePreview)wardrobePreview=gameObject.AddComponent<WardrobePreview>();
+   wardrobePreview.Show(SkinCatalog.Get(wardrobePreviewSkin));
+  }
   void OnGUI(){
    LoadButtonTextures();
    // Only the in-game HUD needs a live Player; menus must draw and respond even
@@ -438,7 +446,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    if(Screen==GameScreen.Playing&&!Player)return;
    Styles();
    GUI.matrix=Matrix4x4.TRS(Vector3.zero,Quaternion.identity,new Vector3(UnityEngine.Screen.width/1280f,UnityEngine.Screen.height/720f,1));
-   if(showSkins&&(Screen==GameScreen.Settings||Screen==GameScreen.Paused)){WardrobeView();return;}
+   if(showSkins&&!showVault&&(Screen==GameScreen.Settings||Screen==GameScreen.Paused)){WardrobeView();return;}
    if(showArsenal&&(Screen==GameScreen.Settings||Screen==GameScreen.Paused)){ArsenalView();return;}
    if(showCodex&&(Screen==GameScreen.Settings||Screen==GameScreen.Paused)){BestiaryView();if(RewardedAdManager.IsShowing)RewardedAdManager.DrawGUI(pixel,titleC,smallC,btnText);return;}
    if(showVault&&(Screen==GameScreen.Settings||Screen==GameScreen.Paused)){VaultView();if(RewardedAdManager.IsShowing)RewardedAdManager.DrawGUI(pixel,titleC,smallC,btnText);return;}
@@ -771,64 +779,50 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    }
 
    void WardrobeView(){
+    if(wardrobePreviewSkin<0)SelectWardrobePreview(Save.equippedSkin);
     Panel(170,32,940,656);
     Text(210,50,860,28,"Wardrobe & Outfits",titleC);
     if(headerOrnament)GUI.DrawTexture(new Rect(440,82,400,12),headerOrnament,ScaleMode.ScaleToFit);
     if(dividerLine)GUI.DrawTexture(new Rect(210,95,860,8),dividerLine,ScaleMode.StretchToFill);
-    else Box(new Rect(210,98,860,2),new Color(Accent.r,Accent.g,Accent.b,.35f));
-
-    Text(210,105,860,20,$"Available:  {Save.coins} Gold   •   {Save.gems} Gems    |    Equipped: {CurrentSkin.Name.ToUpper()}",smallC);
+    Text(210,105,860,20,$"Available: {Save.coins} Gold  •  {Save.gems} Gems    |    Tap an outfit to preview",smallC);
 
     for(int i=0;i<SkinCatalog.Count;i++){
      var def=SkinCatalog.Get(i);
-     bool owned=Save.skins!=null&&Save.skins.Contains(i);
-     bool eq=Save.equippedSkin==i;
+     bool owned=Save.skins!=null&&Save.skins.Contains(i),eq=Save.equippedSkin==i,selected=wardrobePreviewSkin==i;
      float ry=128+i*81;
-
-     Color border=eq?new Color(1f,.85f,.35f):owned?new Color(.38f,.68f,.94f,.7f):new Color(.35f,.4f,.5f,.5f);
-     MenuCard(new Rect(210,ry,860,76),eq);
-
-     Rect slot=new Rect(218,ry+4,68,68);
-     BoxOutline(slot,new Color(.03f,.07f,.12f,.95f),border,1.5f);
-     var portrait=SkinPortrait(def);
-     if(portrait){
-      GUI.color=Color.white;
-      GUI.DrawTexture(new Rect(slot.x+2,slot.y+2,slot.width-4,slot.height-4),portrait,ScaleMode.ScaleToFit,true);
-     }else{
-      string initial=string.IsNullOrEmpty(def.Name)?"?":def.Name.Substring(0,1);
-      Text(slot.x,slot.y+15,68,36,initial,big);
+     MenuCard(new Rect(210,ry,600,76),selected);
+     // Preview selection is independent of equipping or spending currency.
+     if(GUI.Button(new Rect(218,ry+4,394,68),GUIContent.none,GUIStyle.none)){
+      SelectWardrobePreview(i);Sound("power_select");
      }
-
-     GUI.color=eq?new Color(1f,.92f,.45f):Color.white;
-     Text(298,ry+10,486,18,$"{def.Name.ToUpper()}  —  {def.Title}",small);
-     GUI.color=Color.white;
-
-     GUI.color=new Color(.38f,.68f,.94f);
-     Text(298,ry+29,486,18,def.StatSummary,tinyC);
-     GUI.color=Color.white;
-
-     Text(298,ry+45,486,30,def.Description,tinyC);
-
-     if(eq){
-      GUI.color=new Color(1f,.9f,.35f);
-      Box(new Rect(792,ry+16,166,42),new Color(.25f,.20f,.05f,.8f));
-      BoxOutline(new Rect(792,ry+16,166,42),new Color(0,0,0,0),new Color(1f,.85f,.35f),1.5f);
-      Text(792,ry+26,166,20,"✓ EQUIPPED",smallC);
-      GUI.color=Color.white;
-     }else if(owned){
-      if(MenuButton(new Rect(792,ry+16,166,42),"EQUIP",smallBtn:true,st:smallC)){
-       EquipSkin(def.Id);
+     Rect slot=new Rect(218,ry+4,68,68);
+     BoxOutline(slot,new Color(.03f,.07f,.12f,.95f),selected?MenuGold:MenuBlue,1f);
+     var portrait=SkinPortrait(def);
+     if(portrait)GUI.DrawTexture(new Rect(slot.x+2,slot.y+2,64,64),portrait,ScaleMode.ScaleToFit,true);
+     Text(298,ry+10,310,22,def.Name.ToUpper(),small);
+     Text(298,ry+36,310,28,def.Title,tinyC);
+     if(eq){Text(626,ry+26,164,24,"EQUIPPED",smallC);}
+     else if(owned){
+      if(MenuButton(new Rect(626,ry+14,164,48),"EQUIP",smallBtn:true,st:smallC)){
+       SelectWardrobePreview(i);EquipSkin(def.Id);
       }
-     }else{
-      GUI.color=new Color(.82f,.45f,1f);
-      if(MenuButton(new Rect(792,ry+16,166,42),"EPIC CHEST",smallBtn:true,st:tinyC)){
-       showVault=true;vaultState=VaultState.Browse;vaultReturn=skinReturn;Sound("power_select");
-      }
-      GUI.color=Color.white;
+     }else if(MenuButton(new Rect(626,ry+14,164,48),"EPIC CHEST",smallBtn:true,st:tinyC)){
+      showVault=true;vaultState=VaultState.Browse;vaultReturn=skinReturn;Sound("power_select");
      }
     }
 
-    if(MenuButton(new Rect(500,620,280,44),skinReturn==GameScreen.Paused?"BACK TO PAUSE":"BACK TO SANCTUARY",iconBack,smallBtn:true,st:smallC)){
+    var previewDef=SkinCatalog.Get(wardrobePreviewSkin);
+    bool previewOwned=Save.skins!=null&&Save.skins.Contains(wardrobePreviewSkin);
+    MenuCard(new Rect(826,128,244,480));
+    Text(840,140,216,32,previewDef.Name,smallC);
+    if(wardrobePreview&&wardrobePreview.Frame&&string.IsNullOrEmpty(wardrobePreview.Error))
+     GUI.DrawTexture(new Rect(842,174,212,318),wardrobePreview.Frame,ScaleMode.ScaleToFit,true);
+    else Text(842,264,212,40,wardrobePreview?wardrobePreview.Error:"Loading preview",smallC);
+    Text(840,494,216,20,Save.equippedSkin==wardrobePreviewSkin?"EQUIPPED":previewOwned?"OUTFIT PREVIEW":"LOCKED OUTFIT PREVIEW",tinyC);
+    Text(840,524,216,70,previewDef.StatSummary,tinyC);
+    // Full outfit details remain available without compressing the list rows.
+    Text(210,616,600,48,previewDef.Description,tinyC);
+    if(MenuButton(new Rect(826,620,244,44),skinReturn==GameScreen.Paused?"BACK TO PAUSE":"BACK TO SANCTUARY",iconBack,smallBtn:true,st:smallC)){
      showSkins=false;Sound("power_select");
     }
    }

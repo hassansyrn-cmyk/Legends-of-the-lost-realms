@@ -1,0 +1,11 @@
+# Wardrobe 3D idle preview
+
+The Wardrobe places a live 3D model beside the outfit list. Tap a row or portrait to preview any outfit, including locked outfits; only the existing Equip action changes the equipped skin. Outfit stats, description and ownership status follow the preview selection. The current portrait resources remain unchanged.
+
+`WardrobePreview` instantiates existing character prefabs and uses their existing materials and the generated `Animations/Aster/idle` clip. It uses an independent manually evaluated animation graph with unscaled time, so the idle pose animates while gameplay is paused. A dedicated camera, two lights and a 384x576 render target display the model. The display occupies a distant stage on layer 31, has no Hero component or active colliders, and does not participate in gameplay. It is destroyed, with its animation graph and render target, when leaving Wardrobe or opening the chest vault.
+
+No changes to Aster's generated animation files, model imports, animation baker, gameplay animation code or movement tuning. The existing blue/gold artwork and fantasy fonts frame the preview and list.
+
+Validation: runtime and editor compilation passed; all six source regression guards passed. Final Unity play-mode run logged `WARDROBE_PREVIEW_PASSED` for all six outfits and `MENU_VISUAL_REVIEW_CAPTURED 7`. Checks cover locked outfit preview, idle playback at timeScale=0, unchanged equippedSkin during preview, and cleanup on leaving the menu. All six final screenshots were visually inspected: full bodies fit the preview, labels and stats stay inside frames, and no text-overflow or exception diagnostics were logged. Screenshots are in `Validation/MenuReview/wardrobe-preview-0.png` through `wardrobe-preview-5.png`, plus `wardrobe-closed.png`. Capture runner: `LostRealms.MenuVisualProbe.RunWardrobe` with `-menuVisualProbe` (test mode prevents saving progress).
+
+Local rollback backup: `Temp/opencode/wardrobe-preview-20261007-backup`. Restore with `Temp/opencode/revert-wardrobe-preview-20261007.ps1`. This restores only the preceding Wardrobe and probe files and removes the preview component files, retaining the approved HUD, axe and ladder changes. This feature is included as a separate commit on `Sol-New-Design` for straightforward rollback.
