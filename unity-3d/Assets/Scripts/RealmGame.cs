@@ -31,7 +31,7 @@ public static readonly string[] Realms={"VERDANT KINGDOM","BURNING DUNES","FROZE
   public Vector2 MoveInput; public bool JumpPressed,DashPressed,AttackPressed,AttackReleased,CastPressed,ParryPressed,SpellPressed,SpellReleased,GrapplePressed; public bool AttackHeld,SpellHeld,JumpHeld;
   public readonly List<Enemy> Enemies=new List<Enemy>(); public AudioSource Music,Sfx;
   public RealmAudio Audio {get;private set;} public RealmTrials Trial {get;private set;}
-   Transform worldRoot; GUIStyle title,titleC,label,small,button,center,big,smallC,tinyC,btnText; Texture2D pixel,circleFill,circleRing,btnBlade,btnJump,btnDodge,btnPower,btnParry,btnSpell,btnPause,joyBase,joyKnob; static readonly Color MenuGold=new Color(.82f,.65f,.32f), MenuBlue=new Color(.38f,.68f,.94f); Font fantasyHeading,fantasyButton,fantasyBody; Texture2D iconWardrobe,iconAchievements,iconBestiary,iconVault,chestNormal,chestGolden,chestEpic,rewardHalo; Texture2D bgMainMenu,avatarAster,btnPrimaryNorm,btnPrimaryHigh,btnStdNorm,btnStdHigh,btnSecNorm,btnSecHigh,panelLarge,panelMedium,cardUnlocked,cardSelected,cardLocked,cardCompleted,headerOrnament,dividerLine,barFrame,barFill,resourceCapsule,iconArsenal,iconAtlas,iconBack,iconClose,iconCoin,iconGem,iconLock,iconMainMenu,iconNewJourney,iconContinue,iconResume,iconRestart,iconSanctuary,iconStar; readonly TouchRouter touch=new TouchRouter(); float yawInput,hitStopUntil,bossIntroUntil,heartbeatNext;bool showArsenal,showSkins,showCodex,showAchievements,showVault;int arsenalPage,skinPage,codexPage,achievementsPage;GameScreen arsenalReturn=GameScreen.Settings,skinReturn=GameScreen.Settings,codexReturn=GameScreen.Settings,achievementsReturn=GameScreen.Settings,vaultReturn=GameScreen.Settings;enum VaultState{Browse,Opening,Revealed};VaultState vaultState=VaultState.Browse;ChestType openingChestType=ChestType.Normal;float vaultAnimTimer=0f,rewardRevealStarted=-100f;ChestReward currentChestReward=null;bool showDropRates=false;readonly System.Collections.Generic.Dictionary<string,Texture2D> iconCache=new System.Collections.Generic.Dictionary<string,Texture2D>();
+   Transform worldRoot; GUIStyle title,titleC,label,small,button,center,big,smallC,tinyC,btnText; Texture2D hudPanel; Texture2D pixel,circleFill,circleRing,btnBlade,btnJump,btnDodge,btnPower,btnParry,btnSpell,btnPause,joyBase,joyKnob; static readonly Color MenuGold=new Color(.82f,.65f,.32f), MenuBlue=new Color(.38f,.68f,.94f); Font fantasyHeading,fantasyButton,fantasyBody; Texture2D iconWardrobe,iconAchievements,iconBestiary,iconVault,chestNormal,chestGolden,chestEpic,rewardHalo; Texture2D bgMainMenu,avatarAster,btnPrimaryNorm,btnPrimaryHigh,btnStdNorm,btnStdHigh,btnSecNorm,btnSecHigh,panelLarge,panelMedium,cardUnlocked,cardSelected,cardLocked,cardCompleted,headerOrnament,dividerLine,barFrame,barFill,resourceCapsule,iconArsenal,iconAtlas,iconBack,iconClose,iconCoin,iconGem,iconLock,iconMainMenu,iconNewJourney,iconContinue,iconResume,iconRestart,iconSanctuary,iconStar; readonly TouchRouter touch=new TouchRouter(); float yawInput,hitStopUntil,bossIntroUntil,heartbeatNext;bool showArsenal,showSkins,showCodex,showAchievements,showVault;int arsenalPage,skinPage,codexPage,achievementsPage;GameScreen arsenalReturn=GameScreen.Settings,skinReturn=GameScreen.Settings,codexReturn=GameScreen.Settings,achievementsReturn=GameScreen.Settings,vaultReturn=GameScreen.Settings;enum VaultState{Browse,Opening,Revealed};VaultState vaultState=VaultState.Browse;ChestType openingChestType=ChestType.Normal;float vaultAnimTimer=0f,rewardRevealStarted=-100f;ChestReward currentChestReward=null;bool showDropRates=false;readonly System.Collections.Generic.Dictionary<string,Texture2D> iconCache=new System.Collections.Generic.Dictionary<string,Texture2D>();
   public static readonly Color[] ElementColors={new Color(1f,.45f,.1f),new Color(.2f,.85f,1f),new Color(.2f,1f,.55f)};
   static int debugTurretCycle;
   [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Boot(){
@@ -272,6 +272,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
   }
   Texture2D LoadButtonTex(string name) => LoadUITex("Buttons", name);
   void LoadUITextures(){
+   if(!hudPanel)hudPanel=LoadUITex("Frames","UI_HUD_Panel");
    if(!iconWardrobe)iconWardrobe=LoadUITex("Icons","UI_Icon_Wardrobe");
    if(!iconAchievements)iconAchievements=LoadUITex("Icons","UI_Icon_Achievements");
    if(!iconBestiary)iconBestiary=LoadUITex("Icons","UI_Icon_Bestiary");
@@ -411,8 +412,24 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
   }
   void Panel(float x,float y,float w,float h){
    Rect r=new Rect(x,y,w,h);
+   if(Screen==GameScreen.Playing&&hudPanel){GUI.color=Color.white;ImageFrame(r,hudPanel,8f);return;}
    if(Screen!=GameScreen.Playing&&w>400&&h>150&&panelLarge){GUI.color=Color.white;ImageFrame(r,w<700?panelMedium:panelLarge,20f);return;}
    BoxOutline(r,new Color(.028f,.06f,.09f,.86f),Screen==GameScreen.Playing?Accent:MenuGold,1.5f);
+  }
+  // Values stay live; the generated panel provides the frame, never baked text.
+  void HudMeter(Rect r,float fraction,Color fill,float lag=0f){
+   ImageFrame(r,hudPanel,4f);
+   Rect inner=new Rect(r.x+4,r.y+4,r.width-8,r.height-8);
+   if(lag>fraction)Box(new Rect(inner.x,inner.y,inner.width*Mathf.Clamp01(lag),inner.height),new Color(1f,.64f,.3f,.8f));
+   Box(new Rect(inner.x,inner.y,inner.width*Mathf.Clamp01(fraction),inner.height),fill);
+  }
+  bool HudButton(Rect r,string caption){
+   GUI.color=r.Contains(Event.current.mousePosition)?new Color(1f,1f,1f,.85f):Color.white;
+   ImageFrame(r,hudPanel,8f);GUI.color=Color.white;
+   var style=new GUIStyle(center){font=fantasyButton,fontSize=16,wordWrap=false};
+   Rect content=new Rect(r.x+12,r.y+10,r.width-24,r.height-20);
+   GUI.Label(content,caption,FitText(style,content,caption));
+   return GUI.Button(r,GUIContent.none,GUIStyle.none);
   }
   void OnGUI(){
    LoadButtonTextures();
@@ -432,34 +449,19 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     if(avatarAster){
      Box(new Rect(32,28,74,74),new Color(.02f,.06f,.09f,.92f));
      GUI.DrawTexture(new Rect(33,29,72,72),avatarAster,ScaleMode.ScaleToFit);
-     BoxOutline(new Rect(32,28,74,74),Color.clear,Accent*.85f,1.5f);
+     BoxOutline(new Rect(32,28,74,74),Color.clear,MenuGold,1f);
     }
     float textX=avatarAster?114:42;
-    Text(textX,28,320,22,$"REALM {Realm+1}  /  {Realms[Realm]}",small);
-    Text(textX,50,320,30,Titles[Level-1]);
+    Text(textX,30,276,20,$"REALM {Realm+1}  /  {Realms[Realm]}",small);
+    Text(textX,51,276,25,Titles[Level-1]);
 
     float targetH=Player?Mathf.Clamp01((float)Player.Health/Player.MaxHealth):1f;
     healthLag=Mathf.Lerp(healthLag,targetH,Time.unscaledDeltaTime*3.5f);
-    if(barFrame&&barFill){
-     Rect fr=new Rect(textX,78,200,24);
-     GUI.DrawTexture(fr,barFrame,ScaleMode.StretchToFill);
-     float fx=textX+16f,fy=81f,fw=168f,fh=18f;
-     if(healthLag>targetH){
-      GUI.color=new Color(1f,.7f,.3f,.8f);
-      GUI.DrawTexture(new Rect(fx,fy,fw*healthLag,fh),barFill,ScaleMode.StretchToFill);
-     }
-     GUI.color=new Color(.95f,.18f,.18f);
-     GUI.DrawTexture(new Rect(fx,fy,fw*targetH,fh),barFill,ScaleMode.StretchToFill);
-     GUI.color=Color.white;
-    }else{
-     BoxOutline(new Rect(textX,80,200,20),new Color(.12f,.18f,.22f),new Color(.28f,.38f,.45f),1f);
-     if(healthLag>targetH)Box(new Rect(textX+1,81,198*healthLag,18),new Color(1f,.65f,.35f,.75f));
-     Box(new Rect(textX+1,81,198*targetH,18),new Color(.95f,.2f,.2f));
-    }
-    Text(textX+208,78,80,24,$"HP {(Player?Player.Health:8)}/{(Player?Player.MaxHealth:8)}",tinyC);
+    HudMeter(new Rect(textX,82,200,16),targetH,new Color(.85f,.18f,.22f),healthLag);
+    Text(textX+208,80,68,20,$"HP {(Player?Player.Health:8)}/{(Player?Player.MaxHealth:8)}",tinyC);
     Text(textX,106,280,20,$"WEAPON  {CurrentWeapon.Name}",small);
     if(Player&&Player.CounterReady)Text(textX,124,280,18,"COUNTER READY  /  STRIKE NOW",tinyC);
-    if(Combo>=3){BoxOutline(new Rect(textX,146,140,24),new Color(.05f,.09f,.12f,.85f),new Color(1f,.78f,.3f),1f);Text(textX+10,149,122,18,$"COMBO  x{Combo}",small);}
+    if(Combo>=3){Panel(textX,172,140,28);Text(textX+10,177,122,18,$"COMBO  x{Combo}",small);}
 
     // Collectibles + gate progress panel
     Panel(418,20,230,94);
@@ -477,57 +479,22 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     // Power Selector & Energy Bar
     string[] powerNames={"EMBER [FIRE]","FROST [ICE]","GALE [WIND]"};
     Color[] powerCols={new Color(1f,.22f,.18f),new Color(.2f,.85f,1f),new Color(.2f,1f,.55f)};
-    if(MenuButton(new Rect(660,20,205,48),powerNames[Player.Power],iconArsenal,smallBtn:true)){Player.Power=(Player.Power+1)%3;Sound("power_select");}
+    if(HudButton(new Rect(660,20,205,48),powerNames[Player.Power])){Player.Power=(Player.Power+1)%3;Sound("power_select");}
     Text(660,70,205,16,"AETHER",tinyC);
     float enFrac=Mathf.Clamp01(Player.Energy/100f);
-    if(barFrame&&barFill){
-     Rect afr=new Rect(660,86,205,18);
-     GUI.DrawTexture(afr,barFrame,ScaleMode.StretchToFill);
-     float afx=660+16f,afy=88f,afw=173f,afh=14f;
-     GUI.color=powerCols[Player.Power];
-     GUI.DrawTexture(new Rect(afx,afy,afw*enFrac,afh),barFill,ScaleMode.StretchToFill);
-     GUI.color=Color.white;
-    }else{
-     BoxOutline(new Rect(660,86,205,8),new Color(.1f,.15f,.2f),powerCols[Player.Power]*.5f,1f);
-     Box(new Rect(661,87,203*enFrac,6),powerCols[Player.Power]);
-    }
+    HudMeter(new Rect(660,88,205,14),enFrac,powerCols[Player.Power]);
 
-    // Timer and Pause Button
-    Panel(882,20,135,50);Text(898,32,105,28,$"TIME {Clock(Elapsed)}",small);
-    if(btnPause){
-     Rect pr=new Rect(1035,19,120,52);
-     bool hover=pr.Contains(Event.current.mousePosition);
-     GUI.color=hover?new Color(1.15f,1.15f,1.15f,1f):Color.white;
-     GUI.DrawTexture(pr,btnPause,ScaleMode.ScaleToFit);
-     GUI.color=Color.white;
-     if(GUI.Button(pr,GUIContent.none,GUIStyle.none))Pause();
-    }else if(Button(1035,20,120,50,"PAUSE"))Pause();
-
-    // Route compass: points at the next island, or the gate once past the last.
-    {
-     Vector3 pos=Player.transform.position;Vector3 tgt=pos;bool found=false;float bestZ=float.MaxValue;
-     foreach(var node in World.Route){float dz=node.z-pos.z;if(dz>1f&&dz<bestZ){bestZ=dz;tgt=node;found=true;}}
-     if(!found)tgt=new Vector3(0,pos.y,World.EndZ);
-     Vector3 to=tgt-pos;to.y=0;float cd=to.magnitude;
-     Vector3 fwd=Player.transform.forward;fwd.y=0;
-     float ang=to.sqrMagnitude>.01f?Vector3.SignedAngle(fwd.normalized,to.normalized,Vector3.up):0f;
-     float cx=500,cw=280;
-     Panel(cx-8,532,cw+16,30);
-     Box(new Rect(cx,545,cw,6),new Color(.1f,.16f,.2f,.9f));
-     Box(new Rect(cx+cw*.5f-1,540,2,16),new Color(.35f,.45f,.5f,.9f));
-     float mx=cx+cw*.5f+Mathf.Clamp(ang/90f,-1f,1f)*cw*.5f;
-     Box(new Rect(mx-3,541,6,14),Accent);
-     Text(cx+8,512,cw,20,$"{(int)cd}m to {(found?"next isle":"realm gate")}",small);
-    }
+    // Live timer and clickable pause use the same minimal panel artwork.
+    Panel(882,20,135,48);Text(894,30,111,28,$"TIME {Clock(Elapsed)}",smallC);
+    if(HudButton(new Rect(1035,20,120,48),"PAUSE"))Pause();
 
      foreach(var foe in Enemies){if(!foe||foe.Boss||foe.Health<=0||Vector3.Distance(Player.transform.position,foe.transform.position)>12)continue;Vector3 v=Camera.main.WorldToViewportPoint(foe.transform.position+Vector3.up*(foe.Kind==6?2.9f:2.1f));float x=v.x*1280,y=(1-v.y)*720;if(v.z<=0||y<175||y>540||x<45||x>1235)continue;Box(new Rect(x-34,y,68,7),new Color(.03f,.07f,.08f,.85f));Box(new Rect(x-40,y,5,7),ElementColors[foe.WeakElement]);Box(new Rect(x-33,y+1,66*Mathf.Clamp01(foe.Health/foe.MaxHealth),5),ElementColors[foe.WeakElement]);}
     // Boss Bar
     var boss=Enemies.Find(x=>x&&x.Boss&&x.Health>0);
     if(boss&&Vector3.Distance(Player.transform.position,boss.transform.position)<32){
-Panel(390,105,500,68);
-      Text(410,112,470,26,boss.DisplayName+"   PHASE "+boss.BossPhase+"/3",small);
-     BoxOutline(new Rect(410,144,460,14),new Color(.25f,.12f,.15f),new Color(.6f,.25f,.3f),1f);
-     Box(new Rect(411,145,458*Mathf.Clamp01(boss.Health/boss.MaxHealth),12),Accent);
+     Panel(418,122,472,60);
+     Text(438,128,432,26,boss.DisplayName+"   PHASE "+boss.BossPhase+"/3",small);
+     HudMeter(new Rect(438,160,432,14),Mathf.Clamp01(boss.Health/boss.MaxHealth),new Color(.85f,.18f,.22f));
     }
 
     // Boss title card: fades in, holds, fades out on guardian levels.
@@ -601,7 +568,9 @@ Panel(390,105,500,68);
      float jx=150,jy=612,jr=86;
      if(joyBase){
       GUI.color=Color.white;
+      GUI.color=new Color(1,1,1,.8f);
       GUI.DrawTexture(new Rect(jx-jr,jy-jr,jr*2,jr*2),joyBase);
+      GUI.color=Color.white;
       float kw=58f;
       if(joyKnob)GUI.DrawTexture(new Rect(jx+touch.Move.x*50-kw*.5f,jy-touch.Move.y*50-kw*.5f,kw,kw),joyKnob);
      }else{
@@ -618,9 +587,9 @@ Panel(390,105,500,68);
      RoundButton(TouchRouter.ActionRect(2),btnBlade,"BLADE","HOLD TO CHARGE",true,touch.BladeHeld||(Application.isEditor&&Input.GetKey(KeyCode.J)));
      RoundButton(TouchRouter.ActionRect(3),btnJump,"JUMP","×2",false,touch.Jump||(Application.isEditor&&Input.GetKey(KeyCode.Space)));
      RoundButton(TouchRouter.ActionRect(0),btnDodge,"DODGE","",false,touch.Dodge||(Application.isEditor&&Input.GetKey(KeyCode.LeftShift)));
-     RoundButton(TouchRouter.ActionRect(1),btnPower,"POWER","ELEMENT",false,touch.Power||(Application.isEditor&&Input.GetKey(KeyCode.K)));
+     RoundButton(TouchRouter.ActionRect(1),btnPower,"POWER","",false,touch.Power||(Application.isEditor&&Input.GetKey(KeyCode.K)));
      RoundButton(TouchRouter.ActionRect(4),btnParry,"PARRY","",false,touch.Parry||(Application.isEditor&&Input.GetKey(KeyCode.L)));
-     RoundButton(TouchRouter.ActionRect(5),btnSpell,"SPELL","HOLD TO LOB",false,touch.SpellHeld||(Application.isEditor&&Input.GetKey(KeyCode.F)));
+     RoundButton(TouchRouter.ActionRect(5),btnSpell,"SPELL","HOLD",false,touch.SpellHeld||(Application.isEditor&&Input.GetKey(KeyCode.F)));
     }
     if(!Application.isMobilePlatform)Text(300,685,680,24,"WASD Move   •   SPACE Jump   •   SHIFT Dash   •   J Attack   •   K Power   •   L Parry   •   F Spell",tinyC);
     return;
@@ -1000,6 +969,19 @@ Panel(390,105,500,68);
      }
      GUI.DrawTexture(drawRect,tex);
      GUI.color=Color.white;
+     var actionStyle=new GUIStyle(center){font=fantasyButton,fontSize=primary?23:14,wordWrap=false,alignment=TextAnchor.MiddleCenter};
+     actionStyle.normal.textColor=new Color(1f,.94f,.79f);
+     Rect nameRect=new Rect(drawRect.x+drawRect.width*.1f,drawRect.y+drawRect.height*.59f,drawRect.width*.8f,drawRect.height*.18f);
+     GUI.Label(nameRect,name,FitText(actionStyle,nameRect,name));
+     if(sub.Length>0){
+      // Keep the whole hint above the bottom jewel and within the circle's
+      // narrower lower chord, including when the pressed artwork shrinks.
+      var hintStyle=new GUIStyle(tinyC){fontSize=primary?11:9,wordWrap=false,alignment=TextAnchor.MiddleCenter,clipping=TextClipping.Clip,padding=new RectOffset(0,0,0,0)};
+      Rect hintRect=new Rect(drawRect.x+drawRect.width*.22f,drawRect.y+drawRect.height*.77f,drawRect.width*.56f,drawRect.height*.11f);
+      var hintContent=new GUIContent(sub);
+      while(hintStyle.fontSize>8&&hintStyle.CalcSize(hintContent).x>hintRect.width)hintStyle.fontSize--;
+      GUI.Label(hintRect,hintContent,hintStyle);
+     }
      return;
     }
     GUI.color=new Color(Accent.r,Accent.g,Accent.b,primary?.95f:.7f);

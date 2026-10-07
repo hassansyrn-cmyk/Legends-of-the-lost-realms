@@ -1,0 +1,83 @@
+[
+  {
+    "path": "Buttons/UI_Action_Blade_Attack_HoldToCharge.png",
+    "size": [
+      320,
+      319
+    ],
+    "source": "C:\\Users\\X1 YOGA\\.codex\\generated_images\\01a115eb-8484-7601-8588-d6a1c0b1d47a\\exec-fce02662-0dd2-480a-abe5-258e0abd7cb7.png",
+    "sha256": "529e957f1d16cbc8cdb7f62f3df63fd2e6e1357adca42e0682b1936295806fce"
+  },
+  {
+    "path": "Buttons/UI_Action_Jump_DoubleJump_x2.png",
+    "size": [
+      256,
+      256
+    ],
+    "source": "C:\\Users\\X1 YOGA\\.codex\\generated_images\\01a115eb-8484-7601-8588-d6a1c0b1d47a\\exec-9d1f43d5-e174-4b57-b65b-60225d4daabe.png",
+    "sha256": "2ac71c765bc22ad7f513f120a998e5ed32d62efbb5daa0fd249186a84056a9ba"
+  },
+  {
+    "path": "Buttons/UI_Action_Dodge_Evade.png",
+    "size": [
+      256,
+      254
+    ],
+    "source": "C:\\Users\\X1 YOGA\\.codex\\generated_images\\01a115eb-8484-7601-8588-d6a1c0b1d47a\\exec-0c928324-9a15-40d8-bf02-f2961f8c332c.png",
+    "sha256": "523bbf51a85f7b5405ca6404e3595cc97cbde68fe7ee89852b980a95f4941619"
+  },
+  {
+    "path": "Buttons/UI_Action_ElementalPower.png",
+    "size": [
+      256,
+      255
+    ],
+    "source": "C:\\Users\\X1 YOGA\\.codex\\generated_images\\01a115eb-8484-7601-8588-d6a1c0b1d47a\\exec-fab86271-b4e8-4866-8251-2a23dcbcde8c.png",
+    "sha256": "aa0c791a380572cc1ca97097edf0f625a4fbdf3f5970eb7f694985bc2cd35ec2"
+  },
+  {
+    "path": "Buttons/UI_Action_Parry_Defense.png",
+    "size": [
+      256,
+      255
+    ],
+    "source": "C:\\Users\\X1 YOGA\\.codex\\generated_images\\01a115eb-8484-7601-8588-d6a1c0b1d47a\\exec-03e584ba-720d-4a46-aa97-ebd97bb10e9a.png",
+    "sha256": "291550dfebc2124906e3836f2b455dd52b38ef5b7a424143c51e08ee491ad430"
+  },
+  {
+    "path": "Buttons/UI_Action_Spell_LockOn_HoldToLock.png",
+    "size": [
+      256,
+      253
+    ],
+    "source": "C:\\Users\\X1 YOGA\\.codex\\generated_images\\01a115eb-8484-7601-8588-d6a1c0b1d47a\\exec-f0fce5f4-21f4-4f70-ba3b-3d89be615d23.png",
+    "sha256": "a59d195246cb8ff42c0f1368905db4193abe8d23bafba40464de566f1ba1976c"
+  },
+  {
+    "path": "Buttons/UI_Move_Joystick_OuterBase.png",
+    "size": [
+      320,
+      317
+    ],
+    "source": "C:\\Users\\X1 YOGA\\.codex\\generated_images\\01a115eb-8484-7601-8588-d6a1c0b1d47a\\exec-ffed70fc-7fe3-4cdb-951c-c900a7cf72e7.png",
+    "sha256": "2c7b681f7e947379a7857e592a5604dfe72fdbc8d0c7e616e9ef894d721ec0e4"
+  },
+  {
+    "path": "Buttons/UI_Move_Joystick_InnerAnalog.png",
+    "size": [
+      128,
+      126
+    ],
+    "source": "C:\\Users\\X1 YOGA\\.codex\\generated_images\\01a115eb-8484-7601-8588-d6a1c0b1d47a\\exec-c38f9296-2ca8-49e9-93b1-2dd5804d24eb.png",
+    "sha256": "eeb517119fded12c768146450de109a27e322c263b57e646a0e2b8296080a80c"
+  },
+  {
+    "path": "Frames/UI_HUD_Panel.png",
+    "size": [
+      768,
+      189
+    ],
+    "source": "C:\\Users\\X1 YOGA\\.codex\\generated_images\\01a115eb-8484-7601-8588-d6a1c0b1d47a\\exec-318fc9dc-f191-4ae2-88e6-5729a9ee6f19.png",
+    "sha256": "7df2a25e2e6910142d3988d6f8de2d9f980c50dba2b96ae711407151ba8ecf01"
+  }
+]

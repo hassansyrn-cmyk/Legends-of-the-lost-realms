@@ -9,10 +9,28 @@ namespace LostRealms {
   const string Key="LostRealms.MenuVisualProbe";
   static double next;static int index=-1,waitFrames;static bool waiting;
   static readonly string[] AllViews={"main","atlas","atlas-locked","sanctuary","pause","arsenal","arsenal-page2","arsenal-empty","wardrobe","wardrobe-locked","bestiary","bestiary-page5","achievements","achievements-page6","vault","probabilities","vault-opening","vault-reward","vault-duplicate","complete","complete-final","defeated"};
-  static string[] Views=>SessionState.GetBool(Key+".alignment",false)?new[]{"atlas","atlas-locked","vault"}:SessionState.GetBool(Key+".chests",false)?new[]{"atlas","vault","vault-rare","vault-reward","vault-duplicate","vault-common","vault-settled"}:AllViews;
+  static string[] Views=>SessionState.GetBool(Key+".hud",false)?new[]{"hud-idle","hud-frost","hud-gale","hud-low-health","hud-long-title","hud-boss"}:SessionState.GetBool(Key+".alignment",false)?new[]{"atlas","atlas-locked","vault"}:SessionState.GetBool(Key+".chests",false)?new[]{"atlas","vault","vault-rare","vault-reward","vault-duplicate","vault-common","vault-settled"}:AllViews;
   static MenuVisualProbe(){if(SessionState.GetBool(Key,false))EditorApplication.update+=Tick;}
   public static void RunAlignment(){SessionState.SetBool(Key+".alignment",true);Run();}
   public static void RunChests(){SessionState.SetBool(Key+".chests",true);Run();}
+  public static void RunHUD(){
+   // Exercise the unchanged input routing as well as the generated visuals.
+   var t=new TouchRouter();
+   for(int i=0;i<6;i++){
+    t.Reset();t.Sample(i,TouchRouter.ActionRect(i).center,Vector2.zero,TouchPhase.Began);
+    bool ok=i==0?t.Dodge:i==1?t.Power:i==2?t.BladePressed&&t.BladeHeld:i==3?t.Jump:i==4?t.Parry:t.Spell&&t.SpellHeld;
+    if(!ok)throw new Exception("HUD action routing failed: "+i);
+    t.BeginFrame();t.Sample(i,Vector2.zero,Vector2.zero,TouchPhase.Ended);
+    if(i==2&&!t.BladeReleased||i==5&&!t.SpellReleased)throw new Exception("HUD hold release failed");
+   }
+   t.Reset();t.Sample(42,new Vector2(150,612),Vector2.zero,TouchPhase.Began);
+   t.BeginFrame();t.Sample(42,new Vector2(215,612),new Vector2(65,0),TouchPhase.Moved);
+   if(t.Move!=Vector2.right)throw new Exception("HUD inner knob movement failed");
+   t.BeginFrame();t.Sample(42,new Vector2(215,612),Vector2.zero,TouchPhase.Ended);
+   if(t.Move!=Vector2.zero)throw new Exception("HUD inner knob return failed");
+   Debug.Log("HUD_CONTROL_ROUTING_PASSED");
+   SessionState.SetBool(Key+".hud",true);Run();
+  }
   static void Finish(int code){SessionState.SetBool(Key,false);EditorApplication.Exit(code);}
   public static void Run(){
    Directory.CreateDirectory("Validation/MenuReview");
@@ -66,7 +84,19 @@ namespace LostRealms {
    Field(g,"vaultState",Enum.Parse(typeof(RealmGame).GetField("vaultState",BindingFlags.NonPublic|BindingFlags.Instance).FieldType,"Browse"));
    g.Screen=GameScreen.Menu;Time.timeScale=0;g.Notice="";
    string v=Views[index];
-   if(v.StartsWith("atlas")){g.Screen=GameScreen.Map;if(v.EndsWith("locked")){g.Save.unlocked=3;g.Save.stars=new int[15];}}
+   if(v.StartsWith("hud-")){
+    g.LoadLevel(v=="hud-boss"?4:v=="hud-long-title"?7:1);Time.timeScale=0;
+    g.Notice="";Field(g,"noticeUntil",0f);Field(g,"bossIntroUntil",0f);
+    g.Coins=123;g.Gems=24;g.Elapsed=125;
+    g.Player.Power=v=="hud-frost"?1:v=="hud-gale"?2:0;
+    g.Player.Energy=v=="hud-low-health"?16:75;
+    if(v=="hud-low-health")g.Player.Health=1;
+    if(v=="hud-boss"){
+     var boss=g.Enemies.Find(e=>e&&e.Boss);
+     if(boss)g.Player.transform.position=boss.transform.position+Vector3.back*8;
+    }
+   }
+   else if(v.StartsWith("atlas")){g.Screen=GameScreen.Map;if(v.EndsWith("locked")){g.Save.unlocked=3;g.Save.stars=new int[15];}}
    else if(v=="sanctuary")g.Screen=GameScreen.Settings;
    else if(v=="pause")g.Screen=GameScreen.Paused;
    else if(v.StartsWith("arsenal")){g.Screen=GameScreen.Paused;Field(g,"showArsenal",true);Field(g,"arsenalPage",v.EndsWith("2")?1:0);if(v.EndsWith("empty")){g.Save.weapons.Clear();g.Save.equippedWeapon=-1;}}
