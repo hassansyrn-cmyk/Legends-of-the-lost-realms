@@ -1,23 +1,17 @@
 name: Unity 3D Android Release AAB
-
 on:
-  push:
-    branches: [Astra3]
   workflow_dispatch:
-
 permissions:
-  contents: write
-
+  contents: read
 env:
   UNITY_VERSION: 6000.6.0f1
-  ANDROID_VERSION_CODE: ${{ github.run_number }}
-  ANDROID_VERSION_NAME: 0.1.${{ github.run_number }}
-
+  SOURCE_SHA: 5e37a222a0fd08f8d60d672926c7fd9b9d927b79
+  ANDROID_VERSION_CODE: '20'
+  ANDROID_VERSION_NAME: 0.1.20
 jobs:
   build-unity-release-aab:
-    name: Build signed Unity IL2CPP ARM64 AAB
+    name: Build signed Unity IL2CPP ARM64 AAB from main
     runs-on: ubuntu-latest
-
     steps:
       - name: Free disk space for Unity Android container
         shell: bash
@@ -29,28 +23,37 @@ jobs:
           docker system prune --all --force
           echo "Disk space after cleanup:"
           df -h /
-
-      - name: Check out Astra3
+      - name: Check out the exact main source commit
         uses: actions/checkout@v4
         with:
-          ref: Astra3
+          ref: ${{ env.SOURCE_SHA }}
           lfs: true
           fetch-depth: 1
-
+      - name: Verify exact main source commit
+        shell: bash
+        env:
+          EXPECTED_SOURCE_SHA: ${{ env.SOURCE_SHA }}
+        run: |
+          set -Eeuo pipefail
+          actual="$(git rev-parse HEAD)"
+          if [[ "$actual" != "$EXPECTED_SOURCE_SHA" ]]; then
+            echo "Wrong source commit: expected $EXPECTED_SOURCE_SHA, got $actual" >&2
+            exit 1
+          fi
+          echo "Verified source commit: $actual"
+          echo "### Verified source" >> "$GITHUB_STEP_SUMMARY"
+          echo "- main commit: \`$actual\`" >> "$GITHUB_STEP_SUMMARY"
       - name: Verify Unity CI configuration
         shell: bash
         run: bash .github/scripts/verify-unity-ci-config.sh
-
       - name: Prepare Android output directory
         shell: bash
         run: mkdir -p unity-3d/Builds/Android
-
       - name: Cache Unity Library
         uses: actions/cache@v4
         with:
           path: unity-3d/Library
           key: Unity-${{ env.UNITY_VERSION }}-Android-${{ hashFiles('unity-3d/Assets/**', 'unity-3d/Packages/**', 'unity-3d/ProjectSettings/**') }}
-
       - name: Build signed Unity AAB
         uses: game-ci/unity-builder@v4
         env:
@@ -74,7 +77,6 @@ jobs:
           androidKeyaliasName: ${{ secrets.KEY_ALIAS }}
           androidKeyaliasPass: ${{ secrets.KEY_PASSWORD }}
           dockerCpuLimit: 2
-
       - name: Install bundletool
         shell: bash
         run: |
@@ -83,7 +85,6 @@ jobs:
             -o "$RUNNER_TEMP/bundletool.jar" \
             https://github.com/google/bundletool/releases/download/1.17.2/bundletool-all-1.17.2.jar
           test -s "$RUNNER_TEMP/bundletool.jar"
-
       - name: Verify generated Unity AAB
         shell: bash
         env:
@@ -93,109 +94,74 @@ jobs:
           EXPECTED_PACKAGE: com.manus.lostrealms3d
           EXPECTED_VERSION_CODE: ${{ env.ANDROID_VERSION_CODE }}
           EXPECTED_VERSION_NAME: ${{ env.ANDROID_VERSION_NAME }}
+          EXPECTED_SOURCE_SHA: ${{ env.SOURCE_SHA }}
         run: |
           set -Eeuo pipefail
           AAB="unity-3d/Builds/Android/LostRealms3D.aab"
           test -s "$AAB"
-
-          # Verify the actual bundle's JAR signature and certificate fingerprint.
           jarsigner -verify -verbose -certs "$AAB" >/dev/null
           keytool -printcert -jarfile "$AAB" > "$RUNNER_TEMP/aab-certificate.txt"
           keytool -list -v -keystore "$KEYSTORE_PATH" -storepass "$KEYSTORE_PASSWORD" -alias "$KEY_ALIAS" > "$RUNNER_TEMP/keystore-certificate.txt"
-          python3 - "$RUNNER_TEMP/aab-certificate.txt" "$RUNNER_TEMP/keystore-certificate.txt" <<'PY'
+          python3 - "$RUNNER_TEMP/aab-certificate.txt" "$RUNNER_TEMP/keystore-certificate.txt" > "$RUNNER_TEMP/signing-fingerprint.txt" <<'PY'
           import re
           import sys
-
           def fingerprint(path):
               text = open(path, encoding="utf-8", errors="replace").read()
               match = re.search(r"SHA256:\s*([0-9A-Fa-f:]+)", text)
               if not match:
                   raise SystemExit(f"No SHA-256 certificate fingerprint found in {path}")
               return match.group(1).replace(":", "").upper()
-
           bundle_fp = fingerprint(sys.argv[1])
           keystore_fp = fingerprint(sys.argv[2])
           if bundle_fp != keystore_fp:
               raise SystemExit("AAB certificate does not match the configured upload keystore")
-          print(f"signing_certificate_sha256={bundle_fp}")
+          print(bundle_fp)
           PY
-
-          # Dump the manifest from the actual AAB and assert package/version values.
+          BUNDLE_FINGERPRINT="$(cat "$RUNNER_TEMP/signing-fingerprint.txt")"
           java -jar "$RUNNER_TEMP/bundletool.jar" dump manifest --bundle="$AAB" > "$RUNNER_TEMP/aab-manifest.xml"
           python3 - "$RUNNER_TEMP/aab-manifest.xml" <<'PY'
           import re
           import sys
-
           text = open(sys.argv[1], encoding="utf-8", errors="replace").read()
           def attr(name):
               match = re.search(rf'(?:android:)?{name}=["\']([^"\']+)', text)
               if not match:
                   raise SystemExit(f"Missing {name} in generated AAB manifest")
               return match.group(1)
-
-          package = attr("package")
-          version_code = attr("versionCode")
-          version_name = attr("versionName")
+          actual = {
+              "package": attr("package"),
+              "versionCode": attr("versionCode"),
+              "versionName": attr("versionName"),
+          }
           expected = {
               "package": "${{ env.EXPECTED_PACKAGE }}",
               "versionCode": "${{ env.EXPECTED_VERSION_CODE }}",
               "versionName": "${{ env.EXPECTED_VERSION_NAME }}",
           }
-          actual = {"package": package, "versionCode": version_code, "versionName": version_name}
           if actual != expected:
               raise SystemExit(f"Generated AAB metadata mismatch: expected={expected} actual={actual}")
           for key, value in actual.items():
               print(f"{key}={value}")
           PY
-
           cp "$AAB" "$RUNNER_TEMP/LostRealms3D-${GITHUB_RUN_ID}.aab"
-          sha256sum "$RUNNER_TEMP/LostRealms3D-${GITHUB_RUN_ID}.aab"
-
-      - name: Publish signed AAB release
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -Eeuo pipefail
-          RELEASE_TAG="v0.1.${{ github.run_number }}-aab"
-          AAB="${RUNNER_TEMP}/LostRealms3D-${GITHUB_RUN_ID}.aab"
-          test -s "$AAB"
-
-          gh release create "$RELEASE_TAG" \
-            --title "Lost Realms 3D Play Store AAB (Build ${{ github.run_number }})" \
-            --notes "Signed production Android App Bundle (AAB) for Google Play Store.
-
-          - Package: com.manus.lostrealms3d
-          - Version Code: ${{ env.ANDROID_VERSION_CODE }}
-          - Version Name: ${{ env.ANDROID_VERSION_NAME }}
-          - Commit: ${GITHUB_SHA}
-          - Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" \
-            --prerelease \
-            "$AAB"
-
-          echo "AAB successfully published to GitHub Release: $RELEASE_TAG"
-
-      - name: Confirm downloadable release asset
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -Eeuo pipefail
-          RELEASE_TAG="v0.1.${{ github.run_number }}-aab"
-          asset_count="$(gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets | length')"
-          test "$asset_count" -ge 1
-          echo "Verified $asset_count release asset(s) ready for download."
-
+          AAB_SHA256="$(sha256sum "$RUNNER_TEMP/LostRealms3D-${GITHUB_RUN_ID}.aab" | awk '{print $1}')"
+          echo "AAB_SHA256=$AAB_SHA256" >> "$GITHUB_ENV"
+          {
+            echo "### Verified signed Android App Bundle"
+            echo "- Source commit: \`$EXPECTED_SOURCE_SHA\`"
+            echo "- Package: \`$EXPECTED_PACKAGE\`"
+            echo "- Version code: \`$EXPECTED_VERSION_CODE\`"
+            echo "- Version name: \`$EXPECTED_VERSION_NAME\`"
+            echo "- Signing certificate SHA-256: \`$BUNDLE_FINGERPRINT\`"
+            echo "- AAB SHA-256: \`$AAB_SHA256\`"
+          } >> "$GITHUB_STEP_SUMMARY"
       - name: Upload signed Unity AAB artifact
         uses: actions/upload-artifact@v4
-        continue-on-error: true
         with:
-          name: Legends-of-the-Lost-Realms-Unity-Astra3-${{ github.run_id }}
+          name: Legends-of-the-Lost-Realms-main-${{ github.run_id }}
           path: ${{ runner.temp }}/LostRealms3D-${{ github.run_id }}.aab
           if-no-files-found: error
-          retention-days: 1
-
-
+          retention-days: 14
       - name: Remove temporary signing material
         if: always()
         shell: bash
