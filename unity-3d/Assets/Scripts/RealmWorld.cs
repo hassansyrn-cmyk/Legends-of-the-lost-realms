@@ -165,7 +165,8 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     }
     float width=last&&IsBoss?19:last?11:arch==IslandArchetype.Arena?13.5f:arch==IslandArchetype.NarrowBridge?4.2f:arch==IslandArchetype.TieredPlatform?10.5f:arch==IslandArchetype.MovingFerry?6f:arch==IslandArchetype.SteppingStones?7.5f:9;
     float length=last?15:arch==IslandArchetype.Arena?13f:arch==IslandArchetype.NarrowBridge?14f:arch==IslandArchetype.TieredPlatform?10f:arch==IslandArchetype.MovingFerry?6f:arch==IslandArchetype.SteppingStones?8f:8.3f;
-    var islandObj=Island(p,width,length,i,arch,last&&IsBoss);if(i==0)Spawn=p+Vector3.up*.05f;
+    if(stage==9&&i==10)arch=IslandArchetype.Standard;
+    var islandObj=Island(p,width,length,i,arch,last&&IsBoss);if(islandObj)ExpansionChapter.Reserve(islandObj.transform,stage,i);if(i==0)Spawn=p+Vector3.up*.05f;
      if(i==1&&islandObj){
       var tk=realm==1?DartTurret.TurretKind.Lion:(realm==2?DartTurret.TurretKind.Dragon:(realm==3?(stage%2==0?DartTurret.TurretKind.Dragon:DartTurret.TurretKind.Lion):DartTurret.TurretKind.Stone));
       Vector3 spot=NudgeSpot(islandObj.transform,new Vector3(-width*.34f,.05f,length*.25f),1.4f,width,length);
@@ -199,10 +200,10 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
      }
     }
     for(int j=-1;j<=1;j++){float py=(arch==IslandArchetype.TieredPlatform&&j<0)?2.1f:.8f;Pickup(p+new Vector3(0,py,j*2.2f),false);}
-    if(i>1&&!last&&i%2==0){var side=p+new Vector3((i%4==0?-1:1)*9.5f,1.2f,0);Island(side,4.8f,5.3f,100+i);Pickup(side+Vector3.up*.9f,true);
+    if(i>1&&!last&&i%2==0){bool adventureBranch=ExpansionChapter.EnabledFor(stage)&&i==4;var side=p+new Vector3((i%4==0?-1:1)*9.5f,adventureBranch?.4f:1.2f,0);var sideIsland=Island(side,adventureBranch?9f:4.8f,adventureBranch?9f:5.3f,100+i);if(adventureBranch)TrapArt.Reserve(sideIsland.transform,Vector3.zero,3.4f);Pickup(side+Vector3.up*.9f,true);
      // Side islands become moving ferries as chapters progress: the gem detour
      // is a moving target from chapter 6 on.
-     if(i==6||i==10||i==14||(stage>=6&&i>=4)||(stage>=9&&i==13&&count>=15)){var move=FindIsland(side);if(move){var motion=move.AddComponent<MovingIsland>();motion.Origin=move.transform.position;
+     if(!adventureBranch&&(i==6||i==10||i==14||(stage>=6&&i>=4)||(stage>=9&&i==13&&count>=15))){var move=FindIsland(side);if(move){var motion=move.AddComponent<MovingIsland>();motion.Origin=move.transform.position;
       motion.Style=IslandMotionStyle.VerticalElevator;
       motion.Offset=new Vector3(0,1.8f,0);
       motion.TravelTime=3.0f;
@@ -215,7 +216,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
      }
     if(i>=2&&i%4==0){float hx=(i%2==0?-1:1)*(1.2f+(float)random.NextDouble()*.9f);HealPickup(p+new Vector3(hx,.6f,-1.2f+(float)random.NextDouble()*2.4f));}
     // Temporary user playtest drops; remove this override after weapon approval.
-    if(stage<=2&&i==1)WeaponDrop(p+new Vector3(-1.4f,.18f,-1.2f),stage==1?WeaponId.Duskblade:WeaponId.Soulreaper);
+    if(stage<=2&&i==1&&System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-epicPlaytest")>=0)WeaponDrop(p+new Vector3(-1.4f,.18f,-1.2f),stage==1?WeaponId.Duskblade:WeaponId.Soulreaper);
     if(i==weaponIsland)WeaponDrop(p+new Vector3((i%2==0?-2.3f:2.3f),.18f,-1.4f),weaponId);
     if(stage>=2&&!last&&(i==3||i==7)){
      BouncePad.Place(transform,p+new Vector3((i%2==0?-2.8f:2.8f),.05f,-1.8f),accent);
@@ -923,6 +924,9 @@ void WeaponDrop(Vector3 p,WeaponId id){
     if(island!=null)Hazard(island.transform,island.transform.InverseTransformPoint(p),kind);
     else Hazard(transform,p,kind);
    }
+  public Enemy SpawnExpansionElite(Transform island,int kind){
+   SpawnEnemy(island.position+new Vector3(0,.05f,1f),kind,false,island.position,9f,9f);RealmGame.I.KillsTotal--;return RealmGame.I.Enemies[RealmGame.I.Enemies.Count-1];
+  }
   void SpawnEnemy(Vector3 p,int kind,bool boss,Vector3 center,float width,float length){
    // Every initial spawn counts toward the chapter's foe total (mid-fight
    // heralds/minions spawn via Configure directly and stay bonus kills).

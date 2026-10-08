@@ -10,6 +10,7 @@ namespace LostRealms {
   void Update(){var g=RealmGame.I;if(g&&g.Screen==GameScreen.Playing){g.MoveInput=move;g.JumpPressed=jump;jump=false;}}
   void Check(bool okay,string message){if(!okay){Debug.LogError("REALM_TEST_FAILED: "+message);Quit(1);throw new Exception(message);}assertions++;Debug.Log("PASS: "+message);}
   IEnumerator Start(){
+   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-expansionFocused")>=0){yield return null;yield return ExpansionChecks.Run(Check,value=>move=value,()=>jump=true);Check(runtimeErrors==0,"Expansion checks emit no runtime errors");Debug.Log("EXPANSION_STAGE1_TESTS_PASSED "+assertions);Quit(0);yield break;}
    if(Array.IndexOf(Environment.GetCommandLineArgs(),"-guardianOnly")>=0){yield return null;yield return GuardianCombatChecks.Run(Check);Check(runtimeErrors==0,"Guardian patterns emit no runtime errors");Debug.Log("GUARDIAN_PATTERN_TESTS_PASSED "+assertions);Quit(0);yield break;}
    if(Array.IndexOf(Environment.GetCommandLineArgs(),"-newEpicFocused")>=0){
     yield return null;yield return NewEpicChecks.Run(Check);yield return EpicPolishChecks.Run(Check);yield return GuardianCombatChecks.Run(Check);
@@ -215,6 +216,7 @@ target.Hit(999,0,true);Check(target.Health==0,"Combat can defeat enemies");
    yield return ChapterCleanupChecks.Run(Check);
    yield return QualityUpgradeChecks.Run(Check);
    yield return ChapterPhysicsChecks.Run(Check);
+   yield return ExpansionChecks.Run(Check,value=>move=value,()=>jump=true);
    g.LoadLevel(1);yield return new WaitForSeconds(.6f);string outDir=Path.GetFullPath(Path.Combine(Application.dataPath,"../Validation"));Directory.CreateDirectory(outDir);string captureDir=Path.Combine(outDir,"QualityUpgrade-"+DateTime.UtcNow.ToString("yyyyMMdd-HHmmss"));Directory.CreateDirectory(captureDir);Capture(captureDir+"/Verdant.png");
    g.LoadLevel(7);yield return new WaitForSeconds(.4f);g.Player.Warp(g.World.Route[g.World.Route.Count-1]+new Vector3(0,.1f,-5));yield return new WaitForSeconds(.4f);Capture(captureDir+"/Sunscar.png");
    g.LoadLevel(10);yield return new WaitForSeconds(.4f);g.Player.Warp(g.World.Route[g.World.Route.Count-1]+new Vector3(0,.1f,-5));yield return new WaitForSeconds(.4f);Capture(captureDir+"/Whiteout.png");
