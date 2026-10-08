@@ -10,11 +10,19 @@ namespace LostRealms {
  // GolemBossSetup, resolved through CharacterVisual.extraClips.
  public partial class Enemy {
   public bool IsGolemBoss=>Boss&&(Kind==8||Kind==9||Kind==10);
+  public bool IsDesertLavaGuardian=>Boss&&Kind==9;
+  public int LavaEruptionCount {get;private set;}
+  float eruptionReady;
   int golemSeenPhase=1;int golemMove;bool golemComboPending;bool golemHitThisCharge;
   float slamReady,chargeReady,chargeUntil;Vector3 chargeDir;
   // Pose override: while set, the AI pauses and the pose clip plays out
   // (victory / gethit / dizzy). Shared with the LavaBoss warden.
   float poseUntil;string poseState="idle";
+  void LavaErupt(Vector3 point){
+   point.y=baseY;StrikeZone.Create(point,1.65f,2,.01f);
+   Vfx.Play("ga_vfx_Explosion_02",point+Vector3.up*.2f,Quaternion.identity,1.4f);
+   KenneyPuff.Burst(point+Vector3.up*.25f,new Color(1f,.32f,.06f),16,1.1f);
+  }
   void UpdateGolemBoss(float dt){
    var g=RealmGame.I;
    if(g==null||g.Screen!=GameScreen.Playing||state==State.Dead)return;
@@ -47,10 +55,17 @@ namespace LostRealms {
    if(state==State.Patrol||state==State.Notice){
     Face(g.Player.transform.position,dt);
     if(distance>2.2f){
-     Visual.Play(phase>=2?"run":"walk");
      MoveTo(g.Player.transform.position,(phase>=3?1.35f:1f)*1.9f,dt);
+     Visual.Play(IsDesertLavaGuardian&&!LocomotionMoving?"idle":phase>=2?"run":"walk");
     }else Visual.Play("idle");
     if(timer>0)return;
+    if(IsDesertLavaGuardian&&distance<16f&&g.Elapsed>=eruptionReady){
+     golemMove=10;golemComboPending=false;state=State.Windup;timer=1.25f;
+     target=Clamp(g.Player.transform.position);target.y=baseY;
+     Visual.PlayTimed("cast",timer);warning=CombatTelegraph.Create(target,1.65f,timer,g.World.transform);
+     if(phase>=2)foreach(float side in new[]{-1f,1f})CombatTelegraph.Create(Clamp(target+transform.right*side*3.6f),1.65f,timer,g.World.transform);
+     g.Sound("boss_warning",RealmAudio.BossPitch(Kind));return;
+    }
     // Attack selection: slam (close, phase 2+), charge (mid, phase 3),
     // otherwise a melee swing that may combo into a second.
     if(phase>=2&&distance<4.8f&&g.Elapsed>=slamReady){
@@ -62,7 +77,9 @@ namespace LostRealms {
       return;
     }
      if(phase>=3&&distance>5f&&distance<13f&&g.Elapsed>=chargeReady){
-      chargeDir=delta.normalized;chargeUntil=g.Elapsed+1.25f;chargeReady=g.Elapsed+(7f-g.Realm);
+      chargeDir=delta.normalized;chargeReady=g.Elapsed+(7f-g.Realm);
+      if(IsDesertLavaGuardian){golemMove=11;state=State.Windup;timer=.75f;golemComboPending=false;Visual.PlayTimed("victory",timer);warning=CombatTelegraph.Create(Clamp(transform.position+chargeDir*3.5f),2.2f,timer,g.World.transform);g.Sound("boss_warning");return;}
+      chargeUntil=g.Elapsed+1.25f;
      golemHitThisCharge=false;state=State.Attack;timer=1.3f;
      Visual.Restart("run_fast");
      g.Sound("enemy_dash");
@@ -83,12 +100,18 @@ namespace LostRealms {
     return;
    }
    if(state==State.Windup){
-    Visual.Play(golemMove==9?"attack_2":"attack");
+    Visual.Play(golemMove==10?"cast":golemMove==11?"victory":golemMove==9?"attack_2":"attack");
     Glow(new Color(1,.25f,.1f),.2f);
     if(timer<=0){
      ClearGlow();if(warning){Destroy(warning);warning=null;}
      state=State.Attack;timer=.5f;
-     if(golemMove==9){
+     if(golemMove==11){chargeUntil=g.Elapsed+1.25f;golemHitThisCharge=false;Visual.Restart("run_fast");g.Sound("enemy_dash");}
+     else if(golemMove==10){
+      LavaEruptionCount++;eruptionReady=g.Elapsed+Mathf.Max(5f,9f-phase);
+      LavaErupt(target);if(phase>=2)foreach(float side in new[]{-1f,1f})LavaErupt(Clamp(target+transform.right*side*3.6f));
+      g.Sound("ember_cast");g.CameraRig.Shake=.3f;
+     }
+     else if(golemMove==9){
       // Ground slam: radial crushing zone with dust and shockwave.
        StrikeZone.Create(transform.position,3.8f,3+(g.Realm>=2?1:0),.01f);
       Vfx.Play("ga_vfx_Shockwave_01",transform.position+Vector3.up*.15f,Quaternion.identity,1.8f);

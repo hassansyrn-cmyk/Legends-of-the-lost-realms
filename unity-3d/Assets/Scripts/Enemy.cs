@@ -21,29 +21,31 @@ namespace LostRealms {
   // Per-kind tuning so each enemy family reads and plays differently:
   // goblins dart in, demons pressure, frost runners slip wide, the elemental
   // and caster are slower but hit harder / shoot from range.
-    static readonly float[] NoticeRange={8.5f,10.5f,8.5f,9f,10.5f,8.5f,7f,13f,12f,12.5f,13f,11f,9f,12f,11f,10.5f,10f,12f,9f,10f,10.5f,12.5f};
-    static readonly float[] ChaseSpeed={2.3f,2.05f,2.3f,2.5f,2.05f,2.3f,1.5f,1.15f,2.1f,2.3f,2.5f,2.9f,3.1f,1.2f,2.6f,2.2f,2.7f,2.4f,3.2f,2.1f,2.3f,2.3f};
-    static readonly int[] MeleeDamage={1,2,1,1,2,1,2,1,2,2,2,1,2,1,3,2,2,2,1,2,3,3};
+    static readonly float[] NoticeRange={8.5f,10.5f,8.5f,9f,10.5f,8.5f,7f,13f,12f,12.5f,13f,11f,9f,12f,11f,10.5f,10f,12f,9f,10f,10.5f,12.5f,10f,12f,9f,10f};
+    static readonly float[] ChaseSpeed={2.3f,2.05f,2.3f,2.5f,2.05f,2.3f,1.5f,1.15f,2.1f,2.3f,2.5f,2.9f,3.1f,1.2f,2.6f,2.2f,2.7f,2.4f,3.2f,2.1f,2.3f,2.3f,2.65f,2.35f,1.7f,1.65f};
+    static readonly int[] MeleeDamage={1,2,1,1,2,1,2,1,2,2,2,1,2,1,3,2,2,2,1,2,3,3,1,2,3,2};
    // Each family's vulnerable element (0 ember, 1 frost, 2 gale). Matching the
    // player's current element deals bonus damage and triggers that reaction.
-    static readonly int[] Weakness={2,1,0,0,1,0,2,2,0,1,0,2,0,1,0,1,0,1,1,0,2,2};
-   public static int WeaknessOf(int kind)=>Weakness[Mathf.Clamp(kind,0,21)];
-   public int WeakElement=>Weakness[Mathf.Clamp(Kind,0,21)];
+    static readonly int[] Weakness={2,1,0,0,1,0,2,2,0,1,0,2,0,1,0,1,0,1,1,0,2,2,0,1,1,1};
+   public static int WeaknessOf(int kind)=>Weakness[Mathf.Clamp(kind,0,Codex.Kinds-1)];
+   public int WeakElement=>Weakness[Mathf.Clamp(Kind,0,Codex.Kinds-1)];
   // Winged families use the same grounded collision body as other enemies.
   // Elite affixes (non-boss, stage>=3): 1 Shielded, 2 Burning, 4 Swift, 8 Vampiric, 16 Armored.
   public int Affix;float shield;float speedMul=1f;float comboNext;int comboLeft;bool Ranged=>Kind==7||Kind==13||Kind==17;
    public int BossPhase=>phase;
    // True while a strike is telegraphed — drives the off-screen danger arrows.
    public bool Telegraphing=>state==State.Windup;
-  public void Configure(int kind,bool boss,Vector3 anchor,Vector2 island){Kind=kind;Boss=boss;center=anchor;area=island;baseY=transform.position.y;Radius=boss?1.1f:kind>=14?.7f:.5f;MaxHealth=(boss?80+RealmGame.I.Realm*45:3+RealmGame.I.Level*.3f)*(kind==14?2.7f:1f);Health=MaxHealth;
+  public void Configure(int kind,bool boss,Vector3 anchor,Vector2 island){Kind=kind;Boss=boss;center=anchor;area=island;baseY=transform.position.y;Radius=boss?1.1f:kind>=14?.7f:.5f;MaxHealth=(boss?80+RealmGame.I.Realm*45:3+RealmGame.I.Level*.3f)*(kind==14?2.7f:kind==24?2f:kind==23?1.35f:1f);Health=MaxHealth;
    if(boss)bossAddAt=RealmGame.I.Elapsed+11f;
-    string[] roles={"Goblin","Demon","Goblin","Frost","Demon","Goblin","Elemental","Caster","Heartwood","Sunscar","Whiteout","Flyer","Bomber","Summoner","Elite","Skeleton","BriarGoblin","EmberDemon","Spider","Footman","DogKnight","DogKnight"};string role=roles[Mathf.Clamp(kind,0,21)];DisplayName=boss?new[]{"HEARTWOOD COLOSSUS","SUNSCAR TITAN","WHITEOUT GUARDIAN","EMBERFALL WARDEN"}[RealmGame.I.Realm]:role;
+    string[] roles={"Goblin","Demon","Goblin","Frost","Demon","Goblin","Elemental","Caster","Heartwood","Sunscar","Whiteout","Flyer","Bomber","Summoner","Elite","Skeleton","BriarGoblin","EmberDemon","Spider","Footman","DogKnight","DogKnight","IronGoblin","AshDemon","StoneBrute","Sunscar"};string role=roles[Mathf.Clamp(kind,0,Codex.Kinds-1)];DisplayName=boss?new[]{"HEARTWOOD COLOSSUS","LAVA GOLEM","WHITEOUT GUARDIAN","EMBERFALL WARDEN"}[RealmGame.I.Realm]:role;
+   if(boss&&kind==9)role="StoneBrute";
    if(boss&&RealmGame.I.Realm==3)role="LavaBoss";
-   Visual=CharacterVisual.Create(role,transform,boss?3.6f:kind==6?2.5f:kind==14?2.2f:kind==15?1.7f:kind==16?1.35f:kind==17?1.85f:kind==18?0.6f:kind==19?1.75f:kind==20?1.4f:1.65f,RealmGame.I.Accent);RealmGame.I.Enemies.Add(this);state=State.Patrol;timer=.5f;target=center;
+   if(kind>=22&&kind<Codex.Kinds)DisplayName=Codex.Entries[kind].Name;
+   Visual=CharacterVisual.Create(role,transform,boss?(kind==9?4.5f:3.6f):kind==25?2.1f:kind==24?2.4f:kind==23?1.95f:kind==22?1.5f:kind==6?2.5f:kind==14?2.2f:kind==15?1.7f:kind==16?1.35f:kind==17?1.85f:kind==18?0.6f:kind==19?1.75f:kind==20?1.4f:1.65f,RealmGame.I.Accent);RealmGame.I.Enemies.Add(this);state=State.Patrol;timer=.5f;target=center;
    if(IsLavaBoss)LavaBossWeapon.Attach(Visual);
     skin=Visual?Visual.GetComponentsInChildren<Renderer>(true):null;
     if(skin!=null&&skin.Length>0)bodyMat=skin[0].material;
-    gameObject.AddComponent<EnemyAura>().Setup(Weakness[Mathf.Clamp(kind,0,21)],boss);
+    gameObject.AddComponent<EnemyAura>().Setup(Weakness[Mathf.Clamp(kind,0,Codex.Kinds-1)],boss);
     if(!boss&&RealmGame.I!=null&&RealmGame.I.Level>=3){
      float chance=Mathf.Clamp01((RealmGame.I.Level-2)*.06f);
      if(Random.value<chance){
@@ -66,7 +68,7 @@ namespace LostRealms {
      if(kind==18&&Visual)gameObject.AddComponent<SpiderLimbMotion>().Setup(Visual);
     // Block Aster: a real (non-trigger) capsule so the CharacterController
     // cannot walk through the enemy. Damage stays manual (no contact damage).
-    BuildBody(boss?3.6f:kind==6?2.5f:kind==14?2.2f:kind==15?1.7f:kind==16?1.35f:kind==17?1.85f:kind==18?.9f:kind==19?1.75f:kind==20?1.4f:1.65f,boss?1.15f:kind==18?.4f:kind>=14?.55f:.5f);
+    BuildBody(boss?(kind==9?4.5f:3.6f):kind==25?2.1f:kind==24?2.4f:kind==23?1.95f:kind==22?1.5f:kind==6?2.5f:kind==14?2.2f:kind==15?1.7f:kind==16?1.35f:kind==17?1.85f:kind==18?.9f:kind==19?1.75f:kind==20?1.4f:1.65f,boss?(kind==9?1.35f:1.15f):kind==18?.4f:kind>=14?.55f:.5f);
 
    }
    void Update(){var game=RealmGame.I;if(game.Screen!=GameScreen.Playing)return;float dt=Time.deltaTime;
@@ -80,18 +82,19 @@ namespace LostRealms {
    // Pose override (victory/gethit/dizzy): the AI pauses while the pose plays,
    // but phase escalation and summons above still progress.
    if(poseUntil>RealmGame.I.Elapsed){Visual.Play(poseState);return;}
+   if(IsDesertLavaGuardian){UpdateDesertGuardian(dt);return;}
    if(IsGolemBoss){UpdateGolemBoss(dt);return;}
    if(IsLavaBoss){UpdateLavaBoss(dt);return;}
    timer-=dt;Vector3 delta=game.Player.transform.position-transform.position;delta.y=0;float distance=delta.magnitude;bool sameHeight=Mathf.Abs(game.Player.transform.position.y-baseY)<3;
    switch(state){
     case State.Patrol:
      Visual.Play("walk");if(timer<=0){float x=Mathf.Sin(RealmGame.I.Elapsed*.7f)*area.x*.24f,z=Mathf.Cos(RealmGame.I.Elapsed*.5f)*area.y*.22f;target=center+new Vector3(x,.03f,z);timer=2;}
-      MoveTo(target,.7f,dt);if(distance<(Boss?17:NoticeRange[Mathf.Clamp(Kind,0,21)])&&sameHeight){state=State.Notice;timer=.4f;game.Sound(Boss?("boss_roar_"+Kind):"enemy_warning",Boss?RealmAudio.BossPitch(Kind):1f);
+      MoveTo(target,.7f,dt);if(distance<(Boss?17:NoticeRange[Mathf.Clamp(Kind,0,Codex.Kinds-1)])&&sameHeight){state=State.Notice;timer=.4f;game.Sound(Boss?("boss_roar_"+Kind):"enemy_warning",Boss?RealmAudio.BossPitch(Kind):1f);
        // Aggro sharing: nearby patrolling kin join the fight.
        foreach(var other in game.Enemies){if(!other||other==this||other.Boss||other.Health<=0)continue;if(other.state==State.Patrol&&Vector3.Distance(other.transform.position,transform.position)<8f){other.state=State.Notice;other.timer=.55f;}}}break;
     case State.Notice:
       Face(game.Player.transform.position,dt);
-      float chase=Boss?1.8f+RealmGame.I.Realm*.15f+phase*.2f:ChaseSpeed[Mathf.Clamp(Kind,0,21)]*speedMul;
+      float chase=Boss?1.8f+RealmGame.I.Realm*.15f+phase*.2f:ChaseSpeed[Mathf.Clamp(Kind,0,Codex.Kinds-1)]*speedMul;
       // Token gate: only token-holding melee enemies close in and swing.
       bool tokened=Boss||Ranged||TryAcquireToken();
       bool advancing=Ranged?(distance<3.4f||distance>3.6f):!tokened||distance>(Boss?4:2.1f);
@@ -127,7 +130,7 @@ namespace LostRealms {
    // Elite (kind 14) telegraphed follow-up strikes.
    if(comboLeft>0&&RealmGame.I.Elapsed>=comboNext){
     comboLeft--;comboNext=RealmGame.I.Elapsed+.34f;
-    int dmg=MeleeDamage[Mathf.Clamp(Kind,0,21)];Vector3 dc=game.Player.transform.position-transform.position;
+    int dmg=MeleeDamage[Mathf.Clamp(Kind,0,Codex.Kinds-1)];Vector3 dc=game.Player.transform.position-transform.position;
     if(dc.magnitude<3f&&Vector3.Dot(transform.forward,dc.normalized)>.0f){if(game.Player.Damage(dmg,transform.position))DamageTip.Show(game.Player.transform.position+Vector3.up*1.7f,"-"+dmg,new Color(1,.3f,.24f));}
     Visual.Restart("attack");
    }
@@ -142,7 +145,7 @@ namespace LostRealms {
    else if(Kind==13){int alive=0;foreach(var e in g.Enemies)if(e&&!e.Boss&&e.Health>0)alive++;if(alive<16){var minion=new GameObject("Summoned minion");minion.transform.SetParent(transform.parent);minion.transform.position=transform.position+transform.forward*1.6f;minion.AddComponent<Enemy>().Configure(RealmGame.I.Level>=7?16:0,false,center,area);Vfx.Play("ga_vfx_Implosion_01",transform.position+Vector3.up*.8f,Quaternion.identity,.9f);}}
    else if(Kind==17)EnemyBolt.Create(transform.position+Vector3.up*1.1f,(g.Player.transform.position+Vector3.up*.8f-transform.position-Vector3.up*1.1f).normalized,6.5f,2,false,17);
     else if(Kind==7||Kind==1)EnemyBolt.Create(transform.position+Vector3.up*.9f,(g.Player.transform.position+Vector3.up*.8f-transform.position-Vector3.up*.9f).normalized,6,1);
-   else{int dmg=MeleeDamage[Mathf.Clamp(Kind,0,21)];if((Affix&2)!=0)dmg+=1;Vector3 d=g.Player.transform.position-transform.position;if(d.magnitude<3&&Vector3.Dot(transform.forward,d.normalized)>.05f){if(g.Player.Damage(dmg,transform.position)){DamageTip.Show(g.Player.transform.position+Vector3.up*1.7f,"-"+dmg,new Color(1,.3f,.24f));if((Affix&8)!=0){Health=Mathf.Min(MaxHealth,Health+.8f);}}}if(Kind==14){comboLeft=2;comboNext=RealmGame.I.Elapsed+.34f;}}
+   else{int dmg=MeleeDamage[Mathf.Clamp(Kind,0,Codex.Kinds-1)];if((Affix&2)!=0)dmg+=1;Vector3 d=g.Player.transform.position-transform.position;if(d.magnitude<3&&Vector3.Dot(transform.forward,d.normalized)>.05f){if(g.Player.Damage(dmg,transform.position)){DamageTip.Show(g.Player.transform.position+Vector3.up*1.7f,"-"+dmg,new Color(1,.3f,.24f));if((Affix&8)!=0){Health=Mathf.Min(MaxHealth,Health+.8f);}}}if(Kind==14){comboLeft=2;comboNext=RealmGame.I.Elapsed+.34f;}}
    }
    // Phase-2 boss mechanic: each realm guardian calls its own minions into the
    // arena every ~15s (capped so the fight never becomes an add-spam). Realm
@@ -193,7 +196,7 @@ namespace LostRealms {
    public void Hit(float damage,int power,bool elemental,Vector3 knockDir=default,bool guardBreak=false){
     if(Health<=0)return;
     RealmGame.I?.ComboHit();
-    bool weak=power>=0&&power<3&&Weakness[Mathf.Clamp(Kind,0,21)]==power;
+    bool weak=power>=0&&power<3&&Weakness[Mathf.Clamp(Kind,0,Codex.Kinds-1)]==power;
     if(weak)elemental=true;
     // guardBreak: heavy weapons (greataxes/hammers) smash through the kind-5
     // front block instead of being shrugged off.
@@ -225,6 +228,9 @@ namespace LostRealms {
    if(shield>0f){float absorbed=Mathf.Min(shield,real*(guardBreak?2f:1f));shield-=absorbed;real=Mathf.Max(0,real-absorbed);if(shield<=0f){Vfx.Play("ga_vfx_Implosion_01",transform.position+Vector3.up*1f,Quaternion.identity,.8f);RealmGame.I.Tell("Guard broken!",1);}}
    if(real>0&&weak&&RealmGame.I.Trial)RealmGame.I.Trial.WeaknessHit();
    ApplyDamage(real);
+   if(Kind>=22&&Kind<Codex.Kinds&&Health>0&&real>0&&state!=State.Windup&&state!=State.Attack){
+    poseState=Kind==25?"gethit":"hit";poseUntil=RealmGame.I.Elapsed+.2f;Visual.PlayTimed(poseState,.2f);
+   }
    // Heavy hits interrupt boss attacks: a stagger window rewards charged
    // timing and ripostes (pose plays via the pose gate).
    if(Boss&&real>=4.5f&&(state==State.Windup||state==State.Attack)&&Health>0){

@@ -1,0 +1,5 @@
+ICON_OK Duskblade
+Duskblade bounds=Center: (0.00, 0.00, 0.00), Extents: (0.04, 0.65, 0.09) local=Center: (0.00, 0.00, 0.00), Extents: (0.03, 0.50, 0.07) rotation=(0.00, 0.00, 0.00) scale=(1.30, 1.30, 1.30)
+ICON_OK Soulreaper
+Soulreaper bounds=Center: (0.00, 0.00, 0.00), Extents: (0.12, 0.78, 0.62) local=Center: (0.00, 0.00, 0.00), Extents: (0.08, 0.50, 0.40) rotation=(0.00, 0.00, 0.00) scale=(1.55, 1.55, 1.55)
+ICON_DONE ok=2

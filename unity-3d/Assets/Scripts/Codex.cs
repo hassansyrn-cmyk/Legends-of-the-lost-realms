@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace LostRealms {
- // One bestiary page per enemy Kind (0..21). Weakness comes from Enemy.WeaknessOf so the
+ // One bestiary page per enemy Kind (0..25). Weakness comes from Enemy.WeaknessOf so the
  // codex can never drift from the real combat table.
  public sealed class BestiaryEntry {
   public string Name,Habitat,Behavior;
@@ -18,7 +18,7 @@ namespace LostRealms {
  }
 
  public static class Codex {
-  public const int Kinds=22;
+  public const int Kinds=26;
   public static bool Dirty;
   public static readonly string[] ElementNames={"Ember","Frost","Gale"};
 
@@ -32,7 +32,7 @@ namespace LostRealms {
    new BestiaryEntry("Elemental","All realms","Towering conjured construct with punishing melee."),
    new BestiaryEntry("Hex Caster","Verdant Kingdom","Ranged spellcaster. Close the gap or dodge the bolt sideways."),
    new BestiaryEntry("Heartwood Colossus","Guardian of the Verdant Kingdom","Golem guardian: combos, ground slam and a phase-three charge. Stagger it with heavy hits."),
-   new BestiaryEntry("Sunscar Titan","Guardian of the Burning Dunes","Golem guardian that summons allies and slams the ground."),
+   new BestiaryEntry("Lava Golem Guardian","Guardian of the Burning Dunes","Towering lava guardian: eruption volleys, ground slams, melee combos and a warned charge. Dodge the marked ground and counter its recovery."),
    new BestiaryEntry("Whiteout Guardian","Guardian of the Frozen Peaks","Golem guardian that grows faster each phase."),
    new BestiaryEntry("Wisp Flyer","Sky islands","Hovers above the ground. Jump attacks and ranged powers reach it."),
    new BestiaryEntry("Bomber","Burning Dunes","Fragile and explosive. Kill it at range or step out of the blast."),
@@ -44,7 +44,11 @@ namespace LostRealms {
    new BestiaryEntry("Spider","Ruins","Tiny and quick. Easy to miss, so aim at your feet."),
    new BestiaryEntry("Footman","Frozen Peaks","Disciplined soldier with solid damage and steady pressure."),
    new BestiaryEntry("Dog Knight","Emberfall","Armored knight that punishes wild swinging."),
-   new BestiaryEntry("Emberfall Warden","Guardian of Emberfall","Final guardian wielding a juggernaut blade. Learn its telegraphs.")
+   new BestiaryEntry("Emberfall Warden","Guardian of Emberfall","Final guardian wielding a juggernaut blade. Learn its telegraphs."),
+   new BestiaryEntry("Iron Goblin","Verdant Kingdom","A nimble brawler with quick punches. Parry its windup."),
+   new BestiaryEntry("Ash Demon","Burning Dunes and Emberfall","A fierce close-range demon. Dodge its committed strikes."),
+   new BestiaryEntry("Lava Golem","Emberfall","A heavy stone-and-lava brute. Slow swings leave room to counter."),
+   new BestiaryEntry("Sunscar Brute","Burning Dunes","A smaller sand golem with heavy melee strikes. Sidestep its windup.")
   };
 
   public static bool IsBoss(int kind)=>kind==8||kind==9||kind==10||kind==21;
@@ -94,7 +98,7 @@ namespace LostRealms {
    new Achievement("skins_6","Wardrobe Complete","Own every outfit.",6,200,2,s=>s.skins==null?0:s.skins.Count),
    new Achievement("codex_6","Field Notes","Discover 6 bestiary entries.",6,50,0,Discovered),
    new Achievement("codex_12","Naturalist","Discover 12 bestiary entries.",12,120,1,Discovered),
-   new Achievement("codex_22","Complete Bestiary","Discover every bestiary entry.",22,300,3,Discovered),
+   new Achievement("codex_22","Complete Bestiary","Discover every bestiary entry.",Kinds,300,3,Discovered),
    new Achievement("parry_10","Steel Wall","Parry 10 attacks.",10,50,0,s=>s.lifetimeParries),
    new Achievement("parry_50","Riposte Artist","Parry 50 attacks.",50,150,1,s=>s.lifetimeParries),
    new Achievement("dodge_10","Light Feet","Perfect-dodge 10 attacks.",10,50,0,s=>s.lifetimeDodges),

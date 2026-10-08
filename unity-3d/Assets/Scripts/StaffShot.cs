@@ -10,7 +10,7 @@ namespace LostRealms {
    var go=new GameObject(element==0?"Staff fireball":element==1?"Staff frost bolt":"Staff thunder bolt");go.transform.SetParent(g.World.transform,false);go.transform.position=origin;
    var shot=go.AddComponent<StaffShot>();shot.direction=forward.normalized;shot.damage=damage;shot.element=element;shot.weapon=weapon;
    if(shot.Slash||weapon==WeaponId.WardenPike){
-    go.name=weapon==WeaponId.OrnateCurvedBlade?"Gale crosscut":weapon==WeaponId.VoidReaper?"Void Reaper crescent":weapon==WeaponId.PureScythe?"Reaper crescent":"Warden storm lance";
+    go.name=WeaponCatalog.IsEpic(weapon)?WeaponCatalog.Get(weapon).Name+" crescent":weapon==WeaponId.OrnateCurvedBlade?"Gale crosscut":weapon==WeaponId.VoidReaper?"Void Reaper crescent":weapon==WeaponId.PureScythe?"Reaper crescent":"Warden storm lance";
     shot.material=ChargedWeaponArt.Build(go.transform,forward,weapon);
     g.Sound(shot.Slash?"sword_slash":"gale_cast");return shot;
    }
@@ -34,7 +34,7 @@ namespace LostRealms {
    to=from+direction*stop;Enemy target=null;float nearest=2f;
    foreach(var enemy in g.Enemies){
     if(!enemy||enemy.Health<=0)continue;
-    if(ProjectileSweep.Hits(from,to,enemy.transform.position+Vector3.up*.85f,enemy.Radius+(weapon==WeaponId.PureScythe||weapon==WeaponId.OrnateCurvedBlade||weapon==WeaponId.VoidReaper?.65f:.18f),out float fraction)&&fraction<nearest&&Clear(from,enemy.transform.position+Vector3.up*.85f)){
+    if(ProjectileSweep.Hits(from,to,enemy.transform.position+Vector3.up*.85f,enemy.Radius+(Slash?.65f:.18f),out float fraction)&&fraction<nearest&&Clear(from,enemy.transform.position+Vector3.up*.85f)){
      nearest=fraction;target=enemy;
     }
    }

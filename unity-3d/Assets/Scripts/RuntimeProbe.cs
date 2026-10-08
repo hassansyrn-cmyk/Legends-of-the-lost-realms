@@ -10,6 +10,12 @@ namespace LostRealms {
   void Update(){var g=RealmGame.I;if(g&&g.Screen==GameScreen.Playing){g.MoveInput=move;g.JumpPressed=jump;jump=false;}}
   void Check(bool okay,string message){if(!okay){Debug.LogError("REALM_TEST_FAILED: "+message);Quit(1);throw new Exception(message);}assertions++;Debug.Log("PASS: "+message);}
   IEnumerator Start(){
+   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-guardianOnly")>=0){yield return null;yield return GuardianCombatChecks.Run(Check);Check(runtimeErrors==0,"Guardian patterns emit no runtime errors");Debug.Log("GUARDIAN_PATTERN_TESTS_PASSED "+assertions);Quit(0);yield break;}
+   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-newEpicFocused")>=0){
+    yield return null;yield return NewEpicChecks.Run(Check);yield return EpicPolishChecks.Run(Check);yield return GuardianCombatChecks.Run(Check);
+    Check(runtimeErrors==0,"New asset checks emit no runtime errors");
+    Debug.Log("NEW_EPIC_TESTS_PASSED "+assertions);Quit(0);yield break;
+   }
    if(Array.IndexOf(Environment.GetCommandLineArgs(),"-chapterPhysicsFocused")>=0){
     yield return null;yield return ChapterPhysicsChecks.Run(Check);
     Check(runtimeErrors==0,"Chapter physics checks emit no runtime errors");
@@ -176,8 +182,8 @@ target.Hit(999,0,true);Check(target.Health==0,"Combat can defeat enemies");
     g.Respawn();g.Resume();g.Player.Energy=40;float e0=g.Player.Energy;yield return new WaitForSeconds(1f);
     Check(g.Player.Energy>e0+14f,"Aether rank boosts energy regen above base 12/s rate");
     string v2=JsonUtility.ToJson(g.Save);Check(v2.Contains("\"version\":2"),"Save payload retains v2 version without changing user preferences in tests");
-    Check(Codex.Entries.Length==22,"Codex defines entries for all 22 enemy kinds");
-    for(int k=0;k<22;k++){Check(!string.IsNullOrEmpty(Codex.Entries[k].Name)&&!string.IsNullOrEmpty(Codex.Entries[k].Habitat)&&!string.IsNullOrEmpty(Codex.Entries[k].Behavior),"Codex entry valid: "+k);Check(Enemy.WeaknessOf(k)>=0&&Enemy.WeaknessOf(k)<=2,"Elemental weakness valid: "+k);}
+    Check(Codex.Entries.Length==Codex.Kinds,"Codex defines entries for all enemy kinds");
+    for(int k=0;k<Codex.Kinds;k++){Check(!string.IsNullOrEmpty(Codex.Entries[k].Name)&&!string.IsNullOrEmpty(Codex.Entries[k].Habitat)&&!string.IsNullOrEmpty(Codex.Entries[k].Behavior),"Codex entry valid: "+k);Check(Enemy.WeaknessOf(k)>=0&&Enemy.WeaknessOf(k)<=2,"Elemental weakness valid: "+k);}
     Check(Codex.All.Length==28,"28 achievements defined");
     Codex.Record(g.Save,0,false);
     Check(g.Save.bestiary[0]>0&&Codex.Discovered(g.Save)>=1,"Bestiary records enemy defeat");

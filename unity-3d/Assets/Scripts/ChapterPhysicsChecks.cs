@@ -28,7 +28,7 @@ namespace LostRealms {
    var deck=new GameObject("Island");deck.transform.SetParent(g.World.transform);deck.transform.position=new Vector3(1000,30,0);
    Art.Shape("Visible physics deck",PrimitiveType.Cube,Vector3.down*.25f,new Vector3(30,.5f,30),Color.gray,deck.transform,true);
    var families=new List<Enemy>();
-   for(int kind=0;kind<=21;kind++)families.Add(Foe(g,kind,deck.transform.position+new Vector3((kind%6-2.5f)*3f,.05f,(kind/6-1.5f)*3f)));
+   for(int kind=0;kind<Codex.Kinds;kind++)families.Add(Foe(g,kind,deck.transform.position+new Vector3((kind%6-2.5f)*3f,.05f,(kind/6-1.5f)*3f)));
    Physics.SyncTransforms();yield return new WaitForSeconds(.4f);
    foreach(var e in families)check(e.Grounded&&e.Controller&&e.Controller.enabled,"All families use a grounded collision capsule: "+e.Kind);
    foreach(var e in families)UnityEngine.Object.Destroy(e.gameObject);yield return null;

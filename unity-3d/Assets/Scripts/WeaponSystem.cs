@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace LostRealms {
- public enum WeaponId { AstersBlade=0, Axe=1, CurvedSword=2, BlinkAxe=3, BlinkMace=4, BlinkSpear=5, AxeIron=6, AxeBattle=7, AxeBearded=8, AxeCleaver=9, SwordShort=10, SwordFalchion=11, SwordSabre=12, SwordClaymore=13, SwordZweihander=14, SwordGreat=15, HovlMagic=16, HovlMoon=17, HovlMoon2=18, PureAxe2H=19, PureHammer=20, PureScythe=21, PureSword2H=22, PureSpear=23, PureSword1H=24, HalberdA=25, HalberdB=26, HalberdC=27, RangerAxe=28, Executioner=29, SquireBlade=30, Juggernaut=31, HuntsmanSpear=32, MoonChakram=33, RiftDagger=34, WardenPike=35, Maul=36, EmberTorch=37, SageStaff=38, FantasyGreatsword=39, FierySword=40, OrnateCurvedBlade=41, AstralStaff=42, GlacierMaul=43, VoidReaper=44, FrostHalberd=45 }
+ public enum WeaponId { AstersBlade=0, Axe=1, CurvedSword=2, BlinkAxe=3, BlinkMace=4, BlinkSpear=5, AxeIron=6, AxeBattle=7, AxeBearded=8, AxeCleaver=9, SwordShort=10, SwordFalchion=11, SwordSabre=12, SwordClaymore=13, SwordZweihander=14, SwordGreat=15, HovlMagic=16, HovlMoon=17, HovlMoon2=18, PureAxe2H=19, PureHammer=20, PureScythe=21, PureSword2H=22, PureSpear=23, PureSword1H=24, HalberdA=25, HalberdB=26, HalberdC=27, RangerAxe=28, Executioner=29, SquireBlade=30, Juggernaut=31, HuntsmanSpear=32, MoonChakram=33, RiftDagger=34, WardenPike=35, Maul=36, EmberTorch=37, SageStaff=38, FantasyGreatsword=39, FierySword=40, OrnateCurvedBlade=41, AstralStaff=42, GlacierMaul=43, VoidReaper=44, FrostHalberd=45, Duskblade=46, Soulreaper=47 }
 
   public readonly struct WeaponDefinition {
    public readonly WeaponId Id;public readonly string Name,Resource,Summary;public readonly float Damage,Reach,Tempo,ModelScale;public readonly Vector3 EquipEuler;
@@ -11,11 +11,12 @@ namespace LostRealms {
  }
 
 public static class WeaponCatalog {
-    public const int MaxId=(int)WeaponId.FrostHalberd;
+    public const int MaxId=(int)WeaponId.Soulreaper;
+    public static bool IsEpic(WeaponId id)=>id==WeaponId.Duskblade||id==WeaponId.Soulreaper;
     // Explicit identities: spear-shaped weapons remain physical polearms.
     public static int ChargedShot(WeaponId id)=>id==WeaponId.EmberTorch?0:id==WeaponId.AstralStaff||id==WeaponId.FrostHalberd?1:id==WeaponId.SageStaff||id==WeaponId.WardenPike?2:-1;
     public static bool ChargedSlash(WeaponId id)=>id==WeaponId.PureScythe||id==WeaponId.OrnateCurvedBlade||id==WeaponId.VoidReaper;
-    public static bool HasSpecialHold(WeaponId id)=>id==WeaponId.FantasyGreatsword||id==WeaponId.FierySword||id==WeaponId.OrnateCurvedBlade||id==WeaponId.GlacierMaul||ChargedShot(id)>=0||ChargedSlash(id);
+    public static bool HasSpecialHold(WeaponId id)=>IsEpic(id)||id==WeaponId.FantasyGreatsword||id==WeaponId.FierySword||id==WeaponId.OrnateCurvedBlade||id==WeaponId.GlacierMaul||ChargedShot(id)>=0||ChargedSlash(id);
     // Keep one normal chapter drop, but discover the collection before repeating it.
     // Reuse the existing roll so selecting loot does not reshuffle the level layout.
     public static WeaponId DiscoveryDrop(int roll,Progress progress){
@@ -72,7 +73,9 @@ public static class WeaponCatalog {
     new WeaponDefinition(WeaponId.AstralStaff,"ASTRAL STAFF","Weapons/AstralStaff",1.08f,1.34f,.98f,1.48f,new Vector3(10,0,0),"hold attack: frost bolt  •  freezes on impact"),
     new WeaponDefinition(WeaponId.GlacierMaul,"GLACIER MAUL","Weapons/GlacierMaul",1.82f,.94f,.62f,1.35f,new Vector3(8,0,0),"hold attack: glacier break  •  freezing ground rift"),
     new WeaponDefinition(WeaponId.VoidReaper,"VOID REAPER","Weapons/VoidReaper",1.28f,1.27f,.86f,1.48f,new Vector3(10,90,90),"hold attack: shadow crescent  •  long-range cut"),
-    new WeaponDefinition(WeaponId.FrostHalberd,"FROST HALBERD","Weapons/FrostHalberd",1.18f,1.42f,.9f,1.52f,new Vector3(10,0,0),"hold attack: ice lance  •  freezes on impact")
+    new WeaponDefinition(WeaponId.FrostHalberd,"FROST HALBERD","Weapons/FrostHalberd",1.18f,1.42f,.9f,1.52f,new Vector3(10,0,0),"hold attack: ice lance  •  freezes on impact"),
+    new WeaponDefinition(WeaponId.Duskblade,"DUSKBLADE","Weapons/Duskblade",1.58f,1.22f,.96f,1.3f,new Vector3(10,90,90),"Epic • hold attack: piercing star lance"),
+    new WeaponDefinition(WeaponId.Soulreaper,"SOULREAPER","Weapons/Soulreaper",1.72f,1.42f,.76f,1.55f,new Vector3(10,90,90),"Epic • hold attack: soul vortex")
     };
   public static WeaponDefinition Get(int rawId){return rawId<0?Fists:Definitions[Mathf.Clamp(rawId,0,Definitions.Length-1)];}
   public static WeaponDefinition Get(WeaponId id)=>Get((int)id);
@@ -174,11 +177,13 @@ public static class WeaponCatalog {
  }
 
  public sealed class EquippedWeapon:MonoBehaviour {
-  public static bool HasAuthoredGrip(WeaponId id)=>id==WeaponId.FantasyGreatsword||id==WeaponId.FierySword||id==WeaponId.OrnateCurvedBlade||id==WeaponId.AstersBlade||id==WeaponId.SwordShort;
+  public static bool HasAuthoredGrip(WeaponId id)=>id==WeaponId.FantasyGreatsword||id==WeaponId.FierySword||id==WeaponId.OrnateCurvedBlade||id==WeaponId.AstersBlade||id==WeaponId.SwordShort||WeaponCatalog.IsEpic(id);
   public static bool HasGripAnchor(WeaponId id)=>HasAuthoredGrip(id)||id==WeaponId.Axe||id==WeaponId.AstralStaff||id==WeaponId.GlacierMaul||id==WeaponId.VoidReaper||id==WeaponId.FrostHalberd;
-  public static bool DiagonalSheath(WeaponId id)=>id==WeaponId.FantasyGreatsword||id==WeaponId.FierySword||id==WeaponId.OrnateCurvedBlade;
+  public static bool DiagonalSheath(WeaponId id)=>id==WeaponId.FantasyGreatsword||id==WeaponId.FierySword||id==WeaponId.OrnateCurvedBlade||WeaponCatalog.IsEpic(id);
   // Mesh-local handle centers measured from the textured front views and geometry census.
   public static Vector3 GripPoint(WeaponId id){
+   if(id==WeaponId.Duskblade)return new Vector3(0,.34f,0);
+   if(id==WeaponId.Soulreaper)return new Vector3(-.008f,-.20f,-.145f);
    if(id==WeaponId.FantasyGreatsword)return new Vector3(.247f,.799f,0);
    if(id==WeaponId.FierySword)return new Vector3(-.334f,.819f,0);
    if(id==WeaponId.OrnateCurvedBlade)return new Vector3(.020f,.728f,0);
@@ -222,7 +227,8 @@ public static class WeaponCatalog {
   static Vector3 BladeAxis(WeaponId id){
    if(id==WeaponId.FantasyGreatsword)return new Vector3(-.64f,-.768f,0);
    if(id==WeaponId.FierySword)return new Vector3(.707f,-.707f,0);
-   if(id==WeaponId.OrnateCurvedBlade)return Vector3.down;
+   if(id==WeaponId.Soulreaper)return Vector3.up;
+   if(id==WeaponId.OrnateCurvedBlade||id==WeaponId.Duskblade)return Vector3.down;
    if(id==WeaponId.AstersBlade)return new Vector3(0.4547f,0.1875f,0.8707f).normalized;
    if(id==WeaponId.SwordShort)return Vector3.up;
    return Vector3.up;
@@ -230,6 +236,8 @@ public static class WeaponCatalog {
   static Quaternion ModelCorrection(WeaponId id){
    if(id==WeaponId.FantasyGreatsword)return Quaternion.Inverse(Quaternion.LookRotation(Vector3.forward,new Vector3(-.64f,-.768f,0)));
    if(id==WeaponId.FierySword)return Quaternion.Inverse(Quaternion.LookRotation(Vector3.forward,new Vector3(.707f,-.707f,0)));
+   if(id==WeaponId.Duskblade)return Quaternion.Inverse(Quaternion.LookRotation(Vector3.forward,Vector3.down));
+   if(id==WeaponId.Soulreaper)return Quaternion.Inverse(Quaternion.LookRotation(Vector3.right,Vector3.up))*Quaternion.AngleAxis(180f,Vector3.up);
    if(id==WeaponId.OrnateCurvedBlade)return Quaternion.Inverse(Quaternion.LookRotation(Vector3.forward,Vector3.down));
    if(id==WeaponId.AstersBlade)return Quaternion.Inverse(Quaternion.LookRotation(new Vector3(0.4547f,0.1875f,0.8707f).normalized,new Vector3(-0.2995f,-0.8884f,0.3477f).normalized));
    if(id==WeaponId.SwordShort)return Quaternion.Inverse(Quaternion.LookRotation(Vector3.up,Vector3.forward));
@@ -338,6 +346,7 @@ public static class WeaponCatalog {
    string state=hero.Visual.CurrentState;
    if(state.StartsWith("attack_")||state=="charged")drawnUntil=Time.time+1.1f;
    bool shouldDraw=Time.time<drawnUntil;
+   if(Id==WeaponId.Soulreaper&&draw<1f&&(state.StartsWith("attack_")||state=="charged")){draw=1f;if(trail){trail.emitting=false;trail.Clear();}}
    if(trail)trail.emitting=shouldDraw&&draw>=.9f;
    draw=Mathf.MoveTowards(draw,shouldDraw?1f:0f,Time.deltaTime*(shouldDraw?9f:3.5f));
    Vector3 handPosition=hand.position;

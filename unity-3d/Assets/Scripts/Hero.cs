@@ -376,7 +376,9 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
      if(g.Elapsed<hitUntil||g.Elapsed<dodgeVisualUntil||g.Elapsed<parryUntil||plunging)break;
      if(g.Elapsed>=releaseAt){
       Vector3 origin=transform.position+Vector3.up*1.05f;
-      if(weapon==WeaponId.GlacierMaul){
+      if(WeaponCatalog.IsEpic(weapon)){
+       EpicChargedAttack.Fire(origin,transform.forward,damage,weapon);
+      }else if(weapon==WeaponId.GlacierMaul){
        EarthQuakeSlam.Create(transform.position,transform.forward,damage,1);
       }else if(weapon==WeaponId.FantasyGreatsword){
        EarthQuakeSlam.Create(transform.position,transform.forward,damage);
@@ -823,6 +825,7 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
     if(extra)v.extraClips[st]=extra;
    }
    if(!isAsterRole){var runFast=Resources.Load<AnimationClip>("Animations/"+role+"_run");if(runFast)v.extraClips["run_fast"]=runFast;}
+   if(role=="StoneBrute")foreach(var st in new[]{"slam","sweep","stomp","eruption","roar","charge_ready"}){var clip=Resources.Load<AnimationClip>("Animations/StoneBrute_"+st);if(clip)v.extraClips[st]=clip;}
    // Removed dynamic Animator addition. Prefabs should contain their own Animators if they are animated.
    // Normalize any FBX model to the requested role height and ground it on its
    // real bounds — pack FBX ship arbitrary scales and pivot offsets (the golem
@@ -857,6 +860,14 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
     output.SetSourcePlayable(v.mixer);
     v.hasGraph=true;v.graph.Play();
    }
+   if((role=="IronGoblin"||role=="AshDemon"||role=="StoneBrute")&&v.animator){
+    // Grounding samples the animated soles even beyond the camera view.
+    // A stale culled pose causes a height pop when the enemy becomes visible.
+    v.animator.cullingMode=AnimatorCullingMode.AlwaysAnimate;
+    var skin=v.GetComponentInChildren<SkinnedMeshRenderer>();
+    if(skin)v.gameObject.AddComponent<EnemyGroundPose>().Setup(parent,skin);
+    v.Play("idle");v.blend=1;v.mixer.SetInputWeight(v.slot,1);v.mixer.SetInputWeight(1-v.slot,0);
+   }
    return v;
   }
 
@@ -870,6 +881,8 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
    if(!texture){skins[role]=null;return null;}
    var mat=new Material(Shader.Find("Standard")){name=role,color=Color.white};
    mat.mainTexture=texture;mat.SetFloat("_Metallic",.05f);mat.SetFloat("_Glossiness",.26f);
+   var normal=Resources.Load<Texture2D>("Characters/Textures/"+role+"_normal");
+   if(normal){mat.SetTexture("_BumpMap",normal);mat.EnableKeyword("_NORMALMAP");}
    skins[role]=mat;return mat;
   }
 

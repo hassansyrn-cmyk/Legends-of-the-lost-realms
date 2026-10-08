@@ -214,6 +214,8 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
       Checkpoint(islandObj?islandObj.transform:null,p,width,length);
      }
     if(i>=2&&i%4==0){float hx=(i%2==0?-1:1)*(1.2f+(float)random.NextDouble()*.9f);HealPickup(p+new Vector3(hx,.6f,-1.2f+(float)random.NextDouble()*2.4f));}
+    // Temporary user playtest drops; remove this override after weapon approval.
+    if(stage<=2&&i==1)WeaponDrop(p+new Vector3(-1.4f,.18f,-1.2f),stage==1?WeaponId.Duskblade:WeaponId.Soulreaper);
     if(i==weaponIsland)WeaponDrop(p+new Vector3((i%2==0?-2.3f:2.3f),.18f,-1.4f),weaponId);
     if(stage>=2&&!last&&(i==3||i==7)){
      BouncePad.Place(transform,p+new Vector3((i%2==0?-2.8f:2.8f),.05f,-1.8f),accent);
@@ -230,6 +232,7 @@ public void Build(int stage,int world){level=stage;realm=world;IsBoss=stage==4||
     }
     if(i>=2&&!last){int kind=(stage+i)%8;
      if(stage>=9&&i%6==2)kind=17;else if(stage>=3&&i%6==2)kind=11;else if(stage>=5&&i%5==4)kind=12;else if(stage>=6&&i%7==3)kind=13;else if(stage>=4&&i%6==5)kind=14;else if(stage>=4&&i%7==6)kind=15;else if(stage>=5&&i==7)kind=16;else if(stage>=3&&((stage+i)%8)==2)kind=18;else if(stage>=4&&((stage+i)%8)==5)kind=19;else if(stage>=4&&((stage+i)%8)==6)kind=20;
+     if(world==1&&i==5)kind=25;else if(stage>=11&&i==5)kind=24;else if(stage>=5&&i==4&&(world==1||world==3))kind=23;else if(stage>=2&&i==3&&world==0)kind=22;
      float ez=arch==IslandArchetype.TieredPlatform?-2.2f:1f;float ey=arch==IslandArchetype.TieredPlatform?1.28f:.03f;
      if(arch==IslandArchetype.SteppingStones){
       deferredEnemyKind=kind;
