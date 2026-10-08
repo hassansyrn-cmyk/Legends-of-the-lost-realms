@@ -626,7 +626,10 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     if(MenuButton(new Rect(440,424,400,56),"SANCTUARY",iconSanctuary))Screen=GameScreen.Settings;
     if(MenuButton(new Rect(440,492,400,56),"NEW JOURNEY",iconNewJourney)){Save=new Progress();Save.equippedWeapon=-1;Persist();Sound("upgrade");LoadLevel(1);}
 
-    Text(240,672,800,22,"UNITY 3D EDITION   *   TOUCH + KEYBOARD   *   JOURNEY AUTOSAVES",tinyC);
+    if(MenuButton(new Rect(440,560,400,56),"PRIVACY POLICY",smallBtn:true,st:smallC))
+    Application.OpenURL("https://legends-of-the-lost-realms-site.vercel.app/privacy.html");
+
+   Text(240,672,800,22,"UNITY 3D EDITION   *   TOUCH + KEYBOARD   *   JOURNEY AUTOSAVES",tinyC);
     return;
    }
 
