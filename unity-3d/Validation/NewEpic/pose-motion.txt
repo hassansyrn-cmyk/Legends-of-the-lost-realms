@@ -1,0 +1,20 @@
+IronGoblin idle motion=0.09818587 feet=0.004999995
+IronGoblin walk motion=0.2794183 feet=0.004999995
+IronGoblin run motion=0.7575109 feet=0.004999995
+IronGoblin attack motion=0.218161 feet=0.004999995
+IronGoblin hit motion=0.4560969 feet=0.004999995
+IronGoblin death motion=0.3560032 feet=0.004999995
+AshDemon idle motion=0.04051253 feet=0.004999995
+AshDemon walk motion=0.5029105 feet=0.005000003
+AshDemon run motion=1.015489 feet=0.004999999
+AshDemon attack motion=0.2820424 feet=0.004999995
+AshDemon hit motion=0.4870005 feet=0.005000003
+AshDemon death motion=0.4338046 feet=0.005000003
+StoneBrute idle motion=0.2112185 feet=0.004999995
+StoneBrute walk motion=0.5860032 feet=0.004999999
+StoneBrute run motion=1.152885 feet=0.005000003
+StoneBrute attack motion=0.2342888 feet=0.004999995
+StoneBrute hit motion=0.3896268 feet=0.004999995
+StoneBrute death motion=0.5540103 feet=0.005000003
+Duskblade localbounds=Center: (0.00, 0.00, 0.00), Extents: (0.03, 0.50, 0.07) sheath=Center: (0.00, 1.02, -0.28), Extents: (0.26, 0.65, 0.04)
+Soulreaper localbounds=Center: (0.00, 0.00, 0.00), Extents: (0.08, 0.50, 0.40) sheath=Center: (0.00, 1.02, -0.28), Extents: (0.80, 0.91, 0.12)

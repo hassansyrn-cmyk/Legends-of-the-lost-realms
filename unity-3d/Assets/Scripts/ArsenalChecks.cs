@@ -14,7 +14,7 @@ namespace LostRealms {
    g.EquipWeapon(WeaponId.HuntsmanSpear);yield return null;
    check(g.Screen==GameScreen.Paused&&g.Save.weapons.Count==2&&g.CurrentWeapon.Id==WeaponId.HuntsmanSpear,"Mid-run arsenal swap preserves pause and both collected weapons");
    var roundtrip=JsonUtility.FromJson<Progress>(JsonUtility.ToJson(g.Save));roundtrip.NormalizeWeapons();
-   check(roundtrip.weapons.Count==2&&roundtrip.equippedWeapon==33,"Arsenal collection and equipped selection round-trip through save JSON");
+   check(roundtrip.weapons.Count==2&&roundtrip.equippedWeapon==(int)WeaponId.HuntsmanSpear,"Arsenal collection and equipped selection round-trip through save JSON");
    g.UnequipWeapon();yield return null;
    check(g.Save.weapons.Count==2&&g.Save.equippedWeapon==-1&&!g.Player.GetComponentInChildren<EquippedWeapon>(),"Unequip removes model but retains collected weapons");
    for(int id=0;id<=WeaponCatalog.MaxId;id++){

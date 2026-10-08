@@ -102,6 +102,8 @@ namespace LostRealms {
    WeaponId.FrostHalberd
   };
 
+  public static readonly WeaponId[] EpicHoldWeapons = { WeaponId.PureScythe, WeaponId.WardenPike, WeaponId.EmberTorch, WeaponId.SageStaff, WeaponId.FantasyGreatsword, WeaponId.FierySword, WeaponId.OrnateCurvedBlade, WeaponId.AstralStaff, WeaponId.GlacierMaul, WeaponId.VoidReaper, WeaponId.FrostHalberd, WeaponId.Duskblade, WeaponId.Soulreaper };
+
   // Unlockable skins (5 skins, skin 0 Wanderer is starter)
   public static readonly SkinId[] UnlockableSkins = {
    SkinId.ShadowAssassin,
@@ -243,8 +245,8 @@ namespace LostRealms {
       return ChestReward.MakeWeapon(wid, false, 0, 0, RewardRarity.Common);
      }
     } else if (roll < 85) {
-     var wid = RareHoldWeapons[rng.Next(0, RareHoldWeapons.Length)];
-     RewardRarity rar = RewardRarity.Rare;
+     var wid = EpicHoldWeapons[rng.Next(0, EpicHoldWeapons.Length)];
+     RewardRarity rar = WeaponCatalog.IsEpic(wid) ? RewardRarity.Epic : RewardRarity.Rare;
      bool has = save.weapons != null && save.weapons.Contains((int)wid);
      if (has) {
       int dupGold = 450, dupGems = 5;

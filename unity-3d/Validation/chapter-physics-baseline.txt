@@ -1,0 +1,1324 @@
+OVERLAP chapter=1 Prop Bush_02 / Prop Tree_04
+OVERLAP chapter=1 Prop Grass_02 / Prop Tree_04
+OVERLAP chapter=1 Prop rpgpp_lt_crate_02 / Prop Tree_04
+OVERLAP chapter=1 Prop rpgpp_lt_crate_02 / Prop Bush_02
+OVERLAP chapter=1 Prop rpgpp_lt_crate_02 / Prop Grass_02
+OVERLAP chapter=1 Prop rpgpp_lt_sack_01 / Prop rpgpp_lt_grass_small_01a
+OVERLAP chapter=1 Breakable crate / Prop Tree_04
+OVERLAP chapter=1 Breakable crate / Prop rpgpp_lt_crate_02
+OVERLAP chapter=1 Prop Rock_01 / Prop rpgpp_lt_tree_02
+OVERLAP chapter=1 Prop Bush_03 / Prop rpgpp_lt_tree_02
+OVERLAP chapter=1 Prop Bush_03 / Prop Rock_01
+OVERLAP chapter=1 Prop Bush_01 / Prop rpgpp_lt_tree_02
+OVERLAP chapter=1 Prop Bush_01 / Prop Rock_01
+OVERLAP chapter=1 Prop Bush_01 / Prop Bush_03
+OVERLAP chapter=1 Prop Bush_03 / Prop Rock_01
+OVERLAP chapter=1 Prop Bush_03 / Prop Bush_01
+OVERLAP chapter=1 Prop rpgpp_lt_flower_02 / Prop rpgpp_lt_tree_02
+OVERLAP chapter=1 Prop rpgpp_lt_flower_02 / Prop Rock_01
+OVERLAP chapter=1 Prop rpgpp_lt_flower_02 / Prop Bush_03
+OVERLAP chapter=1 Prop rpgpp_lt_flower_02 / Prop Bush_01
+OVERLAP chapter=1 Prop rpgpp_lt_flower_02 / Prop Bush_03
+OVERLAP chapter=1 Prop rpgpp_lt_box_wood_01 / Prop rpgpp_lt_tree_02
+OVERLAP chapter=1 Prop rpgpp_lt_box_wood_01 / Prop Rock_01
+OVERLAP chapter=1 Prop rpgpp_lt_box_wood_01 / Prop Bush_03
+OVERLAP chapter=1 Prop rpgpp_lt_box_wood_01 / Prop Bush_01
+OVERLAP chapter=1 Prop rpgpp_lt_box_wood_01 / Prop Bush_03
+OVERLAP chapter=1 Prop rpgpp_lt_box_wood_01 / Prop rpgpp_lt_flower_02
+OVERLAP chapter=1 Prop rpgpp_lt_bush_02 / Prop Bush_03
+OVERLAP chapter=1 Breakable barrel / Prop Bush_01
+OVERLAP chapter=1 Pushable block / Prop rpgpp_lt_tree_02
+LANE_BLOCK chapter=1 Pushable block
+OVERLAP chapter=1 Prop Tree_01 / Prop Tree_03
+LANE_BLOCK chapter=1 Prop Rock_01
+OVERLAP chapter=1 Prop Rock_02 / Prop rpgpp_lt_tree_02
+LANE_BLOCK chapter=1 Prop Rock_02
+OVERLAP chapter=1 Prop Rock_02 / Prop Tree_03
+OVERLAP chapter=1 Prop Flowers_01 / Prop Tree_03
+OVERLAP chapter=1 Prop Flowers_01 / Prop Rock_02
+OVERLAP chapter=1 Prop Bush_01 / Prop Tree_01
+OVERLAP chapter=1 Prop rpgpp_lt_flower_01 / Prop Tree_03
+OVERLAP chapter=1 Prop rpgpp_lt_flower_01 / Prop Rock_02
+OVERLAP chapter=1 Prop rpgpp_lt_flower_01 / Prop Flowers_01
+OVERLAP chapter=1 Prop rpgpp_lt_flower_01 / Prop rpgpp_lt_tree_02
+OVERLAP chapter=1 Prop rpgpp_lt_flower_01 / Prop Rock_02
+OVERLAP chapter=1 Prop rpgpp_lt_crate_02 / Prop Tree_01
+OVERLAP chapter=1 Prop rpgpp_lt_bench_wood_01 / Prop Tree_03
+OVERLAP chapter=1 Prop rpgpp_lt_bench_wood_01 / Prop Tree_01
+OVERLAP chapter=1 Prop rpgpp_lt_bench_wood_01 / Prop Rock_02
+OVERLAP chapter=1 Prop rpgpp_lt_rock_small_02 / Prop Tree_03
+OVERLAP chapter=1 Breakable barrel / Prop Tree_03
+OVERLAP chapter=1 Breakable barrel / Prop Rock_02
+OVERLAP chapter=1 Breakable barrel / Prop rpgpp_lt_flower_01
+OVERLAP chapter=1 Breakable crate / Prop Rock_02
+OVERLAP chapter=1 Prop Bush_03 / Prop Bush_01
+FLOAT chapter=1 Prop Rock_01 pos=(-2.15, -0.75, 40.58) bounds=Center: (-2.18, -0.70, 40.57), Extents: (1.02, 0.45, 1.02)
+LANE_BLOCK chapter=1 Prop Rock_01
+FLOAT chapter=1 Prop Rock_03 pos=(-2.68, 0.50, 37.37) bounds=Center: (-2.64, 0.57, 37.37), Extents: (1.03, 0.45, 1.04)
+FLOAT chapter=1 Prop Rock_02 pos=(2.23, 0.56, 39.21) bounds=Center: (2.24, 0.56, 39.23), Extents: (1.03, 0.44, 0.99)
+LANE_BLOCK chapter=1 Prop Rock_02
+OVERLAP chapter=1 Prop Bush_03 / Prop Rock_03
+OVERLAP chapter=1 Prop Mushroom_01 / Prop Tree_04
+OVERLAP chapter=1 Prop rpgpp_lt_flower_01 / Prop Grass_02
+FLOAT chapter=1 Prop rpgpp_lt_wagon_01 pos=(2.51, 0.87, 39.38) bounds=Center: (2.06, 1.15, 38.54), Extents: (1.75, 1.03, 2.32)
+OVERLAP chapter=1 Prop rpgpp_lt_wagon_01 / Prop Tree_04
+OVERLAP chapter=1 Prop rpgpp_lt_wagon_01 / Prop Rock_02
+OVERLAP chapter=1 Prop rpgpp_lt_wagon_01 / Prop Mushroom_01
+LANE_BLOCK chapter=1 Prop rpgpp_lt_wagon_01
+FLOAT chapter=1 Prop rpgpp_lt_rock_02 pos=(4.05, -0.12, 40.33) bounds=Center: (4.10, -0.02, 40.37), Extents: (0.58, 0.46, 0.52)
+OVERLAP chapter=1 Prop rpgpp_lt_rock_02 / Prop rpgpp_lt_wagon_01
+OVERLAP chapter=1 Breakable barrel / Prop Rock_01
+OVERLAP chapter=1 Breakable crate / Prop Rock_01
+OVERLAP chapter=1 Breakable crate / Prop Mushroom_01
+FLOAT chapter=1 Pushable block pos=(1.40, -1.08, 39.83) bounds=Center: (1.40, -0.68, 39.83), Extents: (0.45, 0.40, 0.45)
+LANE_BLOCK chapter=1 Pushable block
+OVERLAP chapter=1 Prop Tree_03 / Prop Tree_03
+FLOAT chapter=1 Prop Rock_02 pos=(-4.09, 1.13, 49.78) bounds=Center: (-4.07, 1.13, 49.79), Extents: (1.12, 0.44, 1.12)
+OVERLAP chapter=1 Prop Rock_02 / Prop Tree_03
+OVERLAP chapter=1 Prop Rock_02 / Prop Tree_03
+LANE_BLOCK chapter=1 Prop Rock_02
+OVERLAP chapter=1 Prop Grass_02 / Prop Tree_03
+OVERLAP chapter=1 Prop Grass_02 / Prop Rock_02
+OVERLAP chapter=1 Prop Bush_03 / Prop Tree_03
+OVERLAP chapter=1 Prop Bush_03 / Prop Tree_03
+OVERLAP chapter=1 Prop Bush_03 / Prop Rock_02
+OVERLAP chapter=1 Prop Bush_02 / Prop Rock_02
+OVERLAP chapter=1 Prop Bush_03 / Prop Rock_02
+OVERLAP chapter=1 Prop Bush_03 / Prop Bush_02
+OVERLAP chapter=1 Prop rpgpp_lt_rock_01 / Prop Rock_02
+OVERLAP chapter=1 Prop rpgpp_lt_rock_01 / Prop Rock_02
+OVERLAP chapter=1 Prop rpgpp_lt_rock_01 / Prop Bush_03
+OVERLAP chapter=1 Prop rpgpp_lt_rock_small_02 / Prop Tree_03
+OVERLAP chapter=1 Prop rpgpp_lt_rock_small_02 / Prop Tree_03
+OVERLAP chapter=1 Prop rpgpp_lt_rock_small_02 / Prop Rock_02
+OVERLAP chapter=1 Prop rpgpp_lt_rock_small_02 / Prop Bush_03
+OVERLAP chapter=1 Prop rpgpp_lt_rock_small_02 / Prop rpgpp_lt_rock_01
+OVERLAP chapter=1 Breakable barrel / Prop Rock_02
+OVERLAP chapter=1 Breakable barrel / Prop Bush_03
+OVERLAP chapter=1 Prop Tree_01 / Prop Tree_03
+FLOAT chapter=1 Prop Rock_02 pos=(-0.07, 0.51, 62.94) bounds=Center: (-0.09, 0.51, 62.92), Extents: (1.25, 0.49, 1.24)
+OVERLAP chapter=1 Prop Rock_02 / Prop rpgpp_lt_tree_01
+LANE_BLOCK chapter=1 Prop Rock_02
+OVERLAP chapter=1 Prop rpgpp_lt_flower_01 / Prop Tree_03
+OVERLAP chapter=1 Prop rpgpp_lt_flower_02 / Prop Rock_02
+OVERLAP chapter=1 Prop rpgpp_lt_grass_small_01a / Prop rpgpp_lt_tree_01
+OVERLAP chapter=1 Prop rpgpp_lt_grass_small_01a / Prop Rock_02
+OVERLAP chapter=1 Prop Grass_01 / Prop Rock_02
+OVERLAP chapter=1 Prop rpgpp_lt_rock_01 / Prop Rock_02
+OVERLAP chapter=1 Prop rpgpp_lt_rock_01 / Prop Grass_01
+OVERLAP chapter=1 Prop rpgpp_lt_log_wood_01 / Prop Tree_03
+OVERLAP chapter=1 Prop rpgpp_lt_log_wood_01 / Prop Tree_01
+OVERLAP chapter=1 Prop rpgpp_lt_log_wood_01 / Prop rpgpp_lt_flower_01
+OVERLAP chapter=1 Prop rpgpp_lt_rock_small_01 / Prop Tree_01
+OVERLAP chapter=1 Prop rpgpp_lt_rock_small_01 / Prop rpgpp_lt_log_wood_01
+LANE_BLOCK chapter=1 Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=1 Breakable barrel / Prop Rock_03
+OVERLAP chapter=1 Breakable barrel / Prop Rock_03
+OVERLAP chapter=1 Breakable barrel / Breakable barrel
+OVERLAP chapter=1 Breakable barrel / Prop rpgpp_lt_rock_small_01
+FLOAT chapter=1 Prop Rock_03 pos=(2.30, 0.27, 68.66) bounds=Center: (2.28, 0.33, 68.64), Extents: (1.00, 0.35, 1.00)
+OVERLAP chapter=1 Prop Bush_01 / Prop Bush_03
+OVERLAP chapter=1 Prop Grass_01 / Prop Rock_03
+OVERLAP chapter=1 Prop rpgpp_lt_rock_small_01 / Prop Rock_03
+OVERLAP chapter=1 Prop rpgpp_lt_rock_small_01 / Prop Grass_01
+OVERLAP chapter=1 Breakable barrel / Prop rpgpp_lt_grass_small_01a
+OVERLAP chapter=1 Prop Tree_03 / Prop Tree_04
+OVERLAP chapter=1 Prop Rock_03 / Prop Tree_03
+FLOAT chapter=1 Prop Rock_02 pos=(3.30, 1.15, 82.88) bounds=Center: (3.31, 1.15, 82.86), Extents: (1.07, 0.43, 1.09)
+OVERLAP chapter=1 Prop Rock_02 / Prop Tree_04
+OVERLAP chapter=1 Prop Rock_02 / Prop Tree_03
+OVERLAP chapter=1 Prop Rock_02 / Prop Rock_02
+LANE_BLOCK chapter=1 Prop Rock_02
+OVERLAP chapter=1 Prop Rock_01 / Prop Rock_02
+LANE_BLOCK chapter=1 Prop Rock_01
+OVERLAP chapter=1 Prop Mushroom_01 / Prop Tree_03
+OVERLAP chapter=1 Prop Mushroom_01 / Prop Rock_03
+OVERLAP chapter=1 Prop rpgpp_lt_flower_01 / Prop Tree_03
+OVERLAP chapter=1 Prop rpgpp_lt_flower_01 / Prop Rock_03
+OVERLAP chapter=1 Prop Bush_01 / Prop Rock_02
+OVERLAP chapter=1 Prop Bush_01 / Prop Rock_01
+OVERLAP chapter=1 Prop rpgpp_lt_flower_01 / Prop Tree_04
+OVERLAP chapter=1 Prop rpgpp_lt_flower_01 / Prop Tree_03
+OVERLAP chapter=1 Prop Bush_02 / Prop Rock_02
+OVERLAP chapter=1 Prop rpgpp_lt_bench_wood_01 / Prop Bush_01
+LANE_BLOCK chapter=1 Prop rpgpp_lt_bench_wood_01
+OVERLAP chapter=1 Prop rpgpp_lt_rock_small_01 / Prop Bush_01
+OVERLAP chapter=1 Prop rpgpp_lt_rock_small_01 / Prop rpgpp_lt_bench_wood_01
+LANE_BLOCK chapter=1 Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=1 Breakable crate / Prop rpgpp_lt_bench_wood_01
+OVERLAP chapter=1 Breakable crate / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=1 Pushable block / Prop Tree_03
+LANE_BLOCK chapter=1 Pushable block
+FLOAT chapter=1 Prop Tree_01 pos=(7.00, 0.21, 87.81) bounds=Center: (6.94, 1.82, 87.82), Extents: (1.07, 1.61, 1.06)
+OVERLAP chapter=1 Prop rpgpp_lt_tree_02 / Breakable barrel
+OVERLAP chapter=1 Prop Rock_01 / Prop rpgpp_lt_tree_01
+OVERLAP chapter=1 Prop Grass_02 / Prop Rock_01
+OVERLAP chapter=1 Prop Mushroom_01 / Prop Tree_01
+OVERLAP chapter=1 Prop rpgpp_lt_crate_01 / Prop rpgpp_lt_tree_01
+OVERLAP chapter=1 Prop rpgpp_lt_crate_01 / Prop Rock_01
+OVERLAP chapter=1 Prop rpgpp_lt_rock_01 / Prop Bush_01
+OVERLAP chapter=1 Prop rpgpp_lt_rock_small_02 / Prop Bush_01
+OVERLAP chapter=1 Prop rpgpp_lt_rock_small_02 / Prop rpgpp_lt_rock_01
+OVERLAP chapter=1 Breakable barrel / Prop Bush_01
+OVERLAP chapter=1 Breakable barrel / Prop rpgpp_lt_rock_01
+OVERLAP chapter=1 Breakable barrel / Prop rpgpp_lt_rock_small_02
+OVERLAP chapter=1 Prop rpgpp_lt_tree_01 / Prop rpgpp_lt_tree_01
+OVERLAP chapter=1 Prop Rock_02 / Prop Rock_02
+LANE_BLOCK chapter=1 Prop Rock_02
+OVERLAP chapter=1 Prop Rock_03 / Prop rpgpp_lt_tree_01
+OVERLAP chapter=1 Prop Rock_03 / Prop rpgpp_lt_tree_01
+OVERLAP chapter=1 Prop rpgpp_lt_flower_02 / Prop Rock_02
+OVERLAP chapter=1 Prop Bush_01 / Prop rpgpp_lt_tree_01
+OVERLAP chapter=1 Prop rpgpp_lt_shed_wood_01 / Prop rpgpp_lt_tree_01
+OVERLAP chapter=1 Prop rpgpp_lt_shed_wood_01 / Prop rpgpp_lt_tree_01
+OVERLAP chapter=1 Prop rpgpp_lt_shed_wood_01 / Prop Rock_03
+FLOAT chapter=1 Prop rpgpp_lt_crate_02 pos=(-1.56, 0.03, 96.20) bounds=Center: (-1.52, 0.47, 96.19), Extents: (0.89, 0.45, 0.84)
+FLOAT chapter=1 Prop rpgpp_lt_barrel_02 pos=(3.33, -0.67, 100.59) bounds=Center: (3.33, -0.30, 100.58), Extents: (0.52, 0.36, 0.52)
+OVERLAP chapter=1 Prop rpgpp_lt_barrel_02 / Prop Rock_02
+FLOAT chapter=1 Prop rpgpp_lt_rock_small_01 pos=(5.05, 0.35, 97.98) bounds=Center: (5.05, 0.32, 97.88), Extents: (0.92, 0.23, 0.93)
+OVERLAP chapter=1 Prop rpgpp_lt_sack_01 / Prop rpgpp_lt_tree_01
+OVERLAP chapter=1 Prop rpgpp_lt_sack_01 / Prop rpgpp_lt_tree_01
+OVERLAP chapter=1 Prop rpgpp_lt_sack_01 / Prop Rock_03
+OVERLAP chapter=1 Prop rpgpp_lt_sack_01 / Prop rpgpp_lt_shed_wood_01
+OVERLAP chapter=1 Breakable crate / Prop rpgpp_lt_tree_01
+OVERLAP chapter=1 Breakable crate / Prop rpgpp_lt_tree_01
+OVERLAP chapter=1 Breakable crate / Prop rpgpp_lt_shed_wood_01
+OVERLAP chapter=1 Breakable crate / Prop rpgpp_lt_sack_01
+OVERLAP chapter=1 Breakable barrel / Prop rpgpp_lt_flower_02
+OVERLAP chapter=1 Breakable barrel / Prop rpgpp_lt_rock_small_01
+FLOAT chapter=1 Pushable block pos=(-0.40, 0.12, 99.42) bounds=Center: (-0.40, 0.52, 99.42), Extents: (0.45, 0.40, 0.45)
+LANE_BLOCK chapter=1 Pushable block
+OVERLAP chapter=1 Prop Tree_04 / Prop Tree_03
+OVERLAP chapter=1 Prop Tree_04 / Prop Tree_03
+FLOAT chapter=1 Prop Rock_02 pos=(4.30, 0.44, 107.98) bounds=Center: (4.32, 0.44, 107.99), Extents: (1.21, 0.49, 1.23)
+OVERLAP chapter=1 Prop rpgpp_lt_bush_01 / Prop Rock_02
+OVERLAP chapter=1 Prop Mushroom_01 / Prop Rock_01
+OVERLAP chapter=1 Prop rpgpp_lt_shed_wood_01 / Prop Tree_03
+OVERLAP chapter=1 Prop rpgpp_lt_shed_wood_01 / Prop Tree_04
+OVERLAP chapter=1 Prop rpgpp_lt_bench_wood_01 / Prop Rock_01
+OVERLAP chapter=1 Prop rpgpp_lt_bench_wood_01 / Prop rpgpp_lt_shed_wood_01
+ENEMY_UNGROUNDED chapter=1 kind=5 at=(0.00, 0.07, 40.00)
+ENEMY_UNGROUNDED chapter=1 kind=3 at=(1.00, 0.07, 100.00)
+CHAPTER 01 props=192 enemies=9 failures=201
+FLOAT chapter=2 Prop Tree_03 pos=(2.79, 0.20, 0.32) bounds=Center: (2.87, 1.81, 0.28), Extents: (1.47, 1.61, 1.34)
+OVERLAP chapter=2 Prop Rock_01 / Prop rpgpp_lt_tree_01
+OVERLAP chapter=2 Prop Rock_01 / Prop Tree_03
+OVERLAP chapter=2 Prop Grass_01 / Prop rpgpp_lt_tree_01
+OVERLAP chapter=2 Prop Mushroom_01 / Prop rpgpp_lt_tree_01
+OVERLAP chapter=2 Prop rpgpp_lt_flower_01 / Prop Grass_01
+OVERLAP chapter=2 Prop rpgpp_lt_bench_wood_01 / Prop Grass_01
+OVERLAP chapter=2 Prop rpgpp_lt_bench_wood_01 / Prop rpgpp_lt_flower_01
+OVERLAP chapter=2 Prop rpgpp_lt_rock_small_02 / Prop Flowers_01
+OVERLAP chapter=2 Prop Tree_03 / Prop rpgpp_lt_tree_02
+OVERLAP chapter=2 Prop Rock_01 / Prop Tree_01
+LANE_BLOCK chapter=2 Prop Rock_01
+OVERLAP chapter=2 Prop Rock_01 / Prop rpgpp_lt_tree_02
+OVERLAP chapter=2 Prop Rock_01 / Prop Rock_03
+LANE_BLOCK chapter=2 Prop Rock_01
+FLOAT chapter=2 Prop Rock_02 pos=(5.30, 1.00, 7.20) bounds=Center: (5.29, 1.00, 7.22), Extents: (1.16, 0.47, 1.18)
+OVERLAP chapter=2 Prop Rock_02 / Prop Rock_03
+OVERLAP chapter=2 Prop Rock_02 / Prop Rock_01
+OVERLAP chapter=2 Prop Bush_01 / Prop rpgpp_lt_tree_02
+OVERLAP chapter=2 Prop Bush_01 / Prop Rock_01
+OVERLAP chapter=2 Prop rpgpp_lt_barrel_01 / Prop Rock_03
+OVERLAP chapter=2 Prop rpgpp_lt_barrel_01 / Prop Rock_02
+OVERLAP chapter=2 Prop rpgpp_lt_rock_01 / Prop rpgpp_lt_tree_02
+OVERLAP chapter=2 Prop rpgpp_lt_rock_01 / Prop Tree_03
+OVERLAP chapter=2 Prop rpgpp_lt_rock_small_02 / Prop Tree_01
+OVERLAP chapter=2 Prop rpgpp_lt_rock_small_02 / Prop Rock_01
+OVERLAP chapter=2 Prop rpgpp_lt_rock_small_02 / Prop Bush_02
+OVERLAP chapter=2 Breakable crate / Prop Rock_03
+OVERLAP chapter=2 Breakable crate / Prop Rock_02
+OVERLAP chapter=2 Breakable crate / Prop rpgpp_lt_barrel_01
+OVERLAP chapter=2 Prop Flowers_01 / Prop Bush_03
+OVERLAP chapter=2 Prop rpgpp_lt_grass_small_01a / Prop Tree_04
+OVERLAP chapter=2 Prop Bush_02 / Prop Bush_03
+OVERLAP chapter=2 Prop Bush_02 / Prop Flowers_01
+LANE_BLOCK chapter=2 Breakable crate
+FLOAT chapter=2 Prop rpgpp_lt_tree_01 pos=(1.00, -1.19, 41.13) bounds=Center: (0.76, 0.55, 41.12), Extents: (0.96, 1.73, 0.98)
+OVERLAP chapter=2 Prop rpgpp_lt_tree_01 / Prop rpgpp_lt_tree_01
+OVERLAP chapter=2 Prop rpgpp_lt_tree_01 / Prop Bush_02
+OVERLAP chapter=2 Prop Rock_01 / Prop rpgpp_lt_tree_01
+OVERLAP chapter=2 Prop Rock_01 / Prop rpgpp_lt_tree_01
+LANE_BLOCK chapter=2 Prop Rock_01
+OVERLAP chapter=2 Prop Bush_01 / Prop rpgpp_lt_flower_01
+FLOAT chapter=2 Prop Bush_02 pos=(2.05, -0.46, 40.57) bounds=Center: (2.05, -0.19, 40.56), Extents: (0.50, 0.29, 0.50)
+OVERLAP chapter=2 Prop Bush_02 / Prop rpgpp_lt_tree_01
+OVERLAP chapter=2 Prop Bush_02 / Prop Mushroom_01
+OVERLAP chapter=2 Prop rpgpp_lt_shed_wood_02 / Prop Mushroom_01
+FLOAT chapter=2 Prop rpgpp_lt_crate_01 pos=(-4.91, -1.25, 38.60) bounds=Center: (-4.90, -0.78, 38.60), Extents: (1.31, 0.47, 1.68)
+LANE_BLOCK chapter=2 Prop rpgpp_lt_crate_01
+OVERLAP chapter=2 Prop rpgpp_lt_bucket_01 / Prop rpgpp_lt_shed_wood_02
+OVERLAP chapter=2 Breakable crate / Prop rpgpp_lt_crate_01
+OVERLAP chapter=2 Breakable barrel / Prop rpgpp_lt_tree_01
+OVERLAP chapter=2 Breakable barrel / Prop Rock_01
+LANE_BLOCK chapter=2 Prop Rock_01
+OVERLAP chapter=2 Prop rpgpp_lt_bush_01 / Prop rpgpp_lt_tree_01
+OVERLAP chapter=2 Prop rpgpp_lt_rock_02 / Prop Rock_02
+OVERLAP chapter=2 Prop rpgpp_lt_rock_02 / Prop Bush_01
+OVERLAP chapter=2 Prop rpgpp_lt_bench_wood_01 / Prop Bush_01
+LANE_BLOCK chapter=2 Prop rpgpp_lt_bench_wood_01
+OVERLAP chapter=2 Prop rpgpp_lt_bucket_01 / Prop rpgpp_lt_bush_01
+OVERLAP chapter=2 Prop rpgpp_lt_rock_small_02 / Prop rpgpp_lt_bush_01
+OVERLAP chapter=2 Prop rpgpp_lt_rock_small_02 / Prop rpgpp_lt_bucket_01
+OVERLAP chapter=2 Breakable barrel / Prop Rock_02
+OVERLAP chapter=2 Breakable barrel / Prop rpgpp_lt_rock_02
+LANE_BLOCK chapter=2 Pushable block
+OVERLAP chapter=2 Prop rpgpp_lt_barrel_01 / Prop rpgpp_lt_flower_01
+LANE_BLOCK chapter=2 Breakable crate
+FLOAT chapter=2 Prop Tree_01 pos=(4.24, 0.82, 94.71) bounds=Center: (4.28, 2.61, 94.75), Extents: (0.82, 1.80, 0.89)
+OVERLAP chapter=2 Prop Grass_02 / Prop Tree_03
+OVERLAP chapter=2 Prop Flowers_01 / Prop Tree_03
+FLOAT chapter=2 Prop rpgpp_lt_rock_03 pos=(6.08, 1.05, 87.32) bounds=Center: (6.14, 1.04, 87.29), Extents: (1.06, 0.42, 1.05)
+OVERLAP chapter=2 Prop rpgpp_lt_rock_03 / Prop Rock_02
+OVERLAP chapter=2 Prop rpgpp_lt_bush_02 / Prop rpgpp_lt_rock_03
+FLOAT chapter=2 Prop Tree_03 pos=(-2.46, 0.09, 100.37) bounds=Center: (-2.38, 1.80, 100.44), Extents: (1.16, 1.71, 1.35)
+OVERLAP chapter=2 Prop Tree_04 / Prop Tree_03
+LANE_BLOCK chapter=2 Prop Rock_01
+FLOAT chapter=2 Prop Rock_03 pos=(-4.03, 0.45, 104.10) bounds=Center: (-3.98, 0.54, 104.10), Extents: (1.25, 0.55, 1.25)
+FLOAT chapter=2 Prop Rock_01 pos=(-3.32, 1.77, 97.78) bounds=Center: (-3.29, 1.83, 97.77), Extents: (1.00, 0.51, 1.01)
+LANE_BLOCK chapter=2 Prop Rock_01
+FLOAT chapter=2 Prop Rock_01 pos=(3.05, 1.78, 97.28) bounds=Center: (3.04, 1.82, 97.25), Extents: (0.80, 0.40, 0.79)
+FLOAT chapter=2 Prop rpgpp_lt_flower_01 pos=(3.05, 0.72, 99.75) bounds=Center: (3.08, 0.92, 99.76), Extents: (0.26, 0.20, 0.24)
+OVERLAP chapter=2 Prop Bush_01 / Prop rpgpp_lt_flower_01
+OVERLAP chapter=2 Prop Bush_01 / Prop Tree_03
+OVERLAP chapter=2 Prop Mushroom_01 / Prop Rock_01
+FLOAT chapter=2 Prop rpgpp_lt_wagon_01 pos=(3.05, 1.86, 96.18) bounds=Center: (2.69, 2.11, 96.94), Extents: (1.74, 0.91, 2.05)
+OVERLAP chapter=2 Prop rpgpp_lt_wagon_01 / Prop Tree_01
+OVERLAP chapter=2 Prop rpgpp_lt_wagon_01 / Prop Rock_01
+OVERLAP chapter=2 Prop rpgpp_lt_wagon_01 / Prop Rock_01
+OVERLAP chapter=2 Prop rpgpp_lt_wagon_01 / Prop Mushroom_01
+OVERLAP chapter=2 Prop rpgpp_lt_vase_01 / Prop rpgpp_lt_wagon_01
+FLOAT chapter=2 Breakable barrel pos=(-2.64, 1.17, 97.17) bounds=Center: (-2.64, 1.52, 97.17), Extents: (0.19, 0.35, 0.19)
+OVERLAP chapter=2 Breakable barrel / Prop Rock_01
+OVERLAP chapter=2 Breakable barrel / Prop rpgpp_lt_tree_01
+FLOAT chapter=2 Prop Rock_03 pos=(-4.30, 1.58, 113.04) bounds=Center: (-4.35, 1.66, 113.04), Extents: (1.33, 0.51, 1.34)
+OVERLAP chapter=2 Prop Rock_03 / Prop Tree_03
+OVERLAP chapter=2 Prop Rock_03 / Prop Rock_01
+OVERLAP chapter=2 Prop Grass_02 / Prop Tree_03
+OVERLAP chapter=2 Prop rpgpp_lt_grass_small_01a / Prop rpgpp_lt_tree_01
+OVERLAP chapter=2 Prop rpgpp_lt_bush_01 / Prop Tree_03
+FLOAT chapter=2 Prop rpgpp_lt_shed_wood_01 pos=(4.27, 1.15, 111.80) bounds=Center: (4.61, 2.22, 111.46), Extents: (1.28, 1.05, 1.28)
+OVERLAP chapter=2 Prop rpgpp_lt_shed_wood_01 / Prop Rock_01
+ENEMY_UNGROUNDED chapter=2 kind=6 at=(-2.00, 0.07, 40.00)
+ENEMY_UNGROUNDED chapter=2 kind=4 at=(-1.00, 1.27, 100.00)
+CHAPTER 02 props=136 enemies=9 failures=102
+OVERLAP chapter=3 Prop rpgpp_lt_tree_02 / Prop rpgpp_lt_tree_02
+FLOAT chapter=3 Prop Rock_01 pos=(3.30, 0.44, -1.05) bounds=Center: (3.28, 0.49, -1.07), Extents: (1.07, 0.47, 1.07)
+OVERLAP chapter=3 Prop Rock_01 / Prop rpgpp_lt_tree_02
+OVERLAP chapter=3 Prop Rock_01 / Prop rpgpp_lt_tree_02
+OVERLAP chapter=3 Prop Bush_03 / Prop rpgpp_lt_flower_01
+OVERLAP chapter=3 Prop rpgpp_lt_flower_01 / Prop Rock_01
+OVERLAP chapter=3 Prop rpgpp_lt_flower_01 / Prop rpgpp_lt_flower_01
+OVERLAP chapter=3 Prop rpgpp_lt_flower_01 / Prop Bush_03
+OVERLAP chapter=3 Prop rpgpp_lt_barrel_01 / Prop Rock_01
+OVERLAP chapter=3 Prop rpgpp_lt_barrel_01 / Prop rpgpp_lt_flower_01
+OVERLAP chapter=3 Prop rpgpp_lt_box_wood_01 / Prop rpgpp_lt_tree_02
+OVERLAP chapter=3 Prop rpgpp_lt_box_wood_01 / Prop rpgpp_lt_flower_01
+OVERLAP chapter=3 Prop rpgpp_lt_box_wood_01 / Prop rpgpp_lt_barrel_01
+LANE_BLOCK chapter=3 Breakable crate
+NO_COLLISION chapter=3 Pushable block
+OVERLAP chapter=3 Pushable block / Prop rpgpp_lt_tree_02
+OVERLAP chapter=3 Prop Tree_04 / Prop Tree_03
+OVERLAP chapter=3 Prop Rock_01 / Prop Tree_03
+FLOAT chapter=3 Prop Rock_02 pos=(1.15, 1.35, 11.42) bounds=Center: (1.16, 1.35, 11.39), Extents: (1.27, 0.51, 1.24)
+OVERLAP chapter=3 Prop Rock_02 / Prop Tree_03
+OVERLAP chapter=3 Prop Rock_02 / Prop Rock_01
+OVERLAP chapter=3 Prop Bush_01 / Prop Tree_03
+OVERLAP chapter=3 Prop Bush_01 / Prop Rock_01
+OVERLAP chapter=3 Prop Grass_01 / Prop Tree_03
+OVERLAP chapter=3 Prop Grass_01 / Prop Rock_02
+OVERLAP chapter=3 Prop rpgpp_lt_bush_01 / Prop Tree_04
+OVERLAP chapter=3 Prop Bush_01 / Prop Tree_03
+OVERLAP chapter=3 Prop Bush_01 / Prop Rock_01
+OVERLAP chapter=3 Prop Bush_01 / Prop Rock_02
+OVERLAP chapter=3 Prop Bush_03 / Prop Tree_03
+OVERLAP chapter=3 Prop Bush_03 / Prop Rock_02
+OVERLAP chapter=3 Prop rpgpp_lt_bench_wood_01 / Prop Tree_03
+OVERLAP chapter=3 Prop rpgpp_lt_bench_wood_01 / Prop Rock_02
+OVERLAP chapter=3 Prop rpgpp_lt_bench_wood_01 / Prop Grass_01
+OVERLAP chapter=3 Prop rpgpp_lt_rock_02 / Prop Tree_03
+OVERLAP chapter=3 Prop rpgpp_lt_rock_02 / Prop Rock_02
+OVERLAP chapter=3 Prop rpgpp_lt_rock_02 / Prop Bush_03
+OVERLAP chapter=3 Prop rpgpp_lt_rock_02 / Prop rpgpp_lt_bench_wood_01
+OVERLAP chapter=3 Prop rpgpp_lt_vase_01 / Prop Tree_03
+OVERLAP chapter=3 Prop rpgpp_lt_vase_01 / Prop Tree_04
+OVERLAP chapter=3 Breakable crate / Prop Tree_03
+LANE_BLOCK chapter=3 Breakable crate
+FLOAT chapter=3 Prop rpgpp_lt_tree_02 pos=(5.05, -0.02, 39.35) bounds=Center: (4.76, 1.64, 39.46), Extents: (1.41, 1.66, 1.21)
+FLOAT chapter=3 Prop Rock_02 pos=(4.43, -0.70, 40.95) bounds=Center: (4.45, -0.70, 40.96), Extents: (1.23, 0.49, 1.24)
+FLOAT chapter=3 Prop Rock_01 pos=(4.22, 0.39, 38.97) bounds=Center: (4.21, 0.44, 39.00), Extents: (0.97, 0.43, 0.96)
+OVERLAP chapter=3 Prop Rock_01 / Prop rpgpp_lt_tree_02
+OVERLAP chapter=3 Prop Bush_03 / Prop Rock_02
+FLOAT chapter=3 Prop rpgpp_lt_flower_01 pos=(-0.54, -0.67, 39.33) bounds=Center: (-0.51, -0.48, 39.35), Extents: (0.31, 0.20, 0.30)
+OVERLAP chapter=3 Prop rpgpp_lt_flower_01 / Prop rpgpp_lt_tree_01
+FLOAT chapter=3 Prop Bush_03 pos=(-1.87, -1.24, 39.11) bounds=Center: (-1.77, -1.05, 39.05), Extents: (0.62, 0.20, 0.62)
+OVERLAP chapter=3 Prop Bush_03 / Prop rpgpp_lt_tree_01
+OVERLAP chapter=3 Prop rpgpp_lt_vase_01 / Prop rpgpp_lt_tree_02
+OVERLAP chapter=3 Prop rpgpp_lt_vase_01 / Prop Rock_01
+OVERLAP chapter=3 Breakable crate / Prop rpgpp_lt_rock_03
+OVERLAP chapter=3 Breakable barrel / Prop Rock_02
+OVERLAP chapter=3 Prop rpgpp_lt_flower_02 / Prop rpgpp_lt_tree_01
+OVERLAP chapter=3 Prop rpgpp_lt_rock_02 / Prop Grass_02
+OVERLAP chapter=3 Prop rpgpp_lt_vase_01 / Prop rpgpp_lt_flower_01
+LANE_BLOCK chapter=3 Breakable crate
+FLOAT chapter=3 Prop Tree_04 pos=(-6.96, 1.02, 87.76) bounds=Center: (-6.84, 2.81, 87.78), Extents: (0.86, 1.79, 0.78)
+FLOAT chapter=3 Prop Rock_03 pos=(-7.55, 1.36, 92.77) bounds=Center: (-7.58, 1.42, 92.79), Extents: (1.15, 0.40, 1.15)
+OVERLAP chapter=3 Prop Rock_03 / Breakable crate
+OVERLAP chapter=3 Prop Rock_03 / Prop Rock_03
+OVERLAP chapter=3 Prop Bush_02 / Prop Tree_04
+OVERLAP chapter=3 Prop Bush_02 / Prop Rock_03
+OVERLAP chapter=3 Prop Grass_01 / Prop Rock_03
+OVERLAP chapter=3 Prop Grass_01 / Prop Rock_03
+OVERLAP chapter=3 Prop Bush_03 / Breakable crate
+OVERLAP chapter=3 Prop Bush_03 / Prop Rock_03
+OVERLAP chapter=3 Prop Bush_03 / Prop Bush_02
+FLOAT chapter=3 Prop Rock_03 pos=(5.05, 2.23, 97.40) bounds=Center: (5.10, 2.31, 97.39), Extents: (1.33, 0.49, 1.33)
+OVERLAP chapter=3 Prop Rock_03 / Prop Tree_01
+OVERLAP chapter=3 Prop Rock_03 / Prop Tree_04
+LANE_BLOCK chapter=3 Prop Rock_01
+FLOAT chapter=3 Prop Bush_03 pos=(5.04, 1.83, 97.31) bounds=Center: (5.15, 2.00, 97.31), Extents: (0.69, 0.18, 0.69)
+OVERLAP chapter=3 Prop Bush_03 / Prop Tree_01
+OVERLAP chapter=3 Prop Bush_03 / Prop Rock_03
+OVERLAP chapter=3 Prop Bush_03 / Prop Bush_01
+OVERLAP chapter=3 Prop rpgpp_lt_crate_01 / Prop Flowers_01
+OVERLAP chapter=3 Prop rpgpp_lt_crate_02 / Prop Flowers_01
+OVERLAP chapter=3 Prop rpgpp_lt_crate_02 / Prop rpgpp_lt_crate_01
+LANE_BLOCK chapter=3 Prop rpgpp_lt_crate_02
+FLOAT chapter=3 Prop rpgpp_lt_sack_01 pos=(-3.05, 0.52, 102.50) bounds=Center: (-3.47, 0.55, 102.99), Extents: (0.68, 0.20, 0.68)
+OVERLAP chapter=3 Breakable crate / Prop rpgpp_lt_sack_01
+OVERLAP chapter=3 Pushable block / Prop Bush_03
+LANE_BLOCK chapter=3 Pushable block
+FLOAT chapter=3 Prop Rock_02 pos=(-6.50, 3.25, 116.33) bounds=Center: (-6.48, 3.25, 116.34), Extents: (1.38, 0.54, 1.37)
+OVERLAP chapter=3 Prop rpgpp_lt_flower_02 / Prop Tree_04
+OVERLAP chapter=3 Prop rpgpp_lt_wagon_01 / Prop Rock_02
+OVERLAP chapter=3 Prop rpgpp_lt_barrel_01 / Prop Tree_04
+OVERLAP chapter=3 Prop rpgpp_lt_bucket_01 / Prop Bush_02
+OVERLAP chapter=3 Prop rpgpp_lt_sack_01 / Prop Tree_03
+ENEMY_UNGROUNDED chapter=3 kind=11 at=(-2.20, 3.97, 21.00)
+ENEMY_UNGROUNDED chapter=3 kind=7 at=(1.00, 0.07, 40.00)
+ENEMY_UNGROUNDED chapter=3 kind=11 at=(-2.20, 2.37, 81.00)
+ENEMY_UNGROUNDED chapter=3 kind=5 at=(1.00, 1.67, 100.00)
+CHAPTER 03 props=119 enemies=9 failures=96
+OVERLAP chapter=4 Prop Tree_04 / Prop Tree_03
+OVERLAP chapter=4 Prop rpgpp_lt_bush_01 / Prop Tree_03
+OVERLAP chapter=4 Prop rpgpp_lt_grass_small_01a / Prop Rock_03
+FLOAT chapter=4 Prop rpgpp_lt_crate_01 pos=(-3.30, 0.02, -0.12) bounds=Center: (-3.31, 0.42, -0.12), Extents: (1.08, 0.40, 1.44)
+OVERLAP chapter=4 Prop rpgpp_lt_crate_01 / Prop rpgpp_lt_grass_small_01a
+OVERLAP chapter=4 Prop rpgpp_lt_barrel_02 / Prop Rock_03
+OVERLAP chapter=4 Prop rpgpp_lt_rock_small_02 / Prop Tree_03
+OVERLAP chapter=4 Prop rpgpp_lt_rock_small_02 / Prop Tree_04
+LANE_BLOCK chapter=4 Prop rpgpp_lt_rock_small_02
+OVERLAP chapter=4 Prop rpgpp_lt_rock_small_02 / Prop Tree_01
+LANE_BLOCK chapter=4 Prop rpgpp_lt_rock_small_02
+OVERLAP chapter=4 Breakable barrel / Prop Tree_01
+NO_COLLISION chapter=4 Pushable block
+OVERLAP chapter=4 Prop Tree_01 / Prop rpgpp_lt_tree_01
+OVERLAP chapter=4 Prop rpgpp_lt_bush_02 / Prop Bush_02
+OVERLAP chapter=4 Breakable barrel / Prop Rock_02
+OVERLAP chapter=4 Prop Bush_02 / Prop Rock_01
+FLOAT chapter=4 Prop rpgpp_lt_log_wood_01 pos=(8.55, 0.90, 24.50) bounds=Center: (8.51, 0.96, 24.50), Extents: (1.04, 0.44, 0.95)
+LANE_BLOCK chapter=4 Breakable crate
+OVERLAP chapter=4 Prop rpgpp_lt_tree_01 / Prop Tree_01
+OVERLAP chapter=4 Prop rpgpp_lt_flower_02 / Prop rpgpp_lt_tree_02
+OVERLAP chapter=4 Prop rpgpp_lt_bush_01 / Prop rpgpp_lt_tree_01
+OVERLAP chapter=4 Prop rpgpp_lt_well_01 / Prop Tree_01
+OVERLAP chapter=4 Prop rpgpp_lt_well_01 / Prop rpgpp_lt_tree_01
+OVERLAP chapter=4 Prop rpgpp_lt_well_01 / Prop rpgpp_lt_bush_01
+FLOAT chapter=4 Prop rpgpp_lt_rock_02 pos=(3.05, 1.35, 59.60) bounds=Center: (3.09, 1.46, 59.54), Extents: (0.51, 0.48, 0.58)
+OVERLAP chapter=4 Prop rpgpp_lt_rock_02 / Prop rpgpp_lt_tree_02
+OVERLAP chapter=4 Prop rpgpp_lt_rock_02 / Prop rpgpp_lt_flower_02
+OVERLAP chapter=4 Prop rpgpp_lt_rock_small_02 / Prop Tree_01
+FLOAT chapter=4 Prop Rock_03 pos=(8.30, 1.34, 68.63) bounds=Center: (8.34, 1.41, 68.65), Extents: (1.18, 0.46, 1.18)
+OVERLAP chapter=4 Prop Bush_02 / Prop Tree_01
+OVERLAP chapter=4 Prop rpgpp_lt_flower_02 / Prop Rock_03
+OVERLAP chapter=4 Prop rpgpp_lt_flower_02 / Prop Rock_03
+OVERLAP chapter=4 Prop Bush_02 / Prop Rock_03
+OVERLAP chapter=4 Prop rpgpp_lt_box_wood_01 / Prop Rock_02
+FLOAT chapter=4 Prop rpgpp_lt_crate_01 pos=(-8.30, 0.93, 64.23) bounds=Center: (-8.30, 1.32, 64.23), Extents: (1.04, 0.39, 1.39)
+OVERLAP chapter=4 Prop rpgpp_lt_rock_small_02 / Prop Tree_04
+OVERLAP chapter=4 Prop rpgpp_lt_rock_small_02 / Prop Rock_03
+OVERLAP chapter=4 Prop rpgpp_lt_rock_small_02 / Prop Bush_02
+ENEMY_UNGROUNDED chapter=4 kind=11 at=(3.80, 3.37, 21.00)
+ENEMY_UNGROUNDED chapter=4 kind=15 at=(-1.00, 1.07, 60.00)
+CHAPTER 04 props=69 enemies=6 failures=41
+FLOAT chapter=5 Prop Rock_03 pos=(2.37, 0.41, -3.18) bounds=Center: (2.32, 0.48, -3.16), Extents: (1.30, 0.46, 1.30)
+OVERLAP chapter=5 Prop Rock_03 / Prop Tower_01
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_01 / Prop Rock_05
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_02 / Prop House_02
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_02 / Prop Grass_02
+OVERLAP chapter=5 Prop Grass_02 / Prop Rock_03
+OVERLAP chapter=5 Prop rpgpp_lt_crate_02 / Prop Rock_05
+OVERLAP chapter=5 Prop Banner / Prop Rock_05
+OVERLAP chapter=5 Breakable crate / Prop House_02
+OVERLAP chapter=5 Breakable crate / Prop Bush_02
+OVERLAP chapter=5 Breakable crate / Prop rpgpp_lt_rock_small_01
+FLOAT chapter=5 Prop House_02 pos=(3.45, 0.72, 7.90) bounds=Center: (3.45, 2.17, 7.90), Extents: (1.26, 1.45, 1.29)
+FLOAT chapter=5 Prop Rock_03 pos=(-3.30, 1.15, 7.82) bounds=Center: (-3.26, 1.23, 7.85), Extents: (1.42, 0.51, 1.42)
+LANE_BLOCK chapter=5 Prop Rock_03
+OVERLAP chapter=5 Prop Rock_05 / Prop House_02
+OVERLAP chapter=5 Prop Rock_05 / Prop Rock_04
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_01 / Prop Rock_04
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_01 / Prop Rock_05
+OVERLAP chapter=5 Prop Grass_02 / Prop House_02
+FLOAT chapter=5 Prop rpgpp_lt_sack_01 pos=(3.30, 1.01, 9.48) bounds=Center: (3.88, 1.03, 9.03), Extents: (0.81, 0.23, 0.70)
+OVERLAP chapter=5 Prop rpgpp_lt_sack_01 / Prop House_02
+OVERLAP chapter=5 Prop rpgpp_lt_sack_01 / Prop Rock_04
+OVERLAP chapter=5 Prop rpgpp_lt_sack_01 / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=5 Prop rpgpp_lt_bucket_01 / Prop Rock_03
+FLOAT chapter=5 Prop Rock_03 pos=(1.03, 1.75, 24.63) bounds=Center: (1.03, 1.79, 24.66), Extents: (0.69, 0.30, 0.69)
+FLOAT chapter=5 Prop Rock_04 pos=(10.45, 1.93, 24.49) bounds=Center: (10.44, 2.43, 24.53), Extents: (0.46, 0.50, 0.50)
+FLOAT chapter=5 Prop rpgpp_lt_rock_small_01 pos=(9.29, 2.14, 34.19) bounds=Center: (9.40, 2.11, 34.18), Extents: (0.98, 0.24, 0.97)
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_01 / Breakable barrel
+OVERLAP chapter=5 Breakable crate / Prop Rock_03
+OVERLAP chapter=5 Breakable barrel / Prop rpgpp_lt_rock_small_01
+LANE_BLOCK chapter=5 Breakable crate
+FLOAT chapter=5 Prop Rock_03 pos=(5.24, -0.16, 43.72) bounds=Center: (5.22, -0.10, 43.68), Extents: (1.16, 0.40, 1.16)
+FLOAT chapter=5 Prop Rock_03 pos=(1.34, 0.44, 39.64) bounds=Center: (1.37, 0.50, 39.61), Extents: (1.17, 0.41, 1.17)
+LANE_BLOCK chapter=5 Prop Rock_03
+OVERLAP chapter=5 Prop Rock_05 / Prop Ruin_01
+OVERLAP chapter=5 Prop Rock_05 / Prop Rock_03
+OVERLAP chapter=5 Prop Mushroom_01 / Prop Rock_03
+FLOAT chapter=5 Prop rpgpp_lt_rock_small_01 pos=(-0.15, 0.40, 40.88) bounds=Center: (-0.18, 0.36, 40.99), Extents: (1.15, 0.27, 1.15)
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_01 / Prop Ruin_01
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_01 / Prop Rock_03
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_01 / Prop Rock_05
+FLOAT chapter=5 Prop rpgpp_lt_crate_02 pos=(-1.05, 0.08, 40.36) bounds=Center: (-1.09, 0.53, 40.35), Extents: (0.97, 0.46, 0.94)
+OVERLAP chapter=5 Prop rpgpp_lt_crate_02 / Prop Ruin_01
+OVERLAP chapter=5 Prop rpgpp_lt_crate_02 / Prop rpgpp_lt_rock_small_01
+FLOAT chapter=5 Prop rpgpp_lt_bucket_01 pos=(-1.05, -0.55, 36.25) bounds=Center: (-1.05, -0.34, 36.26), Extents: (0.22, 0.21, 0.23)
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_02 / Prop House_02
+OVERLAP chapter=5 Prop Bush_02 / Prop House_01
+OVERLAP chapter=5 Prop Grass_02 / Prop House_01
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_01 / Prop Rock_04
+LANE_BLOCK chapter=5 Breakable crate
+OVERLAP chapter=5 Prop Rock_03 / Prop Ruin_01
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_01 / Prop Ruin_01
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_01 / Prop Tent_01
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_01 / Prop Tent_01
+OVERLAP chapter=5 Prop rpgpp_lt_box_wood_01 / Prop Tent_01
+OVERLAP chapter=5 Prop rpgpp_lt_box_wood_01 / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=5 Prop rpgpp_lt_bucket_01 / Prop rpgpp_lt_box_wood_01
+OVERLAP chapter=5 Breakable barrel / Prop Tent_01
+OVERLAP chapter=5 Breakable barrel / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=5 Prop Rock_04 / Prop Ruin_01
+FLOAT chapter=5 Prop Rock_04 pos=(-2.05, -0.58, 97.17) bounds=Center: (-2.07, -0.15, 97.19), Extents: (0.52, 0.43, 0.53)
+OVERLAP chapter=5 Prop Grass_02 / Prop Rock_04
+OVERLAP chapter=5 Prop Grass_02 / Prop Ruin_01
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_01 / Prop Ruin_01
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_01 / Prop Rock_04
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_02 / Prop Ruin_01
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_02 / Prop Rock_04
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_02 / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=5 Prop rpgpp_lt_shed_wood_02 / Prop Ruin_01
+OVERLAP chapter=5 Prop rpgpp_lt_shed_wood_02 / Prop Rock_04
+OVERLAP chapter=5 Prop rpgpp_lt_shed_wood_02 / Prop Grass_02
+OVERLAP chapter=5 Prop rpgpp_lt_shed_wood_02 / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=5 Prop rpgpp_lt_shed_wood_02 / Prop rpgpp_lt_rock_small_02
+FLOAT chapter=5 Prop rpgpp_lt_crate_02 pos=(-1.37, -0.60, 100.75) bounds=Center: (-1.35, -0.27, 100.72), Extents: (0.77, 0.34, 0.77)
+OVERLAP chapter=5 Prop rpgpp_lt_vase_01 / Prop Rock_05
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_02 / Prop Bush_02
+LANE_BLOCK chapter=5 Pushable block
+FLOAT chapter=5 Prop Ruin_01 pos=(7.80, -0.23, 126.21) bounds=Center: (7.76, 1.27, 126.22), Extents: (1.16, 1.53, 2.02)
+OVERLAP chapter=5 Prop Grass_02 / Prop Ruin_01
+FLOAT chapter=5 Prop rpgpp_lt_rock_small_01 pos=(7.90, 0.06, 132.94) bounds=Center: (8.01, 0.02, 132.99), Extents: (1.18, 0.29, 1.19)
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_01 / Prop Tower_01
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_01 / Prop Ruin_01
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_01 / Prop Rock_05
+OVERLAP chapter=5 Prop Mushroom_01 / Prop Ruin_01
+OVERLAP chapter=5 Prop Mushroom_01 / Prop Grass_02
+OVERLAP chapter=5 Prop rpgpp_lt_wagon_01 / Prop Rock_05
+OVERLAP chapter=5 Prop rpgpp_lt_rock_03 / Prop rpgpp_lt_rock_small_01
+FLOAT chapter=5 Prop rpgpp_lt_rock_03 pos=(7.90, 0.15, 133.98) bounds=Center: (7.95, 0.14, 133.95), Extents: (1.01, 0.40, 1.01)
+OVERLAP chapter=5 Prop rpgpp_lt_rock_03 / Prop Tower_01
+OVERLAP chapter=5 Prop rpgpp_lt_rock_03 / Prop rpgpp_lt_rock_small_01
+FLOAT chapter=5 Prop rpgpp_lt_rock_small_01 pos=(7.90, 0.01, 125.86) bounds=Center: (8.00, -0.02, 125.85), Extents: (0.96, 0.24, 0.95)
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_01 / Prop Ruin_01
+OVERLAP chapter=5 Prop rpgpp_lt_rock_small_02 / Prop rpgpp_lt_wagon_01
+ENEMY_UNGROUNDED chapter=5 kind=11 at=(4.80, 3.77, 21.00)
+ENEMY_UNGROUNDED chapter=5 kind=12 at=(3.00, 0.77, 40.00)
+ENEMY_UNGROUNDED chapter=5 kind=11 at=(-1.20, 3.77, 81.00)
+ENEMY_UNGROUNDED chapter=5 kind=7 at=(2.00, 0.07, 100.00)
+CHAPTER 05 props=116 enemies=11 failures=97
+LANE_BLOCK chapter=6 Prop Rock_04
+OVERLAP chapter=6 Prop Rock_03 / Prop Gate_01
+FLOAT chapter=6 Prop Rock_05 pos=(3.30, 0.54, -1.47) bounds=Center: (3.25, 0.56, -1.41), Extents: (0.93, 0.54, 0.77)
+OVERLAP chapter=6 Prop Rock_05 / Prop Gate_01
+OVERLAP chapter=6 Prop Rock_05 / Prop Tent_01
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_01 / Prop Gate_01
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_02 / Prop Tent_01
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_02 / Prop Rock_04
+LANE_BLOCK chapter=6 Prop rpgpp_lt_rock_small_02
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_02 / Prop Rock_03
+OVERLAP chapter=6 Prop Bush_02 / Prop Rock_03
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_02 / Prop Rock_03
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_02 / Prop rpgpp_lt_rock_small_02
+OVERLAP chapter=6 Prop rpgpp_lt_rock_01 / Prop Gate_01
+OVERLAP chapter=6 Prop rpgpp_lt_rock_01 / Prop Tent_01
+OVERLAP chapter=6 Prop rpgpp_lt_rock_01 / Prop Rock_05
+OVERLAP chapter=6 Prop rpgpp_lt_rock_01 / Prop Gate_01
+OVERLAP chapter=6 Prop rpgpp_lt_rock_01 / Prop Tower_01
+OVERLAP chapter=6 Prop rpgpp_lt_rock_01 / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_01 / Prop Gate_01
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_01 / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=6 Prop rpgpp_lt_bush_02 / Prop Rock_03
+OVERLAP chapter=6 Prop rpgpp_lt_bush_02 / Prop Bush_02
+FLOAT chapter=6 Prop rpgpp_lt_rock_small_02 pos=(3.30, 0.96, -0.81) bounds=Center: (3.33, 0.97, -0.82), Extents: (0.52, 0.17, 0.51)
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_02 / Prop Gate_01
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_02 / Prop Tent_01
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_02 / Prop Rock_05
+OVERLAP chapter=6 Breakable barrel / Prop Gate_01
+OVERLAP chapter=6 Breakable crate / Prop Gate_01
+OVERLAP chapter=6 Breakable crate / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=6 Breakable crate / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=6 Breakable barrel / Prop Tent_01
+NO_COLLISION chapter=6 Pushable block
+OVERLAP chapter=6 Pushable block / Prop Gate_01
+FLOAT chapter=6 Prop Ruin_01 pos=(6.45, 1.06, 7.90) bounds=Center: (6.40, 2.71, 7.91), Extents: (1.28, 1.69, 2.23)
+LANE_BLOCK chapter=6 Prop Rock_03
+LANE_BLOCK chapter=6 Prop Rock_03
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_01 / Prop Ruin_01
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_01 / Prop Rock_03
+LANE_BLOCK chapter=6 Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=6 Prop Mushroom_01 / Prop Rock_03
+FLOAT chapter=6 Prop Grass_02 pos=(6.30, 1.30, 7.91) bounds=Center: (6.30, 1.55, 7.91), Extents: (0.33, 0.26, 0.33)
+OVERLAP chapter=6 Prop Grass_02 / Prop Ruin_01
+OVERLAP chapter=6 Prop Grass_02 / Prop Rock_03
+FLOAT chapter=6 Prop rpgpp_lt_rock_small_01 pos=(0.87, 1.34, 7.29) bounds=Center: (0.88, 1.30, 7.17), Extents: (1.17, 0.28, 1.18)
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_01 / Prop Rock_03
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_01 / Prop Grass_02
+LANE_BLOCK chapter=6 Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=6 Prop rpgpp_lt_crate_01 / Prop Rock_03
+OVERLAP chapter=6 Prop rpgpp_lt_crate_01 / Prop Grass_02
+OVERLAP chapter=6 Prop rpgpp_lt_crate_01 / Prop rpgpp_lt_rock_small_01
+LANE_BLOCK chapter=6 Prop rpgpp_lt_crate_01
+OVERLAP chapter=6 Prop rpgpp_lt_sack_01 / Prop Rock_03
+OVERLAP chapter=6 Prop rpgpp_lt_sack_01 / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=6 Breakable barrel / Prop rpgpp_lt_crate_01
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_02 / Prop Rock_05
+FLOAT chapter=6 Prop Bush_02 pos=(8.55, 3.07, 35.54) bounds=Center: (8.55, 3.26, 35.54), Extents: (0.31, 0.20, 0.32)
+LANE_BLOCK chapter=6 Breakable crate
+OVERLAP chapter=6 Prop Rock_03 / Prop House_02
+OVERLAP chapter=6 Prop Rock_03 / Prop Rock_04
+LANE_BLOCK chapter=6 Prop Rock_03
+FLOAT chapter=6 Prop Rock_03 pos=(-4.05, 1.22, 40.75) bounds=Center: (-4.02, 1.27, 40.74), Extents: (0.91, 0.32, 0.91)
+OVERLAP chapter=6 Prop Rock_03 / Prop Tent_01
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_01 / Prop Rock_03
+LANE_BLOCK chapter=6 Prop rpgpp_lt_rock_small_01
+FLOAT chapter=6 Prop rpgpp_lt_rock_small_02 pos=(-4.05, 1.60, 36.65) bounds=Center: (-4.04, 1.62, 36.60), Extents: (0.61, 0.26, 0.63)
+FLOAT chapter=6 Prop rpgpp_lt_rock_small_01 pos=(-2.55, 1.72, 39.95) bounds=Center: (-2.60, 1.69, 40.05), Extents: (1.13, 0.27, 1.12)
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_01 / Prop Rock_03
+LANE_BLOCK chapter=6 Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_01 / Prop Rock_04
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_01 / Prop Rock_03
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_01 / Prop Rock_05
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_01 / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_01 / Prop rpgpp_lt_rock_small_01
+LANE_BLOCK chapter=6 Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_02 / Prop House_02
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_02 / Prop House_02
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_02 / Prop Rock_03
+OVERLAP chapter=6 Prop rpgpp_lt_crate_01 / Prop Tent_01
+OVERLAP chapter=6 Prop rpgpp_lt_crate_01 / Prop Rock_03
+OVERLAP chapter=6 Prop rpgpp_lt_vase_01 / Prop rpgpp_lt_crate_01
+OVERLAP chapter=6 Prop rpgpp_lt_bucket_01 / Prop House_02
+OVERLAP chapter=6 Prop rpgpp_lt_bucket_01 / Prop rpgpp_lt_rock_small_02
+FLOAT chapter=6 Breakable crate pos=(-4.15, 1.51, 38.88) bounds=Center: (-4.15, 1.86, 38.88), Extents: (0.36, 0.33, 0.36)
+LANE_BLOCK chapter=6 Breakable crate
+FLOAT chapter=6 Prop rpgpp_lt_rock_small_02 pos=(-2.55, 3.65, 95.16) bounds=Center: (-2.57, 3.67, 95.21), Extents: (0.63, 0.27, 0.65)
+OVERLAP chapter=6 Prop Grass_02 / Prop Tent_01
+FLOAT chapter=6 Prop rpgpp_lt_rock_02 pos=(7.57, 3.70, 84.67) bounds=Center: (7.53, 3.78, 84.71), Extents: (0.33, 0.35, 0.39)
+OVERLAP chapter=6 Prop rpgpp_lt_vase_01 / Prop Tent_01
+FLOAT chapter=6 Prop Gate_01 pos=(1.00, 1.13, 100.00) bounds=Center: (1.00, 2.53, 100.00), Extents: (3.01, 1.40, 0.73)
+OVERLAP chapter=6 Prop Rock_03 / Prop Gate_01
+OVERLAP chapter=6 Prop Rock_03 / Prop House_02
+FLOAT chapter=6 Prop rpgpp_lt_rock_small_01 pos=(-3.05, 0.98, 96.02) bounds=Center: (-2.96, 0.96, 96.04), Extents: (0.89, 0.21, 0.88)
+OVERLAP chapter=6 Prop rpgpp_lt_rock_small_02 / Prop Tower_01
+FLOAT chapter=6 Prop rpgpp_lt_wagon_01 pos=(4.06, 1.62, 102.89) bounds=Center: (5.03, 1.90, 102.90), Extents: (2.24, 1.06, 1.31)
+OVERLAP chapter=6 Prop rpgpp_lt_wagon_01 / Prop Rock_05
+OVERLAP chapter=6 Prop rpgpp_lt_wagon_01 / Prop Rock_05
+OVERLAP chapter=6 Prop rpgpp_lt_rock_02 / Prop Tower_01
+OVERLAP chapter=6 Prop rpgpp_lt_rock_02 / Prop rpgpp_lt_rock_small_02
+OVERLAP chapter=6 Prop rpgpp_lt_rock_02 / Prop rpgpp_lt_rock_small_02
+OVERLAP chapter=6 Prop rpgpp_lt_vase_01 / Prop rpgpp_lt_rock_small_02
+OVERLAP chapter=6 Prop rpgpp_lt_sack_01 / Prop House_02
+OVERLAP chapter=6 Prop rpgpp_lt_sack_01 / Prop Rock_03
+OVERLAP chapter=6 Breakable crate / Prop rpgpp_lt_wagon_01
+OVERLAP chapter=6 Pushable block / Prop Gate_01
+LANE_BLOCK chapter=6 Pushable block
+FLOAT chapter=6 Prop House_01 pos=(7.80, 1.74, 126.21) bounds=Center: (7.80, 3.48, 126.21), Extents: (1.67, 1.74, 0.88)
+OVERLAP chapter=6 Prop Rock_03 / Prop House_01
+OVERLAP chapter=6 Prop Rock_03 / Prop House_01
+ENEMY_UNGROUNDED chapter=6 kind=11 at=(6.80, 4.37, 21.00)
+ENEMY_UNGROUNDED chapter=6 kind=12 at=(0.00, 2.07, 40.00)
+ENEMY_UNGROUNDED chapter=6 kind=11 at=(1.80, 4.37, 81.00)
+ENEMY_UNGROUNDED chapter=6 kind=13 at=(1.00, 2.07, 100.00)
+CHAPTER 06 props=114 enemies=11 failures=113
+OVERLAP chapter=7 Prop House_02 / Prop Gate_01
+OVERLAP chapter=7 Prop House_02 / Prop Gate_01
+OVERLAP chapter=7 Prop Rock_05 / Prop Gate_01
+FLOAT chapter=7 Prop Rock_05 pos=(3.01, 0.61, -2.40) bounds=Center: (2.96, 0.63, -2.43), Extents: (0.72, 0.46, 0.82)
+OVERLAP chapter=7 Prop Rock_05 / Prop House_02
+OVERLAP chapter=7 Prop rpgpp_lt_rock_small_01 / Prop House_02
+LANE_BLOCK chapter=7 Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=7 Prop rpgpp_lt_rock_small_02 / Prop House_02
+OVERLAP chapter=7 Prop rpgpp_lt_rock_small_02 / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=7 Prop rpgpp_lt_rock_small_02 / Prop Gate_01
+OVERLAP chapter=7 Prop rpgpp_lt_rock_small_02 / Prop House_02
+OVERLAP chapter=7 Prop rpgpp_lt_rock_01 / Prop House_02
+OVERLAP chapter=7 Prop rpgpp_lt_rock_01 / Prop Rock_05
+OVERLAP chapter=7 Prop rpgpp_lt_sack_01 / Prop Gate_01
+OVERLAP chapter=7 Prop rpgpp_lt_sack_01 / Prop Rock_05
+OVERLAP chapter=7 Breakable crate / Prop House_02
+OVERLAP chapter=7 Breakable crate / Prop Rock_05
+OVERLAP chapter=7 Breakable crate / Prop rpgpp_lt_rock_01
+FLOAT chapter=7 Prop Tower_01 pos=(5.45, 0.83, 7.90) bounds=Center: (5.45, 3.65, 7.92), Extents: (0.60, 2.83, 0.54)
+OVERLAP chapter=7 Prop rpgpp_lt_rock_small_01 / Prop Rock_04
+OVERLAP chapter=7 Prop rpgpp_lt_rock_small_01 / Prop Rock_05
+OVERLAP chapter=7 Prop rpgpp_lt_rock_small_01 / Prop Rock_04
+OVERLAP chapter=7 Prop rpgpp_lt_rock_small_01 / Prop Rock_04
+OVERLAP chapter=7 Prop rpgpp_lt_rock_small_01 / Prop Rock_05
+OVERLAP chapter=7 Prop rpgpp_lt_rock_small_01 / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=7 Prop Mushroom_01 / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=7 Prop rpgpp_lt_crate_02 / Prop Grass_02
+FLOAT chapter=7 Prop rpgpp_lt_rock_01 pos=(5.30, 1.24, 7.70) bounds=Center: (5.37, 1.30, 7.68), Extents: (0.80, 0.48, 0.78)
+OVERLAP chapter=7 Prop rpgpp_lt_rock_01 / Prop Tower_01
+FLOAT chapter=7 Prop rpgpp_lt_sack_01 pos=(5.30, 1.02, 9.67) bounds=Center: (5.97, 1.05, 9.95), Extents: (0.81, 0.23, 0.64)
+OVERLAP chapter=7 Prop rpgpp_lt_sack_01 / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=7 Prop rpgpp_lt_sack_01 / Prop rpgpp_lt_rock_small_01
+FLOAT chapter=7 Prop rpgpp_lt_vase_01 pos=(5.30, 1.04, 7.94) bounds=Center: (5.30, 1.19, 7.94), Extents: (0.10, 0.15, 0.10)
+OVERLAP chapter=7 Prop rpgpp_lt_vase_01 / Prop Tower_01
+OVERLAP chapter=7 Prop rpgpp_lt_vase_01 / Prop rpgpp_lt_rock_01
+LANE_BLOCK chapter=7 Pushable block
+FLOAT chapter=7 Prop Rock_05 pos=(-3.19, 1.18, 26.12) bounds=Center: (-3.22, 1.19, 26.09), Extents: (0.46, 0.34, 0.57)
+FLOAT chapter=7 Prop rpgpp_lt_rock_small_01 pos=(7.06, 1.64, 24.48) bounds=Center: (6.98, 1.61, 24.56), Extents: (1.01, 0.28, 0.99)
+FLOAT chapter=7 Prop rpgpp_lt_rock_03 pos=(-3.55, 1.33, 33.91) bounds=Center: (-3.55, 1.32, 33.96), Extents: (0.84, 0.38, 0.79)
+OVERLAP chapter=7 Prop Banner / Prop rpgpp_lt_barrel_01
+LANE_BLOCK chapter=7 Breakable crate
+LANE_BLOCK chapter=7 Prop Rock_04
+OVERLAP chapter=7 Prop Mushroom_01 / Prop House_01
+OVERLAP chapter=7 Prop rpgpp_lt_rock_small_02 / Prop House_01
+OVERLAP chapter=7 Prop rpgpp_lt_rock_small_02 / Prop Mushroom_01
+FLOAT chapter=7 Prop rpgpp_lt_rock_small_02 pos=(0.14, 0.55, 57.20) bounds=Center: (0.13, 0.56, 57.15), Extents: (0.64, 0.22, 0.65)
+OVERLAP chapter=7 Prop rpgpp_lt_rock_small_02 / Prop House_01
+LANE_BLOCK chapter=7 Prop rpgpp_lt_rock_small_02
+OVERLAP chapter=7 Prop Mushroom_01 / Prop House_01
+OVERLAP chapter=7 Prop Mushroom_01 / Prop Mushroom_01
+OVERLAP chapter=7 Prop Mushroom_01 / Prop rpgpp_lt_rock_small_02
+FLOAT chapter=7 Prop rpgpp_lt_log_wood_01 pos=(2.05, 0.74, 57.24) bounds=Center: (2.01, 0.79, 57.26), Extents: (1.06, 0.45, 1.09)
+OVERLAP chapter=7 Prop rpgpp_lt_log_wood_01 / Prop House_01
+OVERLAP chapter=7 Prop rpgpp_lt_log_wood_01 / Prop Mushroom_01
+OVERLAP chapter=7 Prop rpgpp_lt_log_wood_01 / Prop rpgpp_lt_rock_small_02
+OVERLAP chapter=7 Prop rpgpp_lt_log_wood_01 / Prop Mushroom_01
+OVERLAP chapter=7 Prop rpgpp_lt_barrel_02 / Prop House_01
+OVERLAP chapter=7 Prop rpgpp_lt_barrel_02 / Prop Mushroom_01
+OVERLAP chapter=7 Prop rpgpp_lt_barrel_02 / Prop rpgpp_lt_log_wood_01
+OVERLAP chapter=7 Prop Banner / Prop Rock_05
+ENEMY_UNGROUNDED chapter=7 kind=11 at=(5.80, 3.97, 21.00)
+ENEMY_UNGROUNDED chapter=7 kind=15 at=(-2.00, 1.67, 60.00)
+CHAPTER 07 props=62 enemies=6 failures=62
+OVERLAP chapter=8 Prop rpgpp_lt_bucket_01 / Prop DeadTree_01
+OVERLAP chapter=8 Prop Bush_02 / Prop DeadTree_01
+OVERLAP chapter=8 Prop rpgpp_lt_rock_02 / Prop DeadTree_01
+OVERLAP chapter=8 Prop rpgpp_lt_rock_02 / Prop rpgpp_lt_bucket_01
+OVERLAP chapter=8 Prop rpgpp_lt_rock_02 / Prop Bush_02
+OVERLAP chapter=8 Prop rpgpp_lt_rock_03 / Prop Pine_03
+OVERLAP chapter=8 Breakable crate / Prop rpgpp_lt_rock_01
+NO_COLLISION chapter=8 Pushable block
+FLOAT chapter=8 Prop Rock_03 pos=(0.06, 1.21, 6.97) bounds=Center: (0.06, 1.28, 6.92), Extents: (1.27, 0.47, 1.27)
+OVERLAP chapter=8 Prop Rock_03 / Prop rpgpp_lt_tree_pine_01
+OVERLAP chapter=8 Prop Rock_02 / Prop Pine_03
+OVERLAP chapter=8 Prop Bush_02 / Prop rpgpp_lt_tree_pine_01
+OVERLAP chapter=8 Prop rpgpp_lt_rock_small_02 / Prop Bush_02
+OVERLAP chapter=8 Prop rpgpp_lt_rock_01 / Prop Pine_03
+OVERLAP chapter=8 Prop rpgpp_lt_rock_01 / Prop Rock_02
+OVERLAP chapter=8 Breakable crate / Prop Rock_02
+OVERLAP chapter=8 Prop Rock_02 / Prop Pine_01
+OVERLAP chapter=8 Prop Rock_04 / Prop Rock_03
+FLOAT chapter=8 Prop Mushroom_01 pos=(-2.55, 2.79, 30.72) bounds=Center: (-2.53, 3.08, 30.72), Extents: (0.24, 0.29, 0.23)
+OVERLAP chapter=8 Prop Bush_02 / Prop rpgpp_lt_rock_small_02
+FLOAT chapter=8 Prop rpgpp_lt_log_wood_01 pos=(8.55, 2.74, 30.05) bounds=Center: (8.53, 2.81, 30.09), Extents: (0.77, 0.48, 0.97)
+FLOAT chapter=8 Prop rpgpp_lt_bush_02 pos=(-0.81, 2.12, 34.79) bounds=Center: (-0.78, 2.33, 34.75), Extents: (0.21, 0.21, 0.21)
+LANE_BLOCK chapter=8 Breakable crate
+OVERLAP chapter=8 Prop rpgpp_lt_rock_small_01 / Prop Pine_03
+FLOAT chapter=8 Prop rpgpp_lt_rock_small_02 pos=(4.76, 2.01, 39.41) bounds=Center: (4.76, 2.03, 39.36), Extents: (0.67, 0.24, 0.69)
+OVERLAP chapter=8 Prop rpgpp_lt_rock_small_02 / Prop Bush_01
+OVERLAP chapter=8 Prop rpgpp_lt_rock_small_02 / Prop Mushroom_01
+FLOAT chapter=8 Prop rpgpp_lt_rock_01 pos=(-2.10, 1.91, 36.32) bounds=Center: (-2.05, 1.96, 36.30), Extents: (0.69, 0.41, 0.67)
+OVERLAP chapter=8 Prop rpgpp_lt_rock_01 / Prop Well_01
+OVERLAP chapter=8 Prop rpgpp_lt_rock_02 / Prop Pine_03
+OVERLAP chapter=8 Prop rpgpp_lt_rock_small_01 / Prop rpgpp_lt_tree_pine_01
+OVERLAP chapter=8 Prop rpgpp_lt_rock_small_01 / Prop Bush_01
+OVERLAP chapter=8 Prop rpgpp_lt_rock_small_01 / Prop Mushroom_01
+OVERLAP chapter=8 Prop rpgpp_lt_rock_small_01 / Prop rpgpp_lt_rock_small_02
+OVERLAP chapter=8 Breakable crate / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=8 Breakable barrel / Prop Pine_03
+OVERLAP chapter=8 Breakable barrel / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=8 Breakable barrel / Prop rpgpp_lt_rock_02
+OVERLAP chapter=8 Prop Sign_01 / Prop Rock_01
+OVERLAP chapter=8 Prop rpgpp_lt_sack_01 / Prop Well_01
+LANE_BLOCK chapter=8 Breakable crate
+FLOAT chapter=8 Prop Rock_03 pos=(-7.55, 6.82, 89.39) bounds=Center: (-7.51, 6.88, 89.38), Extents: (1.13, 0.40, 1.13)
+FLOAT chapter=8 Prop Well_01 pos=(-5.28, 6.34, 94.14) bounds=Center: (-5.27, 6.79, 94.10), Extents: (0.48, 0.47, 0.63)
+LANE_BLOCK chapter=8 Prop Rock_04
+OVERLAP chapter=8 Prop rpgpp_lt_rock_small_01 / Prop Snowman_01
+LANE_BLOCK chapter=8 Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=8 Prop rpgpp_lt_rock_small_02 / Prop rpgpp_lt_box_wood_01
+OVERLAP chapter=8 Prop rpgpp_lt_rock_small_02 / Prop DeadTree_01
+OVERLAP chapter=8 Breakable barrel / Prop rpgpp_lt_box_wood_01
+FLOAT chapter=8 Prop Rock_05 pos=(4.05, 6.89, 98.18) bounds=Center: (4.00, 6.90, 98.18), Extents: (0.67, 0.36, 0.65)
+OVERLAP chapter=8 Prop Mushroom_01 / Prop DeadTree_01
+OVERLAP chapter=8 Prop rpgpp_lt_shed_wood_01 / Prop DeadTree_01
+OVERLAP chapter=8 Prop rpgpp_lt_shed_wood_01 / Prop Snowman_01
+FLOAT chapter=8 Prop rpgpp_lt_rock_03 pos=(-2.69, 6.99, 96.27) bounds=Center: (-2.68, 6.99, 96.33), Extents: (1.01, 0.44, 0.96)
+OVERLAP chapter=8 Prop rpgpp_lt_rock_03 / Prop DeadTree_01
+OVERLAP chapter=8 Prop rpgpp_lt_sack_01 / Prop DeadTree_01
+OVERLAP chapter=8 Pushable block / Prop rpgpp_lt_shed_wood_01
+LANE_BLOCK chapter=8 Pushable block
+OVERLAP chapter=8 Prop Rock_04 / Prop rpgpp_lt_tree_pine_01
+OVERLAP chapter=8 Prop rpgpp_lt_rock_small_01 / Prop rpgpp_lt_tree_pine_01
+LANE_BLOCK chapter=8 Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=8 Breakable crate / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=8 Prop Rock_04 / Prop Tree_02
+OVERLAP chapter=8 Prop rpgpp_lt_rock_02 / Prop Pine_01
+OVERLAP chapter=8 Prop rpgpp_lt_bucket_01 / Prop Pine_01
+OVERLAP chapter=8 Prop Stump_01 / Prop Pine_01
+FLOAT chapter=8 Prop rpgpp_lt_crate_01 pos=(2.70, 6.13, 143.15) bounds=Center: (2.70, 6.50, 143.15), Extents: (1.13, 0.37, 1.31)
+OVERLAP chapter=8 Prop rpgpp_lt_vase_01 / Prop Tree_02
+OVERLAP chapter=8 Breakable crate / Prop Pine_01
+OVERLAP chapter=8 Breakable crate / Prop rpgpp_lt_bucket_01
+ENEMY_UNGROUNDED chapter=8 kind=11 at=(1.80, 3.77, 21.00)
+ENEMY_UNGROUNDED chapter=8 kind=12 at=(1.00, 2.87, 40.00)
+ENEMY_UNGROUNDED chapter=8 kind=11 at=(2.80, 7.97, 81.00)
+ENEMY_UNGROUNDED chapter=8 kind=13 at=(0.00, 7.07, 100.00)
+CHAPTER 08 props=130 enemies=14 failures=74
+OVERLAP chapter=9 Prop Bush_01 / Prop DeadTree_01
+OVERLAP chapter=9 Prop Sign_01 / Prop DeadTree_01
+OVERLAP chapter=9 Prop rpgpp_lt_rock_small_01 / Prop Tree_01
+OVERLAP chapter=9 Prop rpgpp_lt_box_wood_01 / Prop rpgpp_lt_tree_pine_01
+OVERLAP chapter=9 Prop rpgpp_lt_box_wood_01 / Prop Snowman_01
+OVERLAP chapter=9 Prop rpgpp_lt_rock_02 / Prop Stump_01
+OVERLAP chapter=9 Prop rpgpp_lt_bush_02 / Prop DeadTree_01
+OVERLAP chapter=9 Prop rpgpp_lt_bush_02 / Prop Bush_01
+OVERLAP chapter=9 Breakable crate / Prop Rock_03
+OVERLAP chapter=9 Breakable crate / Prop rpgpp_lt_box_wood_01
+NO_COLLISION chapter=9 Pushable block
+OVERLAP chapter=9 Prop Pine_03 / Prop Pine_01
+OVERLAP chapter=9 Prop Rock_01 / Prop Pine_03
+OVERLAP chapter=9 Prop rpgpp_lt_rock_small_01 / Prop Pine_01
+OVERLAP chapter=9 Prop rpgpp_lt_rock_small_01 / Prop Pine_03
+OVERLAP chapter=9 Prop Stump_01 / Prop Rock_05
+OVERLAP chapter=9 Prop Mushroom_01 / Prop Rock_01
+OVERLAP chapter=9 Prop Bush_02 / Prop Rock_05
+OVERLAP chapter=9 Prop rpgpp_lt_bucket_01 / Prop Pine_03
+OVERLAP chapter=9 Prop rpgpp_lt_rock_small_02 / Prop Pine_01
+OVERLAP chapter=9 Prop rpgpp_lt_rock_small_02 / Prop Pine_03
+OVERLAP chapter=9 Prop rpgpp_lt_rock_small_02 / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=9 Prop rpgpp_lt_vase_01 / Prop Pine_03
+OVERLAP chapter=9 Prop rpgpp_lt_vase_01 / Prop Rock_01
+OVERLAP chapter=9 Breakable crate / Prop Rock_05
+OVERLAP chapter=9 Breakable crate / Prop Stump_01
+FLOAT chapter=9 Prop Rock_02 pos=(2.55, 3.42, 24.47) bounds=Center: (2.54, 3.42, 24.49), Extents: (1.01, 0.40, 1.00)
+FLOAT chapter=9 Prop rpgpp_lt_rock_02 pos=(-6.82, 3.70, 33.76) bounds=Center: (-6.85, 3.77, 33.79), Extents: (0.30, 0.32, 0.36)
+OVERLAP chapter=9 Prop rpgpp_lt_rock_02 / Breakable crate
+OVERLAP chapter=9 Prop rpgpp_lt_bush_02 / Prop Rock_02
+LANE_BLOCK chapter=9 Breakable crate
+FLOAT chapter=9 Prop rpgpp_lt_rock_small_02 pos=(-4.05, 1.00, 36.57) bounds=Center: (-4.00, 1.02, 36.55), Extents: (0.81, 0.27, 0.81)
+OVERLAP chapter=9 Prop Bush_01 / Prop rpgpp_lt_rock_small_01
+LANE_BLOCK chapter=9 Breakable barrel
+LANE_BLOCK chapter=9 Breakable crate
+OVERLAP chapter=9 Prop Rock_01 / Prop Pine_01
+OVERLAP chapter=9 Prop rpgpp_lt_bucket_01 / Prop Pine_01
+FLOAT chapter=9 Prop Bush_01 pos=(-1.02, 3.03, 94.80) bounds=Center: (-1.03, 3.20, 94.82), Extents: (0.18, 0.18, 0.18)
+OVERLAP chapter=9 Prop Bush_01 / Prop Pine_01
+OVERLAP chapter=9 Prop rpgpp_lt_rock_small_02 / Prop Bush_02
+OVERLAP chapter=9 Prop rpgpp_lt_rock_01 / Prop rpgpp_lt_rock_small_02
+OVERLAP chapter=9 Prop rpgpp_lt_bush_02 / Prop rpgpp_lt_rock_01
+FLOAT chapter=9 Breakable crate pos=(-9.65, 3.23, 91.06) bounds=Center: (-9.65, 3.58, 91.06), Extents: (0.36, 0.33, 0.36)
+OVERLAP chapter=9 Breakable crate / Prop rpgpp_lt_shed_wood_01
+OVERLAP chapter=9 Prop Pine_01 / Prop Pine_02
+FLOAT chapter=9 Prop Rock_03 pos=(2.05, 1.81, 96.71) bounds=Center: (2.07, 1.86, 96.74), Extents: (0.91, 0.32, 0.91)
+FLOAT chapter=9 Prop Rock_02 pos=(2.05, 1.96, 96.87) bounds=Center: (2.05, 1.96, 96.90), Extents: (0.84, 0.41, 0.79)
+OVERLAP chapter=9 Prop Rock_02 / Prop Rock_03
+OVERLAP chapter=9 Prop Bush_02 / Prop Pine_01
+OVERLAP chapter=9 Prop Stump_01 / Prop Pine_01
+OVERLAP chapter=9 Prop Bush_01 / Prop Pine_01
+FLOAT chapter=9 Prop Bush_02 pos=(-4.66, 1.55, 97.64) bounds=Center: (-4.65, 1.81, 97.63), Extents: (0.46, 0.27, 0.46)
+OVERLAP chapter=9 Prop Bush_02 / Prop Pine_01
+OVERLAP chapter=9 Prop Bush_01 / Prop Pine_01
+OVERLAP chapter=9 Prop rpgpp_lt_barrel_02 / Prop Pine_01
+OVERLAP chapter=9 Prop rpgpp_lt_bucket_01 / Prop Pine_02
+OVERLAP chapter=9 Prop rpgpp_lt_bucket_01 / Prop Pine_01
+OVERLAP chapter=9 Breakable crate / Prop Pine_01
+OVERLAP chapter=9 Breakable crate / Prop Bush_01
+OVERLAP chapter=9 Prop Pine_02 / Prop Pine_03
+OVERLAP chapter=9 Prop Bush_01 / Prop Stump_01
+OVERLAP chapter=9 Prop rpgpp_lt_rock_small_02 / Prop rpgpp_lt_bucket_01
+OVERLAP chapter=9 Breakable crate / Prop Pine_02
+OVERLAP chapter=9 Breakable crate / Prop rpgpp_lt_bucket_01
+OVERLAP chapter=9 Prop rpgpp_lt_bucket_01 / Prop Stump_01
+OVERLAP chapter=9 Breakable crate / Prop Pine_03
+OVERLAP chapter=9 Breakable crate / Prop Bush_02
+OVERLAP chapter=9 Breakable crate / Prop rpgpp_lt_log_wood_01
+ENEMY_UNGROUNDED chapter=9 kind=12 at=(0.00, 2.07, 40.00)
+ENEMY_UNGROUNDED chapter=9 kind=13 at=(-2.00, 2.07, 100.00)
+CHAPTER 09 props=119 enemies=15 failures=70
+LANE_BLOCK chapter=10 Prop rpgpp_lt_rock_02
+FLOAT chapter=10 Prop Rock_03 pos=(-3.30, 0.45, 0.84) bounds=Center: (-3.34, 0.53, 0.81), Extents: (1.38, 0.51, 1.39)
+OVERLAP chapter=10 Prop Rock_03 / Prop Pine_01
+OVERLAP chapter=10 Prop Well_01 / Prop Pine_01
+OVERLAP chapter=10 Prop Well_01 / Prop Pine_03
+OVERLAP chapter=10 Prop rpgpp_lt_rock_small_01 / Prop Pine_03
+OVERLAP chapter=10 Prop rpgpp_lt_rock_small_01 / Prop Pine_03
+OVERLAP chapter=10 Prop rpgpp_lt_rock_small_01 / Prop Well_01
+OVERLAP chapter=10 Prop Bush_02 / Prop Pine_01
+OVERLAP chapter=10 Prop Bush_02 / Prop Well_01
+OVERLAP chapter=10 Prop Bush_02 / Prop Pine_03
+OVERLAP chapter=10 Prop Bush_02 / Prop rpgpp_lt_rock_small_01
+FLOAT chapter=10 Prop rpgpp_lt_bench_wood_01 pos=(-2.86, 0.02, -0.71) bounds=Center: (-2.85, 0.51, -0.71), Extents: (1.30, 0.49, 1.59)
+OVERLAP chapter=10 Prop rpgpp_lt_bench_wood_01 / Prop Pine_01
+OVERLAP chapter=10 Prop rpgpp_lt_bench_wood_01 / Prop Rock_03
+OVERLAP chapter=10 Prop rpgpp_lt_bench_wood_01 / Prop Well_01
+OVERLAP chapter=10 Prop rpgpp_lt_bench_wood_01 / Prop Bush_02
+LANE_BLOCK chapter=10 Prop rpgpp_lt_bench_wood_01
+OVERLAP chapter=10 Prop rpgpp_lt_bush_02 / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=10 Prop rpgpp_lt_bush_02 / Prop Stump_01
+OVERLAP chapter=10 Prop rpgpp_lt_bucket_01 / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=10 Breakable crate / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=10 Breakable crate / Prop rpgpp_lt_bush_02
+NO_COLLISION chapter=10 Pushable block
+OVERLAP chapter=10 Prop Pine_03 / Prop Pine_03
+OVERLAP chapter=10 Prop Snowman_01 / Prop Pine_03
+OVERLAP chapter=10 Prop Snowman_01 / Prop Pine_03
+LANE_BLOCK chapter=10 Prop Snowman_01
+OVERLAP chapter=10 Prop Rock_05 / Prop Rock_05
+OVERLAP chapter=10 Prop Stump_01 / Prop Pine_03
+OVERLAP chapter=10 Prop Bush_02 / Prop Pine_03
+OVERLAP chapter=10 Prop rpgpp_lt_rock_small_02 / Prop rpgpp_lt_tree_pine_01
+OVERLAP chapter=10 Prop rpgpp_lt_log_wood_01 / Prop Pine_03
+OVERLAP chapter=10 Prop rpgpp_lt_log_wood_01 / Prop Pine_03
+OVERLAP chapter=10 Prop rpgpp_lt_log_wood_01 / Prop Mushroom_01
+OVERLAP chapter=10 Prop rpgpp_lt_log_wood_01 / Prop Stump_01
+OVERLAP chapter=10 Prop rpgpp_lt_bucket_01 / Prop Pine_03
+OVERLAP chapter=10 Prop rpgpp_lt_bucket_01 / Prop rpgpp_lt_log_wood_01
+OVERLAP chapter=10 Prop rpgpp_lt_bucket_01 / Prop Pine_03
+OVERLAP chapter=10 Prop rpgpp_lt_bucket_01 / Prop rpgpp_lt_log_wood_01
+OVERLAP chapter=10 Breakable crate / Prop rpgpp_lt_tree_pine_01
+OVERLAP chapter=10 Breakable crate / Prop rpgpp_lt_rock_small_02
+OVERLAP chapter=10 Prop Tree_02 / Breakable barrel
+OVERLAP chapter=10 Prop Pine_02 / Prop Tree_02
+OVERLAP chapter=10 Prop rpgpp_lt_rock_01 / Prop Pine_03
+OVERLAP chapter=10 Prop Rock_02 / Prop Tree_02
+OVERLAP chapter=10 Prop Rock_02 / Prop Pine_02
+OVERLAP chapter=10 Prop Bush_02 / Prop Tree_02
+OVERLAP chapter=10 Prop Bush_02 / Prop Pine_02
+OVERLAP chapter=10 Prop Bush_02 / Prop Rock_02
+OVERLAP chapter=10 Prop rpgpp_lt_vase_01 / Prop Tree_02
+LANE_BLOCK chapter=10 Breakable crate
+OVERLAP chapter=10 Prop Rock_03 / Prop Rock_05
+FLOAT chapter=10 Prop rpgpp_lt_rock_small_02 pos=(2.13, 4.63, 58.31) bounds=Center: (2.08, 4.64, 58.35), Extents: (0.91, 0.30, 0.91)
+LANE_BLOCK chapter=10 Prop rpgpp_lt_rock_small_02
+OVERLAP chapter=10 Prop Mushroom_01 / Prop Rock_03
+FLOAT chapter=10 Prop rpgpp_lt_bucket_01 pos=(2.96, 3.55, 56.73) bounds=Center: (2.96, 3.82, 56.73), Extents: (0.23, 0.27, 0.21)
+OVERLAP chapter=10 Prop rpgpp_lt_bucket_01 / Prop rpgpp_lt_rock_small_02
+FLOAT chapter=10 Prop Bush_01 pos=(3.29, 5.01, 57.22) bounds=Center: (3.30, 5.21, 57.25), Extents: (0.28, 0.22, 0.28)
+OVERLAP chapter=10 Prop rpgpp_lt_rock_01 / Prop Rock_05
+OVERLAP chapter=10 Prop rpgpp_lt_rock_01 / Prop Rock_03
+OVERLAP chapter=10 Prop rpgpp_lt_rock_01 / Prop Mushroom_01
+FLOAT chapter=10 Pushable block pos=(1.40, 4.16, 59.09) bounds=Center: (1.40, 4.56, 59.09), Extents: (0.45, 0.40, 0.45)
+OVERLAP chapter=10 Pushable block / Prop rpgpp_lt_rock_small_02
+LANE_BLOCK chapter=10 Pushable block
+LANE_BLOCK chapter=10 Prop Snowman_01
+OVERLAP chapter=10 Prop rpgpp_lt_rock_small_02 / Prop Well_01
+FLOAT chapter=10 Prop rpgpp_lt_bench_wood_01 pos=(1.74, 4.83, 73.00) bounds=Center: (1.73, 5.21, 73.00), Extents: (0.93, 0.38, 1.26)
+OVERLAP chapter=10 Prop rpgpp_lt_bench_wood_01 / Prop Stump_01
+LANE_BLOCK chapter=10 Prop rpgpp_lt_bench_wood_01
+OVERLAP chapter=10 Prop rpgpp_lt_vase_01 / Prop Bush_01
+LANE_BLOCK chapter=10 Breakable crate
+OVERLAP chapter=10 Prop rpgpp_lt_rock_02 / Prop Pine_03
+ENEMY_UNGROUNDED chapter=10 kind=15 at=(0.00, 4.87, 60.00)
+CHAPTER 10 props=81 enemies=8 failures=74
+OVERLAP chapter=11 Prop Grass_02 / Prop Tree_03
+FLOAT chapter=11 Prop Grass_02 pos=(1.79, 0.05, -2.12) bounds=Center: (1.78, 0.28, -2.12), Extents: (0.25, 0.23, 0.26)
+FLOAT chapter=11 Prop rpgpp_lt_rock_small_02 pos=(1.69, 0.17, -2.53) bounds=Center: (1.65, 0.18, -2.52), Extents: (0.57, 0.19, 0.56)
+OVERLAP chapter=11 Prop rpgpp_lt_rock_small_02 / Prop Grass_02
+LANE_BLOCK chapter=11 Prop rpgpp_lt_rock_small_02
+OVERLAP chapter=11 Breakable crate / Prop Tree_03
+NO_COLLISION chapter=11 Pushable block
+OVERLAP chapter=11 Prop Tree_02 / Prop Tree_01
+LANE_BLOCK chapter=11 Prop Rock_03
+OVERLAP chapter=11 Prop Flowers_01 / Prop Tree_02
+FLOAT chapter=11 Prop Bush_02 pos=(4.30, 0.94, 7.44) bounds=Center: (4.29, 1.20, 7.45), Extents: (0.35, 0.28, 0.34)
+OVERLAP chapter=11 Prop Bush_02 / Prop Grass_02
+OVERLAP chapter=11 Prop rpgpp_lt_rock_small_01 / Prop Tree_01
+OVERLAP chapter=11 Prop rpgpp_lt_rock_small_01 / Prop Tree_02
+OVERLAP chapter=11 Prop rpgpp_lt_rock_small_01 / Prop Flowers_01
+OVERLAP chapter=11 Prop Grass_02 / Prop Tree_01
+OVERLAP chapter=11 Prop Grass_02 / Prop Tree_02
+OVERLAP chapter=11 Prop rpgpp_lt_rock_small_01 / Prop Tree_01
+OVERLAP chapter=11 Prop rpgpp_lt_rock_small_01 / Prop Tree_02
+OVERLAP chapter=11 Prop rpgpp_lt_rock_small_01 / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=11 Prop Banner / Prop Tree_01
+OVERLAP chapter=11 Breakable crate / Prop Bush_02
+OVERLAP chapter=11 Prop Tree_03 / Breakable barrel
+OVERLAP chapter=11 Prop Rock_04 / Prop Tree_03
+OVERLAP chapter=11 Prop Flowers_01 / Prop Rock_04
+OVERLAP chapter=11 Breakable barrel / Prop Tree_02
+LANE_BLOCK chapter=11 Breakable crate
+FLOAT chapter=11 Prop rpgpp_lt_rock_small_02 pos=(-3.38, -0.41, 38.58) bounds=Center: (-3.35, -0.40, 38.62), Extents: (0.73, 0.24, 0.73)
+OVERLAP chapter=11 Prop rpgpp_lt_rock_small_02 / Prop Tree_03
+OVERLAP chapter=11 Prop rpgpp_lt_rock_small_01 / Prop Tree_03
+OVERLAP chapter=11 Prop rpgpp_lt_rock_small_01 / Prop rpgpp_lt_rock_small_02
+LANE_BLOCK chapter=11 Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=11 Breakable crate / Prop rpgpp_lt_rock_small_02
+LANE_BLOCK chapter=11 Pushable block
+LANE_BLOCK chapter=11 Prop rpgpp_lt_rock_small_01
+LANE_BLOCK chapter=11 Breakable crate
+FLOAT chapter=11 Prop Rock_03 pos=(7.55, 1.22, 84.46) bounds=Center: (7.57, 1.30, 84.42), Extents: (1.18, 0.47, 1.18)
+OVERLAP chapter=11 Prop Rock_04 / Prop Rock_04
+FLOAT chapter=11 Prop rpgpp_lt_rock_small_01 pos=(-3.55, 1.16, 94.33) bounds=Center: (-3.57, 1.12, 94.20), Extents: (1.15, 0.29, 1.17)
+OVERLAP chapter=11 Prop rpgpp_lt_rock_small_01 / Breakable crate
+OVERLAP chapter=11 Prop Bush_02 / Prop rpgpp_lt_rock_small_02
+FLOAT chapter=11 Prop Bush_02 pos=(-1.54, 1.91, 85.87) bounds=Center: (-1.55, 2.17, 85.88), Extents: (0.44, 0.27, 0.43)
+OVERLAP chapter=11 Prop Rock_05 / Prop Tree_03
+FLOAT chapter=11 Prop Rock_03 pos=(-5.04, -0.48, 97.45) bounds=Center: (-5.04, -0.41, 97.41), Extents: (1.06, 0.45, 1.06)
+FLOAT chapter=11 Prop rpgpp_lt_rock_small_02 pos=(2.30, -0.24, 97.72) bounds=Center: (2.25, -0.22, 97.73), Extents: (0.76, 0.26, 0.75)
+OVERLAP chapter=11 Prop rpgpp_lt_rock_small_02 / Prop Tree_03
+OVERLAP chapter=11 Prop rpgpp_lt_rock_small_02 / Prop Rock_05
+FLOAT chapter=11 Prop Tree_01 pos=(6.90, 0.05, 127.19) bounds=Center: (6.94, 1.65, 127.23), Extents: (0.73, 1.60, 0.79)
+FLOAT chapter=11 Prop Rock_03 pos=(6.90, 0.69, 128.70) bounds=Center: (6.87, 0.76, 128.72), Extents: (1.30, 0.45, 1.30)
+OVERLAP chapter=11 Prop Rock_03 / Prop Tree_01
+OVERLAP chapter=11 Prop Rock_03 / Prop Rock_05
+LANE_BLOCK chapter=11 Prop Rock_03
+OVERLAP chapter=11 Prop Bush_02 / Prop Rock_05
+OVERLAP chapter=11 Prop Bush_02 / Prop Grass_02
+OVERLAP chapter=11 Prop Flowers_01 / Prop Rock_05
+OVERLAP chapter=11 Prop Flowers_01 / Prop Rock_03
+FLOAT chapter=11 Breakable crate pos=(7.00, 0.05, 127.40) bounds=Center: (7.00, 0.40, 127.40), Extents: (0.36, 0.33, 0.36)
+OVERLAP chapter=11 Breakable crate / Prop Tree_01
+OVERLAP chapter=11 Breakable crate / Prop Rock_03
+FLOAT chapter=11 Prop Rock_03 pos=(7.54, 1.41, 151.63) bounds=Center: (7.51, 1.46, 151.65), Extents: (1.01, 0.35, 1.01)
+OVERLAP chapter=11 Prop rpgpp_lt_rock_small_01 / Prop Rock_03
+OVERLAP chapter=11 Prop rpgpp_lt_rock_small_01 / Prop Rock_03
+OVERLAP chapter=11 Prop rpgpp_lt_rock_small_01 / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=11 Prop rpgpp_lt_rock_small_02 / Breakable crate
+OVERLAP chapter=11 Prop rpgpp_lt_rock_small_01 / Prop Rock_03
+OVERLAP chapter=11 Prop rpgpp_lt_rock_small_01 / Prop rpgpp_lt_rock_small_01
+FLOAT chapter=11 Breakable crate pos=(-0.87, 0.98, 146.00) bounds=Center: (-0.87, 1.33, 146.00), Extents: (0.36, 0.33, 0.36)
+OVERLAP chapter=11 Breakable crate / Prop Rock_03
+FLOAT chapter=11 Prop Tree_02 pos=(-1.74, 1.90, 155.05) bounds=Center: (-1.72, 3.21, 155.06), Extents: (0.55, 1.32, 0.55)
+FLOAT chapter=11 Prop Bush_02 pos=(-5.80, 1.56, 153.86) bounds=Center: (-5.80, 1.81, 153.87), Extents: (0.45, 0.26, 0.45)
+OVERLAP chapter=11 Breakable crate / Prop Bush_02
+ENEMY_UNGROUNDED chapter=11 kind=12 at=(-1.00, 0.07, 40.00)
+ENEMY_UNGROUNDED chapter=11 kind=13 at=(-1.00, 0.47, 100.00)
+CHAPTER 11 props=112 enemies=17 failures=73
+FLOAT chapter=12 Prop rpgpp_lt_rock_small_02 pos=(2.87, 0.40, -2.25) bounds=Center: (2.88, 0.42, -2.20), Extents: (0.75, 0.26, 0.76)
+OVERLAP chapter=12 Prop rpgpp_lt_rock_small_02 / Prop Rock_05
+OVERLAP chapter=12 Prop Grass_02 / Prop Rock_05
+OVERLAP chapter=12 Breakable crate / Prop Rock_05
+NO_COLLISION chapter=12 Pushable block
+OVERLAP chapter=12 Prop Tree_01 / Prop Tree_01
+FLOAT chapter=12 Prop Rock_04 pos=(4.51, 0.80, 7.38) bounds=Center: (4.53, 1.31, 7.41), Extents: (0.64, 0.51, 0.64)
+LANE_BLOCK chapter=12 Prop Rock_04
+FLOAT chapter=12 Prop rpgpp_lt_rock_small_01 pos=(5.30, 1.11, 8.22) bounds=Center: (5.33, 1.09, 8.29), Extents: (0.64, 0.19, 0.65)
+OVERLAP chapter=12 Prop rpgpp_lt_rock_small_01 / Prop Rock_04
+OVERLAP chapter=12 Prop Grass_02 / Prop Rock_04
+OVERLAP chapter=12 Breakable barrel / Prop Tree_03
+OVERLAP chapter=12 Prop Rock_04 / Prop Tree_01
+OVERLAP chapter=12 Prop Banner / Prop Bush_02
+LANE_BLOCK chapter=12 Breakable crate
+OVERLAP chapter=12 Prop Tree_03 / Prop Grass_02
+FLOAT chapter=12 Prop Rock_05 pos=(-4.53, 1.22, 37.72) bounds=Center: (-4.57, 1.23, 37.72), Extents: (0.59, 0.32, 0.55)
+OVERLAP chapter=12 Prop Rock_04 / Prop Tree_03
+FLOAT chapter=12 Prop Rock_03 pos=(3.05, 1.17, 38.28) bounds=Center: (3.01, 1.24, 38.26), Extents: (1.25, 0.47, 1.25)
+OVERLAP chapter=12 Prop Rock_03 / Prop Tree_03
+OVERLAP chapter=12 Prop Rock_03 / Prop Rock_04
+OVERLAP chapter=12 Prop rpgpp_lt_rock_small_02 / Prop Rock_04
+FLOAT chapter=12 Prop rpgpp_lt_rock_small_01 pos=(1.74, 0.57, 38.57) bounds=Center: (1.68, 0.54, 38.48), Extents: (0.75, 0.24, 0.77)
+OVERLAP chapter=12 Prop rpgpp_lt_rock_small_01 / Prop Tree_03
+OVERLAP chapter=12 Prop Flowers_01 / Prop Rock_04
+OVERLAP chapter=12 Prop Flowers_01 / Prop Flowers_01
+FLOAT chapter=12 Breakable crate pos=(1.42, 0.13, 36.59) bounds=Center: (1.42, 0.48, 36.59), Extents: (0.36, 0.33, 0.36)
+OVERLAP chapter=12 Breakable crate / Prop Tree_03
+OVERLAP chapter=12 Prop rpgpp_lt_rock_small_02 / Prop Tree_01
+LANE_BLOCK chapter=12 Prop rpgpp_lt_rock_small_02
+OVERLAP chapter=12 Prop Bush_02 / Prop Rock_03
+OVERLAP chapter=12 Breakable barrel / Prop Tree_01
+LANE_BLOCK chapter=12 Breakable crate
+OVERLAP chapter=12 Prop Tree_01 / Breakable crate
+OVERLAP chapter=12 Prop Banner / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=12 Prop Banner / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=12 Breakable barrel / Prop Rock_04
+OVERLAP chapter=12 Prop Rock_05 / Prop Rock_05
+OVERLAP chapter=12 Prop Flowers_01 / Prop rpgpp_lt_rock_small_02
+OVERLAP chapter=12 Prop rpgpp_lt_rock_small_01 / Prop Rock_05
+OVERLAP chapter=12 Prop rpgpp_lt_rock_small_01 / Prop Rock_05
+OVERLAP chapter=12 Prop rpgpp_lt_rock_small_02 / Prop Grass_02
+LANE_BLOCK chapter=12 Pushable block
+OVERLAP chapter=12 Prop Bush_02 / Prop Tree_03
+OVERLAP chapter=12 Prop Rock_05 / Prop Rock_04
+OVERLAP chapter=12 Prop Bush_02 / Prop Rock_04
+OVERLAP chapter=12 Prop Bush_02 / Prop Rock_05
+OVERLAP chapter=12 Prop Grass_02 / Prop Rock_04
+OVERLAP chapter=12 Prop Grass_02 / Prop Bush_02
+FLOAT chapter=12 Breakable crate pos=(-1.51, 1.48, 145.92) bounds=Center: (-1.51, 1.83, 145.92), Extents: (0.36, 0.33, 0.36)
+FLOAT chapter=12 Prop rpgpp_lt_rock_small_02 pos=(0.70, 1.14, 155.60) bounds=Center: (0.75, 1.16, 155.57), Extents: (0.89, 0.29, 0.89)
+OVERLAP chapter=12 Prop rpgpp_lt_rock_small_02 / Prop Rock_04
+OVERLAP chapter=12 Prop rpgpp_lt_rock_small_02 / Prop Rock_05
+FLOAT chapter=12 Prop Flowers_01 pos=(-6.43, 0.88, 155.48) bounds=Center: (-6.44, 1.13, 155.54), Extents: (0.30, 0.26, 0.30)
+OVERLAP chapter=12 Breakable barrel / Prop Tree_02
+ENEMY_UNGROUNDED chapter=12 kind=12 at=(-1.00, 1.47, 40.00)
+ENEMY_UNGROUNDED chapter=12 kind=13 at=(-2.00, 0.07, 100.00)
+CHAPTER 12 props=114 enemies=19 failures=57
+LANE_BLOCK chapter=13 Prop Rock_03
+OVERLAP chapter=13 Prop Rock_03 / Prop Rock_03
+OVERLAP chapter=13 Prop rpgpp_lt_rock_small_02 / Prop Tree_01
+OVERLAP chapter=13 Prop rpgpp_lt_rock_small_02 / Prop Tree_01
+OVERLAP chapter=13 Prop rpgpp_lt_rock_small_02 / Prop rpgpp_lt_rock_small_02
+OVERLAP chapter=13 Prop rpgpp_lt_rock_small_01 / Prop rpgpp_lt_rock_small_02
+LANE_BLOCK chapter=13 Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=13 Prop Bush_02 / Prop rpgpp_lt_rock_small_02
+OVERLAP chapter=13 Prop Bush_02 / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=13 Prop Bush_02 / Prop Rock_03
+OVERLAP chapter=13 Prop Bush_02 / Prop Rock_03
+FLOAT chapter=13 Prop Banner pos=(-2.90, 1.27, -1.40) bounds=Center: (-2.61, 2.37, -1.40), Extents: (0.33, 2.20, 0.04)
+OVERLAP chapter=13 Prop Banner / Prop rpgpp_lt_rock_small_02
+OVERLAP chapter=13 Prop Banner / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=13 Prop Banner / Prop Bush_02
+FLOAT chapter=13 Breakable barrel pos=(-2.66, 0.03, -3.19) bounds=Center: (-2.66, 0.38, -3.19), Extents: (0.19, 0.35, 0.19)
+OVERLAP chapter=13 Breakable barrel / Prop Tree_01
+OVERLAP chapter=13 Breakable barrel / Prop rpgpp_lt_rock_small_02
+LANE_BLOCK chapter=13 Prop Rock_03
+OVERLAP chapter=13 Prop Rock_03 / Prop Tree_03
+OVERLAP chapter=13 Prop Rock_04 / Prop Tree_03
+OVERLAP chapter=13 Prop Rock_04 / Prop Tree_03
+LANE_BLOCK chapter=13 Prop Rock_04
+OVERLAP chapter=13 Prop rpgpp_lt_rock_small_02 / Prop Tree_01
+OVERLAP chapter=13 Prop Flowers_01 / Prop Rock_03
+OVERLAP chapter=13 Prop Grass_02 / Prop Tree_01
+OVERLAP chapter=13 Prop Flowers_01 / Prop rpgpp_lt_rock_small_02
+OVERLAP chapter=13 Prop Flowers_01 / Prop Rock_03
+OVERLAP chapter=13 Prop Banner / Prop Tree_03
+OVERLAP chapter=13 Prop Banner / Prop Rock_03
+OVERLAP chapter=13 Prop Banner / Prop Flowers_01
+FLOAT chapter=13 Prop Tree_01 pos=(-6.55, 2.06, 31.74) bounds=Center: (-6.57, 3.54, 31.69), Extents: (0.92, 1.47, 0.95)
+OVERLAP chapter=13 Prop Rock_03 / Breakable barrel
+OVERLAP chapter=13 Prop Rock_03 / Prop Tree_01
+OVERLAP chapter=13 Prop Bush_02 / Prop Tree_01
+OVERLAP chapter=13 Prop Bush_02 / Prop Rock_03
+OVERLAP chapter=13 Prop Flowers_01 / Prop Tree_01
+OVERLAP chapter=13 Prop Flowers_01 / Prop Rock_03
+OVERLAP chapter=13 Prop Banner / Prop rpgpp_lt_rock_small_01
+LANE_BLOCK chapter=13 Breakable crate
+FLOAT chapter=13 Prop rpgpp_lt_rock_small_01 pos=(-2.05, 1.45, 37.10) bounds=Center: (-2.06, 1.42, 37.22), Extents: (1.14, 0.27, 1.15)
+OVERLAP chapter=13 Prop Grass_02 / Prop Tree_02
+OVERLAP chapter=13 Prop Grass_02 / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=13 Breakable barrel / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=13 Breakable barrel / Prop Grass_02
+OVERLAP chapter=13 Pushable block / Breakable barrel
+LANE_BLOCK chapter=13 Pushable block
+LANE_BLOCK chapter=13 Breakable crate
+OVERLAP chapter=13 Prop Rock_03 / Breakable barrel
+OVERLAP chapter=13 Prop Rock_03 / Prop Tree_03
+LANE_BLOCK chapter=13 Prop Rock_03
+FLOAT chapter=13 Prop Rock_04 pos=(-6.05, 1.31, 86.70) bounds=Center: (-6.08, 1.81, 86.73), Extents: (0.63, 0.51, 0.64)
+OVERLAP chapter=13 Prop Flowers_01 / Prop Rock_03
+OVERLAP chapter=13 Prop Grass_02 / Prop Tree_03
+OVERLAP chapter=13 Prop Grass_02 / Prop Rock_03
+FLOAT chapter=13 Prop rpgpp_lt_rock_small_01 pos=(-7.55, 1.68, 89.62) bounds=Center: (-7.48, 1.64, 89.52), Extents: (1.20, 0.30, 1.19)
+OVERLAP chapter=13 Prop rpgpp_lt_rock_small_02 / Prop Rock_04
+OVERLAP chapter=13 Prop Banner / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=13 Prop Banner / Prop Tree_03
+FLOAT chapter=13 Prop Rock_05 pos=(3.45, 0.64, 97.92) bounds=Center: (3.40, 0.66, 97.98), Extents: (0.93, 0.54, 0.77)
+OVERLAP chapter=13 Prop Rock_05 / Prop Tree_01
+FLOAT chapter=13 Prop rpgpp_lt_rock_small_02 pos=(-2.53, -0.52, 96.24) bounds=Center: (-2.52, -0.51, 96.29), Extents: (0.74, 0.24, 0.74)
+FLOAT chapter=13 Prop Grass_02 pos=(-1.83, 0.10, 96.59) bounds=Center: (-1.83, 0.33, 96.59), Extents: (0.23, 0.24, 0.25)
+OVERLAP chapter=13 Prop Rock_03 / Prop Tree_03
+OVERLAP chapter=13 Prop Rock_05 / Prop Tree_01
+LANE_BLOCK chapter=13 Prop rpgpp_lt_rock_small_02
+FLOAT chapter=13 Prop rpgpp_lt_rock_small_01 pos=(6.90, 0.06, 128.86) bounds=Center: (6.81, 0.03, 128.87), Extents: (0.88, 0.22, 0.87)
+OVERLAP chapter=13 Prop rpgpp_lt_rock_small_01 / Prop Tree_01
+OVERLAP chapter=13 Prop rpgpp_lt_rock_small_01 / Prop Rock_05
+OVERLAP chapter=13 Prop Flowers_01 / Prop Tree_03
+OVERLAP chapter=13 Prop Flowers_01 / Prop Rock_03
+OVERLAP chapter=13 Prop Grass_02 / Prop Tree_01
+OVERLAP chapter=13 Prop Grass_02 / Prop Rock_05
+OVERLAP chapter=13 Prop Grass_02 / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=13 Prop rpgpp_lt_rock_small_01 / Prop Rock_05
+LANE_BLOCK chapter=13 Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=13 Prop rpgpp_lt_rock_small_01 / Prop Tree_03
+OVERLAP chapter=13 Prop rpgpp_lt_rock_small_01 / Prop Rock_03
+OVERLAP chapter=13 Prop rpgpp_lt_rock_small_01 / Prop Flowers_01
+OVERLAP chapter=13 Prop Banner / Prop Bush_02
+FLOAT chapter=13 Breakable barrel pos=(7.00, 0.17, 127.64) bounds=Center: (7.00, 0.52, 127.64), Extents: (0.19, 0.35, 0.19)
+OVERLAP chapter=13 Breakable barrel / Prop Tree_01
+OVERLAP chapter=13 Breakable crate / Prop Tree_03
+OVERLAP chapter=13 Breakable crate / Prop Rock_03
+OVERLAP chapter=13 Breakable crate / Prop rpgpp_lt_rock_small_01
+LANE_BLOCK chapter=13 Pushable block
+OVERLAP chapter=13 Prop Tree_03 / Prop Tree_03
+FLOAT chapter=13 Prop Rock_03 pos=(8.15, 0.93, 145.21) bounds=Center: (8.12, 1.02, 145.25), Extents: (1.46, 0.55, 1.46)
+OVERLAP chapter=13 Prop Flowers_01 / Prop Tree_03
+OVERLAP chapter=13 Prop Flowers_01 / Prop Tree_01
+OVERLAP chapter=13 Prop Flowers_01 / Prop Tree_03
+OVERLAP chapter=13 Prop Bush_02 / Prop Tree_03
+OVERLAP chapter=13 Prop Bush_02 / Prop Tree_03
+OVERLAP chapter=13 Prop Grass_02 / Prop Rock_05
+FLOAT chapter=13 Prop Rock_03 pos=(-6.45, 0.90, 156.96) bounds=Center: (-6.41, 0.98, 156.93), Extents: (1.53, 0.53, 1.53)
+OVERLAP chapter=13 Prop Rock_04 / Prop Rock_03
+FLOAT chapter=13 Prop Rock_03 pos=(-0.05, 0.19, 157.47) bounds=Center: (-0.09, 0.26, 157.48), Extents: (1.24, 0.44, 1.24)
+OVERLAP chapter=13 Prop Rock_03 / Prop Tree_03
+OVERLAP chapter=13 Prop Bush_02 / Prop Rock_03
+FLOAT chapter=13 Prop rpgpp_lt_rock_small_01 pos=(-7.65, -0.09, 155.91) bounds=Center: (-7.65, -0.12, 155.80), Extents: (1.02, 0.25, 1.03)
+OVERLAP chapter=13 Prop Rock_04 / Prop Tree_03
+OVERLAP chapter=13 Prop Rock_03 / Prop Tree_03
+OVERLAP chapter=13 Prop rpgpp_lt_rock_small_01 / Prop Tree_03
+OVERLAP chapter=13 Prop Flowers_01 / Prop Tree_03
+ENEMY_UNGROUNDED chapter=13 kind=12 at=(2.00, 2.47, 40.00)
+ENEMY_UNGROUNDED chapter=13 kind=13 at=(1.00, 0.57, 100.00)
+ENEMY_UNGROUNDED chapter=13 kind=19 at=(-3.60, 0.95, 160.00)
+CHAPTER 13 props=142 enemies=20 failures=107
+FLOAT chapter=14 Prop Rock_03 pos=(-1.88, 0.84, -2.50) bounds=Center: (-1.84, 0.90, -2.50), Extents: (1.12, 0.42, 1.13)
+LANE_BLOCK chapter=14 Prop Rock_03
+OVERLAP chapter=14 Prop Flowers_01 / Prop Tree_01
+FLOAT chapter=14 Prop rpgpp_lt_rock_small_01 pos=(3.04, 0.40, 2.92) bounds=Center: (3.16, 0.37, 2.93), Extents: (1.11, 0.26, 1.10)
+OVERLAP chapter=14 Prop rpgpp_lt_rock_small_01 / Prop Tree_01
+OVERLAP chapter=14 Prop Bush_02 / Prop Tree_01
+FLOAT chapter=14 Prop Banner pos=(-2.90, 1.27, -1.40) bounds=Center: (-2.61, 2.37, -1.40), Extents: (0.33, 2.20, 0.04)
+OVERLAP chapter=14 Prop Banner / Prop Tree_01
+LANE_BLOCK chapter=14 Breakable barrel
+FLOAT chapter=14 Prop Rock_05 pos=(3.30, 1.47, 10.53) bounds=Center: (3.37, 1.49, 10.55), Extents: (0.96, 0.54, 1.01)
+OVERLAP chapter=14 Prop Rock_05 / Prop Tree_03
+OVERLAP chapter=14 Prop Rock_04 / Prop Tree_03
+OVERLAP chapter=14 Prop Rock_04 / Prop Rock_05
+OVERLAP chapter=14 Prop Bush_02 / Prop Tree_03
+OVERLAP chapter=14 Prop Grass_02 / Prop Tree_03
+OVERLAP chapter=14 Prop Grass_02 / Prop Rock_04
+OVERLAP chapter=14 Prop Bush_02 / Prop Bush_02
+OVERLAP chapter=14 Breakable crate / Prop Bush_02
+LANE_BLOCK chapter=14 Pushable block
+OVERLAP chapter=14 Prop Rock_03 / Breakable barrel
+OVERLAP chapter=14 Prop rpgpp_lt_rock_small_01 / Prop Bush_02
+LANE_BLOCK chapter=14 Breakable crate
+OVERLAP chapter=14 Prop Tree_02 / Prop Tree_03
+OVERLAP chapter=14 Prop Rock_05 / Prop Tree_03
+OVERLAP chapter=14 Prop Rock_05 / Prop Tree_02
+OVERLAP chapter=14 Prop Rock_05 / Prop Tree_02
+FLOAT chapter=14 Prop Rock_03 pos=(4.87, 2.49, 44.00) bounds=Center: (4.84, 2.56, 43.96), Extents: (1.38, 0.47, 1.38)
+OVERLAP chapter=14 Prop Rock_05 / Prop Tree_02
+OVERLAP chapter=14 Prop Rock_05 / Prop Tree_02
+LANE_BLOCK chapter=14 Prop Rock_05
+OVERLAP chapter=14 Prop rpgpp_lt_rock_small_01 / Prop Tree_03
+OVERLAP chapter=14 Prop rpgpp_lt_rock_small_01 / Prop Tree_02
+OVERLAP chapter=14 Prop rpgpp_lt_rock_small_01 / Prop Rock_05
+FLOAT chapter=14 Prop Grass_02 pos=(2.46, 1.95, 36.27) bounds=Center: (2.46, 2.23, 36.28), Extents: (0.35, 0.28, 0.33)
+LANE_BLOCK chapter=14 Breakable crate
+FLOAT chapter=14 Prop Rock_05 pos=(7.37, 1.19, 84.79) bounds=Center: (7.44, 1.20, 84.79), Extents: (0.89, 0.47, 0.85)
+OVERLAP chapter=14 Prop Rock_05 / Prop Rock_05
+OVERLAP chapter=14 Prop Bush_02 / Prop Rock_05
+OVERLAP chapter=14 Prop Flowers_01 / Prop Rock_05
+FLOAT chapter=14 Prop Bush_02 pos=(0.32, 0.75, 85.21) bounds=Center: (0.32, 1.00, 85.22), Extents: (0.45, 0.27, 0.45)
+OVERLAP chapter=14 Prop Bush_02 / Prop Bush_02
+OVERLAP chapter=14 Breakable crate / Prop Rock_05
+OVERLAP chapter=14 Breakable crate / Prop Flowers_01
+OVERLAP chapter=14 Breakable crate / Prop Rock_05
+OVERLAP chapter=14 Breakable crate / Prop Flowers_01
+OVERLAP chapter=14 Breakable crate / Breakable crate
+FLOAT chapter=14 Prop Rock_04 pos=(-1.25, -1.25, 99.02) bounds=Center: (-1.25, -0.75, 98.99), Extents: (0.54, 0.50, 0.57)
+FLOAT chapter=14 Prop Flowers_01 pos=(3.79, -1.24, 97.36) bounds=Center: (3.76, -1.02, 97.33), Extents: (0.19, 0.23, 0.20)
+FLOAT chapter=14 Prop Bush_02 pos=(-2.22, -0.26, 96.70) bounds=Center: (-2.22, -0.04, 96.70), Extents: (0.39, 0.23, 0.39)
+FLOAT chapter=14 Prop rpgpp_lt_rock_small_02 pos=(3.00, -0.13, 98.87) bounds=Center: (3.00, -0.12, 98.92), Extents: (0.80, 0.28, 0.81)
+LANE_BLOCK chapter=14 Prop rpgpp_lt_rock_small_02
+OVERLAP chapter=14 Prop Grass_02 / Prop Tree_01
+FLOAT chapter=14 Breakable barrel pos=(5.15, -0.77, 98.77) bounds=Center: (5.15, -0.42, 98.77), Extents: (0.19, 0.35, 0.19)
+OVERLAP chapter=14 Breakable barrel / Prop Tree_02
+LANE_BLOCK chapter=14 Pushable block
+OVERLAP chapter=14 Prop Rock_05 / Prop Rock_05
+FLOAT chapter=14 Prop Rock_03 pos=(5.14, 0.18, 133.11) bounds=Center: (5.11, 0.25, 133.14), Extents: (1.20, 0.43, 1.20)
+OVERLAP chapter=14 Prop Rock_03 / Prop Tree_03
+LANE_BLOCK chapter=14 Prop Rock_03
+OVERLAP chapter=14 Prop rpgpp_lt_rock_small_02 / Prop Tree_02
+OVERLAP chapter=14 Prop rpgpp_lt_rock_small_02 / Prop Rock_05
+LANE_BLOCK chapter=14 Prop rpgpp_lt_rock_small_02
+FLOAT chapter=14 Prop Flowers_01 pos=(6.90, 0.16, 127.84) bounds=Center: (6.95, 0.41, 127.81), Extents: (0.27, 0.26, 0.26)
+OVERLAP chapter=14 Prop rpgpp_lt_rock_small_01 / Prop Tree_03
+OVERLAP chapter=14 Prop rpgpp_lt_rock_small_01 / Prop Rock_03
+OVERLAP chapter=14 Prop rpgpp_lt_rock_small_01 / Prop Rock_03
+LANE_BLOCK chapter=14 Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=14 Prop Grass_02 / Prop Tree_02
+OVERLAP chapter=14 Prop Grass_02 / Prop rpgpp_lt_rock_small_02
+OVERLAP chapter=14 Prop Bush_02 / Prop Tree_03
+OVERLAP chapter=14 Prop Bush_02 / Prop Rock_03
+OVERLAP chapter=14 Prop Tree_03 / Breakable barrel
+FLOAT chapter=14 Prop Bush_02 pos=(6.98, 0.71, 146.31) bounds=Center: (6.98, 0.88, 146.31), Extents: (0.32, 0.19, 0.31)
+OVERLAP chapter=14 Prop Bush_02 / Prop Tree_03
+OVERLAP chapter=14 Prop Grass_02 / Prop Tree_03
+OVERLAP chapter=14 Prop Grass_02 / Prop Rock_03
+OVERLAP chapter=14 Prop rpgpp_lt_rock_small_01 / Prop Tree_03
+OVERLAP chapter=14 Prop rpgpp_lt_rock_small_01 / Prop Rock_05
+LANE_BLOCK chapter=14 Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=14 Breakable crate / Prop Tree_03
+OVERLAP chapter=14 Breakable crate / Prop Tree_03
+OVERLAP chapter=14 Prop Tree_01 / Prop Tree_03
+FLOAT chapter=14 Prop Rock_05 pos=(0.45, 0.14, 157.28) bounds=Center: (0.50, 0.16, 157.34), Extents: (0.68, 0.53, 0.86)
+FLOAT chapter=14 Prop Rock_04 pos=(-6.26, -0.27, 159.30) bounds=Center: (-6.23, 0.13, 159.31), Extents: (0.41, 0.40, 0.37)
+OVERLAP chapter=14 Prop Flowers_01 / Prop Tree_01
+OVERLAP chapter=14 Prop Bush_02 / Prop Rock_04
+OVERLAP chapter=14 Breakable barrel / Breakable crate
+OVERLAP chapter=14 Prop Grass_02 / Prop Rock_05
+FLOAT chapter=14 Prop rpgpp_lt_rock_small_01 pos=(5.73, -0.34, 167.92) bounds=Center: (5.61, -0.38, 167.87), Extents: (1.20, 0.28, 1.20)
+OVERLAP chapter=14 Prop rpgpp_lt_rock_small_02 / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=14 Prop Banner / Prop Tree_03
+OVERLAP chapter=14 Breakable crate / Prop Grass_02
+ENEMY_UNGROUNDED chapter=14 kind=12 at=(1.00, 3.27, 40.00)
+ENEMY_UNGROUNDED chapter=14 kind=13 at=(1.00, 0.07, 100.00)
+ENEMY_UNGROUNDED chapter=14 kind=20 at=(-3.60, 0.95, 160.00)
+CHAPTER 14 props=144 enemies=20 failures=95
+OVERLAP chapter=15 Prop Tree_01 / Prop Tree_03
+OVERLAP chapter=15 Prop Rock_03 / Prop Tree_03
+OVERLAP chapter=15 Prop Rock_03 / Prop Tree_03
+OVERLAP chapter=15 Prop Rock_03 / Prop Tree_01
+LANE_BLOCK chapter=15 Prop Rock_03
+OVERLAP chapter=15 Prop Rock_03 / Prop Tree_03
+OVERLAP chapter=15 Prop Rock_03 / Prop Tree_01
+OVERLAP chapter=15 Prop rpgpp_lt_rock_small_02 / Prop Tree_03
+OVERLAP chapter=15 Prop rpgpp_lt_rock_small_02 / Prop Rock_03
+OVERLAP chapter=15 Prop rpgpp_lt_rock_small_01 / Prop Tree_03
+OVERLAP chapter=15 Prop rpgpp_lt_rock_small_01 / Prop Rock_03
+LANE_BLOCK chapter=15 Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=15 Prop rpgpp_lt_rock_small_01 / Prop Rock_03
+OVERLAP chapter=15 Prop rpgpp_lt_rock_small_01 / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=15 Prop rpgpp_lt_rock_small_01 / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=15 Breakable barrel / Prop Tree_03
+OVERLAP chapter=15 Breakable barrel / Prop rpgpp_lt_rock_small_01
+OVERLAP chapter=15 Breakable crate / Prop Tree_03
+OVERLAP chapter=15 Breakable crate / Prop Tree_01
+OVERLAP chapter=15 Breakable crate / Prop Rock_03
+OVERLAP chapter=15 Breakable crate / Prop Rock_03
+OVERLAP chapter=15 Prop Rock_03 / Prop Tree_03
+OVERLAP chapter=15 Prop Flowers_01 / Prop Tree_03
+OVERLAP chapter=15 Prop Bush_02 / Prop Rock_04
+OVERLAP chapter=15 Breakable crate / Prop Flowers_01
+FLOAT chapter=15 Prop rpgpp_lt_rock_small_01 pos=(-4.55, 3.24, 26.61) bounds=Center: (-4.63, 3.21, 26.71), Extents: (1.07, 0.28, 1.06)
+FLOAT chapter=15 Prop Grass_02 pos=(4.43, 3.19, 25.29) bounds=Center: (4.42, 3.47, 25.29), Extents: (0.36, 0.29, 0.34)
+LANE_BLOCK chapter=15 Breakable crate
+FLOAT chapter=15 Prop Rock_03 pos=(3.05, -0.77, 62.16) bounds=Center: (3.08, -0.71, 62.19), Extents: (1.12, 0.40, 1.12)
+FLOAT chapter=15 Prop rpgpp_lt_rock_small_01 pos=(2.19, -0.79, 60.01) bounds=Center: (2.31, -0.83, 59.99), Extents: (1.15, 0.30, 1.13)
+OVERLAP chapter=15 Prop Bush_02 / Prop Tree_01
+OVERLAP chapter=15 Prop Grass_02 / Prop Tree_01
+OVERLAP chapter=15 Prop Tree_02 / Prop Tree_03
+LANE_BLOCK chapter=15 Prop Rock_03
+OVERLAP chapter=15 Prop Grass_02 / Prop Bush_02
+OVERLAP chapter=15 Prop Grass_02 / Prop Rock_03
+OVERLAP chapter=15 Prop rpgpp_lt_rock_small_02 / Prop Rock_03
+OVERLAP chapter=15 Prop Banner / Prop Rock_03
+OVERLAP chapter=15 Breakable crate / Prop Tree_03
+LANE_BLOCK chapter=15 Breakable crate
+FLOAT chapter=15 Prop Rock_03 pos=(-5.82, 1.48, 81.35) bounds=Center: (-5.86, 1.55, 81.37), Extents: (1.27, 0.44, 1.27)
+LANE_BLOCK chapter=15 Prop Rock_03
+FLOAT chapter=15 Prop Flowers_01 pos=(-4.19, 1.57, 76.82) bounds=Center: (-4.19, 1.85, 76.88), Extents: (0.34, 0.29, 0.34)
+OVERLAP chapter=15 Prop Bush_02 / Prop Rock_04
+OVERLAP chapter=15 Prop Grass_02 / Prop Rock_03
+ENEMY_UNGROUNDED chapter=15 kind=15 at=(-1.00, 0.07, 60.00)
+CHAPTER 15 props=64 enemies=11 failures=46
+SUMMARY chapters=15 props=1714 overlaps=955 unsupported_or_floating=186 missing_collision=8 blocked_lanes=121 failures=1308

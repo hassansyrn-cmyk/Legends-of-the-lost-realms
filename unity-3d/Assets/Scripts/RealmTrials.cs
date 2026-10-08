@@ -57,9 +57,9 @@ namespace LostRealms {
     Transform island=null;float nearest=float.MaxValue;
     foreach(Transform t in world.transform){if(t.name!="Island")continue;float d=(t.position-world.Route[route]).sqrMagnitude;if(d<nearest){nearest=d;island=t;}}
     if(!island)continue;
-    foreach(float x in new[]{-2.65f,0f,2.65f})foreach(float z in new[]{0f,2f,-2f}){
+    foreach(float x in new[]{-2.65f,0f,2.65f,-1.5f,1.5f,-.75f,.75f})foreach(float z in new[]{0f,2f,-2f,1f,-1f,3f,-3f}){
      Vector3 p=world.Route[route]+new Vector3(x,0,z);
-     if(!ChapterLayout.Supported(island,shrine,new Bounds(p,new Vector3(1.6f,.1f,1.6f)),out float y))continue;
+     if(!ChapterLayout.Supported(island,shrine,new Bounds(p,new Vector3(1.05f,.1f,1.05f)),out float y))continue;
      p.y=y+.14f;if(!ShrineClear(p,world.transform,1.6f))continue;
      shrine.position=p;return;
     }

@@ -10,6 +10,17 @@ namespace LostRealms {
   void Update(){var g=RealmGame.I;if(g&&g.Screen==GameScreen.Playing){g.MoveInput=move;g.JumpPressed=jump;jump=false;}}
   void Check(bool okay,string message){if(!okay){Debug.LogError("REALM_TEST_FAILED: "+message);Quit(1);throw new Exception(message);}assertions++;Debug.Log("PASS: "+message);}
   IEnumerator Start(){
+   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-guardianOnly")>=0){yield return null;yield return GuardianCombatChecks.Run(Check);Check(runtimeErrors==0,"Guardian patterns emit no runtime errors");Debug.Log("GUARDIAN_PATTERN_TESTS_PASSED "+assertions);Quit(0);yield break;}
+   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-newEpicFocused")>=0){
+    yield return null;yield return NewEpicChecks.Run(Check);yield return EpicPolishChecks.Run(Check);yield return GuardianCombatChecks.Run(Check);
+    Check(runtimeErrors==0,"New asset checks emit no runtime errors");
+    Debug.Log("NEW_EPIC_TESTS_PASSED "+assertions);Quit(0);yield break;
+   }
+   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-chapterPhysicsFocused")>=0){
+    yield return null;yield return ChapterPhysicsChecks.Run(Check);
+    Check(runtimeErrors==0,"Chapter physics checks emit no runtime errors");
+    Debug.Log("CHAPTER_PHYSICS_TESTS_PASSED "+assertions);Quit(0);yield break;
+   }
    if(Array.IndexOf(Environment.GetCommandLineArgs(),"-weaponAudit")>=0){
     yield return null;
     IEnumerator it=null;
@@ -91,10 +102,9 @@ for(int level=1;level<=15;level++){g.LoadLevel(level);yield return new WaitForSe
      if(floaters>0)Debug.LogWarning("FLOATING_PROPS level "+level+" count="+floaters);
      foreach(var foe in g.Enemies){
       if(!foe||foe.Health<=0)continue;
-      // Aerial kinds (Flyer 11) hover over gaps by design; ground enemies
-      // stranded over the void self-resolve via the fall-death logic, so this
+      // All families use gravity. Enemies pushed over the void self-resolve
+      // via the fall-death logic, so this
       // is a warning rather than a hard failure.
-      if(foe.Kind==11)continue;
       if(!Physics.Raycast(foe.transform.position+Vector3.up*.5f,Vector3.down,6f,~0,QueryTriggerInteraction.Ignore)){
        string dump="ENEMY_OVER_VOID level "+level+" kind="+foe.Kind+" pos="+foe.transform.position.ToString("0.0");
        var deep=Physics.RaycastAll(foe.transform.position+Vector3.up*.5f,Vector3.down,40f,~0,QueryTriggerInteraction.Ignore);
@@ -172,8 +182,8 @@ target.Hit(999,0,true);Check(target.Health==0,"Combat can defeat enemies");
     g.Respawn();g.Resume();g.Player.Energy=40;float e0=g.Player.Energy;yield return new WaitForSeconds(1f);
     Check(g.Player.Energy>e0+14f,"Aether rank boosts energy regen above base 12/s rate");
     string v2=JsonUtility.ToJson(g.Save);Check(v2.Contains("\"version\":2"),"Save payload retains v2 version without changing user preferences in tests");
-    Check(Codex.Entries.Length==22,"Codex defines entries for all 22 enemy kinds");
-    for(int k=0;k<22;k++){Check(!string.IsNullOrEmpty(Codex.Entries[k].Name)&&!string.IsNullOrEmpty(Codex.Entries[k].Habitat)&&!string.IsNullOrEmpty(Codex.Entries[k].Behavior),"Codex entry valid: "+k);Check(Enemy.WeaknessOf(k)>=0&&Enemy.WeaknessOf(k)<=2,"Elemental weakness valid: "+k);}
+    Check(Codex.Entries.Length==Codex.Kinds,"Codex defines entries for all enemy kinds");
+    for(int k=0;k<Codex.Kinds;k++){Check(!string.IsNullOrEmpty(Codex.Entries[k].Name)&&!string.IsNullOrEmpty(Codex.Entries[k].Habitat)&&!string.IsNullOrEmpty(Codex.Entries[k].Behavior),"Codex entry valid: "+k);Check(Enemy.WeaknessOf(k)>=0&&Enemy.WeaknessOf(k)<=2,"Elemental weakness valid: "+k);}
     Check(Codex.All.Length==28,"28 achievements defined");
     Codex.Record(g.Save,0,false);
     Check(g.Save.bestiary[0]>0&&Codex.Discovered(g.Save)>=1,"Bestiary records enemy defeat");
@@ -204,6 +214,7 @@ target.Hit(999,0,true);Check(target.Health==0,"Combat can defeat enemies");
    yield return ArsenalChecks.Run(Check);
    yield return ChapterCleanupChecks.Run(Check);
    yield return QualityUpgradeChecks.Run(Check);
+   yield return ChapterPhysicsChecks.Run(Check);
    g.LoadLevel(1);yield return new WaitForSeconds(.6f);string outDir=Path.GetFullPath(Path.Combine(Application.dataPath,"../Validation"));Directory.CreateDirectory(outDir);string captureDir=Path.Combine(outDir,"QualityUpgrade-"+DateTime.UtcNow.ToString("yyyyMMdd-HHmmss"));Directory.CreateDirectory(captureDir);Capture(captureDir+"/Verdant.png");
    g.LoadLevel(7);yield return new WaitForSeconds(.4f);g.Player.Warp(g.World.Route[g.World.Route.Count-1]+new Vector3(0,.1f,-5));yield return new WaitForSeconds(.4f);Capture(captureDir+"/Sunscar.png");
    g.LoadLevel(10);yield return new WaitForSeconds(.4f);g.Player.Warp(g.World.Route[g.World.Route.Count-1]+new Vector3(0,.1f,-5));yield return new WaitForSeconds(.4f);Capture(captureDir+"/Whiteout.png");

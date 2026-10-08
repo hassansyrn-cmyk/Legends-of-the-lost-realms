@@ -10,7 +10,7 @@ namespace LostRealms {
    for(int roll=1;roll<=WeaponCatalog.MaxId;roll++)check(WeaponCatalog.DiscoveryDrop(roll,collection)==WeaponId.Maul,"Discovery drop finds remaining weapon: "+roll);
    collection.weapons.Add((int)WeaponId.Maul);
    check(WeaponCatalog.DiscoveryDrop((int)WeaponId.SageStaff,collection)==WeaponId.SageStaff,"Full collection still gets a valid chapter weapon");
-   check(WeaponCatalog.DiscoveryDrop(WeaponCatalog.MaxId,collection)==WeaponId.FrostHalberd,"Full collection fallback includes the newest weapon");
+   check(WeaponCatalog.DiscoveryDrop(WeaponCatalog.MaxId,collection)==(WeaponId)WeaponCatalog.MaxId,"Full collection fallback includes the newest weapon");
    g.LoadLevel(1);yield return new WaitForSeconds(.3f);g.Trial.Begin();
    check(RealmTrials.ShrineClear(g.Trial.ShrinePosition,g.World.transform),"Trial shrine has clear activation space");
    var ledge=new GameObject("Regression landing deck");ledge.transform.SetParent(g.World.transform);ledge.transform.position=new Vector3(1000,30,0);
@@ -18,7 +18,7 @@ namespace LostRealms {
    var fallingEnemy=new GameObject("Regression falling enemy");fallingEnemy.transform.SetParent(g.World.transform);fallingEnemy.transform.position=new Vector3(1000,40,0);
    var falling=fallingEnemy.AddComponent<Enemy>();falling.Configure(0,false,ledge.transform.position,new Vector2(8,8));falling.Stun(5);
    Physics.SyncTransforms();yield return new WaitForSeconds(.2f);
-   check(!falling.GetComponent<Collider>().enabled,"Airborne enemy temporarily disables blocking collision");
+   check(falling.GetComponent<Collider>().enabled&&falling.VerticalVelocity<0,"Airborne enemy retains collision while falling");
    yield return new WaitForSeconds(1.2f);
    check(falling&&falling.Health>0&&falling.GetComponent<Collider>().enabled&&Mathf.Abs(falling.transform.position.y-30)<.1f,"Enemy landing restores blocking collision");
    int cliffKills=g.Kills,trialCount=g.Trial.Count;falling.transform.position=new Vector3(1020,30,0);

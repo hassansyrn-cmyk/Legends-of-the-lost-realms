@@ -119,7 +119,7 @@ namespace LostRealms {
        if(!foe||foe.Health<=0)continue;
        Vector3 fd=foe.transform.position-transform.position;
        if(Mathf.Abs(fd.x)<1.1f&&Mathf.Abs(fd.z)<1.1f&&Mathf.Abs(fd.y)<1.3f){
-        foe.Hit(2f,0,false,Vector3.up);
+        foe.HitByTrap(2f,0,false,Vector3.up);
        }
       }
      }
@@ -315,7 +315,7 @@ namespace LostRealms {
      Vector3 fPos=foe.transform.position;
      if(Vector3.Distance(hitPos,fPos+Vector3.up*.8f)<1.2f){
       Vector3 fKnock=fPos-hitPos;fKnock.y=0;
-      foe.Hit(2f,0,false,fKnock.normalized);
+      foe.HitByTrap(2f,0,false,fKnock.normalized);
      }
     }
    }
@@ -396,7 +396,7 @@ namespace LostRealms {
        if(!foe||foe.Health<=0)continue;
        Vector3 fd=foe.transform.position-transform.position;
        if(Mathf.Abs(fd.x)<1.2f&&Mathf.Abs(fd.z)<1.2f&&fd.y>-0.2f&&fd.y<3.8f){
-        foe.Hit(3f,0,false,Vector3.up);
+        foe.HitByTrap(3f,0,false,Vector3.up);
        }
       }
      }
@@ -499,7 +499,7 @@ namespace LostRealms {
       Vector3 fPos=foe.transform.position+Vector3.up*.8f;
       if(Vector3.Distance(bPos,fPos)<1.8f){
        Vector3 knock=fPos-bPos;knock.y=0.25f;
-       foe.Hit(3f,0,false,knock.normalized);
+       foe.HitByTrap(3f,0,false,knock.normalized);
        HitSpark.Burst(fPos,knock.normalized,new Color(1f,.4f,.2f),14);
       }
      }
@@ -639,9 +639,8 @@ namespace LostRealms {
       foreach(var foe in g.Enemies){
        if(!foe||foe.Health<=0)continue;
        if(Physics.Raycast(foe.transform.position+Vector3.up*.5f,Vector3.down,out var fhit,1.6f,~0,QueryTriggerInteraction.Ignore)&&fhit.transform.IsChildOf(transform)){
-        foe.transform.position+=delta;
-        foe.ShiftCenter(delta);
-        if(foe.transform.position.y<startFallY-12f)foe.Hit(999f,0,false,Vector3.down);
+        foe.CarryByPlatform(delta);
+        if(foe.transform.position.y<startFallY-12f)foe.HitByTrap(999f,0,false,Vector3.down);
        }
       }
      }
@@ -753,7 +752,7 @@ namespace LostRealms {
      if(!foe||foe.Health<=0)continue;
      float dist=Vector3.Distance(transform.position,foe.transform.position);
      if(dist<4.5f){
-      foe.Hit(3.5f,0,false,(foe.transform.position-transform.position).normalized);
+      foe.HitByTrap(3.5f,0,false,(foe.transform.position-transform.position).normalized);
      }
     }
    }
@@ -842,7 +841,7 @@ namespace LostRealms {
      if(!foe||foe.Health<=0)continue;
      Vector3 fd=foe.transform.position-transform.position;
      if(Mathf.Abs(fd.x)<1.1f&&Mathf.Abs(fd.z)<1.1f&&Mathf.Abs(fd.y)<1.2f){
-      foe.Hit(1.5f,0,false,Vector3.up);
+      foe.HitByTrap(1.5f,0,false,Vector3.up);
      }
     }
    }

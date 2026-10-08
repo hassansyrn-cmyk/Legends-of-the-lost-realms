@@ -9,6 +9,7 @@ namespace LostRealms {
   public static void Run(){Bake(1,WeaponCatalog.MaxId);}
   public static void RunNewWeapons(){Bake(41,43);}
   public static void RunOct4Weapons(){Bake(44,WeaponCatalog.MaxId);}
+  public static void RunEpicWeapons(){Bake(46,47);}
   static void Bake(int firstId,int lastId){
    const string folder="Assets/Resources/Weapons/Icons";
    Directory.CreateDirectory(folder);Directory.CreateDirectory("Validation");var report=new StringBuilder();
@@ -29,7 +30,7 @@ namespace LostRealms {
       Material iconMaterial=null;
       if(id>=41){iconMaterial=new Material(Shader.Find("Unlit/Texture"));iconMaterial.mainTexture=renderers[0].sharedMaterial.mainTexture;foreach(var r in renderers)r.sharedMaterial=iconMaterial;}
       Bounds bounds=renderers[0].bounds;foreach(var r in renderers)bounds.Encapsulate(r.bounds);
-      var camera=preview.camera;camera.transform.position=bounds.center+(id>=41?Vector3.back:new Vector3(1,.6f,1).normalized)*8;camera.transform.LookAt(bounds.center);float extent=0;
+      var camera=preview.camera;camera.transform.position=bounds.center+(id>=46?Vector3.right:id>=41?Vector3.back:new Vector3(1,.6f,1).normalized)*8;camera.transform.LookAt(bounds.center);float extent=0;
       for(int corner=0;corner<8;corner++){
        Vector3 p=bounds.center+Vector3.Scale(bounds.extents,new Vector3((corner&1)==0?-1:1,(corner&2)==0?-1:1,(corner&4)==0?-1:1));
        Vector3 view=camera.transform.InverseTransformPoint(p);extent=Mathf.Max(extent,Mathf.Abs(view.x),Mathf.Abs(view.y));
@@ -49,8 +50,8 @@ namespace LostRealms {
       if(id>=41)foreach(var r in renderers)report.AppendLine(name+" bounds="+r.bounds+" local="+r.localBounds+" rotation="+r.transform.rotation.eulerAngles+" scale="+r.transform.lossyScale);
      }finally{if(image)UnityEngine.Object.DestroyImmediate(image);UnityEngine.Object.DestroyImmediate(root);}
     }
-   sheet.Apply();File.WriteAllBytes(firstId==1?"Validation/weapon-icons.png":firstId==41?"Validation/new-weapon-icons.png":"Validation/oct4-weapon-icons.png",sheet.EncodeToPNG());
-   }finally{preview.Cleanup();UnityEngine.Object.DestroyImmediate(sheet);report.AppendLine("ICON_DONE ok="+ok);File.WriteAllText(firstId==1?"Validation/weapon-icons.txt":firstId==41?"Validation/new-weapon-icons.txt":"Validation/oct4-weapon-icons.txt",report.ToString());}
+   sheet.Apply();File.WriteAllBytes(firstId==46?"Validation/epic-weapon-icons.png":firstId==1?"Validation/weapon-icons.png":firstId==41?"Validation/new-weapon-icons.png":"Validation/oct4-weapon-icons.png",sheet.EncodeToPNG());
+   }finally{preview.Cleanup();UnityEngine.Object.DestroyImmediate(sheet);report.AppendLine("ICON_DONE ok="+ok);File.WriteAllText(firstId==46?"Validation/epic-weapon-icons.txt":firstId==1?"Validation/weapon-icons.txt":firstId==41?"Validation/new-weapon-icons.txt":"Validation/oct4-weapon-icons.txt",report.ToString());}
    AssetDatabase.Refresh();
    for(int id=firstId;id<=lastId;id++){
     string path=folder+"/"+Path.GetFileName(WeaponCatalog.Get(id).Resource)+".png";

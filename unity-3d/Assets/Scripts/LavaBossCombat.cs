@@ -31,7 +31,7 @@ namespace LostRealms {
     g.Sound("enemy_warning");
    }else if(state==State.Windup){
     Glow(new Color(1,.2f,.08f),.15f);
-    if(lavaMove==2){float t=1-Mathf.Clamp01(timer/lavaWindup);transform.position=Vector3.Lerp(attackOrigin,target,Mathf.SmoothStep(0,1,t));Visual.transform.localPosition=Vector3.up*Mathf.Sin(t*Mathf.PI)*1.15f;}
+    if(lavaMove==2){float t=1-Mathf.Clamp01(timer/lavaWindup);MoveBodyTo(Vector3.Lerp(attackOrigin,target,Mathf.SmoothStep(0,1,t)),16f,dt);Visual.transform.localPosition=Vector3.up*Mathf.Sin(t*Mathf.PI)*1.15f;}
     if(timer>0)return;
     Visual.transform.localPosition=Vector3.zero;ClearGlow();if(warning)Destroy(warning);
     state=State.Attack;timer=.65f;

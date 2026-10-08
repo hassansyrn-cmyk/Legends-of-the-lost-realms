@@ -136,10 +136,10 @@ static void PlaceVillage(Transform island,int realm,float width,float length,Sys
     }
     static bool IsDeckHit(RaycastHit h,Transform island,Transform ignoreRoot){
      var t=h.transform;
-     if(!t||t==ignoreRoot||t.IsChildOf(ignoreRoot))return false;
-     if(h.collider.name.StartsWith("Walkable")&&t.IsChildOf(island))return true;
+     if(!t||(ignoreRoot&&(t==ignoreRoot||t.IsChildOf(ignoreRoot))))return false;
      var renderer=h.collider.GetComponent<Renderer>();
      if(!(h.collider is MeshCollider)&&renderer&&!renderer.enabled)return false;
+     if(h.collider.name.StartsWith("Walkable")&&t.IsChildOf(island))return true;
      while(t!=null&&t!=island){
       var n=t.name;
       if(n.StartsWith("Prop ")||n.StartsWith("Breakable")||n.StartsWith("Pushable"))return false;
@@ -224,21 +224,27 @@ static void PlaceVillage(Transform island,int realm,float width,float length,Sys
     float s=fitH/b.size.y;
     return Mathf.Max(.35f,Mathf.Max(b.size.x,b.size.z)*.5f*s);
    }
-   static void AddCollider(GameObject prop){
+   public static void AddCollider(GameObject prop){
     bool solidDesert=prop.name=="Prop House_01"||prop.name=="Prop House_02"||prop.name=="Prop Tower_01"||prop.name=="Prop Ruin_01"||prop.name=="Prop Tent_01"||prop.name=="Prop Wall_01";
     if(solidDesert){
      // Solid architecture must not depend on one-sided imported triangles or
      // disabled/trigger colliders. Gates retain their open mesh below.
      foreach(var existing in prop.GetComponentsInChildren<Collider>(true)){existing.enabled=false;Object.Destroy(existing);}
-    }else if(prop.GetComponentInChildren<Collider>())return;
+    }else{foreach(var existing in prop.GetComponentsInChildren<Collider>())if(existing.enabled&&!existing.isTrigger)return;}
     var renderers=prop.GetComponentsInChildren<Renderer>(true);if(renderers.Length==0)return;
     Bounds b=renderers[0].bounds;
     for(int i=1;i<renderers.Length;i++)b.Encapsulate(renderers[i].bounds);
-    // Express the AABB in the prop's local frame so a baked root rotation
-    // (desert/snow packs) doesn't put the height on the wrong local axis.
+    // Measure mesh bounds directly in the prop frame. Converting a world AABB
+    // back into local space inflates rotated boxes and creates invisible walls.
     Vector3 min=Vector3.one*float.PositiveInfinity,max=Vector3.one*float.NegativeInfinity;
-    Vector3[] world={new Vector3(b.min.x,b.min.y,b.min.z),new Vector3(b.max.x,b.min.y,b.min.z),new Vector3(b.min.x,b.max.y,b.min.z),new Vector3(b.min.x,b.min.y,b.max.z),new Vector3(b.max.x,b.max.y,b.min.z),new Vector3(b.max.x,b.min.y,b.max.z),new Vector3(b.min.x,b.max.y,b.max.z),new Vector3(b.max.x,b.max.y,b.max.z)};
-    for(int i=0;i<world.Length;i++){var c=prop.transform.InverseTransformPoint(world[i]);min=Vector3.Min(min,c);max=Vector3.Max(max,c);}
+    foreach(var renderer in renderers){
+     if(renderer is ParticleSystemRenderer||renderer is TrailRenderer)continue;
+     var meshBounds=renderer.localBounds;
+     for(int corner=0;corner<8;corner++){
+      var point=new Vector3((corner&1)==0?meshBounds.min.x:meshBounds.max.x,(corner&2)==0?meshBounds.min.y:meshBounds.max.y,(corner&4)==0?meshBounds.min.z:meshBounds.max.z);
+      var c=prop.transform.InverseTransformPoint(renderer.transform.TransformPoint(point));min=Vector3.Min(min,c);max=Vector3.Max(max,c);
+     }
+    }
     Vector3 center=(min+max)*.5f,size=max-min;
     bool isTree=prop.name.StartsWith("Prop Tree")||prop.name.StartsWith("Prop rpgpp_lt_tree")||prop.name.StartsWith("Prop DeadTree")||prop.name.StartsWith("Prop Pine")||prop.name.StartsWith("Prop Palm");
     bool isClutter=prop.name.StartsWith("Prop Bush")||prop.name.StartsWith("Prop Grass")||prop.name.StartsWith("Prop Flower")||prop.name.StartsWith("Prop Skull")||prop.name.StartsWith("Prop Pebbles")||prop.name.StartsWith("Prop rpgpp_lt_flower")||prop.name.StartsWith("Prop rpgpp_lt_grass")||prop.name.StartsWith("Prop rpgpp_lt_bush");
@@ -246,10 +252,13 @@ static void PlaceVillage(Transform island,int realm,float width,float length,Sys
       // No collision for purely visual clutter
     }else if(isTree){
       var col=prop.AddComponent<CapsuleCollider>();
-      col.direction=1;
-      col.center=new Vector3(0,size.y*0.35f,0);
-      col.height=size.y*0.7f;
-      col.radius=Mathf.Min(0.45f,Mathf.Min(size.x,size.z)*0.25f);
+      var up=prop.transform.InverseTransformDirection(Vector3.up);
+      int axis=Mathf.Abs(up.x)>Mathf.Abs(up.y)&&Mathf.Abs(up.x)>Mathf.Abs(up.z)?0:Mathf.Abs(up.z)>Mathf.Abs(up.y)?2:1;
+      col.direction=axis;var trunkCenter=center;trunkCenter[axis]=up[axis]>0?min[axis]+size[axis]*.35f:max[axis]-size[axis]*.35f;
+      col.center=trunkCenter;col.height=size[axis]*.7f;
+      var scale=prop.transform.lossyScale;
+      float radialScale=Mathf.Max(Mathf.Abs(scale[(axis+1)%3]),Mathf.Abs(scale[(axis+2)%3]));
+      col.radius=Mathf.Min(.32f/Mathf.Max(.001f,radialScale),Mathf.Min(size[(axis+1)%3],size[(axis+2)%3])*.25f);
      }else if(IsBuilding(prop.name)&&!solidDesert){
       // Buildings keep their real mesh for collision: the concave MeshCollider
       // follows the model, so doorway/gate openings stay passable while the
