@@ -24,11 +24,37 @@ namespace LostRealms {
    if(stage==6||stage==12)trial.Kind=TrialKind.Resolve;
    var root=new GameObject("Optional trial shrine");root.transform.SetParent(world.transform,false);root.transform.position=(world.Route.Count>1?world.Route[1]:world.Route.Count>0?world.Route[0]:Vector3.zero)+new Vector3(-2.65f,.14f,0);trial.shrine=root.transform;
    PlaceShrine(world,root.transform);
-   Color stone=new Color(.19f,.24f,.27f);Color accent=Color.Lerp(GameColor(),Color.white,.35f);
-   Art.Shape("Trial plinth",PrimitiveType.Cylinder,Vector3.down*.04f,new Vector3(.95f,.12f,.95f),stone,root.transform);
-   trial.border=CombatTelegraph.Ring(root.transform,1.45f,accent,"Invitation ring");
-   trial.core=Art.Crystal(Vector3.up*.7f,.32f,accent,root.transform).transform;
-   CombatTelegraph.Ring(root.transform,.65f,accent,"Inner engraving");
+    Color stone=new Color(.19f,.24f,.27f);Color accent=Color.Lerp(GameColor(),Color.white,.35f);
+    var shrinePrefab=Resources.Load<GameObject>("Props/Expansion/TrailShrine");
+    if(shrinePrefab){
+     var shrineGo=new GameObject("Trial shrine visual");shrineGo.transform.SetParent(root.transform,false);
+     shrineGo.transform.localScale=Vector3.one*1.35f;
+     var sm=Instantiate(shrinePrefab,shrineGo.transform,false);
+     var sRenderers=sm.GetComponentsInChildren<Renderer>();
+     if(sRenderers.Length>0){
+      Bounds b=sRenderers[0].bounds;
+      foreach(var r in sRenderers)b.Encapsulate(r.bounds);
+      sm.transform.position+=shrineGo.transform.position-new Vector3(b.center.x,b.min.y,b.center.z);
+     }
+     var sMat=new Material(Shader.Find("Standard")??Shader.Find("Mobile/Diffuse")){name="TrialShrineMat"};
+     var tex=Resources.Load<Texture2D>("Props/Expansion/Textures/TrailShrine_basecolor");
+     var norm=Resources.Load<Texture2D>("Props/Expansion/Textures/TrailShrine_normal");
+     if(tex)sMat.mainTexture=tex;
+     if(norm){sMat.SetTexture("_BumpMap",norm);sMat.SetFloat("_BumpScale",1f);sMat.EnableKeyword("_NORMALMAP");}
+     foreach(var r in sRenderers){
+      r.sharedMaterial=sMat;
+      var block=new MaterialPropertyBlock();
+      r.GetPropertyBlock(block);
+      block.SetColor("_EmissionColor",accent*.3f);
+      r.SetPropertyBlock(block);
+     }
+     foreach(var col in shrineGo.GetComponentsInChildren<Collider>()){col.enabled=false;Destroy(col);}
+    }else{
+     Art.Shape("Trial plinth",PrimitiveType.Cylinder,Vector3.down*.04f,new Vector3(.95f,.12f,.95f),stone,root.transform);
+    }
+    trial.border=CombatTelegraph.Ring(root.transform,1.45f,accent,"Invitation ring");
+    trial.core=Art.Crystal(Vector3.up*1.2f,.35f,accent,root.transform).transform;
+    CombatTelegraph.Ring(root.transform,.65f,accent,"Inner engraving");
    if(trial.Kind==TrialKind.Echoes){
     for(int i=0;i<3;i++){
      int rIdx=Mathf.Min(3+i*3,world.Route.Count-1);
@@ -69,7 +95,7 @@ namespace LostRealms {
   void Update(){
    var g=Game;if(!g||!g.Player||g.Screen!=GameScreen.Playing)return;
    core.localRotation=Quaternion.Euler(45,g.Elapsed*18f,45);
-   core.localPosition=Vector3.up*(.7f+Mathf.Sin(g.Elapsed*1.6f)*.07f);
+   core.localPosition=Vector3.up*(1.2f+Mathf.Sin(g.Elapsed*1.6f)*.07f);
    if(Active||Completed)return;
    Vector3 d=g.Player.transform.position-shrine.position;
    bool near=new Vector2(d.x,d.z).sqrMagnitude<1.45f*1.45f&&Mathf.Abs(d.y)<1.2f&&g.Player.Grounded&&g.Player.HorizontalSpeed<.5f;

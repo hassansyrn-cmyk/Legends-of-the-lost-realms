@@ -24,9 +24,15 @@ namespace LostRealms {
    if(!prefab)return null;
    var go=new GameObject("Crypt "+name);go.transform.SetParent(parent,false);
    go.transform.localPosition=pos;go.transform.localScale=scale;
-   Instantiate(prefab,go.transform,false);
+   var model=Instantiate(prefab,go.transform,false);
+   var renderers=model.GetComponentsInChildren<Renderer>();
+   if(renderers.Length>0){
+    Bounds b=renderers[0].bounds;
+    foreach(var r in renderers)b.Encapsulate(r.bounds);
+    model.transform.position+=go.transform.position-new Vector3(b.center.x,b.min.y,b.center.z);
+   }
    if(!cryptMaterials.TryGetValue(name,out var mat)||!mat){
-    mat=new Material(Shader.Find("Standard")){name="Crypt "+name};
+    mat=new Material(Shader.Find("Standard")??Shader.Find("Mobile/Diffuse")){name="Crypt "+name};
     var tex=Resources.Load<Texture2D>("Props/Crypt/Textures/"+name+"_basecolor");
     var norm=Resources.Load<Texture2D>("Props/Crypt/Textures/"+name+"_normal");
     if(tex)mat.mainTexture=tex;
@@ -56,11 +62,12 @@ namespace LostRealms {
   }
   internal static Transform Marker(Transform parent,Vector3 point,string caption,Color color,bool entrance=false){
    var go=new GameObject("Crypt "+caption);go.transform.SetParent(parent,false);go.transform.position=point;
-   var model=entrance?PlaceCryptModel("CryptEntrance",go.transform,Vector3.zero,Vector3.one*1.3f,true,color):PlaceCryptModel("CryptMemoryAltar",go.transform,Vector3.zero,Vector3.one*1.1f,false,color);
+   var model=entrance?PlaceCryptModel("CryptEntrance",go.transform,Vector3.zero,Vector3.one*2.8f,true,color):PlaceCryptModel("CryptMemoryAltar",go.transform,Vector3.zero,Vector3.one*1.6f,false,color);
+   if(entrance)CombatTelegraph.Ring(go.transform,1.6f,color,"Crypt entrance ring");
    if(!model){
     var fallback=new GameObject("Crypt memory crystal");fallback.transform.SetParent(go.transform,false);fallback.transform.localPosition=Vector3.up*.75f;fallback.transform.localScale=Vector3.one*.65f;RelicArt.Gem(fallback.transform,color);
    }
-   var label=new GameObject("Crypt inscription");label.transform.SetParent(go.transform,false);label.transform.localPosition=Vector3.up*(entrance?2.6f:1.8f);var t=label.AddComponent<TextMesh>();t.text=caption;t.fontSize=36;t.characterSize=.036f;t.anchor=TextAnchor.MiddleCenter;t.color=new Color(1f,.89f,.6f);var font=Resources.Load<Font>("UI/Fonts/Cinzel-Bold");if(font){t.font=font;t.GetComponent<Renderer>().sharedMaterial=font.material;}label.AddComponent<ExpansionBillboard>();
+   var label=new GameObject("Crypt inscription");label.transform.SetParent(go.transform,false);label.transform.localPosition=Vector3.up*(entrance?3.4f:2.1f);var t=label.AddComponent<TextMesh>();t.text=caption;t.fontSize=36;t.characterSize=.036f;t.anchor=TextAnchor.MiddleCenter;t.color=new Color(1f,.89f,.6f);var font=Resources.Load<Font>("UI/Fonts/Cinzel-Bold");if(font){t.font=font;t.GetComponent<Renderer>().sharedMaterial=font.material;}label.AddComponent<ExpansionBillboard>();
    if(!entrance)foreach(var collider in go.GetComponentsInChildren<Collider>()){collider.enabled=false;Destroy(collider);}return go.transform;
   }
   void BuildRoute(){

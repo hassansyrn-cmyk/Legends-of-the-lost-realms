@@ -65,58 +65,92 @@ namespace LostRealms {
   ExpansionNode MakeNode(Transform island,Vector3 point,int order,string name){var t=Decoration(island,point,name,Definition.Elements!=null?RealmGame.ElementColors[Definition.Elements[order]]:new Color(.3f,.7f,1f));var n=t.gameObject.AddComponent<ExpansionNode>();n.Owner=this;n.Order=order;return n;}
   static readonly Dictionary<string,Material> puzzleMaterials=new Dictionary<string,Material>();
   static string ModelForTitle(string title){
-   if(title.Contains("OPTIONAL")||title.Contains("CACHE"))return "SecretCache";
-   if(title.Contains("RETURN PASSAGE"))return "ReturnPassage";
-   if(title.Contains("KEY"))return "TempleKey";
-   if(title.Contains("EMBER"))return "EmberFocus";
-   if(title.Contains("FROST"))return "FrostFocus";
-   if(title.Contains("GALE"))return "GaleFocus";
-   if(title.Contains("RITUAL"))return "RitualAltar";
-   if(title.Contains("OUTPOST")||title.Contains("RAMPART")||title.Contains("BANNER"))return "RallyBanner";
-   return "TrailShrine";
+   if(title.Contains("RETURN PASSAGE"))return "Props/Expansion/ReturnPassage";
+   if(title.Contains("KEY"))return "Props/Expansion/TempleKey";
+   if(title.Contains("EMBER"))return "Props/Expansion/EmberFocus";
+   if(title.Contains("FROST"))return "Props/Expansion/FrostFocus";
+   if(title.Contains("GALE"))return "Props/Expansion/GaleFocus";
+   if(title.Contains("RITUAL"))return "Props/Expansion/RitualAltar";
+   if(title.Contains("OUTPOST")||title.Contains("RAMPART")||title.Contains("BANNER"))return "Props/Expansion/RallyBanner";
+   if(title.Contains("BEACON"))return "Stormveil/Conductor";
+   if(title.Contains("SEAL"))return "Astral/WardFocus";
+   if(title.Contains("SIGIL"))return "Relics/DawnSigil";
+   if(title.Contains("WARD"))return "Relics/Wardstone";
+   if(title.Contains("MEMORY"))return "Stormveil/MemoryPlaque";
+   if(title.Contains("CACHE")||title.Contains("OPTIONAL"))return "Props/Expansion/SecretCache";
+   return "Props/Expansion/TrailShrine";
   }
-  static GameObject PlacePuzzleModel(string modelName,Transform parent,Color accent){
-   var prefab=Resources.Load<GameObject>("Props/Expansion/"+modelName);
+  static GameObject PlacePuzzleModel(string assetPath,Transform parent,Color accent,out float visualHeight){
+   visualHeight=1.8f;
+   var prefab=Resources.Load<GameObject>(assetPath);
    if(!prefab)return null;
-   var model=Instantiate(prefab,parent,false);
-   model.name="PuzzleModel "+modelName;
-   model.transform.localPosition=Vector3.zero;
-   model.transform.localRotation=Quaternion.identity;
-   model.transform.localScale=Vector3.one*1.2f;
-   if(!puzzleMaterials.TryGetValue(modelName,out var mat)||!mat){
-    mat=new Material(Shader.Find("Standard")){name="Puzzle "+modelName};
-    var tex=Resources.Load<Texture2D>("Props/Expansion/Textures/"+modelName+"_basecolor");
-    var norm=Resources.Load<Texture2D>("Props/Expansion/Textures/"+modelName+"_normal");
+   string modelName=System.IO.Path.GetFileNameWithoutExtension(assetPath);
+   var go=new GameObject("PuzzleModel "+modelName);
+   go.transform.SetParent(parent,false);
+   go.transform.localPosition=Vector3.zero;
+   var model=Instantiate(prefab,go.transform,false);
+   var renderers=model.GetComponentsInChildren<Renderer>();
+   float targetHeight=assetPath.Contains("ReturnPassage")?2.8f:
+                      assetPath.Contains("TempleKey")?1.35f:
+                      assetPath.Contains("SecretCache")?1.45f:
+                      assetPath.Contains("Conductor")?2.2f:
+                      assetPath.Contains("MemoryPlaque")?1.9f:
+                      assetPath.Contains("WardFocus")?2.1f:
+                      assetPath.Contains("Relics/")?1.5f:
+                      assetPath.Contains("RitualAltar")?1.5f:
+                      assetPath.Contains("RallyBanner")?2.4f:1.8f;
+   visualHeight=targetHeight;
+   if(renderers.Length>0){
+    Bounds b=renderers[0].bounds;
+    foreach(var r in renderers)b.Encapsulate(r.bounds);
+    float scale=targetHeight/Mathf.Max(.01f,b.size.y);
+    go.transform.localScale=Vector3.one*scale;
+    b=renderers[0].bounds;
+    foreach(var r in renderers)b.Encapsulate(r.bounds);
+    model.transform.position+=go.transform.position-new Vector3(b.center.x,b.min.y,b.center.z);
+   }
+   if(modelName=="TempleKey"){
+    Art.Shape("Key plinth",PrimitiveType.Cylinder,Vector3.up*.1f,new Vector3(1f,.18f,1f),new Color(.2f,.24f,.28f),go.transform);
+    model.transform.position+=Vector3.up*.55f;
+    var spinner=go.AddComponent<PuzzleSpinner>();spinner.Target=model.transform;
+   }
+   if(modelName=="ReturnPassage"){
+    CombatTelegraph.Ring(go.transform,1.55f,Color.cyan,"Return passage ring");
+   }
+   if(!puzzleMaterials.TryGetValue(assetPath,out var mat)||!mat){
+    mat=new Material(Shader.Find("Standard")??Shader.Find("Mobile/Diffuse")??Shader.Find("Sprites/Default")){name="Puzzle "+modelName};
+    string folder=assetPath.Contains("/")?assetPath.Substring(0,assetPath.LastIndexOf('/')):"Props/Expansion";
+    var tex=Resources.Load<Texture2D>(folder+"/Textures/"+modelName+"_basecolor");
+    if(!tex&&folder=="Astral")tex=Resources.Load<Texture2D>("Astral/AstralPalette");
+    if(!tex&&folder=="Stormveil")tex=Resources.Load<Texture2D>("Stormveil/StormPalette");
+    var norm=Resources.Load<Texture2D>(folder+"/Textures/"+modelName+"_normal");
     if(tex)mat.mainTexture=tex;
-    mat.SetFloat("_Glossiness",.25f);
-    mat.SetFloat("_Metallic",.15f);
-    if(norm){
-     mat.SetTexture("_BumpMap",norm);
-     mat.SetFloat("_BumpScale",1f);
-     mat.EnableKeyword("_NORMALMAP");
-    }
-    puzzleMaterials[modelName]=mat;
+    mat.SetFloat("_Glossiness",.3f);
+    mat.SetFloat("_Metallic",.18f);
+    if(norm){mat.SetTexture("_BumpMap",norm);mat.SetFloat("_BumpScale",1f);mat.EnableKeyword("_NORMALMAP");}
+    puzzleMaterials[assetPath]=mat;
    }
    foreach(var r in model.GetComponentsInChildren<Renderer>()){
     r.sharedMaterial=mat;
     if(accent!=Color.white){
      var block=new MaterialPropertyBlock();
      r.GetPropertyBlock(block);
-     block.SetColor("_EmissionColor",accent*.35f);
+     block.SetColor("_EmissionColor",accent*.4f);
      r.SetPropertyBlock(block);
     }
    }
-   return model;
+   return go;
   }
   Transform Decoration(Transform island,Vector3 point,string title,Color color){
    var go=new GameObject("Adventure "+title);go.transform.SetParent(island,false);go.transform.position=point;
-   string modelName=ModelForTitle(title);
-   var model=PlacePuzzleModel(modelName,go.transform,color);
+   string assetPath=ModelForTitle(title);
+   var model=PlacePuzzleModel(assetPath,go.transform,color,out float height);
    if(!model){
-    Art.Shape("Engraved plinth",PrimitiveType.Cylinder,Vector3.up*.06f,new Vector3(.7f,.06f,.7f),new Color(.18f,.22f,.26f),go.transform);
-    var crystal=new GameObject("Attunement crystal");crystal.transform.SetParent(go.transform,false);crystal.transform.localPosition=Vector3.up*.7f;crystal.transform.localScale=Vector3.one*.5f;RelicArt.Gem(crystal.transform,color);
+    Art.Shape("Engraved plinth",PrimitiveType.Cylinder,Vector3.up*.06f,new Vector3(.85f,.08f,.85f),new Color(.18f,.22f,.26f),go.transform);
+    var crystal=new GameObject("Attunement crystal");crystal.transform.SetParent(go.transform,false);crystal.transform.localPosition=Vector3.up*.75f;crystal.transform.localScale=Vector3.one*.6f;RelicArt.Gem(crystal.transform,color);
+    height=1.5f;
    }
-   var label=new GameObject("Objective label");label.transform.SetParent(go.transform,false);label.transform.localPosition=Vector3.up*(model?1.8f:1.5f);
+   var label=new GameObject("Objective label");label.transform.SetParent(go.transform,false);label.transform.localPosition=Vector3.up*(height+.35f);
    var text=label.AddComponent<TextMesh>();text.text=title;text.fontSize=36;text.characterSize=.035f;text.anchor=TextAnchor.MiddleCenter;text.color=new Color(1f,.9f,.65f);
    var font=Resources.Load<Font>("UI/Fonts/Cinzel-Bold");if(font){text.font=font;text.GetComponent<Renderer>().sharedMaterial=font.material;}
    label.AddComponent<ExpansionBillboard>();foreach(var collider in go.GetComponentsInChildren<Collider>()){collider.enabled=false;Destroy(collider);}return go.transform;
@@ -164,4 +198,8 @@ namespace LostRealms {
   public void MarkRestored(){foreach(var gem in GetComponentsInChildren<GemVisual>())gem.Accent=new Color(1f,.8f,.3f);foreach(var r in GetComponentsInChildren<Renderer>()){if(r.GetComponent<TextMesh>())continue;var p=new MaterialPropertyBlock();p.SetColor("_Color",new Color(1f,.8f,.3f));r.SetPropertyBlock(p);}}
  }
  public sealed class ExpansionBillboard:MonoBehaviour {void LateUpdate(){if(Camera.main)transform.rotation=Camera.main.transform.rotation;}}
+ public sealed class PuzzleSpinner:MonoBehaviour {
+  public Transform Target;
+  void Update(){if(Target)Target.Rotate(0,40f*Time.deltaTime,0,Space.World);}
+ }
 }
