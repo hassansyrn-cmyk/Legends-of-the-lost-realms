@@ -2,9 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 namespace LostRealms {
- void OnApplicationPause(bool pauseStatus){if(pauseStatus)Persist();}
- void OnApplicationFocus(bool focusStatus){if(!focusStatus)Persist();}
- 
  public enum GameScreen { Menu, Map, Playing, Paused, Complete, Defeated, Settings }
 [Serializable] public partial class Progress {
    public void NormalizeWeapons(){
@@ -157,7 +154,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    if(Audio)Audio.SetTrack(key);
   }
   void OnApplicationPause(bool paused){if(paused&&Screen==GameScreen.Playing)Pause();Persist();}
-  void OnApplicationFocus(bool focused){if(!focused&&Screen==GameScreen.Playing)Pause();}
+  void OnApplicationFocus(bool focused){if(!focused&&Screen==GameScreen.Playing)Pause();if(!focused)Persist();}
   public bool NoticeActive=>Time.unscaledTime<noticeUntil;
   public void Tell(string message,float seconds=3){Notice=message;noticeUntil=Time.unscaledTime+seconds;}
    public void ComboHit(){Combo++;comboUntil=Elapsed+1.1f;if(Save!=null)Save.bestCombo=Mathf.Max(Save.bestCombo,Combo);}
