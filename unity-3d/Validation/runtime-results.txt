@@ -1,1 +1,1 @@
-Passed 2343 runtime assertions: movement, double jump, fifteen routes, models, four bosses, passive-contact damage, defeat, pause and checkpoint respawn.
+Passed 3619 runtime assertions: movement, double jump, 25 campaign chapters, models, six guardians, passive-contact damage, defeat, pause and checkpoint respawn.

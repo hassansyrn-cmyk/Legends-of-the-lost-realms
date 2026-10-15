@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace LostRealms {
  public enum GameScreen { Menu, Map, Playing, Paused, Complete, Defeated, Settings }
-[Serializable] public class Progress {
+[Serializable] public partial class Progress {
    public void NormalizeWeapons(){
     equippedWeapon=Mathf.Clamp(equippedWeapon,-1,WeaponCatalog.MaxId);
     if(weapons==null)weapons=new List<int>();
@@ -18,21 +18,21 @@ namespace LostRealms {
     for(int i=skins.Count-1;i>=0;i--)if(skins[i]<0||skins[i]>5||skins.IndexOf(skins[i])!=i)skins.RemoveAt(i);
    }
    public void NormalizeCodex(){Codex.Normalize(this);}
-   public int version=2;public int unlocked=1, equippedWeapon=-1, equippedSkin=0, coins, gems, healthRank, powerRank, arsenalRank, aetherRank, moxieRank, tempoRank, windRank, tipsSeen; public int[] stars=new int[15]; public float[] best=new float[15]; public bool music=true,sound=true,postFx=true,shake=true,haptics=true,softLock=true; public List<int> weapons=new List<int>(); public List<int> skins=new List<int>{0};
+   public int version=2;public int unlocked=1, equippedWeapon=-1, equippedSkin=0, coins, gems, healthRank, powerRank, arsenalRank, aetherRank, moxieRank, tempoRank, windRank, tipsSeen; public int[] stars=new int[Campaign.Chapters]; public float[] best=new float[Campaign.Chapters]; public bool music=true,sound=true,postFx=true,shake=true,haptics=true,softLock=true; public List<int> weapons=new List<int>(); public List<int> skins=new List<int>{0};
    public int[] bestiary=new int[22]; public List<string> achievements=new List<string>(); public int bossKills, lifetimeParries, lifetimeDodges, bestCombo;
   }
- public class RealmGame : MonoBehaviour {
-  public static RealmGame I; public static bool Testing=>Array.IndexOf(Environment.GetCommandLineArgs(),"-realmTest")>=0||Array.IndexOf(Environment.GetCommandLineArgs(),"-menuVisualProbe")>=0; public static readonly string[] Titles={"Mosslight Trail","Whispering Falls","Rootbound Ruins","The Elder Grove","Sunscorched Pass","Temple of Keys","Sandstone Colossus","Frostwind Climb","Crystal Hollow","Crown of Winter","Ember Foothills","Brimstone Rampart","Cindervein Gorge","Obsidian Ascent","Emberfall Summit"};
-public static readonly string[] Realms={"VERDANT KINGDOM","BURNING DUNES","FROZEN PEAKS","EMBERFALL"};
-   public static readonly Color[] Accents={new Color(.38f,.95f,.7f),new Color(1,.67f,.28f),new Color(.4f,.83f,1),new Color(1f,.35f,.28f)};
+ public partial class RealmGame : MonoBehaviour {
+  public static RealmGame I; public static bool Testing=>Array.IndexOf(Environment.GetCommandLineArgs(),"-realmTest")>=0||Array.IndexOf(Environment.GetCommandLineArgs(),"-menuVisualProbe")>=0; public static readonly string[] Titles={"Mosslight Trail","Whispering Falls","Rootbound Ruins","The Elder Grove","Sunscorched Pass","Temple of Keys","Sandstone Colossus","Frostwind Climb","Crystal Hollow","Crown of Winter","Ember Foothills","Brimstone Rampart","Cindervein Gorge","Obsidian Ascent","Emberfall Summit","Cloudbreak Approach","Thunderwatch Ruins","Galeweaver Causeway","Eye of the Tempest","Crown of Stormveil","Starlit Threshold","The Broken Orrery","Moonshard Galleries","Sanctum of Echoes","Heart of the Fracture"};
+public static readonly string[] Realms={"VERDANT KINGDOM","BURNING DUNES","FROZEN PEAKS","EMBERFALL","STORMVEIL EXPANSE","ASTRAL RUINS"};
+   public static readonly Color[] Accents={new Color(.38f,.95f,.7f),new Color(1,.67f,.28f),new Color(.4f,.83f,1),new Color(1f,.35f,.28f),new Color(.4f,.73f,1f),new Color(.7f,.45f,1f)};
   public GameScreen Screen=GameScreen.Menu; public Progress Save=new Progress(); public Hero Player; public RealmWorld World; public FollowCamera CameraRig;
   public int Level=1, Realm, Coins, Gems, DamageTaken, EarnedStars, Combo, Kills, CoinsTotal, GemsTotal, KillsTotal; public float Elapsed; public Vector3 Checkpoint; public bool CheckpointActive; public string Notice=""; float noticeUntil,comboUntil; public Color Accent=>Accents[0];
   public WeaponDefinition CurrentWeapon=>WeaponCatalog.Get(Save.equippedWeapon);
   public Vector2 MoveInput; public bool JumpPressed,DashPressed,AttackPressed,AttackReleased,CastPressed,ParryPressed,SpellPressed,SpellReleased,GrapplePressed; public bool AttackHeld,SpellHeld,JumpHeld;
   public readonly List<Enemy> Enemies=new List<Enemy>(); public AudioSource Music,Sfx;
-  public RealmAudio Audio {get;private set;} public RealmTrials Trial {get;private set;} public ExpansionChapter Adventure {get;private set;} public CampaignPacing Pacing {get;private set;}
+  public RealmAudio Audio {get;private set;} public RealmTrials Trial {get;private set;} public ExpansionChapter Adventure {get;private set;} public CampaignPacing Pacing {get;private set;} public StormChapter Storm {get;private set;} public AstralChapter Astral {get;private set;}
    WardrobePreview wardrobePreview; int wardrobePreviewSkin=-1;
-   Transform worldRoot; GUIStyle title,titleC,label,small,button,center,big,smallC,tinyC,btnText; Texture2D hudPanel; Texture2D pixel,circleFill,circleRing,btnBlade,btnJump,btnDodge,btnPower,btnParry,btnSpell,btnPause,joyBase,joyKnob; static readonly Color MenuGold=new Color(.82f,.65f,.32f), MenuBlue=new Color(.38f,.68f,.94f); Font fantasyHeading,fantasyButton,fantasyBody; Texture2D iconWardrobe,iconAchievements,iconBestiary,iconVault,chestNormal,chestGolden,chestEpic,rewardHalo; Texture2D bgMainMenu,avatarAster,btnPrimaryNorm,btnPrimaryHigh,btnStdNorm,btnStdHigh,btnSecNorm,btnSecHigh,panelLarge,panelMedium,cardUnlocked,cardSelected,cardLocked,cardCompleted,headerOrnament,dividerLine,barFrame,barFill,resourceCapsule,iconArsenal,iconAtlas,iconBack,iconClose,iconCoin,iconGem,iconLock,iconMainMenu,iconNewJourney,iconContinue,iconResume,iconRestart,iconSanctuary,iconStar; readonly TouchRouter touch=new TouchRouter(); float yawInput,hitStopUntil,bossIntroUntil,heartbeatNext;bool showArsenal,showSkins,showCodex,showAchievements,showVault;int arsenalPage,skinPage,codexPage,achievementsPage;GameScreen arsenalReturn=GameScreen.Settings,skinReturn=GameScreen.Settings,codexReturn=GameScreen.Settings,achievementsReturn=GameScreen.Settings,vaultReturn=GameScreen.Settings;enum VaultState{Browse,Opening,Revealed};VaultState vaultState=VaultState.Browse;ChestType openingChestType=ChestType.Normal;float vaultAnimTimer=0f,rewardRevealStarted=-100f;ChestReward currentChestReward=null;bool showDropRates=false;readonly System.Collections.Generic.Dictionary<string,Texture2D> iconCache=new System.Collections.Generic.Dictionary<string,Texture2D>();
+   Transform worldRoot; GUIStyle title,titleC,label,small,button,center,big,smallC,tinyC,btnText; Texture2D hudPanel; Texture2D pixel,circleFill,circleRing,btnBlade,btnJump,btnDodge,btnPower,btnParry,btnSpell,btnPause,joyBase,joyKnob; static readonly Color MenuGold=new Color(.82f,.65f,.32f), MenuBlue=new Color(.38f,.68f,.94f); Font fantasyHeading,fantasyButton,fantasyBody; Texture2D iconWardrobe,iconAchievements,iconBestiary,iconVault,chestNormal,chestGolden,chestEpic,rewardHalo; Texture2D bgMainMenu,avatarAster,btnPrimaryNorm,btnPrimaryHigh,btnStdNorm,btnStdHigh,btnSecNorm,btnSecHigh,panelLarge,panelMedium,cardUnlocked,cardSelected,cardLocked,cardCompleted,headerOrnament,dividerLine,barFrame,barFill,resourceCapsule,iconArsenal,iconAtlas,iconBack,iconClose,iconCoin,iconGem,iconLock,iconMainMenu,iconNewJourney,iconContinue,iconResume,iconRestart,iconSanctuary,iconStar; readonly TouchRouter touch=new TouchRouter(); float yawInput,hitStopUntil,bossIntroUntil,heartbeatNext;bool showArsenal,showSkins,showCodex,showAchievements,showVault;int atlasPage;int arsenalPage,skinPage,codexPage,achievementsPage;GameScreen arsenalReturn=GameScreen.Settings,skinReturn=GameScreen.Settings,codexReturn=GameScreen.Settings,achievementsReturn=GameScreen.Settings,vaultReturn=GameScreen.Settings;enum VaultState{Browse,Opening,Revealed};VaultState vaultState=VaultState.Browse;ChestType openingChestType=ChestType.Normal;float vaultAnimTimer=0f,rewardRevealStarted=-100f;ChestReward currentChestReward=null;bool showDropRates=false;readonly System.Collections.Generic.Dictionary<string,Texture2D> iconCache=new System.Collections.Generic.Dictionary<string,Texture2D>();
   public static readonly Color[] ElementColors={new Color(1f,.45f,.1f),new Color(.2f,.85f,1f),new Color(.2f,1f,.55f)};
   static int debugTurretCycle;
   [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Boot(){
@@ -44,14 +44,13 @@ public static readonly string[] Realms={"VERDANT KINGDOM","BURNING DUNES","FROZE
   void Awake(){ I=this;Pacing=gameObject.AddComponent<CampaignPacing>(); Application.targetFrameRate=60; QualitySettings.vSyncCount=1; Time.fixedDeltaTime=1f/60f; UnityEngine.Screen.orientation=ScreenOrientation.LandscapeLeft;
 try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson<Progress>(PlayerPrefs.GetString("LostRealms3D.v2"))??new Progress();
      else if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v1")){Save=JsonUtility.FromJson<Progress>(PlayerPrefs.GetString("LostRealms3D.v1"))??new Progress();Save.version=2;Persist();}}catch{Save=new Progress();}
-    if(Save.stars==null||Save.stars.Length!=15){var old=Save.stars;Save.stars=new int[15];if(old!=null)for(int i=0;i<old.Length&&i<15;i++)Save.stars[i]=old[i];}
-    if(Save.best==null||Save.best.Length!=15){var old=Save.best;Save.best=new float[15];if(old!=null)for(int i=0;i<old.Length&&i<15;i++)Save.best[i]=old[i];}
-    Save.unlocked=Mathf.Clamp(Save.unlocked,1,15);Save.equippedWeapon=Mathf.Clamp(Save.equippedWeapon,-1,WeaponCatalog.MaxId);
+    Campaign.Normalize(Save);Save.equippedWeapon=Mathf.Clamp(Save.equippedWeapon,-1,WeaponCatalog.MaxId);
     // Collected-weapons inventory: init for old saves, grandfather the
     // currently equipped blade, drop dupes and out-of-range ids.
     Save.NormalizeWeapons();
     Save.NormalizeSkins();
     Save.NormalizeCodex();
+    Save.NormalizeBuild();
     Save.healthRank=Mathf.Clamp(Save.healthRank,0,3);Save.powerRank=Mathf.Clamp(Save.powerRank,0,3);Save.arsenalRank=Mathf.Clamp(Save.arsenalRank,0,3);
     Save.aetherRank=Mathf.Clamp(Save.aetherRank,0,3);Save.moxieRank=Mathf.Clamp(Save.moxieRank,0,3);Save.tempoRank=Mathf.Clamp(Save.tempoRank,0,3);Save.windRank=Mathf.Clamp(Save.windRank,0,3);
    Music=gameObject.AddComponent<AudioSource>(); Music.loop=true; Music.volume=.24f; Sfx=gameObject.AddComponent<AudioSource>(); Sfx.volume=.7f;
@@ -68,12 +67,13 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
   public void Persist(){if(Testing)return;PlayerPrefs.SetString("LostRealms3D.v2",JsonUtility.ToJson(Save));PlayerPrefs.Save();}
   public void LoadLevel(int id){
    if(Pacing)Pacing.Close("restarted");
-   showArsenal=false;arsenalPage=0;showCodex=false;showAchievements=false;showVault=false;
+   showBuild=false;showArsenal=false;arsenalPage=0;showCodex=false;showAchievements=false;showVault=false;
    if(Audio)Audio.ClearRunSounds();
-   Time.timeScale=1; touch.Reset(); if(worldRoot){worldRoot.gameObject.SetActive(false);Destroy(worldRoot.gameObject);} Enemies.Clear(); Level=Mathf.Clamp(id,1,15); Realm=Level<=4?0:Level<=7?1:Level<=10?2:3; Coins=Gems=DamageTaken=EarnedStars=0; Kills=CoinsTotal=GemsTotal=KillsTotal=0; Elapsed=0; CheckpointActive=false;Combo=0;comboUntil=0;
+   showEnding=false;Time.timeScale=1; touch.Reset(); if(worldRoot){worldRoot.gameObject.SetActive(false);Destroy(worldRoot.gameObject);} Enemies.Clear(); Level=Mathf.Clamp(id,1,Campaign.Chapters); Realm=Campaign.RealmFor(Level); Coins=Gems=DamageTaken=EarnedStars=0; Kills=CoinsTotal=GemsTotal=KillsTotal=0; Elapsed=0; CheckpointActive=false;Combo=0;comboUntil=0;
    worldRoot=new GameObject("Realm "+Level+" - "+Titles[Level-1]).transform; World=worldRoot.gameObject.AddComponent<RealmWorld>();   try{World.Build(Level,Realm);}catch(System.Exception e){Debug.LogError("LEVEL_BUILD_FAILED "+Level+": "+e);}
    Trial=RealmTrials.Build(World,Level);
-   Adventure=ExpansionChapter.Build(World,Level);
+   Adventure=ExpansionChapter.Build(World,Level); Storm=Level>=16&&Level<=20?World.GetComponent<StormChapter>():null;Astral=Level>=21?World.GetComponent<AstralChapter>():null;
+   Crypt=DungeonAdventure.Build(this);
    GUI.enabled=true;
    var hero=new GameObject("Aster"); hero.transform.SetParent(worldRoot); hero.transform.position=World.Spawn; Player=hero.AddComponent<Hero>(); Checkpoint=World.Spawn;
    // Restore the camera only after the newly-created Hero Awake path completes.
@@ -81,8 +81,8 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    CameraRig.Snap();
    if(World.IsBoss)CameraRig.ZoomBias=-1.3f;
    bossIntroUntil=World.IsBoss?Time.unscaledTime+4.4f:0f;
-    string stageTrack=World.IsBoss?"boss_battle_theme":Realm==0?"verdant_theme":Realm==1?"desert_exploration_theme":Realm==2?"frozen_exploration_theme":"emberfall_exploration_theme";SetMusic(stageTrack);
-    Screen=GameScreen.Playing; Pacing.Begin(); Tell(Adventure?Adventure.Objective:Level==1?"WASD / left stick to move. Jump twice to reach the next island.":World.IsBoss?"Break the guardian's corruption. Dodge red warnings, strike during recovery.":Titles[Level-1]+"  /  Follow the golden trail to the realm gate.",6);
+    string stageTrack=Realm==5?(World.IsBoss?"astral_guardian_theme":"astral_theme"):Realm==4?(World.IsBoss?"storm_guardian_theme":"stormveil_theme"):World.IsBoss?"boss_battle_theme":Realm==0?"verdant_theme":Realm==1?"desert_exploration_theme":Realm==2?"frozen_exploration_theme":"emberfall_exploration_theme";SetMusic(stageTrack);
+    Screen=GameScreen.Playing; Pacing.Begin(); Tell(Astral?Astral.Objective:Storm?Storm.Objective:Adventure?Adventure.Objective:Level==1?"WASD / left stick to move. Jump twice to reach the next island.":World.IsBoss?"Break the guardian's corruption. Dodge red warnings, strike during recovery.":Titles[Level-1]+"  /  Follow the golden trail to the realm gate.",6);
   }
   void Update(){
    if(wardrobePreview&&(!showSkins||showVault||(Screen!=GameScreen.Settings&&Screen!=GameScreen.Paused))){Destroy(wardrobePreview);wardrobePreview=null;wardrobePreviewSkin=-1;}
@@ -113,11 +113,11 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
      Tell("Spawned "+tk+" Turret ahead! [T cycles: Stone -> Dragon -> Lion]",3);
     }
    }
-   if(Input.GetKeyDown(KeyCode.Escape)){if(RewardedAdManager.IsShowing)RewardedAdManager.Close();else if(showVault)showVault=false;else if(showSkins)showSkins=false;else if(showArsenal)showArsenal=false;else if(showCodex)showCodex=false;else if(showAchievements)showAchievements=false;else if(Screen==GameScreen.Playing)Pause();else if(Screen==GameScreen.Paused)Resume();else Screen=GameScreen.Menu;}
+   if(Input.GetKeyDown(KeyCode.Escape)){if(showEnding){showEnding=false;Screen=GameScreen.Map;}else if(RewardedAdManager.IsShowing)RewardedAdManager.Close();else if(showBuild)showBuild=false;else if(showVault)showVault=false;else if(showSkins)showSkins=false;else if(showArsenal)showArsenal=false;else if(showCodex)showCodex=false;else if(showAchievements)showAchievements=false;else if(Screen==GameScreen.Playing)Pause();else if(Screen==GameScreen.Paused)Resume();else Screen=GameScreen.Menu;}
     if(Screen==GameScreen.Menu||Screen==GameScreen.Map)SetMusic("verdant_theme");
     else if(Screen==GameScreen.Settings)SetMusic("frozen_exploration_theme");
     else if(Screen==GameScreen.Playing){
-     string stageTrack=(World&&World.IsBoss)?"boss_battle_theme":Realm==0?"verdant_theme":Realm==1?"desert_exploration_theme":Realm==2?"frozen_exploration_theme":"emberfall_exploration_theme";
+     string stageTrack=Realm==5?(World.IsBoss?"astral_guardian_theme":"astral_theme"):Realm==4?(World&&World.IsBoss?"storm_guardian_theme":"stormveil_theme"):(World&&World.IsBoss)?"boss_battle_theme":Realm==0?"verdant_theme":Realm==1?"desert_exploration_theme":Realm==2?"frozen_exploration_theme":"emberfall_exploration_theme";
      SetMusic(stageTrack);
     }
     if(Screen!=GameScreen.Playing){AttackHeld=false;touch.Reset();return;} Elapsed+=Time.deltaTime; if(comboUntil>0f&&Elapsed>=comboUntil){Combo=0;comboUntil=0;}
@@ -149,12 +149,13 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    MoveInput=Vector2.ClampMagnitude(MoveInput,1); CameraRig.Yaw+=yawInput;
   }
   public void Pause(){Screen=GameScreen.Paused;Audio.Suspend(true);touch.Reset();}
-  public void Resume(){showSkins=false;showArsenal=false;showCodex=false;showAchievements=false;showVault=false;Screen=GameScreen.Playing;Audio.Suspend(false);}
+  public void Resume(){showBuild=false;showSkins=false;showArsenal=false;showCodex=false;showAchievements=false;showVault=false;Screen=GameScreen.Playing;Audio.Suspend(false);}
   void SetMusic(string key){
    if(Audio)Audio.SetTrack(key);
   }
   void OnApplicationPause(bool paused){if(paused&&Screen==GameScreen.Playing)Pause();Persist();}
   void OnApplicationFocus(bool focused){if(!focused&&Screen==GameScreen.Playing)Pause();}
+  public bool NoticeActive=>Time.unscaledTime<noticeUntil;
   public void Tell(string message,float seconds=3){Notice=message;noticeUntil=Time.unscaledTime+seconds;}
    public void ComboHit(){Combo++;comboUntil=Elapsed+1.1f;if(Save!=null)Save.bestCombo=Mathf.Max(Save.bestCombo,Combo);}
   public void Sound(string name){if(Audio)Audio.Play(name);}
@@ -181,9 +182,11 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    }
    public static int StarsFor(float completion)=>completion>=.95f?3:completion>=.8f?2:completion>=.6f?1:0;
    public float Completion()=>CompletionFor(Coins,CoinsTotal,Gems,GemsTotal,Kills,KillsTotal);
-   public int GateStars()=>Adventure&&Adventure.Ready?Mathf.Max(1,StarsFor(Completion())):StarsFor(Completion());
-   public bool GateOpen()=>Adventure?Adventure.Ready:Completion()>=.6f;
+   public int GateStars()=>(Astral&&Astral.Ready)||(Storm&&Storm.Ready)||(Adventure&&Adventure.Ready)?Mathf.Max(1,StarsFor(Completion())):StarsFor(Completion());
+   public bool GateOpen()=>Astral?Astral.Ready:Storm?Storm.Ready:Adventure?Adventure.Ready:Completion()>=.6f;
    public string GateSealedText(){
+    if(Astral)return Astral.Objective;
+    if(Storm)return Storm.Objective;
     if(Adventure)return Adventure.SealText;
     float c=CoinsTotal>0?(float)Coins/CoinsTotal:1f,g=GemsTotal>0?(float)Gems/GemsTotal:1f,k=KillsTotal>0?(float)Kills/KillsTotal:1f;
     return $"Realm gate sealed — completion {(int)(Completion()*100f)}% (need 60%): coins {(int)(Mathf.Clamp01(c)*100f)}% • gems {(int)(Mathf.Clamp01(g)*100f)}% • foes {(int)(Mathf.Clamp01(k)*100f)}%";
@@ -237,9 +240,11 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
   public void Defeat(){if(Screen==GameScreen.Defeated)return;Pacing.Death();Screen=GameScreen.Defeated;Sound("defeat");if(CameraRig)CameraRig.ZoomBias=1.6f;}
    public void Finish(){if(Screen!=GameScreen.Playing)return;if(World.IsBoss&&Enemies.Exists(x=>x&&x.Boss&&x.Health>0)){Tell("Defeat the guardian to open this gate.");return;}
     // Anti-skip: the gate only opens at 60%+ completion (coins/gems/foes).
+    if(Crypt&&Crypt.Active){Tell("Leave the crypt through its return shrine before finishing the chapter.");return;}
     if(!GateOpen()){Tell(GateSealedText(),4f);Sound("power_fail");return;}
     EarnedStars=GateStars(); Save.stars[Level-1]=Mathf.Max(Save.stars[Level-1],EarnedStars); if(Save.best[Level-1]<=0||Elapsed<Save.best[Level-1])Save.best[Level-1]=Elapsed;
-    Save.coins+=Coins+EarnedStars*10;Save.gems+=Gems;Save.unlocked=Mathf.Max(Save.unlocked,Mathf.Min(15,Level+1));Persist();Pacing.Close("completed");Screen=GameScreen.Complete;Sound("complete");
+    if(Level==1)BuildProgression.Unlock(this,0);
+    Save.coins+=Coins+EarnedStars*10;Save.gems+=Gems;Save.unlocked=Mathf.Max(Save.unlocked,Mathf.Min(Campaign.Chapters,Level+1));Persist();Pacing.Close("completed");Screen=GameScreen.Complete;Sound("complete");
   }
   public static string Clock(float seconds)=>$"{(int)seconds/60:00}:{(int)seconds%60:00}";
   float healthLag = 1f;
@@ -449,6 +454,8 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    if(Screen==GameScreen.Playing&&!Player)return;
    Styles();
    GUI.matrix=Matrix4x4.TRS(Vector3.zero,Quaternion.identity,new Vector3(UnityEngine.Screen.width/1280f,UnityEngine.Screen.height/720f,1));
+   if(showEnding){EndingView();return;}
+   if(showBuild&&(Screen==GameScreen.Settings||Screen==GameScreen.Paused)){BuildView();return;}
    if(showSkins&&!showVault&&(Screen==GameScreen.Settings||Screen==GameScreen.Paused)){WardrobeView();return;}
    if(showArsenal&&(Screen==GameScreen.Settings||Screen==GameScreen.Paused)){ArsenalView();return;}
    if(showCodex&&(Screen==GameScreen.Settings||Screen==GameScreen.Paused)){BestiaryView();if(RewardedAdManager.IsShowing)RewardedAdManager.DrawGUI(pixel,titleC,smallC,btnText);return;}
@@ -485,7 +492,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     }else{
      Text(432,48,205,30,$"◉ {Coins:00}    ◆ {Gems}");
     }
-    Text(432,74,205,20,Adventure?Adventure.Counter:GateOpen()?"GATE OPEN  "+new string('★',GateStars()):"GATE "+(int)(Completion()*100f)+"%  -  need 60%",small);
+    Text(432,74,205,20,Crypt&&Crypt.Active?Crypt.Status:Astral?Astral.Counter:Storm?Storm.Counter:Adventure?Adventure.Counter:GateOpen()?"GATE OPEN  "+new string('★',GateStars()):"GATE "+(int)(Completion()*100f)+"%  -  need 60%",small);
 
     // Power Selector & Energy Bar
     string[] powerNames={"EMBER [FIRE]","FROST [ICE]","GALE [WIND]"};
@@ -498,13 +505,15 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     // Live timer and clickable pause use the same minimal panel artwork.
     Panel(882,20,135,48);Text(894,30,111,28,$"TIME {Clock(Elapsed)}",smallC);
     if(HudButton(new Rect(1035,20,120,48),"PAUSE"))Pause();
+    ExplorationHud();
 
-     foreach(var foe in Enemies){if(!foe||foe.Boss||foe.Health<=0||Vector3.Distance(Player.transform.position,foe.transform.position)>12)continue;Vector3 v=Camera.main.WorldToViewportPoint(foe.transform.position+Vector3.up*(foe.Kind==6?2.9f:2.1f));float x=v.x*1280,y=(1-v.y)*720;if(v.z<=0||y<175||y>540||x<45||x>1235)continue;Box(new Rect(x-34,y,68,7),new Color(.03f,.07f,.08f,.85f));Box(new Rect(x-40,y,5,7),ElementColors[foe.WeakElement]);Box(new Rect(x-33,y+1,66*Mathf.Clamp01(foe.Health/foe.MaxHealth),5),ElementColors[foe.WeakElement]);}
+     foreach(var foe in Enemies){if(!foe||!foe.gameObject.activeInHierarchy||foe.Boss||foe.Health<=0||Vector3.Distance(Player.transform.position,foe.transform.position)>12)continue;Vector3 v=Camera.main.WorldToViewportPoint(foe.transform.position+Vector3.up*(foe.Kind==6?2.9f:2.1f));float x=v.x*1280,y=(1-v.y)*720;if(v.z<=0||y<175||y>540||x<45||x>1235)continue;Box(new Rect(x-34,y,68,7),new Color(.03f,.07f,.08f,.85f));Box(new Rect(x-40,y,5,7),ElementColors[foe.WeakElement]);Box(new Rect(x-33,y+1,66*Mathf.Clamp01(foe.Health/foe.MaxHealth),5),ElementColors[foe.WeakElement]);}
     // Boss Bar
     var boss=Enemies.Find(x=>x&&x.Boss&&x.Health>0);
+    if(Crypt&&Crypt.Active&&Crypt.Room==4)boss=Crypt.Foes.Find(x=>x&&x.gameObject.activeInHierarchy&&x.Health>0);
     if(boss&&Vector3.Distance(Player.transform.position,boss.transform.position)<32){
      Panel(418,122,472,60);
-     Text(438,128,432,26,boss.DisplayName+"   PHASE "+boss.BossPhase+"/3",small);
+     Text(438,128,432,26,boss.Kind==31?"FRACTURE KEEPER / PHASE "+boss.BossPhase+" / "+(boss.AstralWard?new[]{"EMBER","FROST","GALE"}[boss.BossPhase-1]+" WARD":"EXPOSED"):boss.DisplayName+(boss.Boss?"   PHASE "+boss.BossPhase+"/3":"   OATHKEEPER'S VIGIL"),small);
      HudMeter(new Rect(438,160,432,14),Mathf.Clamp01(boss.Health/boss.MaxHealth),new Color(.85f,.18f,.22f));
     }
 
@@ -619,10 +628,10 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     Text(140,74,1000,68,"LEGENDS OF THE LOST REALMS",titleC);
     if(headerOrnament)GUI.DrawTexture(new Rect(440,144,400,26),headerOrnament,ScaleMode.ScaleToFit);
     else{Box(new Rect(440,154,400,2),new Color(Accent.r,Accent.g,Accent.b,.55f));Box(new Rect(628,151,24,8),Accent);}
-    Text(240,174,800,44,"Four realms. One lost heart.\nCross the floating isles, master elemental blades, restore the ancient portals.",smallC);
+    Text(240,174,800,44,"Six realms. One lost heart.\nCross the floating isles, master elemental blades, restore the ancient portals.",smallC);
 
     if(resourceCapsule)GUI.DrawTexture(new Rect(310,224,660,38),resourceCapsule,ScaleMode.StretchToFill);
-    Text(310,232,660,22,$"JOURNEY  {Save.unlocked}/15 CHAPTERS    ✦    {TotalStars()}/45 STARS    ✦    {Save.coins} GOLD    ✦    {Save.gems} GEMS",tinyC);
+    Text(310,232,660,22,$"JOURNEY  {Save.unlocked}/{Campaign.Chapters} CHAPTERS    ✦    {TotalStars()}/{Campaign.Stars} STARS    ✦    {Save.coins} GOLD    ✦    {Save.gems} GEMS",tinyC);
 
     if(MenuButton(new Rect(410,278,460,66),"CONTINUE JOURNEY",iconContinue,primary:true))LoadLevel(Save.unlocked);
     if(MenuButton(new Rect(440,356,400,56),"REALM ATLAS",iconAtlas))Screen=GameScreen.Map;
@@ -646,17 +655,18 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
      GUI.DrawTexture(new Rect(900,62,22,22),iconGem,ScaleMode.ScaleToFit);
      Text(930,62,80,24,$"{Save.gems}",small);
      GUI.DrawTexture(new Rect(1030,62,22,22),iconStar,ScaleMode.ScaleToFit);
-     Text(1060,62,110,24,$"{TotalStars()}/45 Stars",small);
+     Text(1060,62,110,24,$"{TotalStars()}/{Campaign.Stars} Stars",small);
     }else{
-     Text(740,62,440,24,$"Treasury: {Save.coins} Gold  •  {Save.gems} Gems  •  {TotalStars()}/45 Stars",small);
+     Text(740,62,440,24,$"Treasury: {Save.coins} Gold  •  {Save.gems} Gems  •  {TotalStars()}/{Campaign.Stars} Stars",small);
     }
 
     if(dividerLine)GUI.DrawTexture(new Rect(80,128,1120,16),dividerLine,ScaleMode.StretchToFill);
     else Box(new Rect(80,135,1120,2),new Color(Accent.r,Accent.g,Accent.b,.35f));
 
     bool prevEnabled=GUI.enabled;
-    for(int i=0;i<15;i++){
-     float x=80+(i%5)*228,y=150+(i/5)*150;
+    for(int slot=0;slot<15;slot++){
+     int i=atlasPage*15+slot;if(i>=Campaign.Chapters)break;
+     float x=80+(slot%5)*228,y=150+(slot/5)*150;
      bool unlocked=(Application.isEditor&&Array.IndexOf(Environment.GetCommandLineArgs(),"-menuVisualProbe")<0)||i+1<=Save.unlocked;
      bool completed=unlocked&&Save.stars[i]>=3;
      bool selected=unlocked&&i+1==Save.unlocked&&!completed;
@@ -697,6 +707,8 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     }
     GUI.enabled=prevEnabled;
     if(MenuButton(new Rect(80,615,190,50),"BACK",iconBack))Screen=GameScreen.Menu;
+    Text(310,620,620,32,atlasPage==0?"THE FOUR REALMS  /  CHAPTERS 01–15":"STORMVEIL + ASTRAL  /  CHAPTERS 16–25",smallC);
+    if(MenuButton(new Rect(970,615,230,50),atlasPage==0?"NEW REALMS  →":"←  FOUR REALMS",iconAtlas,smallBtn:true,st:smallC))atlasPage=1-atlasPage;
     return;
    }
 
@@ -777,7 +789,9 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
 
     if(dividerLine)GUI.DrawTexture(new Rect(240,540,800,10),dividerLine,ScaleMode.StretchToFill);
 
-    if(MenuButton(new Rect(480,562,320,48),"BACK",iconBack,smallBtn:true,st:smallC))Screen=GameScreen.Menu;
+    if(MenuButton(new Rect(240,558,380,44),"MASTERY & RELICS",iconArsenal,smallBtn:true,st:smallC))OpenBuild();
+    if(MenuButton(new Rect(660,558,380,44),"LYRA / WAYFINDER QUEST",iconAtlas,smallBtn:true,st:smallC))OpenBuild(2);
+    if(MenuButton(new Rect(480,620,320,42),"BACK",iconBack,smallBtn:true,st:smallC))Screen=GameScreen.Menu;
     return;
    }
 
@@ -886,7 +900,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    // Pause / Complete / Defeat Screens
    Panel(320,80,640,560);
 
-   string heading=Screen==GameScreen.Paused?"A Moment of Rest":Screen==GameScreen.Complete?(Level==15?"The Lost Realms Restored!":"Chapter Cleared!"):"The Light Remains";
+   string heading=Screen==GameScreen.Paused?"A Moment of Rest":Screen==GameScreen.Complete?(Level==25?"The Realms Reconnected":Level==20?"Stormveil Restored!":Level==15?"Beyond the Four Realms":"Chapter Cleared!"):"The Light Remains";
    Text(340,115,600,50,heading,titleC);
    if(headerOrnament)GUI.DrawTexture(new Rect(440,166,400,26),headerOrnament,ScaleMode.ScaleToFit);
    if(dividerLine)GUI.DrawTexture(new Rect(355,196,570,14),dividerLine,ScaleMode.StretchToFill);
@@ -901,8 +915,9 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
      Text(355,220,570,36,new string('★',EarnedStars),titleC);
     }
     Text(355,270,570,44,$"TRIUMPH!   Elapsed: {Clock(Elapsed)}\nRewards: +{Coins+EarnedStars*10} Gold   +{Gems} Gems",smallC);
-    if(MenuButton(new Rect(355,340,570,58),Level==15?"RETURN TO REALM ATLAS":"NEXT CHAPTER",iconContinue,primary:true)){
-     if(Level==15)Screen=GameScreen.Map;else LoadLevel(Level+1);
+    if(Level==15||Level==20||Level==25)Text(355,316,570,18,Level==25?"LYRA: The Heart is free. Our people will rebuild together.":Level==15?"LYRA: A new fracture waits above the clouds.":"LYRA: Stormveil is free. The Astral fracture remains.",tinyC);
+    if(MenuButton(new Rect(355,340,570,58),Level==Campaign.Chapters?"READ THE EPILOGUE":"NEXT CHAPTER",iconContinue,primary:true)){
+     if(Level==Campaign.Chapters)ShowEnding();else LoadLevel(Level+1);
     }
     if(MenuButton(new Rect(355,412,570,52),"MAIN MENU",iconMainMenu)){showArsenal=false;Audio.Suspend(false);Time.timeScale=1;Screen=GameScreen.Menu;}
    }else if(Screen==GameScreen.Paused){
@@ -934,22 +949,22 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    // Cheap IMGUI squares only, so it stays in-sync with the touch layout (the
    // panel never overlaps the action buttons or the compass).
    void MiniMap(){
-    if(!World||World.Route.Count<2)return;
+    if(!World||NavigationRoute.Count<2)return;
     Rect rect=new Rect(1032,78,228,150);
     Panel(1028,74,236,158);
     Text(1044,86,180,16,"REALM MAP",small);
     float minX=float.MaxValue,maxX=float.MinValue,minZ=float.MaxValue,maxZ=float.MinValue;
-    foreach(var n in World.Route){minX=Mathf.Min(minX,n.x);maxX=Mathf.Max(maxX,n.x);minZ=Mathf.Min(minZ,n.z);maxZ=Mathf.Max(maxZ,n.z);}
+    foreach(var n in NavigationRoute){minX=Mathf.Min(minX,n.x);maxX=Mathf.Max(maxX,n.x);minZ=Mathf.Min(minZ,n.z);maxZ=Mathf.Max(maxZ,n.z);}
     minX-=4;maxX+=4;minZ-=4;maxZ+=4;
     float spanX=Mathf.Max(1f,maxX-minX),spanZ=Mathf.Max(1f,maxZ-minZ);
     float scale=Mathf.Min(rect.width/spanX,rect.height/spanZ);
     float ox=rect.x+rect.width*.5f,oz=rect.y+rect.height*.5f;
     Vector2 ToPad(Vector3 w){return new Vector2(ox+(w.x-(minX+maxX)*.5f)*scale,oz+(w.z-(minZ+maxZ)*.5f)*scale);}
-    for(int i=0;i<World.Route.Count;i++){Vector2 p=ToPad(World.Route[i]);Box(new Rect(p.x-2.5f,p.y-2.5f,5,5),new Color(1f,.8f,.3f,.9f));}
-    Vector3 gatePos=World.Route[World.Route.Count-1];gatePos.z+=5f;
+    for(int i=0;i<NavigationRoute.Count;i++){Vector2 p=ToPad(NavigationRoute[i]);Box(new Rect(p.x-2.5f,p.y-2.5f,5,5),new Color(1f,.8f,.3f,.9f));}
+    Vector3 gatePos=NavigationRoute[NavigationRoute.Count-1];gatePos.z+=5f;
     Vector2 gp=ToPad(gatePos);Box(new Rect(gp.x-4,gp.y-4,8,8),new Color(.95f,.95f,1f));
-    Text(gp.x-16,gp.y+8,34,16,"GATE",small);
-    foreach(var foe in Enemies){if(!foe||foe.Health<=0||Vector3.Distance(foe.transform.position,Player.transform.position)>60f)continue;Vector2 ep=ToPad(foe.transform.position);Box(new Rect(ep.x-2,ep.y-2,4,4),foe.Boss?new Color(1,.3f,.3f):new Color(1,.5f,.5f,.9f));}
+    Text(gp.x-23,gp.y+8,50,16,Crypt&&Crypt.Active?"OATH":"GATE",small);
+    foreach(var foe in Enemies){if(!foe||!foe.gameObject.activeInHierarchy||foe.Health<=0||Vector3.Distance(foe.transform.position,Player.transform.position)>60f)continue;Vector2 ep=ToPad(foe.transform.position);Box(new Rect(ep.x-2,ep.y-2,4,4),foe.Boss?new Color(1,.3f,.3f):new Color(1,.5f,.5f,.9f));}
     Vector2 pp=ToPad(Player.transform.position);Box(new Rect(pp.x-4,pp.y-4,8,8),new Color(.35f,1f,.5f));
     Vector3 fwd=Player.transform.forward;fwd.y=0;if(fwd.sqrMagnitude>.01f){Vector3 tip=Player.transform.position+fwd.normalized*2.2f;Vector2 tp=ToPad(tip);Box(new Rect(tp.x-1.5f,tp.y-1.5f,3,3),Color.white);}
    }

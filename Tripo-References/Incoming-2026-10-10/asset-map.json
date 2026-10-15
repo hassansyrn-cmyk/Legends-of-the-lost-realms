@@ -1,0 +1,378 @@
+[
+  {
+    "reference": "01-enemies/storm-stalker",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\dragon warrior 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\dragon warrior 3d model\\tripo_convert_5cdcee30-a423-4253-a1ee-9e3251f7eaf2.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\dragon warrior 3d model\\tripo_convert_5cdcee30-a423-4253-a1ee-9e3251f7eaf2.fbm",
+    "owner": "Codex",
+    "notes": ""
+  },
+  {
+    "reference": "01-enemies/storm-scribe",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\fantasy knight 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy knight 3d model\\tripo_convert_d34b519d-ece5-41ed-8436-a511f14a2f79.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy knight 3d model\\tripo_convert_d34b519d-ece5-41ed-8436-a511f14a2f79.fbm",
+    "owner": "Codex",
+    "notes": ""
+  },
+  {
+    "reference": "01-enemies/tempest-regent",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\fantasy griffin 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy griffin 3d model\\tripo_convert_227d5063-3b5e-4c63-bb76-330c2a9dbd8e.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy griffin 3d model\\tripo_convert_227d5063-3b5e-4c63-bb76-330c2a9dbd8e.fbm",
+    "owner": "Codex",
+    "notes": ""
+  },
+  {
+    "reference": "01-enemies/astral-sentinel",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\fantasy knight 3d model (1).fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy knight 3d model (1)\\tripo_convert_d70c44ef-6f36-459f-9731-888a6a83ed53.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy knight 3d model (1)\\tripo_convert_d70c44ef-6f36-459f-9731-888a6a83ed53.fbm",
+    "owner": "Codex",
+    "notes": ""
+  },
+  {
+    "reference": "01-enemies/star-oracle",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\fantasy sorceress 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy sorceress 3d model\\tripo_convert_86f4de20-4a95-4255-a55d-9013e52d3b08.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy sorceress 3d model\\tripo_convert_86f4de20-4a95-4255-a55d-9013e52d3b08.fbm",
+    "owner": "Codex",
+    "notes": ""
+  },
+  {
+    "reference": "01-enemies/fracture-keeper",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\fantasy armored deity 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy armored deity 3d model\\tripo_convert_0337026d-9bb7-458e-839a-b4a8eb09e1a0.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy armored deity 3d model\\tripo_convert_0337026d-9bb7-458e-839a-b4a8eb09e1a0.fbm",
+    "owner": "Codex",
+    "notes": ""
+  },
+  {
+    "reference": "02-stormveil/terrace",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\floating stone platform 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\floating stone platform 3d model\\tripo_convert_cf85a18d-76a5-4868-978d-2bb2f99d88c8.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\floating stone platform 3d model\\tripo_convert_cf85a18d-76a5-4868-978d-2bb2f99d88c8.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "02-stormveil/bridge",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\stone bridge 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\stone bridge 3d model\\tripo_convert_4cb9fb3d-5656-4c71-a24b-51bf7f99cc87.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\stone bridge 3d model\\tripo_convert_4cb9fb3d-5656-4c71-a24b-51bf7f99cc87.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "02-stormveil/tower",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\medieval tower 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\medieval tower 3d model\\tripo_convert_ec7fd2dd-075e-46de-9e6b-171a7461f0be.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\medieval tower 3d model\\tripo_convert_ec7fd2dd-075e-46de-9e6b-171a7461f0be.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "02-stormveil/conductor",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\crystal pedestal 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\crystal pedestal 3d model\\tripo_convert_eea2166b-9f75-4bf8-b9f1-36a48cbebd7c.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\crystal pedestal 3d model\\tripo_convert_eea2166b-9f75-4bf8-b9f1-36a48cbebd7c.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "02-stormveil/relay-arm",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\steampunk wrench 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\steampunk wrench 3d model\\tripo_convert_6fbd18a7-dda5-4e15-b70f-bcefe49c28c1.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\steampunk wrench 3d model\\tripo_convert_6fbd18a7-dda5-4e15-b70f-bcefe49c28c1.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "02-stormveil/turn-pad",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\round stone platform 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\round stone platform 3d model\\tripo_convert_77ebe20e-2970-408a-be5d-4f36d3407c44.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\round stone platform 3d model\\tripo_convert_77ebe20e-2970-408a-be5d-4f36d3407c44.fbm",
+    "owner": "Antigravity",
+    "notes": "Verify pad motif/material before assigning its puzzle state."
+  },
+  {
+    "reference": "02-stormveil/memory-plaque",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\fantasy stone monument 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy stone monument 3d model\\tripo_convert_87a8e755-214c-45e2-8c31-49f665bb908a.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy stone monument 3d model\\tripo_convert_87a8e755-214c-45e2-8c31-49f665bb908a.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "02-stormveil/wind-grate",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\dungeon grate 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\dungeon grate 3d model\\tripo_convert_6167d1d9-24cc-4cc4-93d5-5e567817652d.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\dungeon grate 3d model\\tripo_convert_6167d1d9-24cc-4cc4-93d5-5e567817652d.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "03-astral/terrace",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\floating circular platform 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\floating circular platform 3d model\\tripo_convert_68e1f7cb-7ea1-401b-b255-5adaf7440bf7.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\floating circular platform 3d model\\tripo_convert_68e1f7cb-7ea1-401b-b255-5adaf7440bf7.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "03-astral/bridge",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\ornate bridge 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\ornate bridge 3d model\\tripo_convert_4a9e5356-b74e-472a-a7e0-a40b1697c3f9.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\ornate bridge 3d model\\tripo_convert_4a9e5356-b74e-472a-a7e0-a40b1697c3f9.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "03-astral/arch",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\ornate arch 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\ornate arch 3d model\\tripo_convert_dc76c0e0-66c1-4f3d-8936-ff736de33ef1.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\ornate arch 3d model\\tripo_convert_dc76c0e0-66c1-4f3d-8936-ff736de33ef1.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "03-astral/orrery",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\ornate armillary sphere 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\ornate armillary sphere 3d model\\tripo_convert_05e290fc-6298-4b6e-8608-7d30f0d50802.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\ornate armillary sphere 3d model\\tripo_convert_05e290fc-6298-4b6e-8608-7d30f0d50802.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "03-astral/sun-pad",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\round compass shield 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\round compass shield 3d model\\tripo_convert_61428e69-e9a3-4888-828f-64e3607a1405.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\round compass shield 3d model\\tripo_convert_61428e69-e9a3-4888-828f-64e3607a1405.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "03-astral/moon-pad",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\ornate moon pedestal 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\ornate moon pedestal 3d model\\tripo_convert_607fef9b-80ee-41dc-a87b-c146285d8b9b.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\ornate moon pedestal 3d model\\tripo_convert_607fef9b-80ee-41dc-a87b-c146285d8b9b.fbm",
+    "owner": "Antigravity",
+    "notes": "Verify pad motif/material before assigning its puzzle state."
+  },
+  {
+    "reference": "03-astral/ward-focus",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\fantasy crystal pedestal 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy crystal pedestal 3d model\\tripo_convert_37f8e267-aa19-48fe-9169-b377d5d06371.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy crystal pedestal 3d model\\tripo_convert_37f8e267-aa19-48fe-9169-b377d5d06371.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "03-astral/record",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\ornate celestial device 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\ornate celestial device 3d model\\tripo_convert_8b188c96-9a68-4982-b748-3450ae400b40.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\ornate celestial device 3d model\\tripo_convert_8b188c96-9a68-4982-b748-3450ae400b40.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "03-astral/fracture-vent",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\magical circle 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\magical circle 3d model\\tripo_convert_bf26ab15-ab23-41ea-a7e2-182bca65b493.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\magical circle 3d model\\tripo_convert_bf26ab15-ab23-41ea-a7e2-182bca65b493.fbm",
+    "owner": "Antigravity",
+    "notes": "Verify pad motif/material before assigning its puzzle state."
+  },
+  {
+    "reference": "04-chapter-puzzles/trail-shrine",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\stone arch 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\stone arch 3d model\\tripo_convert_be46b363-2714-418c-a9d6-8b79663c58b2.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\stone arch 3d model\\tripo_convert_be46b363-2714-418c-a9d6-8b79663c58b2.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "04-chapter-puzzles/temple-key",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\ancient magical key 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\ancient magical key 3d model\\tripo_convert_1d42e781-eb0e-4e73-a3b1-270716dd697f.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\ancient magical key 3d model\\tripo_convert_1d42e781-eb0e-4e73-a3b1-270716dd697f.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "04-chapter-puzzles/return-passage",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\fantasy portal 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy portal 3d model\\tripo_convert_7c04693c-6f6d-4764-ad47-191c500bb664.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy portal 3d model\\tripo_convert_7c04693c-6f6d-4764-ad47-191c500bb664.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "04-chapter-puzzles/ember-focus",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\fantasy flame torch 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy flame torch 3d model\\tripo_convert_3786c5cf-1020-4581-abb8-b0b322b63a25.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy flame torch 3d model\\tripo_convert_3786c5cf-1020-4581-abb8-b0b322b63a25.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "04-chapter-puzzles/frost-focus",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\ice crystal monument 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\ice crystal monument 3d model\\tripo_convert_77b59d71-0290-4e5c-b243-e7fbc7467643.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\ice crystal monument 3d model\\tripo_convert_77b59d71-0290-4e5c-b243-e7fbc7467643.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "04-chapter-puzzles/gale-focus",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\crystal pedestal 3d model (1).fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\crystal pedestal 3d model (1)\\tripo_convert_4ab091ae-22a7-48c4-aadc-c401f6f59f5c.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\crystal pedestal 3d model (1)\\tripo_convert_4ab091ae-22a7-48c4-aadc-c401f6f59f5c.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "04-chapter-puzzles/ritual-altar",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\crystal altar 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\crystal altar 3d model\\tripo_convert_31087e62-ed3e-47c9-90a3-0b18a66acf64.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\crystal altar 3d model\\tripo_convert_31087e62-ed3e-47c9-90a3-0b18a66acf64.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "04-chapter-puzzles/rally-banner",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\fantasy banner 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy banner 3d model\\tripo_convert_e70589b1-efbb-46b3-981c-291dda08576a.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy banner 3d model\\tripo_convert_e70589b1-efbb-46b3-981c-291dda08576a.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "04-chapter-puzzles/secret-cache",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\ornate treasure chest 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\ornate treasure chest 3d model\\tripo_convert_087932e4-9e2c-4c81-bb78-7674fb62d978.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\ornate treasure chest 3d model\\tripo_convert_087932e4-9e2c-4c81-bb78-7674fb62d978.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "05-crypt/entrance",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\fantasy stone arch 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy stone arch 3d model\\tripo_convert_96269018-ade8-4251-8d92-42d204194914.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy stone arch 3d model\\tripo_convert_96269018-ade8-4251-8d92-42d204194914.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "05-crypt/room-deck",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\stone circular platform 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\stone circular platform 3d model\\tripo_convert_2eb5522c-f62c-4ccf-bdff-e688ad0715c4.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\stone circular platform 3d model\\tripo_convert_2eb5522c-f62c-4ccf-bdff-e688ad0715c4.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "05-crypt/arch",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\stone archway 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\stone archway 3d model\\tripo_convert_5bd8e6d5-7391-49bb-aae4-940336a7a8d6.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\stone archway 3d model\\tripo_convert_5bd8e6d5-7391-49bb-aae4-940336a7a8d6.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "05-crypt/memory-altar",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\ornate crystal pedestal 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\ornate crystal pedestal 3d model\\tripo_convert_c5f4f480-7a5f-4952-a334-f216c2629582.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\ornate crystal pedestal 3d model\\tripo_convert_c5f4f480-7a5f-4952-a334-f216c2629582.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "06-relics/dawn-sigil",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\ornate sun pendant 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\ornate sun pendant 3d model\\tripo_convert_986d0f07-0338-43cd-8ac4-af12c8d5ad84.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\ornate sun pendant 3d model\\tripo_convert_986d0f07-0338-43cd-8ac4-af12c8d5ad84.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "06-relics/ember-seal",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\fantasy shield 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy shield 3d model\\tripo_convert_f9cde3f4-afed-43ff-bae7-e73388b60970.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy shield 3d model\\tripo_convert_f9cde3f4-afed-43ff-bae7-e73388b60970.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "06-relics/duelist-knot",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\triskelion pendant 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\triskelion pendant 3d model\\tripo_convert_f9c91d19-4385-45aa-8dfa-3654cb3cee3f.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\triskelion pendant 3d model\\tripo_convert_f9c91d19-4385-45aa-8dfa-3654cb3cee3f.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "06-relics/skyglass",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\fantasy crystal 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy crystal 3d model\\tripo_convert_09d48f97-06bd-4777-9950-8c3c03efe0cd.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy crystal 3d model\\tripo_convert_09d48f97-06bd-4777-9950-8c3c03efe0cd.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "06-relics/wardstone",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\ornate shield 3d model (1).fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\ornate shield 3d model (1)\\tripo_convert_97c3e13d-97e6-4010-a7ff-408e5ce9e21c.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\ornate shield 3d model (1)\\tripo_convert_97c3e13d-97e6-4010-a7ff-408e5ce9e21c.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "06-relics/siphon-shard",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\fantasy gem pendant 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy gem pendant 3d model\\tripo_convert_24feddd3-cf59-46cd-add8-6f58805b138c.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy gem pendant 3d model\\tripo_convert_24feddd3-cf59-46cd-add8-6f58805b138c.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "06-relics/frost-emblem",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\fantasy snowflake 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy snowflake 3d model\\tripo_convert_06e4699a-7f84-4417-8584-4c44ff66d680.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy snowflake 3d model\\tripo_convert_06e4699a-7f84-4417-8584-4c44ff66d680.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "06-relics/wayfinder-heart",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\heart shaped artifact 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\heart shaped artifact 3d model\\tripo_convert_c872a052-a925-40bc-9f78-859f7921b2d9.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\heart shaped artifact 3d model\\tripo_convert_c872a052-a925-40bc-9f78-859f7921b2d9.fbm",
+    "owner": "Antigravity",
+    "notes": ""
+  },
+  {
+    "reference": "01-enemies/storm-scribe-staff",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\fantasy magic staff 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy magic staff 3d model\\tripo_convert_21a7bf9a-9707-4cbd-bd72-c4ebb8d1b0f2.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy magic staff 3d model\\tripo_convert_21a7bf9a-9707-4cbd-bd72-c4ebb8d1b0f2.fbm",
+    "owner": "Codex",
+    "notes": ""
+  },
+  {
+    "reference": "01-enemies/astral-sentinel-lance",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\fantasy spear 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy spear 3d model\\tripo_convert_c1890825-24ff-4e69-9517-6a8fe22368fc.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\fantasy spear 3d model\\tripo_convert_c1890825-24ff-4e69-9517-6a8fe22368fc.fbm",
+    "owner": "Codex",
+    "notes": ""
+  },
+  {
+    "reference": "01-enemies/astral-sentinel-buckler",
+    "source_archive": "C:\\Users\\X1 YOGA\\Downloads\\New 3d weapons and Enemies\\ornate shield 3d model.fbx",
+    "model": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\ornate shield 3d model\\tripo_convert_edda4c2d-0f07-4b27-bf05-0bb90bfee7ea.fbx",
+    "textures": "C:\\Users\\X1 YOGA\\Documents\\3D Lost Realms OpenCode\\Legends-of-the-lost-realms\\Temp\\opencode\\tripo-extracted\\ornate shield 3d model\\tripo_convert_edda4c2d-0f07-4b27-bf05-0bb90bfee7ea.fbm",
+    "owner": "Codex",
+    "notes": ""
+  }
+]

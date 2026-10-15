@@ -5,11 +5,16 @@ using System;
 namespace LostRealms {
  [DefaultExecutionOrder(10)] public class RuntimeProbe:MonoBehaviour {
   Vector2 move;bool jump;int assertions;static int runtimeErrors;
-  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)] static void WatchErrors(){if(Array.IndexOf(Environment.GetCommandLineArgs(),"-realmTest")<0)return;runtimeErrors=0;Application.logMessageReceived+=(message,stack,type)=>{if(type==LogType.Exception||type==LogType.Error||type==LogType.Assert)runtimeErrors++;};}
+  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)] static void WatchErrors(){if(Array.IndexOf(Environment.GetCommandLineArgs(),"-realmTest")<0)return;runtimeErrors=0;Application.logMessageReceived+=(message,stack,type)=>{if(type==LogType.Exception||type==LogType.Error||type==LogType.Assert){runtimeErrors++;if(type==LogType.Exception)Quit(1);}};}
   [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void StartIfRequested(){if(Array.IndexOf(Environment.GetCommandLineArgs(),"-realmTest")>=0)new GameObject("Runtime validation").AddComponent<RuntimeProbe>();}
   void Update(){var g=RealmGame.I;if(g&&g.Screen==GameScreen.Playing){g.MoveInput=move;g.JumpPressed=jump;jump=false;}}
   void Check(bool okay,string message){if(!okay){Debug.LogError("REALM_TEST_FAILED: "+message);Quit(1);throw new Exception(message);}assertions++;Debug.Log("PASS: "+message);}
   IEnumerator Start(){
+   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-explorationFocused")>=0){yield return null;yield return ExplorationChecks.Run(Check,value=>move=value,()=>jump=true);Check(runtimeErrors==0,"Exploration checks emit no runtime errors");Debug.Log("EXPLORATION_TESTS_PASSED "+assertions);Quit(0);yield break;}
+   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-stage5Focused")>=0){yield return null;yield return ExpansionStage5Checks.Run(Check,value=>move=value,()=>jump=true);Check(runtimeErrors==0,"Stage 5 checks emit no runtime errors");Debug.Log("EXPANSION_STAGE5_TESTS_PASSED "+assertions);Quit(0);yield break;}
+   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-stage4Focused")>=0){yield return null;yield return ExpansionStage4Checks.Run(Check,value=>move=value,()=>jump=true);Check(runtimeErrors==0,"Stage 4 checks emit no runtime errors");Debug.Log("EXPANSION_STAGE4_TESTS_PASSED "+assertions);Quit(0);yield break;}
+   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-stage3Focused")>=0){yield return null;yield return ExpansionStage3Checks.Run(Check,value=>move=value,()=>jump=true);Check(runtimeErrors==0,"Stage 3 checks emit no runtime errors");Debug.Log("EXPANSION_STAGE3_TESTS_PASSED "+assertions);Quit(0);yield break;}
+   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-stage2Focused")>=0){yield return null;yield return ExpansionStage2Checks.Run(Check);Check(runtimeErrors==0,"Stage 2 checks emit no runtime errors");Debug.Log("EXPANSION_STAGE2_TESTS_PASSED "+assertions);Quit(0);yield break;}
    if(Array.IndexOf(Environment.GetCommandLineArgs(),"-expansionFocused")>=0){yield return null;yield return ExpansionChecks.Run(Check,value=>move=value,()=>jump=true);Check(runtimeErrors==0,"Expansion checks emit no runtime errors");Debug.Log("EXPANSION_STAGE1_TESTS_PASSED "+assertions);Quit(0);yield break;}
    if(Array.IndexOf(Environment.GetCommandLineArgs(),"-guardianOnly")>=0){yield return null;yield return GuardianCombatChecks.Run(Check);Check(runtimeErrors==0,"Guardian patterns emit no runtime errors");Debug.Log("GUARDIAN_PATTERN_TESTS_PASSED "+assertions);Quit(0);yield break;}
    if(Array.IndexOf(Environment.GetCommandLineArgs(),"-newEpicFocused")>=0){
@@ -185,7 +190,7 @@ target.Hit(999,0,true);Check(target.Health==0,"Combat can defeat enemies");
     string v2=JsonUtility.ToJson(g.Save);Check(v2.Contains("\"version\":2"),"Save payload retains v2 version without changing user preferences in tests");
     Check(Codex.Entries.Length==Codex.Kinds,"Codex defines entries for all enemy kinds");
     for(int k=0;k<Codex.Kinds;k++){Check(!string.IsNullOrEmpty(Codex.Entries[k].Name)&&!string.IsNullOrEmpty(Codex.Entries[k].Habitat)&&!string.IsNullOrEmpty(Codex.Entries[k].Behavior),"Codex entry valid: "+k);Check(Enemy.WeaknessOf(k)>=0&&Enemy.WeaknessOf(k)<=2,"Elemental weakness valid: "+k);}
-    Check(Codex.All.Length==28,"28 achievements defined");
+    Check(Codex.All.Length==34,"34 achievements defined");
     Codex.Record(g.Save,0,false);
     Check(g.Save.bestiary[0]>0&&Codex.Discovered(g.Save)>=1,"Bestiary records enemy defeat");
     Codex.Unlock(g.Save);
@@ -217,12 +222,16 @@ target.Hit(999,0,true);Check(target.Health==0,"Combat can defeat enemies");
    yield return QualityUpgradeChecks.Run(Check);
    yield return ChapterPhysicsChecks.Run(Check);
    yield return ExpansionChecks.Run(Check,value=>move=value,()=>jump=true);
+   yield return ExpansionStage2Checks.Run(Check);
+   yield return ExpansionStage3Checks.Run(Check,value=>move=value,()=>jump=true);
+   yield return ExpansionStage4Checks.Run(Check,value=>move=value,()=>jump=true);
+   yield return ExpansionStage5Checks.Run(Check,value=>move=value,()=>jump=true);
    g.LoadLevel(1);yield return new WaitForSeconds(.6f);string outDir=Path.GetFullPath(Path.Combine(Application.dataPath,"../Validation"));Directory.CreateDirectory(outDir);string captureDir=Path.Combine(outDir,"QualityUpgrade-"+DateTime.UtcNow.ToString("yyyyMMdd-HHmmss"));Directory.CreateDirectory(captureDir);Capture(captureDir+"/Verdant.png");
    g.LoadLevel(7);yield return new WaitForSeconds(.4f);g.Player.Warp(g.World.Route[g.World.Route.Count-1]+new Vector3(0,.1f,-5));yield return new WaitForSeconds(.4f);Capture(captureDir+"/Sunscar.png");
    g.LoadLevel(10);yield return new WaitForSeconds(.4f);g.Player.Warp(g.World.Route[g.World.Route.Count-1]+new Vector3(0,.1f,-5));yield return new WaitForSeconds(.4f);Capture(captureDir+"/Whiteout.png");
 g.LoadLevel(15);yield return new WaitForSeconds(.4f);g.Player.Warp(g.World.Route[g.World.Route.Count-1]+new Vector3(0,.1f,-5));yield return new WaitForSeconds(.4f);Capture(captureDir+"/Emberfall.png");
     Check(runtimeErrors==0,"No runtime exceptions or errors during playthrough checks");
-    File.WriteAllText(outDir+"/quality-render-path.txt",captureDir);File.WriteAllText(outDir+"/runtime-results.txt",$"Passed {assertions} runtime assertions: movement, double jump, fifteen routes, models, four bosses, passive-contact damage, defeat, pause and checkpoint respawn.\n");Debug.Log("REALM_RUNTIME_TESTS_PASSED "+assertions);Quit(0);
+    File.WriteAllText(outDir+"/quality-render-path.txt",captureDir);File.WriteAllText(outDir+"/runtime-results.txt",$"Passed {assertions} runtime assertions: movement, double jump, 25 campaign chapters, models, six guardians, passive-contact damage, defeat, pause and checkpoint respawn.\n");Debug.Log("REALM_RUNTIME_TESTS_PASSED "+assertions);Quit(0);
   }
   static void Capture(string path){
    var camera=Camera.main;var rt=new RenderTexture(1280,720,24);var previous=RenderTexture.active;var target=camera.targetTexture;Texture2D tex=null;

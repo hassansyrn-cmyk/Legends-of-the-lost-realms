@@ -3,24 +3,26 @@ using UnityEngine;
 
 namespace LostRealms {
  public static class TeleportGateFactory {
-  public static readonly string[] RealmNames = new[] { "Verdant", "Desert", "Snow", "Lava" };
+  public static readonly string[] RealmNames = new[] { "Verdant", "Desert", "Snow", "Lava", "Storm", "Astral" };
 
   public static readonly Color[] PrimaryColors = new[] {
    new Color(0.0f, 0.78f, 0.33f),  // Verdant: Emerald green
    new Color(1.0f, 0.84f, 0.0f),   // Desert: Golden yellow
    new Color(0.0f, 0.90f, 1.0f),   // Snow: Cyan
-   new Color(1.0f, 0.43f, 0.0f)    // Lava: Orange
+   new Color(1.0f, 0.43f, 0.0f),   // Lava: Orange
+   new Color(.42f,.73f,1f),new Color(.7f,.45f,1f)
   };
 
   public static readonly Color[] SecondaryColors = new[] {
    new Color(0.11f, 0.91f, 0.71f), // Verdant: Turquoise
    new Color(1.0f, 0.67f, 0.0f),   // Desert: Amber
    new Color(0.50f, 0.85f, 1.0f),  // Snow: Ice blue
-   new Color(0.84f, 0.0f, 0.0f)    // Lava: Red
+   new Color(0.84f, 0.0f, 0.0f),   // Lava: Red
+   new Color(.8f,.86f,1f),new Color(.94f,.8f,1f)
   };
 
   public static GameObject Create(Transform parent, int realm, Vector3 position, bool isBoss) {
-   realm = Mathf.Clamp(realm, 0, 3);
+   realm = Mathf.Clamp(realm, 0, 5);
    string realmName = RealmNames[realm];
    Color prime = PrimaryColors[realm];
    Color sec = SecondaryColors[realm];
@@ -47,6 +49,11 @@ namespace LostRealms {
      }
     }
    }
+   if(realm>=4){
+    foreach(var mesh in modelRoot.GetComponentsInChildren<MeshFilter>()){
+     var collider=mesh.gameObject.AddComponent<MeshCollider>();collider.sharedMesh=mesh.sharedMesh;
+    }
+   }else{
    // Left & Right pillar colliders
    var colLeft = modelRoot.AddComponent<BoxCollider>();
    colLeft.center = new Vector3(-2.1f, 2.2f, 0f);
@@ -71,6 +78,7 @@ namespace LostRealms {
    colStepBack.center = new Vector3(0f, baseH * 0.25f, 1.65f);
    colStepBack.size = new Vector3(2.7f, baseH * 0.5f, 0.9f);
 
+   }
    // 2. PortalSurface
    var surfObj = GameObject.CreatePrimitive(PrimitiveType.Quad);
    surfObj.name = "PortalSurface";
@@ -175,6 +183,7 @@ namespace LostRealms {
   }
 
   static void ConfigurePortalParticles(ParticleSystem ps, Color prime, Color sec) {
+   ps.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
    var main = ps.main;
    main.playOnAwake = true;
    main.loop = true;
@@ -197,6 +206,7 @@ namespace LostRealms {
    var pr = ps.GetComponent<ParticleSystemRenderer>();
    var pmat = TeleportGateController.GetParticleMaterial();
    if (pmat) pr.sharedMaterial = pmat;
+   ps.Play(true);
   }
 
   static void ConfigureRealmParticles(GameObject parent, int realm, Color prime, Color sec) {
@@ -211,6 +221,12 @@ namespace LostRealms {
    } else if (realm == 2) {
     var snow = CreatePS(parent, "Snowflakes", new Color(0.9f, 0.98f, 1f, 0.85f), smokeTex, 18, 45, 0.10f, new Vector3(3f, 3.5f, 2f), -0.8f);
     var sparks = CreatePS(parent, "IceSparks", prime, smokeTex, 12, 30, 0.08f, new Vector3(2f, 2f, 1.5f), 0.5f);
+   } else if(realm==5){
+    CreatePS(parent,"AstralDust",new Color(.7f,.5f,1f,.55f),smokeTex,7,24,.1f,new Vector3(2.5f,3f,1.5f),.3f);
+    CreatePS(parent,"Starlight",sec,smokeTex,10,28,.07f,new Vector3(2f,2.5f,1f),.5f);
+   } else if(realm==4){
+    CreatePS(parent,"StormMist",new Color(.55f,.7f,.9f,.45f),smokeTex,6,20,.25f,new Vector3(2.5f,2f,1.5f),.35f);
+    CreatePS(parent,"StormCurrent",prime,smokeTex,12,28,.08f,new Vector3(2f,2.5f,1f),.6f);
    } else {
     var embers = CreatePS(parent, "Embers", new Color(1f, 0.45f, 0.1f, 0.9f), smokeTex, 15, 35, 0.12f, new Vector3(2.5f, 0.5f, 1.5f), 0.9f);
     var ash = CreatePS(parent, "Ash", new Color(0.3f, 0.25f, 0.25f, 0.7f), smokeTex, 10, 25, 0.14f, new Vector3(2.5f, 3f, 2f), -0.5f);
@@ -222,6 +238,7 @@ namespace LostRealms {
    var go = new GameObject(name);
    go.transform.SetParent(parent.transform, false);
    var ps = go.AddComponent<ParticleSystem>();
+   ps.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
    var main = ps.main;
    main.playOnAwake = true;
    main.loop = true;
@@ -250,7 +267,7 @@ namespace LostRealms {
    var pmat = TeleportGateController.GetParticleMaterial();
    if (pmat) pr.sharedMaterial = pmat;
 
-   return ps;
+   ps.Play(true);return ps;
   }
  }
 }

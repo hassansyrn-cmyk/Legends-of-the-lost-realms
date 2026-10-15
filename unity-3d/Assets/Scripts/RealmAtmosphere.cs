@@ -10,7 +10,7 @@ namespace LostRealms {
    readonly List<GameObject> rain=new List<GameObject>();
    readonly List<Transform> aurora=new List<Transform>();readonly List<Color> auroraTint=new List<Color>();
   int realm;Color accent;Material moteMaterial,cloudMaterial;
-  static Material[] skyMats=new Material[4];float moteTime;
+  static Material[] skyMats=new Material[6];float moteTime;
 
   public static void Apply(RealmWorld world,int realm){
    var atmosphere=world.gameObject.AddComponent<RealmAtmosphere>();
@@ -18,9 +18,9 @@ namespace LostRealms {
   }
 
   void Build(){
-Color[] sunColors={new Color(1f,.94f,.82f),new Color(1f,.86f,.69f),new Color(.82f,.91f,1f),new Color(1f,.83f,.72f)};
-    Color[] fogColors={new Color(.24f,.39f,.34f),new Color(.47f,.29f,.21f),new Color(.32f,.49f,.63f),new Color(.28f,.16f,.22f)};
-    Color[] skyColors={new Color(.34f,.48f,.48f),new Color(.48f,.48f,.52f),new Color(.42f,.57f,.72f),new Color(.38f,.40f,.51f)};
+Color[] sunColors={new Color(1f,.94f,.82f),new Color(1f,.86f,.69f),new Color(.82f,.91f,1f),new Color(1f,.83f,.72f),new Color(.82f,.9f,1f),new Color(.92f,.87f,1f)};
+    Color[] fogColors={new Color(.24f,.39f,.34f),new Color(.47f,.29f,.21f),new Color(.32f,.49f,.63f),new Color(.28f,.16f,.22f),new Color(.23f,.29f,.39f),new Color(.17f,.11f,.25f)};
+    Color[] skyColors={new Color(.34f,.48f,.48f),new Color(.48f,.48f,.52f),new Color(.42f,.57f,.72f),new Color(.38f,.40f,.51f),new Color(.25f,.34f,.47f),new Color(.24f,.16f,.36f)};
    var sun=transform.Find("Realm sunlight");
    if(sun){var light=sun.GetComponent<Light>();if(light){light.color=sunColors[realm];light.intensity=1.1f;light.shadows=LightShadows.Soft;light.shadowStrength=.58f;light.shadowBias=.045f;light.shadowNormalBias=.25f;}}
    var fillObject=new GameObject("Cool realm fill");fillObject.transform.SetParent(transform,false);
@@ -35,14 +35,14 @@ Color[] sunColors={new Color(1f,.94f,.82f),new Color(1f,.86f,.69f),new Color(.82
    if(Camera.main){Camera.main.clearFlags=CameraClearFlags.Skybox;Camera.main.backgroundColor=fogColors[realm];Camera.main.allowHDR=false;}
    CreateHorizon(skyColors[realm],fogColors[realm]);CreateRouteLandmarks();CreateAmbientMotes();
    CreateSky(fogColors[realm]);CreateCloudSea();CreateFloatingIslets();
-   if(realm==2){CreateRain();CreateSnow();}
+   if(realm==2){CreateRain();CreateSnow();}if(realm==4)CreateRain();
    if(Camera.main){
     var post=Camera.main.GetComponent<RealmPostFx>();
-    Color[] postTints={new Color(.99f,1f,.99f),new Color(1.02f,1f,.97f),new Color(.97f,1f,1.03f),new Color(1.01f,.99f,1.02f)};
-    float[] postBloom={.28f,.3f,.32f,.26f};
+    Color[] postTints={new Color(.99f,1f,.99f),new Color(1.02f,1f,.97f),new Color(.97f,1f,1.03f),new Color(1.01f,.99f,1.02f),new Color(.96f,1f,1.04f),new Color(1.01f,.97f,1.04f)};
+    float[] postBloom={.28f,.3f,.32f,.26f,.24f,.28f};
     // Height fog per realm: the cloud sea below the route reads as thick
     // atmosphere; dunes haze lighter, frozen air crisper.
-    float[] fogDensity={.13f,.10f,.17f,.14f};
+    float[] fogDensity={.13f,.10f,.17f,.14f,.16f,.12f};
     if(post){
      post.Configure(postTints[realm],postBloom[realm]);
      post.ConfigureFog(RenderSettings.fogColor,fogDensity[realm],-2f);
@@ -72,7 +72,7 @@ Color[] sunColors={new Color(1f,.94f,.82f),new Color(1f,.86f,.69f),new Color(.82
   // Embers (desert) and snow motes (frozen) drifting on the breeze.
   void CreateAmbience(){
    var tex=Resources.Load<Texture2D>("VFX/Textures/smoke_04");if(!tex)return;
-   Color tint=realm==0?new Color(.7f,1f,.55f):realm==1?new Color(1,.55f,.18f):realm==2?new Color(.85f,.95f,1f):new Color(1f,.45f,.2f);
+   Color tint=realm==5?new Color(.66f,.44f,1f):realm==4?new Color(.5f,.7f,1f):realm==0?new Color(.7f,1f,.55f):realm==1?new Color(1,.55f,.18f):realm==2?new Color(.85f,.95f,1f):new Color(1f,.45f,.2f);
    var go=new GameObject("Realm ambience");go.transform.SetParent(transform,false);go.transform.localPosition=new Vector3(0,6,55);
    var ps=go.AddComponent<ParticleSystem>();
    var main=ps.main;main.playOnAwake=false;ps.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
@@ -108,6 +108,10 @@ var em=ps.emission;em.rateOverTime=realm==0?2f:realm==1?6f:8f;
   // The horizon band matches the fog color, hiding the seam with far geometry.
   static Material SkyFor(int r,Color horizon){
    if(skyMats[r]&&skyMats[r])return skyMats[r];
+   if(r>=4){
+    var panorama=Resources.Load<Shader>("Shaders/RealmPanoramicSky");var texture=Resources.Load<Texture2D>("Art/Realm"+(r==4?0:2)+"_Sky360");
+    if(panorama&&texture){var material=new Material(panorama){name=r==4?"Stormveil cloud archipelago":"Astral moonlit horizon"};material.SetTexture("_MainTex",texture);material.SetColor("_Tint",r==4?new Color(.68f,.8f,.98f):new Color(.64f,.52f,.94f));material.SetFloat("_Exposure",r==4?.95f:.85f);material.SetFloat("_Rotation",r==4?90:215);skyMats[r]=material;return material;}
+   }
    var tex=Resources.Load<Texture2D>("Art/Realm"+r+"_Sky360");
    var panoShader=Resources.Load<Shader>("Shaders/RealmPanoramicSky")??Shader.Find("LostRealms/RealmPanoramicSky");
    if(tex&&panoShader){
@@ -123,11 +127,11 @@ var em=ps.emission;em.rateOverTime=realm==0?2f:realm==1?6f:8f;
     }
     skyMats[r]=pm;return pm;
    }
-   var shader=Shader.Find("LostRealms/RealmSkyBox");if(!shader)return null;
-Color[] tops={new Color(.13f,.38f,.52f),new Color(.25f,.45f,.70f),new Color(.05f,.12f,.28f),new Color(.22f,.12f,.18f)};
-    Color[] grounds={new Color(.10f,.16f,.16f),new Color(.35f,.22f,.15f),new Color(.08f,.12f,.20f),new Color(.55f,.30f,.22f)};
-    Color[] suns={new Color(1,.93f,.75f),new Color(1,.8f,.55f),new Color(.85f,.92f,1f),new Color(1f,.6f,.4f)};
-    float[] stars={.25f,.12f,.85f,.5f};
+   var shader=Resources.Load<Shader>("Shaders/RealmSkyBox")??Shader.Find("LostRealms/RealmSkyBox");if(!shader)return null;
+Color[] tops={new Color(.13f,.38f,.52f),new Color(.25f,.45f,.70f),new Color(.05f,.12f,.28f),new Color(.22f,.12f,.18f),new Color(.08f,.14f,.28f),new Color(.035f,.015f,.1f)};
+    Color[] grounds={new Color(.10f,.16f,.16f),new Color(.35f,.22f,.15f),new Color(.08f,.12f,.20f),new Color(.55f,.30f,.22f),new Color(.12f,.17f,.25f),new Color(.12f,.07f,.2f)};
+    Color[] suns={new Color(1,.93f,.75f),new Color(1,.8f,.55f),new Color(.85f,.92f,1f),new Color(1f,.6f,.4f),new Color(.75f,.85f,1f),new Color(.84f,.65f,1f)};
+    float[] stars={.25f,.12f,.85f,.5f,.4f,.95f};
    var m=new Material(shader){name="Realm sky "+r};
    m.SetColor("_TopColor",tops[r]);m.SetColor("_HorizonColor",horizon);m.SetColor("_GroundColor",grounds[r]);
    m.SetColor("_SunColor",suns[r]);m.SetVector("_SunDir",Quaternion.Euler(48,-35,0)*Vector3.back);
@@ -140,14 +144,14 @@ Color[] tops={new Color(.13f,.38f,.52f),new Color(.25f,.45f,.70f),new Color(.05f
   // A single drifting particle cloud sea far below the route (one draw call).
   void CreateCloudSea(){
    var tex=Resources.Load<Texture2D>("VFX/Textures/smoke_04");if(!tex)return;
-   var go=new GameObject("Cloud sea");go.transform.SetParent(transform,false);go.transform.localPosition=new Vector3(0,-10,55);
+   var go=new GameObject("Cloud sea");go.transform.SetParent(transform,false);go.transform.localPosition=realm>=4?new Vector3(0,-13,0):new Vector3(0,-10,55);
    var ps=go.AddComponent<ParticleSystem>();
    var main=ps.main;main.playOnAwake=false;ps.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
    main.loop=true;main.duration=40;main.startLifetime=38;main.startSpeed=.5f;main.startSize=15f;main.maxParticles=34;main.simulationSpace=ParticleSystemSimulationSpace.World;
-   Color[] tints={new Color(.85f,.95f,.88f),new Color(.98f,.9f,.78f),new Color(.82f,.9f,.98f),new Color(.95f,.8f,.7f)};
+   Color[] tints={new Color(.85f,.95f,.88f),new Color(.98f,.9f,.78f),new Color(.82f,.9f,.98f),new Color(.95f,.8f,.7f),new Color(.65f,.72f,.83f),new Color(.55f,.42f,.72f)};
    main.startColor=tints[realm];
    var em=ps.emission;em.rateOverTime=1.1f;
-   var sh=ps.shape;sh.shapeType=ParticleSystemShapeType.Box;sh.scale=new Vector3(80,4,140);
+   var sh=ps.shape;sh.shapeType=ParticleSystemShapeType.Box;sh.scale=realm>=4?new Vector3(260,5,260):new Vector3(80,4,140);
    var sz=ps.sizeOverLifetime;sz.enabled=true;sz.size=new ParticleSystem.MinMaxCurve(1f,new AnimationCurve(new Keyframe(0,0),new Keyframe(.25f,1),new Keyframe(1,1.4f)));
    var col=ps.colorOverLifetime;col.enabled=true;
    var grad=new Gradient();
@@ -156,7 +160,7 @@ Color[] tops={new Color(.13f,.38f,.52f),new Color(.25f,.45f,.70f),new Color(.05f
    var pr=go.GetComponent<ParticleSystemRenderer>();
    cloudMaterial=new Material(Shader.Find("Sprites/Default")){name="Cloud sea"};cloudMaterial.mainTexture=tex;cloudMaterial.color=Color.white;
    pr.material=cloudMaterial;
-   ps.Play();
+   if(realm>=4)ps.Simulate(24,true,true);ps.Play();
   }
   // Distant floating rock islets ringing the route for depth (disabled primitive cylinders).
   void CreateFloatingIslets(){}
@@ -193,6 +197,7 @@ Color[] tops={new Color(.13f,.38f,.52f),new Color(.25f,.45f,.70f),new Color(.05f
 
   void Update(){
    if(!RealmGame.I||RealmGame.I.Screen!=GameScreen.Playing||!RealmGame.I.Player)return;
+   if(realm>=4){for(int r=0;r<rain.Count;r++)if(rain[r])rain[r].transform.position=RealmGame.I.Player.transform.position+new Vector3((r-1)*15,13,0);}
    moteTime+=Time.deltaTime;
    for(int i=0;i<motes.Count;i++)if(motes[i]){
     var mote=motes[i];float phase=i*.73f+moteTime*(realm==1?.42f:.6f);Vector3 p=mote.localPosition;

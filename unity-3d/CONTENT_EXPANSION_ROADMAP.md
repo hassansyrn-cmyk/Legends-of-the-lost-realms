@@ -111,3 +111,7 @@ Performance should remain within the current target device budget. Prefer stream
 ## First implementation milestone
 
 Implement only the three richer chapter prototypes and pacing measurements first. Keep the new systems reversible and preserve the current campaign as the comparison baseline. Review actual playtime, clarity and enjoyment before approving the broader production scope.
+
+## Implementation status — October 9, 2026
+
+The staged delivery schedule is tracked in `EXPANSION_STAGES.md`. Stages 1–4 are implemented, and Stage 5 adds the Astral hook, chapters 21–25 and the campaign epilogue. This corresponds to completing the two-realm main-campaign expansion in the broader phase plan above. Stage 6 remains the optional-adventure and replay milestone; the main campaign does not claim its six dungeons, twelve quests or Rift runs are already present. Human pacing and device evaluation still determine whether the duration and performance targets are met.

@@ -24,12 +24,12 @@ namespace LostRealms {
      if(!clips.TryGetValue(key,out var clip)){
       if(key=="sfx_boss"||key=="sfx_boss_roar"||key.StartsWith("sfx_boss_roar_")){
        int r=game?game.Realm:0;
-       string[] roars=new[]{"guardian_heartwood","guardian_sunscar","guardian_whiteout","guardian_warden"};
+       string[] roars=new[]{"guardian_heartwood","guardian_sunscar","guardian_whiteout","guardian_warden","guardian_tempest","guardian_astral"};
        // Kind-routed roars so each guardian keeps its own voice even when
        // two bosses share a realm; unknown kinds fall back to the realm roar.
        if(key.StartsWith("sfx_boss_roar_")&&int.TryParse(key.Substring("sfx_boss_roar_".Length),out int kind)){
-        string[] byKind=new string[22];
-        byKind[8]="guardian_heartwood";byKind[9]="guardian_sunscar";byKind[10]="guardian_whiteout";byKind[21]="guardian_warden";
+        string[] byKind=new string[32];
+        byKind[8]="guardian_heartwood";byKind[9]="guardian_sunscar";byKind[10]="guardian_whiteout";byKind[21]="guardian_warden";byKind[28]="guardian_tempest";byKind[31]="guardian_astral";
         if(kind>=0&&kind<byKind.Length&&byKind[kind]!=null)clip=Resources.Load<AudioClip>("Audio/sfx_"+byKind[kind]);
        }
        if(!clip&&r>=0&&r<roars.Length)clip=Resources.Load<AudioClip>("Audio/sfx_"+roars[r]);

@@ -105,7 +105,7 @@ namespace LostRealms {
      if(boss)g.Player.transform.position=boss.transform.position+Vector3.back*8;
     }
    }
-   else if(v.StartsWith("atlas")){g.Screen=GameScreen.Map;if(v.EndsWith("locked")){g.Save.unlocked=3;g.Save.stars=new int[15];}}
+   else if(v.StartsWith("atlas")){g.Screen=GameScreen.Map;if(v.EndsWith("locked")){g.Save.unlocked=3;g.Save.stars=new int[Campaign.Chapters];}}
    else if(v=="sanctuary")g.Screen=GameScreen.Settings;
    else if(v=="pause")g.Screen=GameScreen.Paused;
    else if(v.StartsWith("arsenal")){g.Screen=GameScreen.Paused;Field(g,"showArsenal",true);Field(g,"arsenalPage",v.EndsWith("2")?1:0);if(v.EndsWith("empty")){g.Save.weapons.Clear();g.Save.equippedWeapon=-1;}}

@@ -1,0 +1,68 @@
+Loaded Level 21 via RealmWorld.Build
+Spawn: (0.00, 0.05, 0.00)
+Route count: 12
+Route[0]: (0.00, 0.00, 0.00), Route[1]: (0.00, 0.00, 13.00)
+
+--- SURFACE PROFILES ALONG Z (x=0) ---
+z = 0.00: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 0.25: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 0.50: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 0.75: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 1.00: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 1.25: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 1.50: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 1.75: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 2.00: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 2.25: hit y = 0.000 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 2.50: hit y = 0.000 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 2.75: hit y = 0.000 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 3.00: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 3.25: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 3.50: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 3.75: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 4.00: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 4.25: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 4.50: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 4.75: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 5.00: hit y = 0.000 on 'Bridge(Clone)' (parent: 'Bridge')
+z = 5.25: hit y = 0.000 on 'Bridge(Clone)' (parent: 'Bridge')
+z = 5.50: hit y = 0.000 on 'Bridge(Clone)' (parent: 'Bridge')
+z = 5.75: hit y = 0.000 on 'Bridge(Clone)' (parent: 'Bridge')
+z = 6.00: hit y = 0.000 on 'Bridge(Clone)' (parent: 'Bridge')
+z = 6.25: hit y = 0.000 on 'Bridge(Clone)' (parent: 'Bridge')
+z = 6.50: hit y = 0.000 on 'Bridge(Clone)' (parent: 'Bridge')
+z = 6.75: hit y = 0.000 on 'Bridge(Clone)' (parent: 'Bridge')
+z = 7.00: hit y = 0.000 on 'Bridge(Clone)' (parent: 'Bridge')
+z = 7.25: hit y = 0.000 on 'Bridge(Clone)' (parent: 'Bridge')
+z = 7.50: hit y = 0.000 on 'Bridge(Clone)' (parent: 'Bridge')
+z = 7.75: hit y = 0.000 on 'Bridge(Clone)' (parent: 'Bridge')
+z = 8.00: hit y = 0.000 on 'Bridge(Clone)' (parent: 'Bridge')
+z = 8.25: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 8.50: hit y = 0.000 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 8.75: hit y = 0.000 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 9.00: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 9.25: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 9.50: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 9.75: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 10.00: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 10.25: hit y = 0.000 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 10.50: hit y = 0.000 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 10.75: hit y = 0.000 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 11.00: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 11.25: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 11.50: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 11.75: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 12.00: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 12.25: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 12.50: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 12.75: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+z = 13.00: hit y = -0.001 on 'Terrace(Clone)' (parent: 'Terrace')
+
+--- COLLIDERS NEAR CAUSEWAY (z between 0 and 13, |x| <= 3) ---
+Collider: 'Cube', type: BoxCollider, center: (1.70, 0.03, 11.40), size: (0.08, 0.08, 0.08), yMin: -0.008, yMax: 0.067, zRange: [11.36, 11.44]
+Collider: 'Cube', type: BoxCollider, center: (1.70, 0.03, 11.40), size: (0.08, 0.08, 0.08), yMin: -0.008, yMax: 0.067, zRange: [11.36, 11.44]
+Collider: 'Cube', type: BoxCollider, center: (1.70, 0.03, 11.40), size: (0.08, 0.08, 0.08), yMin: -0.008, yMax: 0.067, zRange: [11.36, 11.44]
+Collider: 'Realm enemy', type: CharacterController, center: (1.70, 0.98, 11.40), size: (1.10, 1.90, 1.10), yMin: 0.029, yMax: 1.929, zRange: [10.85, 11.95]
+Collider: 'Terrace(Clone)', type: MeshCollider, center: (0.00, -0.23, 0.00), size: (10.00, 0.46, 9.99), yMin: -0.456, yMax: 0.002, zRange: [-4.99, 4.99]
+Collider: 'Bridge(Clone)', type: MeshCollider, center: (0.00, -0.01, 6.50), size: (3.20, 0.17, 3.40), yMin: -0.099, yMax: 0.071, zRange: [4.80, 8.20]
+Collider: 'Terrace(Clone)', type: MeshCollider, center: (0.00, -0.23, 13.00), size: (10.00, 0.46, 9.99), yMin: -0.456, yMax: 0.002, zRange: [8.01, 17.99]

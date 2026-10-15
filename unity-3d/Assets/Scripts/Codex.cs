@@ -18,7 +18,7 @@ namespace LostRealms {
  }
 
  public static class Codex {
-  public const int Kinds=26;
+  public const int Kinds=32;
   public static bool Dirty;
   public static readonly string[] ElementNames={"Ember","Frost","Gale"};
 
@@ -44,14 +44,20 @@ namespace LostRealms {
    new BestiaryEntry("Spider","Ruins","Tiny and quick. Easy to miss, so aim at your feet."),
    new BestiaryEntry("Footman","Frozen Peaks","Disciplined soldier with solid damage and steady pressure."),
    new BestiaryEntry("Dog Knight","Emberfall","Armored knight that punishes wild swinging."),
-   new BestiaryEntry("Emberfall Warden","Guardian of Emberfall","Final guardian wielding a juggernaut blade. Learn its telegraphs."),
+   new BestiaryEntry("Emberfall Warden","Guardian of Emberfall","Emberfall guardian wielding a juggernaut blade. Learn its telegraphs."),
    new BestiaryEntry("Iron Goblin","Verdant Kingdom","A nimble brawler with quick punches. Parry its windup."),
    new BestiaryEntry("Ash Demon","Burning Dunes and Emberfall","A fierce close-range demon. Dodge its committed strikes."),
    new BestiaryEntry("Lava Golem","Emberfall","A heavy stone-and-lava brute. Slow swings leave room to counter."),
-   new BestiaryEntry("Sunscar Brute","Burning Dunes","A smaller sand golem with heavy melee strikes. Sidestep its windup.")
+   new BestiaryEntry("Sunscar Brute","Burning Dunes","A smaller sand golem with heavy melee strikes. Sidestep its windup."),
+   new BestiaryEntry("Storm Stalker","Stormveil Expanse","Grounded reptilian duelist. Closes quickly; parry its committed claw strike."),
+   new BestiaryEntry("Storm Scribe","Stormveil Expanse","Armoured conductor keeper. Warns a lightning strike at your position, then locks its aim."),
+   new BestiaryEntry("Tempest Regent","Guardian of Stormveil","Grounded armoured gryphon. Pursues, charges marked lanes and calls lightning. Ground the arena conductors to interrupt its storm."),
+   new BestiaryEntry("Astral Sentinel","Astral Ruins","Star-lance duelist. Pursues on the deck; dodge its committed strike."),
+   new BestiaryEntry("Star Oracle","Astral Ruins","Retreating caster. Warns a starfall at your position and mends nearby sentinels."),
+   new BestiaryEntry("Fracture Keeper","Guardian of Astral Ruins","Three elemental wards. Match Ember, Frost and Gale at their focuses; dodge lanes and strike during recovery.")
   };
 
-  public static bool IsBoss(int kind)=>kind==8||kind==9||kind==10||kind==21;
+  public static bool IsBoss(int kind)=>kind==8||kind==9||kind==10||kind==21||kind==28||kind==31;
   public static string Weakness(int kind)=>ElementNames[Mathf.Clamp(Enemy.WeaknessOf(kind),0,2)];
 
   public static void Normalize(Progress s){
@@ -76,6 +82,8 @@ namespace LostRealms {
   public static int TotalKills(Progress s){if(s.bestiary==null)return 0;long n=0;for(int i=0;i<s.bestiary.Length;i++)n+=s.bestiary[i];return (int)Mathf.Min(int.MaxValue,n);}
   static int Stars(Progress s){int n=0;if(s.stars!=null)foreach(int v in s.stars)n+=Mathf.Max(0,v);return n;}
   static int Cleared(Progress s){int n=0;if(s.stars!=null)foreach(int v in s.stars)if(v>0)n++;return n;}
+  static int OriginalCleared(Progress s){int n=0;for(int i=0;s.stars!=null&&i<Mathf.Min(15,s.stars.Length);i++)if(s.stars[i]>0)n++;return n;}
+  static int OriginalStars(Progress s){int n=0;for(int i=0;s.stars!=null&&i<Mathf.Min(15,s.stars.Length);i++)n+=Mathf.Max(0,s.stars[i]);return n;}
   static int Upgrades(Progress s)=>s.healthRank+s.powerRank+s.arsenalRank+s.aetherRank+s.moxieRank+s.tempoRank+s.windRank;
 
   public static readonly Achievement[] All={
@@ -87,10 +95,10 @@ namespace LostRealms {
    new Achievement("clear_1","Into the Mist","Clear your first chapter.",1,25,0,Cleared),
    new Achievement("clear_5","Pathfinder","Clear 5 chapters.",5,75,0,Cleared),
    new Achievement("clear_10","Peak Climber","Clear 10 chapters.",10,150,1,Cleared),
-   new Achievement("clear_15","Heart of Realms","Clear all 15 chapters.",15,400,5,Cleared),
+   new Achievement("clear_15","Heart of Realms","Clear the original 15 chapters.",15,400,5,s=>OriginalCleared(s)),
    new Achievement("stars_15","Starlit","Earn 15 stars.",15,60,0,Stars),
    new Achievement("stars_30","Constellation","Earn 30 stars.",30,150,1,Stars),
-   new Achievement("stars_45","Perfectionist","Earn every star (45).",45,350,4,Stars),
+   new Achievement("stars_45","Perfectionist","Earn 45 stars in the original realms.",45,350,4,s=>OriginalStars(s)),
    new Achievement("weapons_5","Armed","Collect 5 weapons.",5,50,0,s=>s.weapons==null?0:s.weapons.Count),
    new Achievement("weapons_15","Armory","Collect 15 weapons.",15,150,1,s=>s.weapons==null?0:s.weapons.Count),
    new Achievement("weapons_30","Arsenal Master","Collect 30 weapons.",30,300,3,s=>s.weapons==null?0:s.weapons.Count),
@@ -106,7 +114,13 @@ namespace LostRealms {
    new Achievement("combo_10","Rhythm","Land a 10-hit combo.",10,40,0,s=>s.bestCombo),
    new Achievement("combo_25","Whirlwind","Land a 25-hit combo.",25,120,1,s=>s.bestCombo),
    new Achievement("upgrade_5","Sanctuary Apprentice","Buy 5 upgrade ranks.",5,60,0,Upgrades),
-   new Achievement("upgrade_21","Sanctuary Master","Max every upgrade track.",21,300,3,Upgrades)
+   new Achievement("upgrade_21","Sanctuary Master","Max every upgrade track.",21,300,3,Upgrades),
+   new Achievement("clear_20","Beyond the Clouds","Clear 20 chapters.",20,500,5,Cleared),
+   new Achievement("stars_60","Storm Constellation","Earn 60 stars.",60,400,4,Stars),
+   new Achievement("storm_guardian","Tempest Breaker","Defeat the Tempest Regent.",1,180,3,s=>s.bestiary!=null&&s.bestiary.Length>28?s.bestiary[28]:0),
+   new Achievement("clear_25","The Realms Reconnected","Clear the entire 25-chapter campaign.",25,650,6,Cleared),
+   new Achievement("stars_75","Astral Constellation","Earn all 75 campaign stars.",75,500,5,Stars),
+   new Achievement("astral_guardian","Heart Unbound","Defeat the Fracture Keeper.",1,220,4,s=>s.bestiary!=null&&s.bestiary.Length>31?s.bestiary[31]:0)
   };
 
   public static int UnlockedCount(Progress s){int n=0;if(s.achievements!=null)foreach(var a in All)if(s.achievements.Contains(a.Id))n++;return n;}

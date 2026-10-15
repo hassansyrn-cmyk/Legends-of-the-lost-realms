@@ -50,7 +50,7 @@ namespace LostRealms {
   }
   void MoveBodyTo(Vector3 destination,float speed,float dt){
    Vector3 delta=destination-transform.position;delta.y=0;
-   if(IsDesertLavaGuardian&&speed<5f&&delta.sqrMagnitude>.001f){
+   if((IsDesertLavaGuardian||Kind==28||Kind==31)&&speed<5f&&delta.sqrMagnitude>.001f){
     bossBlockedTime=bodyMoved?0:bossBlockedTime+dt;
     Vector3 forward=delta.normalized;bool clear=false;
     foreach(float angle in BossStepAngles){

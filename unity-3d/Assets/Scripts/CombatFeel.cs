@@ -30,6 +30,7 @@ namespace LostRealms {
 
   public static void OnEnemyKilled(Enemy e){
    var g=RealmGame.I;if(!e||g==null||g.Save==null)return;
+   if(g.Player&&BuildProgression.Has(g.Save,5))g.Player.Energy=Mathf.Min(100,g.Player.Energy+6);
    if(Codex.Record(g.Save,e.Kind,e.Boss)){
     int k=Mathf.Clamp(e.Kind,0,Codex.Kinds-1);
     g.Tell("Bestiary updated: "+Codex.Entries[k].Name,3f);
@@ -80,7 +81,7 @@ namespace LostRealms {
    fwd=fwd.sqrMagnitude<.01f?Vector3.forward:fwd.normalized;
    Enemy best=null;float bestScore=float.MaxValue;
    foreach(var e in g.Enemies){
-    if(!e||e.Health<=0)continue;
+    if(!e||e.Health<=0||!e.gameObject.activeInHierarchy)continue;
     float s=Score(pos,fwd,e.transform.position,e==Target);
     if(s<bestScore){bestScore=s;best=e;}
    }

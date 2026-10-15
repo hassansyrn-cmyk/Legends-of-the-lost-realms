@@ -48,7 +48,7 @@ namespace LostRealms {
    static Material particleMat;
 
    public static string GetRealmName(int index) {
-    string[] names = new[] { "Verdant", "Desert", "Snow", "Lava" };
+    string[] names = new[] { "Verdant", "Desert", "Snow", "Lava", "Storm", "Astral" };
     if (index >= 0 && index < names.Length) return names[index];
     return "Verdant";
    }
@@ -154,6 +154,7 @@ namespace LostRealms {
    public void EnsureBaseColliders() {
     if (!GateModel) GateModel = transform.Find("GateModel");
     if (!GateModel) return;
+    if (RealmIndex>=4 && GateModel.GetComponentInChildren<MeshCollider>()) return;
 
     // Avoid duplicate colliders if already created
     var colliders = GateModel.GetComponents<BoxCollider>();

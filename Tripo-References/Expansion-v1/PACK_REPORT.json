@@ -1,0 +1,485 @@
+{
+  "image_count": 47,
+  "category_counts": {
+    "01-enemies": 9,
+    "02-stormveil": 8,
+    "03-astral": 9,
+    "04-chapter-puzzles": 9,
+    "05-crypt": 4,
+    "06-relics": 8
+  },
+  "generator": "Built-in imagegen",
+  "visual_review": "All images reviewed individually; framing and open platform edges refined where needed.",
+  "images": [
+    {
+      "id": "storm-stalker",
+      "file": "01-enemies/storm-stalker.png",
+      "dimensions": [
+        1214,
+        1295
+      ],
+      "bytes": 2027996,
+      "sha256": "5e788b6d40eb73b7bcefd2e5341cbb15f5b96ef30b53848a4a2d534bd0dad61b"
+    },
+    {
+      "id": "storm-scribe",
+      "file": "01-enemies/storm-scribe.png",
+      "dimensions": [
+        1214,
+        1295
+      ],
+      "bytes": 2072975,
+      "sha256": "0ad44527a37f22bee48e32938a4e841b89887361f3c0c693b0036d7f34a496c7"
+    },
+    {
+      "id": "tempest-regent",
+      "file": "01-enemies/tempest-regent.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 2091191,
+      "sha256": "ef0cbd4213d14582b0dd24722fbc88f9c1015fa769e35e300e19a3bffe4356e9"
+    },
+    {
+      "id": "astral-sentinel",
+      "file": "01-enemies/astral-sentinel.png",
+      "dimensions": [
+        1312,
+        1199
+      ],
+      "bytes": 1911193,
+      "sha256": "b7e30f1da37af594a08408a0249825acbabebd5b94e15cc6f17e1bd373ba2996"
+    },
+    {
+      "id": "star-oracle",
+      "file": "01-enemies/star-oracle.png",
+      "dimensions": [
+        1225,
+        1284
+      ],
+      "bytes": 2057074,
+      "sha256": "596400ef7a162d948f6f938a86b3731b3bc9534789f441c9c4b24429d67a7a29"
+    },
+    {
+      "id": "fracture-keeper",
+      "file": "01-enemies/fracture-keeper.png",
+      "dimensions": [
+        1312,
+        1199
+      ],
+      "bytes": 2063071,
+      "sha256": "41fc4869fb9efb5c4242f0114d4aa553b0547f3863a3bef0ecaa081e833dcbe3"
+    },
+    {
+      "id": "terrace",
+      "file": "02-stormveil/terrace.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 2632420,
+      "sha256": "eeb78e2d67416e38e5fc20e254f933b3a670ae7b3b458ce37ad58d0d019a5458"
+    },
+    {
+      "id": "bridge",
+      "file": "02-stormveil/bridge.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 2430628,
+      "sha256": "03f3fa696f068ab956088e6abf76515f1b6bd3be7d2cca28987a32a80b03e30e"
+    },
+    {
+      "id": "tower",
+      "file": "02-stormveil/tower.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "bytes": 2435439,
+      "sha256": "7fbdf96e1f16209bd13bf1103ddcf791b0726971295638ca7aa02cd9b7f36922"
+    },
+    {
+      "id": "conductor",
+      "file": "02-stormveil/conductor.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "bytes": 2279821,
+      "sha256": "e4954c17a421b1e2757d6bb00c64705d7a45d30b118ff9beca8319117a09cfb8"
+    },
+    {
+      "id": "relay-arm",
+      "file": "02-stormveil/relay-arm.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 1661074,
+      "sha256": "ab87a21b3fc6a9aa4e6e1d4bebbfaec21951a6f06327517a066ba6ef0cb84338"
+    },
+    {
+      "id": "turn-pad",
+      "file": "02-stormveil/turn-pad.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 2298457,
+      "sha256": "bff1e201c7806fd73ebaecca0cb8061ec319c7217d454e8bb5b1a34dbf8ee2d1"
+    },
+    {
+      "id": "memory-plaque",
+      "file": "02-stormveil/memory-plaque.png",
+      "dimensions": [
+        1312,
+        1199
+      ],
+      "bytes": 2332267,
+      "sha256": "857af70aa731f53cdf3ba92bd058358ee2568e6f9779ec4b0b703810c21b65a8"
+    },
+    {
+      "id": "wind-grate",
+      "file": "02-stormveil/wind-grate.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 2470109,
+      "sha256": "e518a041ede61ec6f56ab920873ebe22c203f82fe25f5d6b297409e59391edf7"
+    },
+    {
+      "id": "terrace",
+      "file": "03-astral/terrace.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 2436070,
+      "sha256": "40d9b24694733de60e9cf2dc3c5275eb4181b2a29d1b4c44ce7230c530543228"
+    },
+    {
+      "id": "bridge",
+      "file": "03-astral/bridge.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 2367582,
+      "sha256": "39db791e7e21ecd334150d32c3646f6c0acf21ac6462ed7a640ec9b58dcbbc80"
+    },
+    {
+      "id": "arch",
+      "file": "03-astral/arch.png",
+      "dimensions": [
+        1312,
+        1199
+      ],
+      "bytes": 2212795,
+      "sha256": "8d1c3df82dc91b304f856341446ec311ae63fbfc169712d2f007f75b83bf0626"
+    },
+    {
+      "id": "orrery",
+      "file": "03-astral/orrery.png",
+      "dimensions": [
+        1214,
+        1295
+      ],
+      "bytes": 2312570,
+      "sha256": "0c54d663bd41714503b897d07f3f6216a5481b12847998314df359e4a9f96239"
+    },
+    {
+      "id": "sun-pad",
+      "file": "03-astral/sun-pad.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 2337948,
+      "sha256": "3c8a9d99baf645bb787ba97924a58a3384673ecf032111cade4ff7781c39c201"
+    },
+    {
+      "id": "moon-pad",
+      "file": "03-astral/moon-pad.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 2451373,
+      "sha256": "75ae8ea3a51d712061c7ec15cd7d2e0275095ad08fd53df1e69487663aee30f4"
+    },
+    {
+      "id": "ward-focus",
+      "file": "03-astral/ward-focus.png",
+      "dimensions": [
+        1312,
+        1199
+      ],
+      "bytes": 2409907,
+      "sha256": "97e0b81ec89f91effd558f6e2a9f85ca73f03fd2fbdf073758988a2e5f1eb741"
+    },
+    {
+      "id": "record",
+      "file": "03-astral/record.png",
+      "dimensions": [
+        1312,
+        1199
+      ],
+      "bytes": 2427876,
+      "sha256": "1a673202338133e7d2ef0d0d80bd86398db5fbbb122cdc78c8195c65efa36250"
+    },
+    {
+      "id": "fracture-vent",
+      "file": "03-astral/fracture-vent.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 2878395,
+      "sha256": "0bc7bfdd513b2767fab918218fca697485e0b9d0a07f4803cedd921f2ea6c0ae"
+    },
+    {
+      "id": "trail-shrine",
+      "file": "04-chapter-puzzles/trail-shrine.png",
+      "dimensions": [
+        1312,
+        1199
+      ],
+      "bytes": 2648135,
+      "sha256": "a00dddb5703cff405b6e571f33a5f6aab171220a84e55f178bfb1392d517ee2e"
+    },
+    {
+      "id": "temple-key",
+      "file": "04-chapter-puzzles/temple-key.png",
+      "dimensions": [
+        1312,
+        1199
+      ],
+      "bytes": 2275687,
+      "sha256": "8a78fe77e98c169c1527cfd1bd5ee9f099addc024fc0d5499f63ae82a77aaeab"
+    },
+    {
+      "id": "return-passage",
+      "file": "04-chapter-puzzles/return-passage.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "bytes": 2210972,
+      "sha256": "3a03f5ffa91a9d709fc10752f91bba2058edfbaa689e8e0a2e927706feebd3bb"
+    },
+    {
+      "id": "ember-focus",
+      "file": "04-chapter-puzzles/ember-focus.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "bytes": 2157731,
+      "sha256": "873b7e2d9853c9ec073460aab9701d8b2993501522ad73cf7a5f18a5cd688f9b"
+    },
+    {
+      "id": "frost-focus",
+      "file": "04-chapter-puzzles/frost-focus.png",
+      "dimensions": [
+        1312,
+        1199
+      ],
+      "bytes": 2051145,
+      "sha256": "5878bca754a3a6d92341a661f899a02339eb065a9ded63644df1a36e883e1a71"
+    },
+    {
+      "id": "gale-focus",
+      "file": "04-chapter-puzzles/gale-focus.png",
+      "dimensions": [
+        1145,
+        1374
+      ],
+      "bytes": 2178238,
+      "sha256": "b225449757854ed1eaaa10bf68a8ab3304b6a6723a3e19c0cbacbd21aed541af"
+    },
+    {
+      "id": "ritual-altar",
+      "file": "04-chapter-puzzles/ritual-altar.png",
+      "dimensions": [
+        1312,
+        1199
+      ],
+      "bytes": 2480604,
+      "sha256": "ebaa62ab006e6b033b89a914da1e92c0d6e2909d01060fc09202fc7bc24ea61d"
+    },
+    {
+      "id": "rally-banner",
+      "file": "04-chapter-puzzles/rally-banner.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "bytes": 2043029,
+      "sha256": "cbb6e609806f2bf133172af0c1bd65138f717c930948091c78865ce249e086bb"
+    },
+    {
+      "id": "secret-cache",
+      "file": "04-chapter-puzzles/secret-cache.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 2550784,
+      "sha256": "72b7afa01ecf8217d021f9ebe73799fde6ce634125edbedc66de6bb9b1256d9c"
+    },
+    {
+      "id": "entrance",
+      "file": "05-crypt/entrance.png",
+      "dimensions": [
+        1322,
+        1190
+      ],
+      "bytes": 2408220,
+      "sha256": "25a11b125c0510eb4142a199d4fae9ca62df04e0c0b5e0d24faf2be71d9388bb"
+    },
+    {
+      "id": "room-deck",
+      "file": "05-crypt/room-deck.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 2843905,
+      "sha256": "7bf074c67ea21a016624c083882e0ed9b5c015b5b7df4b59bdbc13d96f4cc021"
+    },
+    {
+      "id": "arch",
+      "file": "05-crypt/arch.png",
+      "dimensions": [
+        1312,
+        1199
+      ],
+      "bytes": 2230369,
+      "sha256": "ad62e97e34281a90a482a6b43ecc91e119f7802aa52a12c1a559a4da131848a2"
+    },
+    {
+      "id": "memory-altar",
+      "file": "05-crypt/memory-altar.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "bytes": 2588711,
+      "sha256": "76ef5f0b359acb1d95c083b7db4e29d9b5e157d0d5b29f864f0a4d4cb6b3105c"
+    },
+    {
+      "id": "dawn-sigil",
+      "file": "06-relics/dawn-sigil.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "bytes": 2353841,
+      "sha256": "9ad17cc89b0a203bb9e6d430580e0f4958affeb49c9d7f2a9f38c5e53cec60c5"
+    },
+    {
+      "id": "ember-seal",
+      "file": "06-relics/ember-seal.png",
+      "dimensions": [
+        1312,
+        1199
+      ],
+      "bytes": 2606393,
+      "sha256": "976f60e04a3de43d9906af8d6db1ef8be1d46a7ae8b9db2350a9b0b5150aab0a"
+    },
+    {
+      "id": "duelist-knot",
+      "file": "06-relics/duelist-knot.png",
+      "dimensions": [
+        1312,
+        1199
+      ],
+      "bytes": 2244657,
+      "sha256": "6681155a588698a867ab0a3369d019fc60456ab35368709034eee46c863cd44d"
+    },
+    {
+      "id": "skyglass",
+      "file": "06-relics/skyglass.png",
+      "dimensions": [
+        1312,
+        1199
+      ],
+      "bytes": 2102562,
+      "sha256": "3c3f50f9ccd414db4177832eb64c1d919170c4dacb730d36b06443d0fa3ee5d7"
+    },
+    {
+      "id": "wardstone",
+      "file": "06-relics/wardstone.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "bytes": 2532414,
+      "sha256": "4ddbb3abed104c73784ea1c837aea9526cc97680d979bc9ed18c8481da0c18d4"
+    },
+    {
+      "id": "siphon-shard",
+      "file": "06-relics/siphon-shard.png",
+      "dimensions": [
+        1312,
+        1199
+      ],
+      "bytes": 2041346,
+      "sha256": "a9a6df2026487ee36b8fd65d99cdc195086c3f76650085471534d3b41856489f"
+    },
+    {
+      "id": "frost-emblem",
+      "file": "06-relics/frost-emblem.png",
+      "dimensions": [
+        1312,
+        1199
+      ],
+      "bytes": 2428986,
+      "sha256": "8cc519e47aa23ccd678cacaf915a2db7a298dce999f03b1bf475975350570bdb"
+    },
+    {
+      "id": "wayfinder-heart",
+      "file": "06-relics/wayfinder-heart.png",
+      "dimensions": [
+        1312,
+        1199
+      ],
+      "bytes": 2624697,
+      "sha256": "2e3d764810d190be87a5f2cff0e66d277b4d76a0e436aeb9d8ff4a3ef4bba7b2"
+    },
+    {
+      "id": "storm-scribe-staff",
+      "file": "01-enemies/storm-scribe-staff.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "bytes": 1673370,
+      "sha256": "e49b5258b6b6f8b0ff35c62b81e81abede793452ed1819d7a1dad0571ac242b8"
+    },
+    {
+      "id": "astral-sentinel-lance",
+      "file": "01-enemies/astral-sentinel-lance.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "bytes": 1624308,
+      "sha256": "c07511095cb445716ed24f95c3f685eed006a60491e90564575e1b2d74c367d7"
+    },
+    {
+      "id": "astral-sentinel-buckler",
+      "file": "01-enemies/astral-sentinel-buckler.png",
+      "dimensions": [
+        1312,
+        1199
+      ],
+      "bytes": 2519146,
+      "sha256": "e466312728d33d64cf12f6485abec83cfdc5d3255a8610f78e7128d8e0778beb"
+    }
+  ]
+}

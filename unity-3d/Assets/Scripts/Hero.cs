@@ -6,6 +6,8 @@ namespace LostRealms {
  [DefaultExecutionOrder(20)] public class Hero:MonoBehaviour {
   public CharacterController Controller;public int MaxHealth,Health,Power;public float Energy=100;public bool Grounded=>Controller&&Controller.isGrounded; public CharacterVisual Visual;
   public int windUsed;
+  HeroBuildEffects buildEffects;
+  HeroBuildEffects BuildEffects=>buildEffects?buildEffects:(buildEffects=gameObject.AddComponent<HeroBuildEffects>());
   const float MaxMoveSpeed=4.8f,GroundResponse=18f,AirResponse=8f,StopResponse=22f;
   public float MoveSpeedMultiplier=1f;
   public float CurrentMoveSpeed=>MaxMoveSpeed*MoveSpeedMultiplier;
@@ -290,7 +292,7 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
     // Small facing assist keeps nearby targets usable with a phone stick.
     // Partial turn only: an instant snap reads as a teleport pop.
     Enemy closest=SoftLock.Assist(this);
-    if(!closest){float nearest=3.5f;foreach(var foe in g.Enemies){if(!foe||foe.Health<=0)continue;Vector3 d=foe.transform.position-transform.position;d.y=0;if(d.magnitude<nearest&&Vector3.Dot(transform.forward,d.normalized)>.35f){closest=foe;nearest=d.magnitude;}}}
+    if(!closest){float nearest=3.5f;foreach(var foe in g.Enemies){if(!foe||!foe.gameObject.activeInHierarchy||foe.Health<=0)continue;Vector3 d=foe.transform.position-transform.position;d.y=0;if(d.magnitude<nearest&&Vector3.Dot(transform.forward,d.normalized)>.35f){closest=foe;nearest=d.magnitude;}}}
     if(closest){Vector3 aim=closest.transform.position-transform.position;aim.y=0;if(aim.sqrMagnitude>.01f)transform.rotation=Quaternion.Slerp(transform.rotation,Quaternion.LookRotation(aim.normalized),.65f);}
     // Forward attack step blended with current momentum (never a teleport
     // pop), softened in air so jump arcs survive the swing.
@@ -314,6 +316,8 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
 
     float reach=(charged?3.4f:2.7f)*weapon.Reach;
     float damage=(charged?3.5f:combo==3?2.5f:1.5f)*weapon.Damage;
+    bool buildRiposte=g.Elapsed<counterUntil;
+    if(combo==3&&!charged&&BuildProgression.Perk(g.Save,0,2,weapon))Energy=Mathf.Min(100,Energy+8);
     if(isDashStrike){damage*=1.35f;reach*=1.2f;}
     damage*=1f+g.Save.arsenalRank*.08f;
     damage*=skin.DamageMult;
@@ -328,6 +332,7 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
      Vfx.Play("ga_vfx_Hyperdrive_01",transform.position+Vector3.up*.9f,Quaternion.LookRotation(transform.forward),1.2f);
      DamageTip.Show(transform.position+Vector3.up*2.2f,"CRITICAL RIPOSTE!",new Color(1f,.92f,.25f));
     }
+    damage*=BuildProgression.DamageMultiplier(g.Save,weapon,buildRiposte,combo,false,false);
     int staffElement=WeaponCatalog.ChargedShot(weapon.Id);
     if(charged&&(staffElement>=0||WeaponCatalog.ChargedSlash(weapon.Id)||WeaponCatalog.HasSpecialHold(weapon.Id))){
      pendingCharge=true;int version=++chargeReleaseVersion;
@@ -357,7 +362,9 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
       dmg*=1.6f;
       DamageTip.Show(e.transform.position+Vector3.up*(e.Boss?2.4f:1.6f),"BACKSTAB!",new Color(.6f,1f,.55f));
      }
-     e.Hit(dmg,Power,false,transform.forward,heavy);
+     dmg*=BuildProgression.DamageMultiplier(g.Save,weapon,false,0,delta.magnitude>reach*.62f,Power==e.WeakElement);
+     float priorHealth=e.Health;e.Hit(dmg,Power,false,transform.forward,heavy);
+     if(charged&&e.Health>0&&e.Health<priorHealth){if(BuildProgression.Has(g.Save,1))e.IgniteRelic();if(BuildProgression.Perk(g.Save,1,1,weapon)&&!e.Boss)e.Stun(.45f);}
     }
    }
    // The blade also smashes breakable crates/barrels in reach.
@@ -460,6 +467,7 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
    if(g.Trial)g.Trial.PerfectDefense();
    if(g.Save!=null)g.Save.lifetimeParries++;
    g.HitStop(.14f,.08f);g.CameraRig.Shake=.35f;g.Sound("impact");g.Haptic();
+   BuildEffects.PerfectDefense(true);
    Energy=Mathf.Min(100,Energy+25+RealmGame.I.Save.tempoRank*5);counterUntil=g.Elapsed+1.8f;
    HitSpark.Burst(transform.position+Vector3.up*.95f,-transform.forward,new Color(1f,.96f,.72f),32);
    DamageTip.Show(transform.position+Vector3.up*1.95f,"PARRY DEFLECT!",new Color(1f,.94f,.6f));
@@ -471,7 +479,7 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
     foe.Stun(1.4f);
     float knockDist=foe.Boss?0.8f:1.85f;
     foe.PushBack(knockDir,knockDist,0.22f);
-    float riposteDmg=3.8f+g.CurrentWeapon.Damage*2.2f;
+    float riposteDmg=(3.8f+g.CurrentWeapon.Damage*2.2f)*BuildProgression.DamageMultiplier(g.Save,g.CurrentWeapon,true,0,false,false);
     foe.Hit(riposteDmg,Power,false,knockDir,true);
     DamageTip.Show(foe.transform.position+Vector3.up*(foe.Boss?2.5f:1.8f),"RIPOSTE!",new Color(1f,.92f,.2f));
     Vfx.Play("ga_vfx_Nova_01",foe.transform.position+Vector3.up*1f,Quaternion.identity,foe.Boss?1.4f:.9f);
@@ -487,6 +495,7 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
    var g=RealmGame.I;g.HitStop(.1f,.1f);g.CameraRig.Shake=.2f;g.Sound("player_dash");g.Haptic();
    if(g.Trial)g.Trial.PerfectDefense();
    if(g.Save!=null)g.Save.lifetimeDodges++;
+   BuildEffects.PerfectDefense(false);
    Energy=Mathf.Min(100,Energy+30);counterUntil=g.Elapsed+1.4f;
    DamageTip.Show(transform.position+Vector3.up*1.95f,"PERFECT DODGE",new Color(.65f,.95f,1f));
   }
@@ -503,7 +512,7 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
   void CastSpell(){
    var g=RealmGame.I;
    if(g.Elapsed<spellUntil)return;
-   const float cost=15f;
+   float cost=BuildProgression.SpellCost(g.Save,g.CurrentWeapon,15f,!Grounded&&jumps>=2);
    if(Energy<cost){g.Sound("power_fail");g.Tell("Wait for your energy to recharge.");spellUntil=g.Elapsed+.3f;return;}
    Energy-=cost;spellUntil=g.Elapsed+.8f;
    g.Sound(Power==0?"ember_cast":Power==1?"frost_cast":"gale_cast");
@@ -517,7 +526,7 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
   void LobSpell(){
    var g=RealmGame.I;
    if(g.Elapsed<spellUntil)return;
-   const float cost=20f;
+   float cost=BuildProgression.SpellCost(g.Save,g.CurrentWeapon,20f,!Grounded&&jumps>=2);
    if(Energy<cost){g.Sound("power_fail");g.Tell("Wait for your energy to recharge.");spellUntil=g.Elapsed+.3f;return;}
    Energy-=cost;spellUntil=g.Elapsed+.95f;
    g.Sound(Power==0?"ember_cast":Power==1?"frost_cast":"gale_cast");
@@ -531,7 +540,7 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
   void TryGrapple(){
    var g=RealmGame.I;if(g==null||g.World==null||g.World.Route==null)return;
    Vector3 p=transform.position;Vector3 best=Vector3.zero;float bestScore=float.MaxValue;bool found=false;
-   foreach(var node in g.World.Route){
+   foreach(var node in g.NavigationRoute){
     float dz=node.z-p.z;if(dz<1.5f)continue;float d=Vector3.Distance(node,p);if(d>20f)continue;
     if(d<bestScore){bestScore=d;best=node;found=true;}
    }
@@ -860,13 +869,15 @@ var skin=SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0);
     output.SetSourcePlayable(v.mixer);
     v.hasGraph=true;v.graph.Play();
    }
-   if((role=="IronGoblin"||role=="AshDemon"||role=="StoneBrute")&&v.animator){
+   if((role=="IronGoblin"||role=="AshDemon"||role=="StoneBrute"||role=="StormStalker"||role=="StormScribe"||role=="TempestRegent"||role=="AstralSentinel"||role=="StarOracle"||role=="FractureKeeper")&&v.animator){
     // Grounding samples the animated soles even beyond the camera view.
     // A stale culled pose causes a height pop when the enemy becomes visible.
     v.animator.cullingMode=AnimatorCullingMode.AlwaysAnimate;
     var skin=v.GetComponentInChildren<SkinnedMeshRenderer>();
     if(skin)v.gameObject.AddComponent<EnemyGroundPose>().Setup(parent,skin);
     v.Play("idle");v.blend=1;v.mixer.SetInputWeight(v.slot,1);v.mixer.SetInputWeight(1-v.slot,0);
+    // Bind these hand props from the drawn idle grip, rather than from T-pose.
+    if(role=="StormScribe"||role=="AstralSentinel")v.graph.Evaluate(0);
    }
    return v;
   }

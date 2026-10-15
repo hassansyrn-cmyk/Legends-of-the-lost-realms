@@ -82,6 +82,52 @@ namespace LostRealms {
    }
   }
 
+  public static readonly string[] RelicModelNames={"DawnSigil","EmberSeal","DuelistKnot","Skyglass","Wardstone","SiphonShard","FrostEmblem","WayfinderHeart"};
+  static readonly Dictionary<int,Material> RelicMaterials=new Dictionary<int,Material>();
+  static readonly Dictionary<int,Texture2D> RelicTextures=new Dictionary<int,Texture2D>();
+
+  public static Texture2D RelicTexture(int id){
+   if(id<0||id>=RelicModelNames.Length)return null;
+   if(RelicTextures.TryGetValue(id,out var tex)&&tex)return tex;
+   tex=Resources.Load<Texture2D>("Relics/Textures/"+RelicModelNames[id]+"_basecolor");
+   RelicTextures[id]=tex;
+   return tex;
+  }
+
+  public static GameObject RelicModel(int id,Transform root,Color accent,float scale=1f){
+   if(id<0||id>=RelicModelNames.Length)return null;
+   string name=RelicModelNames[id];
+   var prefab=Resources.Load<GameObject>("Relics/"+name);
+   if(!prefab)return null;
+   var go=new GameObject("Relic "+name);go.transform.SetParent(root,false);
+   go.transform.localPosition=Vector3.zero;go.transform.localScale=Vector3.one*scale;
+   Object.Instantiate(prefab,go.transform,false);
+   if(!RelicMaterials.TryGetValue(id,out var mat)||!mat){
+    mat=new Material(Shader.Find("Standard")){name="Relic "+name};
+    var tex=RelicTexture(id);
+    var norm=Resources.Load<Texture2D>("Relics/Textures/"+name+"_normal");
+    if(tex)mat.mainTexture=tex;
+    mat.SetFloat("_Glossiness",.45f);
+    mat.SetFloat("_Metallic",.25f);
+    if(norm){
+     mat.SetTexture("_BumpMap",norm);
+     mat.SetFloat("_BumpScale",1f);
+     mat.EnableKeyword("_NORMALMAP");
+    }
+    RelicMaterials[id]=mat;
+   }
+   foreach(var r in go.GetComponentsInChildren<Renderer>()){
+    r.sharedMaterial=mat;
+    if(accent!=Color.white){
+     var block=new MaterialPropertyBlock();
+     r.GetPropertyBlock(block);
+     block.SetColor("_EmissionColor",accent*.35f);
+     r.SetPropertyBlock(block);
+    }
+   }
+   return go;
+  }
+
   public static void Checkpoint(Transform root,Color accent,Color stone){
    var visual=root.gameObject.AddComponent<CheckpointVisual>();visual.Accent=accent;
    var glow=Glow(accent);var highlight=Glow(Color.Lerp(accent,Color.white,.56f));var stoneMat=Art.Material(stone*.86f);

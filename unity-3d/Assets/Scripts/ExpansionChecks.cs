@@ -6,7 +6,7 @@ namespace LostRealms {
  public static class ExpansionChecks {
   static void Defeat(Enemy e){if(!e||e.Health<=0)return;e.Hit(100000f,0,false,Vector3.zero,true);if(e.Health>0)e.Hit(100000f,0,false,Vector3.zero,true);}
   static void Capture(Transform target,string name){
-   string folder=Path.Combine(Application.dataPath,"../Validation/ExpansionStage1");Directory.CreateDirectory(folder);
+   string folder=RuntimeEvidence.Folder(1);Directory.CreateDirectory(folder);
    var go=new GameObject("Expansion review camera");var cam=go.AddComponent<Camera>();cam.orthographic=true;cam.orthographicSize=8;cam.farClipPlane=140;cam.transform.position=target.position+new Vector3(8,13,-12);cam.transform.LookAt(target.position);
    var rt=new RenderTexture(1100,800,24);cam.targetTexture=rt;var old=RenderTexture.active;cam.Render();RenderTexture.active=rt;var image=new Texture2D(1100,800,TextureFormat.RGB24,false);image.ReadPixels(new Rect(0,0,1100,800),0,0);image.Apply();File.WriteAllBytes(Path.Combine(folder,name+".png"),image.EncodeToPNG());RenderTexture.active=old;cam.targetTexture=null;rt.Release();UnityEngine.Object.Destroy(image);UnityEngine.Object.Destroy(rt);UnityEngine.Object.Destroy(go);
   }
@@ -16,7 +16,7 @@ namespace LostRealms {
   public static IEnumerator Run(Action<bool,string> check,Action<Vector2> move,Action jump){
    var g=RealmGame.I;
    g.LoadLevel(1);yield return new WaitForSeconds(.2f);
-   check(!g.Adventure,"Stage one leaves the other chapters' objectives unchanged");
+   check(g.Adventure&&g.Adventure.Definition.Route.Length==1,"Chapter one offers a gentle single-objective introduction");
    bool epic=false;foreach(var drop in UnityEngine.Object.FindObjectsByType<WeaponDrop>(FindObjectsSortMode.None))if(WeaponCatalog.IsEpic(drop.Id))epic=true;
    check(!epic,"Normal campaign has no temporary first-chapter Epic pickup");
    foreach(int chapter in new[]{2,6,9}){
