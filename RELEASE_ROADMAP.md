@@ -1,5 +1,12 @@
 # Legends of the Lost Realms — Pro-Level Release Roadmap
 
+## v5.1.0 (versionCode 61) — Play Store & Astra Pro Release Upgrades
+- **Graphics & Performance**: Added 30/60/120 FPS Quality Tiers and 5-Biome Dynamic Atmospheric Fog/Lighting.
+- - **Combat & Feel**: Hit-Stop feedback, Camera Trauma Shake, Boss Telegraph Windup Rings, and Pooled Floating Combat Text.
+  - - **Gameplay & Content**: Elemental Resonance Combos (Thermal Shock, Firestorm Vortex, Blizzard Tempest, Astral Cataclysm) and 5-tier Astral Trials Boss Rush with Elite Affixes.
+    - - **UX & Ergonomics**: Safe-Area Cutout HUD adaptation and Checksummed Dual-Slot Save Backup.
+     
+      - 
 ## Current state (honest assessment)
 
 **What's already strong**
