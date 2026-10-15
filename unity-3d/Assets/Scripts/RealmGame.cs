@@ -65,17 +65,40 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    Screen=GameScreen.Menu; Tell("The Heart of Realms is waiting.",4);
   }
   public void Persist(){if(Testing)return;PlayerPrefs.SetString("LostRealms3D.v2",JsonUtility.ToJson(Save));PlayerPrefs.Save();}
+  public string ChapterLoadError {get;private set;}
+  int requestedChapter;string chapterLoadStage;
+  public void RequestChapter(int id){if(requestedChapter==0)requestedChapter=Mathf.Clamp(id,1,Campaign.Chapters);}
   public void LoadLevel(int id){
+   ChapterLoadError=null;requestedChapter=0;chapterLoadStage="starting";
+   try{LoadLevelCore(id);}
+   catch(Exception e){
+    string report="CHAPTER_LOAD_FAILED chapter="+id+" stage="+chapterLoadStage+"\n"+e;
+    Debug.LogError(report);
+    if(!Testing)try{System.IO.File.WriteAllText(System.IO.Path.Combine(Application.persistentDataPath,"chapter-load-error.txt"),report);}catch(Exception logError){Debug.LogWarning("Could not save chapter load report: "+logError.Message);}
+    if(worldRoot){worldRoot.gameObject.SetActive(false);Destroy(worldRoot.gameObject);}worldRoot=null;
+    World=null;Player=null;Trial=null;Adventure=null;Storm=null;Astral=null;Crypt=null;Enemies.Clear();
+    if(CameraRig)CameraRig.Target=null;
+    Time.timeScale=1;touch.Reset();Screen=GameScreen.Menu;
+    ChapterLoadError="Chapter "+id+" could not be opened ("+chapterLoadStage+"). Please retry.";
+   }
+  }
+  void LoadLevelCore(int id){
    if(Pacing)Pacing.Close("restarted");
    showBuild=false;showArsenal=false;arsenalPage=0;showCodex=false;showAchievements=false;showVault=false;
    if(Audio)Audio.ClearRunSounds();
    showEnding=false;Time.timeScale=1; touch.Reset(); if(worldRoot){worldRoot.gameObject.SetActive(false);Destroy(worldRoot.gameObject);} Enemies.Clear(); Level=Mathf.Clamp(id,1,Campaign.Chapters); Realm=Campaign.RealmFor(Level); Coins=Gems=DamageTaken=EarnedStars=0; Kills=CoinsTotal=GemsTotal=KillsTotal=0; Elapsed=0; CheckpointActive=false;Combo=0;comboUntil=0;
-   worldRoot=new GameObject("Realm "+Level+" - "+Titles[Level-1]).transform; World=worldRoot.gameObject.AddComponent<RealmWorld>();   try{World.Build(Level,Realm);}catch(System.Exception e){Debug.LogError("LEVEL_BUILD_FAILED "+Level+": "+e);}
+   chapterLoadStage="world";
+   worldRoot=new GameObject("Realm "+Level+" - "+Titles[Level-1]).transform; World=worldRoot.gameObject.AddComponent<RealmWorld>();World.Build(Level,Realm);
+   chapterLoadStage="trials";
    Trial=RealmTrials.Build(World,Level);
+   chapterLoadStage="objectives";
    Adventure=ExpansionChapter.Build(World,Level); Storm=Level>=16&&Level<=20?World.GetComponent<StormChapter>():null;Astral=Level>=21?World.GetComponent<AstralChapter>():null;
+   chapterLoadStage="crypt";
    Crypt=DungeonAdventure.Build(this);
-   GUI.enabled=true;
+   chapterLoadStage="Aster";
    var hero=new GameObject("Aster"); hero.transform.SetParent(worldRoot); hero.transform.position=World.Spawn; Player=hero.AddComponent<Hero>(); Checkpoint=World.Spawn;
+   if(!Player.Controller||!Player.Visual)throw new InvalidOperationException("Aster could not be initialized.");
+   chapterLoadStage="camera";
    // Restore the camera only after the newly-created Hero Awake path completes.
    CameraRig.Target=Player.transform;
    CameraRig.Snap();
@@ -85,6 +108,8 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     Screen=GameScreen.Playing; Pacing.Begin(); Tell(Astral?Astral.Objective:Storm?Storm.Objective:Adventure?Adventure.Objective:Level==1?"WASD / left stick to move. Jump twice to reach the next island.":World.IsBoss?"Break the guardian's corruption. Dodge red warnings, strike during recovery.":Titles[Level-1]+"  /  Follow the golden trail to the realm gate.",6);
   }
   void Update(){
+   // Build the chapter after the menu event has finished, outside the IMGUI touch callback.
+   if(requestedChapter>0){int chapter=requestedChapter;requestedChapter=0;LoadLevel(chapter);return;}
    if(wardrobePreview&&(!showSkins||showVault||(Screen!=GameScreen.Settings&&Screen!=GameScreen.Paused))){Destroy(wardrobePreview);wardrobePreview=null;wardrobePreviewSkin=-1;}
 
    JumpPressed=DashPressed=AttackPressed=AttackReleased=CastPressed=ParryPressed=SpellPressed=SpellReleased=GrapplePressed=false; MoveInput=Vector2.zero; yawInput=0;
@@ -162,7 +187,11 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
   public void Sound(string name,float pitchMul){if(Audio)Audio.Play(name,1f,pitchMul);}
   // Short vibration tick on key feedback moments (parry, perfect dodge).
   // Mobile only, and gated by the Sanctuary HAPTICS toggle.
-  public void Haptic(){if(Save.haptics&&Application.isMobilePlatform)Handheld.Vibrate();}
+  public void Haptic(){
+#if UNITY_ANDROID || UNITY_IOS
+   if(Save.haptics&&Application.isMobilePlatform)Handheld.Vibrate();
+#endif
+  }
    public void TrapSound(string name,Vector3 position,float minDistance=3f,float maxDistance=15f,float volumeMul=1f){
     if(Audio)Audio.PlaySpatial(name,position,minDistance,maxDistance,volumeMul);
    }
@@ -633,10 +662,11 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     if(resourceCapsule)GUI.DrawTexture(new Rect(310,224,660,38),resourceCapsule,ScaleMode.StretchToFill);
     Text(310,232,660,22,$"JOURNEY  {Save.unlocked}/{Campaign.Chapters} CHAPTERS    ✦    {TotalStars()}/{Campaign.Stars} STARS    ✦    {Save.coins} GOLD    ✦    {Save.gems} GEMS",tinyC);
 
-    if(MenuButton(new Rect(410,278,460,66),"CONTINUE JOURNEY",iconContinue,primary:true))LoadLevel(Save.unlocked);
+    if(MenuButton(new Rect(410,278,460,66),"CONTINUE JOURNEY",iconContinue,primary:true))RequestChapter(Save.unlocked);
     if(MenuButton(new Rect(440,356,400,56),"REALM ATLAS",iconAtlas))Screen=GameScreen.Map;
     if(MenuButton(new Rect(440,424,400,56),"SANCTUARY",iconSanctuary))Screen=GameScreen.Settings;
-    if(MenuButton(new Rect(440,492,400,56),"NEW JOURNEY",iconNewJourney)){Save=new Progress();Save.equippedWeapon=-1;Persist();Sound("upgrade");LoadLevel(1);}
+    if(MenuButton(new Rect(440,492,400,56),"NEW JOURNEY",iconNewJourney)){Save=new Progress();Save.equippedWeapon=-1;Persist();Sound("upgrade");RequestChapter(1);}
+    if(!string.IsNullOrEmpty(ChapterLoadError))Text(280,566,720,54,ChapterLoadError,smallC);
 
     Text(240,672,800,22,"UNITY 3D EDITION   *   TOUCH + KEYBOARD   *   JOURNEY AUTOSAVES",tinyC);
     return;
@@ -702,7 +732,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
      }
 
      if(unlocked&&GUI.Button(cardRect,GUIContent.none,GUIStyle.none)){
-      LoadLevel(i+1);
+      RequestChapter(i+1);
      }
     }
     GUI.enabled=prevEnabled;
