@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 namespace LostRealms {
+ void OnApplicationPause(bool pauseStatus){if(pauseStatus)Persist();}
+ void OnApplicationFocus(bool focusStatus){if(!focusStatus)Persist();}
+ 
  public enum GameScreen { Menu, Map, Playing, Paused, Complete, Defeated, Settings }
 [Serializable] public partial class Progress {
    public void NormalizeWeapons(){
