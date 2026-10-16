@@ -40,7 +40,7 @@ if(skyShader){var sky=new Material(skyShader);lifetime.Keep(sky);sky.SetColor("_
     }
     Tufts(island,width,length,realm,rng);
     // A readable worn trail leaves the centre clear for movement and combat.
-    for(int n=0;n<3;n++){Vector3 stonePos=new Vector3((n%2==0?.24f:-.24f),.12f,(n-1)*2);if(!TrapArt.IsClear(island,stonePos,0.8f))continue;var slab=Art.Shape("Ancient stepping stone",PrimitiveType.Cube,stonePos,new Vector3(1.1f,.06f,.85f),Color.white,island);slab.transform.localRotation=Quaternion.Euler(0,(n-1)*11,0);slab.GetComponent<Renderer>().sharedMaterial=rock;}
+
    }
    // Distant silhouettes frame the route without obstructing the playable camera corridor.
    foreach(Transform t in world.transform)if(t.name=="Distant canopy"||t.name=="Distant realm spire"){t.gameObject.SetActive(false);if(Application.isPlaying)Object.Destroy(t.gameObject);else Object.DestroyImmediate(t.gameObject);}
@@ -110,7 +110,7 @@ if(skyShader){var sky=new Material(skyShader);lifetime.Keep(sky);sky.SetColor("_
    // whenever an island edge crossed the near field.
    float height=2.2f+(seed%3)*.24f;var trunk=Art.Shape("Crooked oak",PrimitiveType.Cylinder,p+Vector3.up*height*.45f,new Vector3(.25f,height*.5f,.25f),new Color(.23f,.18f,.115f),parent);trunk.transform.localRotation=Quaternion.Euler(0,0,7*Mathf.Sin(seed));var trunkCol=trunk.AddComponent<CapsuleCollider>();trunkCol.direction=1;trunkCol.radius=.5f;trunkCol.height=2f;
    for(int i=0;i<4;i++){float a=i*2.4f+seed;Vector3 at=p+new Vector3(Mathf.Sin(a)*.5f,height+i*.17f,Mathf.Cos(a)*.5f);Cone(at,1.02f-i*.1f,.92f,new Color(.2f+i*.04f,.34f+i*.035f,.13f+i*.02f),parent,8);}
-   for(int i=0;i<3;i++){float a=i*2.1f;var root=Art.Shape("Exposed root",PrimitiveType.Cube,p+new Vector3(Mathf.Sin(a)*.35f,.12f,Mathf.Cos(a)*.35f),new Vector3(.16f,.16f,.85f),new Color(.23f,.18f,.115f),parent);root.transform.localRotation=Quaternion.Euler(0,a*Mathf.Rad2Deg,0);}
+
   }
   static void Pine(Vector3 p,Transform parent,int seed){var trunk=Art.Shape("Pine trunk",PrimitiveType.Cylinder,p+Vector3.up*1.5f,new Vector3(.23f,1.5f,.23f),new Color(.22f,.23f,.23f),parent);var trunkCol=trunk.AddComponent<CapsuleCollider>();trunkCol.direction=1;trunkCol.radius=.5f;trunkCol.height=2f;for(int i=0;i<4;i++)Cone(p+Vector3.up*(1+i*.6f),1.25f-i*.22f,1.4f,i%2==0?new Color(.32f,.48f,.48f):new Color(.78f,.86f,.84f),parent);}
   static void Tufts(Transform parent,float width,float length,int realm,System.Random rng){

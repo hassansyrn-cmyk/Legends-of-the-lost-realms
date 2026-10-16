@@ -24,7 +24,9 @@ namespace LostRealms {
   RealmGame Game=>RealmGame.I;
   public static void Reserve(Transform island,int stage,int index){
    if(!EnabledFor(stage)||Array.IndexOf(ChapterAdventure.Get(stage).Route,index)<0)return;
-   TrapArt.Reserve(island,new Vector3(0,.05f,-2.5f),2f);
+   TrapArt.Reserve(island,new Vector3(0,.05f,-2.5f),2.3f);
+   if(stage==2&&index==7)TrapArt.Reserve(island,new Vector3(3f,.05f,-2.5f),2.0f);
+   if(stage==6)TrapArt.Reserve(island,new Vector3(-2.5f,.05f,-2.5f),2.2f);
   }
   public static ExpansionChapter Build(RealmWorld world,int stage){
    if(!EnabledFor(stage))return null;
@@ -38,84 +40,140 @@ namespace LostRealms {
     c.Nodes.Add(node);
    }
    // The second crossing can be restored from either flank, not two extra chores.
-   if(stage==2){var n=c.Nodes[1];Vector3 p=ClearSpot(world,n.transform.parent,n.transform.position+Vector3.right*3f);c.choice=c.Decoration(n.transform.parent,p,"ALTERNATE BEACON",new Color(.35f,.8f,1f));}
-   if(stage==6){c.shortcutStart=c.Decoration(c.Nodes[0].transform.parent,ClearSpot(world,c.Nodes[0].transform.parent,c.Nodes[0].transform.position+Vector3.left*2.5f),"RETURN PASSAGE",Color.cyan);c.shortcutEnd=c.Decoration(c.Nodes[1].transform.parent,ClearSpot(world,c.Nodes[1].transform.parent,c.Nodes[1].transform.position+Vector3.left*2.5f),"RETURN PASSAGE",Color.cyan);}
+   if(stage==2){var n=c.Nodes[1];Vector3 p=ClearSpot(world,n.transform.parent,n.transform.position+Vector3.right*3f);c.choice=c.Decoration(n.transform.parent,p,"ALTERNATE BEACON",new Color(.35f,.8f,1f),2);}
+   if(stage==6){c.shortcutStart=c.Decoration(c.Nodes[0].transform.parent,ClearSpot(world,c.Nodes[0].transform.parent,c.Nodes[0].transform.position+Vector3.left*2.5f),"RETURN PASSAGE",Color.cyan,0);c.shortcutEnd=c.Decoration(c.Nodes[1].transform.parent,ClearSpot(world,c.Nodes[1].transform.parent,c.Nodes[1].transform.position+Vector3.left*2.5f),"RETURN PASSAGE",Color.cyan,1);}
    Vector3 branchPoint=world.Route[4]+new Vector3(-9.5f,.4f,0);c.Branch=Nearest(world,world.IsBoss?world.Route[1]:branchPoint);
    if(c.Definition.EliteKind>=0){
     c.OptionalElite=world.SpawnExpansionElite(c.Branch,c.Definition.EliteKind);
     c.OptionalElite.DisplayName=c.Definition.Secret;c.OptionalElite.NamedSignature=c.Definition.Signature;
     c.OptionalElite.MaxHealth*=1.4f;c.OptionalElite.Health=c.OptionalElite.MaxHealth;
    }
-   c.secretPoint=c.Decoration(c.Branch,ClearSpot(world,c.Branch,c.Branch.position+(world.IsBoss?new Vector3(2.8f,0,2f):Vector3.back*2.6f)),"OPTIONAL: "+c.Definition.Secret,new Color(1f,.78f,.3f));
+   c.secretPoint=c.Decoration(c.Branch,ClearSpot(world,c.Branch,c.Branch.position+(world.IsBoss?new Vector3(2.8f,0,2f):Vector3.back*2.6f)),"OPTIONAL: "+c.Definition.Secret,new Color(1f,.78f,.3f),stage);
    return c;
   }
   public static Transform Nearest(RealmWorld world,Vector3 point){Transform best=null;float distance=float.MaxValue;foreach(Transform t in world.transform){if(t.name!="Island")continue;float d=(t.position-point).sqrMagnitude;if(d<distance){distance=d;best=t;}}return best;}
+  internal static bool ObjectiveSpotClear(Vector3 point,Transform world,float radius){
+   if(!RealmTrials.ShrineClear(point,world,radius))return false;
+   foreach(var collider in Physics.OverlapCapsule(point+Vector3.up*.25f,point+Vector3.up*1.6f,radius,~0,QueryTriggerInteraction.Ignore)){
+    for(var t=collider.transform;t&&t!=world;t=t.parent){
+     if(t.name.StartsWith("Adventure ")||t.name.StartsWith("Crypt ")||t.name.StartsWith("Optional trial")||t.GetComponent<RealmCheckpoint>()||t.GetComponent<BouncePad>()||t.GetComponent<RealmGate>())return false;
+    }
+   }
+   return true;
+  }
+  internal static bool ModelSpotClear(Vector3 point,Transform world,float radius){
+   foreach(var collider in Physics.OverlapCapsule(point+Vector3.up*.25f,point+Vector3.up*1.6f,radius,~0,QueryTriggerInteraction.Ignore)){
+    for(var t=collider.transform;t&&t!=world;t=t.parent){
+     if(ChapterLayout.IsTrap(t)||t.GetComponent<Enemy>()||t.name.StartsWith("Adventure ")||t.name.StartsWith("Crypt ")||t.name.StartsWith("Optional trial")||t.GetComponent<RealmCheckpoint>()||t.GetComponent<BouncePad>()||t.GetComponent<RealmGate>())return false;
+    }
+   }
+   return true;
+  }
+  internal static void ClearOverlappingProps(Transform island,Vector3 anchor,Vector3 modelCenter,float radius=1.45f){
+   if(!island)return;
+   Physics.SyncTransforms();
+   var toRemove=new List<GameObject>();
+   foreach(Transform child in island){
+    if(!child||!ChapterLayout.IsProp(child)||child.name=="Prop Crypt arch"||child.name.StartsWith("Prop Storm")||child.name.StartsWith("Prop Astral"))continue;
+    if(!ChapterLayout.BoundsOf(child,out var b))continue;
+    Vector3 aFlat=new Vector3(anchor.x,b.center.y,anchor.z);
+    Vector3 mFlat=new Vector3(modelCenter.x,b.center.y,modelCenter.z);
+    if(Vector3.Distance(aFlat,b.ClosestPoint(aFlat))<radius||Vector3.Distance(mFlat,b.ClosestPoint(mFlat))<radius){
+     toRemove.Add(child.gameObject);
+    }
+   }
+   foreach(var go in toRemove){
+    go.SetActive(false);
+    if(Application.isPlaying)Destroy(go);else DestroyImmediate(go);
+   }
+   Physics.SyncTransforms();
+  }
   internal static Vector3 ClearSpot(RealmWorld world,Transform island,Vector3 target){
    Physics.SyncTransforms();
    Vector3 result=default;float best=float.MaxValue;
-   for(int x=-7;x<=7;x++)for(int z=-7;z<=7;z++){
-    Vector3 p=target+new Vector3(x*.45f,0,z*.45f);
-    if(!ChapterLayout.Supported(island,null,new Bounds(p,new Vector3(.8f,.1f,.8f)),out float y))continue;
-    p.y=y+.03f;if(!RealmTrials.ShrineClear(p,world.transform,.9f))continue;
-    float score=(p-target).sqrMagnitude;if(score<best){best=score;result=p;}
+   for(int pass=0;pass<2&&best==float.MaxValue;pass++){
+    for(int x=-7;x<=7;x++)for(int z=-7;z<=7;z++){
+     Vector3 p=target+new Vector3(x*.45f,0,z*.45f);
+     if(!ChapterLayout.Supported(island,null,new Bounds(p,new Vector3(.8f,.1f,.8f)),out float y))continue;
+     if(pass==0&&!ChapterLayout.Supported(island,null,new Bounds(p+Vector3.forward*.68f,new Vector3(.8f,.1f,.8f)),out _))continue;
+     p.y=y+.03f;
+     if(pass==0?!ObjectiveSpotClear(p,world.transform,.95f)||!ModelSpotClear(p+Vector3.forward*.68f,world.transform,.75f):!RealmTrials.ShrineClear(p,world.transform,.9f))continue;
+     float score=(p-target).sqrMagnitude;if(score<best){best=score;result=p;}
+    }
    }
    if(best==float.MaxValue)throw new InvalidOperationException("No supported objective slot in chapter "+RealmGame.I.Level);
-   TrapArt.Reserve(island,island.InverseTransformPoint(result),1.2f);return result;
+   TrapArt.Reserve(island,island.InverseTransformPoint(result),1.5f);return result;
   }
-  ExpansionNode MakeNode(Transform island,Vector3 point,int order,string name){var t=Decoration(island,point,name,Definition.Elements!=null?RealmGame.ElementColors[Definition.Elements[order]]:new Color(.3f,.7f,1f));var n=t.gameObject.AddComponent<ExpansionNode>();n.Owner=this;n.Order=order;return n;}
+  ExpansionNode MakeNode(Transform island,Vector3 point,int order,string name){var t=Decoration(island,point,name,Definition.Elements!=null?RealmGame.ElementColors[Definition.Elements[order]]:new Color(.3f,.7f,1f),order);var n=t.gameObject.AddComponent<ExpansionNode>();n.Owner=this;n.Order=order;return n;}
   static readonly Dictionary<string,Material> puzzleMaterials=new Dictionary<string,Material>();
-  static string ModelForTitle(string title){
-   if(title.Contains("RETURN PASSAGE"))return "Props/Expansion/ReturnPassage";
-   if(title.Contains("KEY"))return "Props/Expansion/TempleKey";
+  public static string ModelForTitle(string title,int stage=1,int index=0){
+   if(title.Contains("RETURN PASSAGE"))return index%2==0?"Props/Expansion/PortalArch":"Props/Expansion/ReturnPassage";
+   if(title.Contains("KEY"))return (stage+index)%2==0?"Props/Expansion/RunicKey":"Props/Expansion/TempleKey";
+   if(title.Contains("BEACON"))return index==1?"Stormveil/Conductor":"Props/Expansion/WatchkeeperBeacon";
+   if(title.Contains("SEAL"))return (stage+index)%2==0?"Props/Expansion/SealStone":"Astral/WardFocus";
+   if(title.Contains("RITUAL"))return index%3==0?"Props/Expansion/RitualAltar":index%3==1?"Props/Expansion/SealStone":"Props/Expansion/CrystalShrine";
+   if(title.Contains("OUTPOST")||title.Contains("RAMPART")||title.Contains("BANNER"))return (stage+index)%2==0?"Props/Expansion/RallyBanner":"Props/Expansion/WatchkeeperBeacon";
+   if(title.Contains("WARD")){
+    if(title.Contains("FROST"))return "Props/Expansion/SealStone";
+    if(title.Contains("EMBER"))return "Props/Expansion/EmberFocus";
+    return "Relics/Wardstone";
+   }
+   if(title.Contains("CRYSTAL")){
+    if(title.Contains("EMBER"))return "Props/Expansion/EmberFocus";
+    if(title.Contains("FROST"))return "Props/Expansion/CrystalShrine";
+    if(title.Contains("GALE"))return "Props/Expansion/GaleFocus";
+   }
+   if(title.Contains("SIGIL")){
+    if(title.Contains("GALE"))return "Props/Expansion/GaleFocus";
+    if(title.Contains("EMBER"))return "Relics/DawnSigil";
+    if(title.Contains("FROST"))return "Props/Expansion/FrostFocus";
+    return "Relics/DawnSigil";
+   }
    if(title.Contains("EMBER"))return "Props/Expansion/EmberFocus";
    if(title.Contains("FROST"))return "Props/Expansion/FrostFocus";
    if(title.Contains("GALE"))return "Props/Expansion/GaleFocus";
-   if(title.Contains("RITUAL"))return "Props/Expansion/RitualAltar";
-   if(title.Contains("OUTPOST")||title.Contains("RAMPART")||title.Contains("BANNER"))return "Props/Expansion/RallyBanner";
-   if(title.Contains("BEACON"))return "Stormveil/Conductor";
-   if(title.Contains("SEAL"))return "Astral/WardFocus";
-   if(title.Contains("SIGIL"))return "Relics/DawnSigil";
-   if(title.Contains("WARD"))return "Relics/Wardstone";
-   if(title.Contains("MEMORY"))return "Stormveil/MemoryPlaque";
-   if(title.Contains("CACHE")||title.Contains("OPTIONAL"))return "Props/Expansion/SecretCache";
-   return "Props/Expansion/TrailShrine";
+   if(title.Contains("MEMORY"))return stage%2==0?"Stormveil/MemoryPlaque":"Props/Expansion/SealStone";
+   if(title.Contains("CACHE")||title.Contains("OPTIONAL"))return stage%2==1?"Props/Expansion/TreasureCache":"Props/Expansion/SecretCache";
+   return (stage+index)%2==1?"Props/Expansion/CrystalShrine":"Props/Expansion/TrailShrine";
   }
-  static GameObject PlacePuzzleModel(string assetPath,Transform parent,Color accent,out float visualHeight){
-   visualHeight=1.8f;
+  public static float TargetHeightFor(string assetPath){
+   if(assetPath.Contains("PortalArch")||assetPath.Contains("ReturnPassage")||assetPath.Contains("CryptEntrance"))return 2.95f;
+   if(assetPath.Contains("WatchkeeperBeacon")||assetPath.Contains("Conductor")||assetPath.Contains("RallyBanner"))return 2.3f;
+   if(assetPath.Contains("CrystalShrine")||assetPath.Contains("TrailShrine")||assetPath.Contains("SealStone")||assetPath.Contains("WardFocus")||assetPath.Contains("MemoryPlaque")||assetPath.Contains("CryptMemoryAltar"))return 1.9f;
+   if(assetPath.Contains("RunicKey")||assetPath.Contains("TempleKey"))return 1.35f;
+   if(assetPath.Contains("TreasureCache")||assetPath.Contains("SecretCache"))return 1.1f;
+   return 1.65f;
+  }
+  public static GameObject PlacePuzzleModel(string assetPath,Transform parent,Color accent,out float visualHeight){
+   visualHeight=TargetHeightFor(assetPath);
    var prefab=Resources.Load<GameObject>(assetPath);
    if(!prefab)return null;
    string modelName=System.IO.Path.GetFileNameWithoutExtension(assetPath);
+   bool isArch=modelName=="PortalArch"||modelName=="ReturnPassage"||modelName=="CryptEntrance";
+   bool isKey=modelName=="RunicKey"||modelName=="TempleKey";
+   Vector3 localOffset=isArch?Vector3.zero:new Vector3(0f,0f,.72f);
    var go=new GameObject("PuzzleModel "+modelName);
    go.transform.SetParent(parent,false);
-   go.transform.localPosition=Vector3.zero;
+   go.transform.localPosition=localOffset;
    var model=Instantiate(prefab,go.transform,false);
+   foreach(var oldCol in go.GetComponentsInChildren<Collider>(true)){oldCol.enabled=false;if(Application.isPlaying)Destroy(oldCol);else DestroyImmediate(oldCol);}
    var renderers=model.GetComponentsInChildren<Renderer>();
-   float targetHeight=assetPath.Contains("ReturnPassage")?2.8f:
-                      assetPath.Contains("TempleKey")?1.35f:
-                      assetPath.Contains("SecretCache")?1.45f:
-                      assetPath.Contains("Conductor")?2.2f:
-                      assetPath.Contains("MemoryPlaque")?1.9f:
-                      assetPath.Contains("WardFocus")?2.1f:
-                      assetPath.Contains("Relics/")?1.5f:
-                      assetPath.Contains("RitualAltar")?1.5f:
-                      assetPath.Contains("RallyBanner")?2.4f:1.8f;
-   visualHeight=targetHeight;
+   Bounds worldBounds=default;
    if(renderers.Length>0){
-    Bounds b=renderers[0].bounds;
-    foreach(var r in renderers)b.Encapsulate(r.bounds);
-    float scale=targetHeight/Mathf.Max(.01f,b.size.y);
+    worldBounds=renderers[0].bounds;
+    foreach(var r in renderers)worldBounds.Encapsulate(r.bounds);
+    float scale=visualHeight/Mathf.Max(.01f,worldBounds.size.y);
     go.transform.localScale=Vector3.one*scale;
-    b=renderers[0].bounds;
-    foreach(var r in renderers)b.Encapsulate(r.bounds);
-    model.transform.position+=go.transform.position-new Vector3(b.center.x,b.min.y,b.center.z);
+    worldBounds=renderers[0].bounds;
+    foreach(var r in renderers)worldBounds.Encapsulate(r.bounds);
+    model.transform.position+=go.transform.position-new Vector3(worldBounds.center.x,worldBounds.min.y,worldBounds.center.z);
+    worldBounds=renderers[0].bounds;
+    foreach(var r in renderers)worldBounds.Encapsulate(r.bounds);
    }
-   if(modelName=="TempleKey"){
-    Art.Shape("Key plinth",PrimitiveType.Cylinder,Vector3.up*.1f,new Vector3(1f,.18f,1f),new Color(.2f,.24f,.28f),go.transform);
-    model.transform.position+=Vector3.up*.55f;
+   if(isKey){
+    model.transform.position+=Vector3.up*.22f;
+    visualHeight+=.22f;
     var spinner=go.AddComponent<PuzzleSpinner>();spinner.Target=model.transform;
-   }
-   if(modelName=="ReturnPassage"){
-    CombatTelegraph.Ring(go.transform,1.55f,Color.cyan,"Return passage ring");
    }
    if(!puzzleMaterials.TryGetValue(assetPath,out var mat)||!mat){
     mat=new Material(Shader.Find("Standard")??Shader.Find("Mobile/Diffuse")??Shader.Find("Sprites/Default")){name="Puzzle "+modelName};
@@ -125,7 +183,7 @@ namespace LostRealms {
     if(!tex&&folder=="Stormveil")tex=Resources.Load<Texture2D>("Stormveil/StormPalette");
     var norm=Resources.Load<Texture2D>(folder+"/Textures/"+modelName+"_normal");
     if(tex)mat.mainTexture=tex;
-    mat.SetFloat("_Glossiness",.3f);
+    mat.SetFloat("_Glossiness",.32f);
     mat.SetFloat("_Metallic",.18f);
     if(norm){mat.SetTexture("_BumpMap",norm);mat.SetFloat("_BumpScale",1f);mat.EnableKeyword("_NORMALMAP");}
     puzzleMaterials[assetPath]=mat;
@@ -135,25 +193,46 @@ namespace LostRealms {
     if(accent!=Color.white){
      var block=new MaterialPropertyBlock();
      r.GetPropertyBlock(block);
-     block.SetColor("_EmissionColor",accent*.4f);
+     block.SetColor("_EmissionColor",accent*.38f);
      r.SetPropertyBlock(block);
     }
    }
+   // Solid collision for Aster and enemies (placed on an unscaled child so BoxCollider sizes are exact world metres)
+   var colHolder=new GameObject("SolidCollider");
+   colHolder.transform.SetParent(parent,false);
+   colHolder.transform.localPosition=localOffset;
+   colHolder.transform.localRotation=Quaternion.identity;
+   colHolder.transform.localScale=Vector3.one;
+   if(isArch){
+    var leftCol=colHolder.AddComponent<BoxCollider>();
+    leftCol.center=new Vector3(-.92f,visualHeight*.48f,0f);
+    leftCol.size=new Vector3(.48f,visualHeight*.95f,.72f);
+    var rightCol=colHolder.AddComponent<BoxCollider>();
+    rightCol.center=new Vector3(.92f,visualHeight*.48f,0f);
+    rightCol.size=new Vector3(.48f,visualHeight*.95f,.72f);
+   }else{
+    var box=colHolder.AddComponent<BoxCollider>();
+    float sx=renderers.Length>0?Mathf.Clamp(worldBounds.size.x*.8f,.52f,1.1f):.75f;
+    float sz=renderers.Length>0?Mathf.Clamp(worldBounds.size.z*.75f,.42f,.48f):.46f;
+    box.center=new Vector3(0f,visualHeight*.5f,0f);
+    box.size=new Vector3(sx,visualHeight,sz);
+   }
    return go;
   }
-  Transform Decoration(Transform island,Vector3 point,string title,Color color){
+  Transform Decoration(Transform island,Vector3 point,string title,Color color,int index=0){
    var go=new GameObject("Adventure "+title);go.transform.SetParent(island,false);go.transform.position=point;
-   string assetPath=ModelForTitle(title);
+   string assetPath=ModelForTitle(title,level,index);
    var model=PlacePuzzleModel(assetPath,go.transform,color,out float height);
    if(!model){
-    Art.Shape("Engraved plinth",PrimitiveType.Cylinder,Vector3.up*.06f,new Vector3(.85f,.08f,.85f),new Color(.18f,.22f,.26f),go.transform);
-    var crystal=new GameObject("Attunement crystal");crystal.transform.SetParent(go.transform,false);crystal.transform.localPosition=Vector3.up*.75f;crystal.transform.localScale=Vector3.one*.6f;RelicArt.Gem(crystal.transform,color);
+    var crystal=new GameObject("Attunement crystal");crystal.transform.SetParent(go.transform,false);crystal.transform.localPosition=new Vector3(0,.85f,.72f);crystal.transform.localScale=Vector3.one*.65f;RelicArt.Gem(crystal.transform,color);
     height=1.5f;
    }
-   var label=new GameObject("Objective label");label.transform.SetParent(go.transform,false);label.transform.localPosition=Vector3.up*(height+.35f);
+   ClearOverlappingProps(island,point,model?model.transform.position:point,1.45f);
+   Vector3 labelOffset=model?model.transform.localPosition:Vector3.zero;
+   var label=new GameObject("Objective label");label.transform.SetParent(go.transform,false);label.transform.localPosition=labelOffset+Vector3.up*(height+.35f);
    var text=label.AddComponent<TextMesh>();text.text=title;text.fontSize=36;text.characterSize=.035f;text.anchor=TextAnchor.MiddleCenter;text.color=new Color(1f,.9f,.65f);
    var font=Resources.Load<Font>("UI/Fonts/Cinzel-Bold");if(font){text.font=font;text.GetComponent<Renderer>().sharedMaterial=font.material;}
-   label.AddComponent<ExpansionBillboard>();foreach(var collider in go.GetComponentsInChildren<Collider>()){collider.enabled=false;Destroy(collider);}return go.transform;
+   label.AddComponent<ExpansionBillboard>();return go.transform;
   }
   public bool CanActivate(ExpansionNode node){if(node.Completed)return false;if(Definition.Ordered&&node.Order!=CompletedCount)return false;foreach(var e in node.Guards)if(e&&e.Health>0)return false;return node.Element<0||Game.Player.Power==node.Element;}
   public void Complete(ExpansionNode node){
@@ -167,17 +246,22 @@ namespace LostRealms {
    if(Ready){Game.Tell(Objective,5f);if(level==6)Game.Tell("Temple keys recovered. Stand by a return passage to travel between the two clearings.",5f);}
   }
   void Hint(string hint){if(hint==lastHint)return;lastHint=hint;if(hint!=null)Game.Tell(hint,4f);}
-  bool Near(Transform t,float range)=>t&&Vector3.Distance(Game.Player.transform.position,t.position)<range;
+  internal static bool NearPointOrModel(Vector3 playerPos,Transform t,float range){
+   if(!t)return false;
+   if(Vector3.Distance(playerPos,t.position)<range)return true;
+   return Vector3.Distance(playerPos,t.position+Vector3.forward*.72f)<range;
+  }
+  bool Near(Transform t,float range)=>NearPointOrModel(Game.Player.transform.position,t,range);
   void Update(){
    var g=Game;if(!g||!g.Player||g.Screen!=GameScreen.Playing)return;
    string hint=null;foreach(var node in Nodes)if(!node.Completed&&Near(node.transform,3f)){
     bool guarded=node.Guards.Exists(e=>e&&e.Health>0);
     hint=guarded?"Defeat the guards to restore this point.":Definition.Ordered&&node.Order!=CompletedCount?"Restore the marked objectives in order. "+Definition.Instruction:node.Element>=0&&g.Player.Power!=node.Element?"Select "+new[]{"EMBER","FROST","GALE"}[node.Element]+" using the power selector above.":"Stand still beside "+node.name.Replace("Adventure ","")+" to restore it.";break;
    }
-   if(choice&&!Nodes[1].Completed){bool ready=Near(choice,1.6f)&&g.Player.Grounded&&g.Player.HorizontalSpeed<.5f&&CanActivate(Nodes[1]);choiceDwell=ready?choiceDwell+Time.deltaTime:0;if(choiceDwell>=.85f)Complete(Nodes[1]);}
+   if(choice&&!Nodes[1].Completed){bool ready=Near(choice,1.65f)&&g.Player.Grounded&&g.Player.HorizontalSpeed<.5f&&CanActivate(Nodes[1]);choiceDwell=ready?choiceDwell+Time.deltaTime:0;if(choiceDwell>=.85f)Complete(Nodes[1]);}
    bool onBranch=Near(Branch,7f)&&g.Player.Grounded&&RealmProps.TryDeckSurface(Branch,Branch.InverseTransformPoint(g.Player.transform.position).x,Branch.InverseTransformPoint(g.Player.transform.position).z,secretPoint,out float branchLocalY)&&Mathf.Abs(Branch.TransformPoint(new Vector3(0,branchLocalY,0)).y-g.Player.transform.position.y)<.35f;
    if(onBranch&&(Definition.EliteKind>=0||Near(secretPoint,2f))){BranchVisited=true;if(!RewardClaimed)hint=OptionalElite&&OptionalElite.Health>0?"OPTIONAL: defeat "+OptionalElite.DisplayName+" for "+GoldReward+" Gold and "+GemReward+" Gems.":"Claiming the secret clearing reward.";}
-   bool cacheReady=onBranch&&Near(secretPoint,1.6f)&&g.Player.HorizontalSpeed<.5f;secretDwell=cacheReady?secretDwell+Time.deltaTime:0;
+   bool cacheReady=onBranch&&Near(secretPoint,1.65f)&&g.Player.HorizontalSpeed<.5f;secretDwell=cacheReady?secretDwell+Time.deltaTime:0;
    if(onBranch&&!RewardClaimed&&(Definition.EliteKind>=0?(!OptionalElite||OptionalElite.Health<=0):secretDwell>=.85f)){
     RewardClaimed=true;BuildProgression.OnSecret(g,level);g.Coins+=GoldReward;g.Gems+=GemReward;g.Sound("upgrade");g.Tell(Definition.Secret+" discovered: +"+GoldReward+" Gold, +"+GemReward+" Gems. Finish the chapter to bank rewards.",5f);
    }
@@ -194,7 +278,7 @@ namespace LostRealms {
  }
  public sealed class ExpansionNode:MonoBehaviour {
   public ExpansionChapter Owner;public int Order,Element=-1;public bool Completed,WaveStarted;public float DwellTime=.85f;public readonly List<Enemy> Guards=new List<Enemy>();float dwell;
-  void Update(){var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||Completed||!g.Player)return;bool ready=Owner.CanActivate(this)&&g.Player.Grounded&&g.Player.HorizontalSpeed<.5f&&Vector3.Distance(g.Player.transform.position,transform.position)<1.6f;dwell=ready?dwell+Time.deltaTime:0;if(dwell>=DwellTime*BuildProgression.ChannelMultiplier(g.Save))Owner.Complete(this);}
+  void Update(){var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||Completed||!g.Player)return;bool ready=Owner.CanActivate(this)&&g.Player.Grounded&&g.Player.HorizontalSpeed<.5f&&ExpansionChapter.NearPointOrModel(g.Player.transform.position,transform,1.65f);dwell=ready?dwell+Time.deltaTime:0;if(dwell>=DwellTime*BuildProgression.ChannelMultiplier(g.Save))Owner.Complete(this);}
   public void MarkRestored(){foreach(var gem in GetComponentsInChildren<GemVisual>())gem.Accent=new Color(1f,.8f,.3f);foreach(var r in GetComponentsInChildren<Renderer>()){if(r.GetComponent<TextMesh>())continue;var p=new MaterialPropertyBlock();p.SetColor("_Color",new Color(1f,.8f,.3f));r.SetPropertyBlock(p);}}
  }
  public sealed class ExpansionBillboard:MonoBehaviour {void LateUpdate(){if(Camera.main)transform.rotation=Camera.main.transform.rotation;}}

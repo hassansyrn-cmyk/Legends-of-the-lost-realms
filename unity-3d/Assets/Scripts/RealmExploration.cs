@@ -22,7 +22,7 @@ namespace LostRealms {
    if(find.Key){Keys++;g.Sound("upgrade");g.Tell(find.Title+" recovered — "+Keys+" / 3 gate keys",4);}
    else {g.Coins+=60;g.Gems+=2;g.Sound("discover");g.Tell("HIDDEN CACHE — +60 Gold, +2 Gems. Finish the chapter to bank them.",4);}
    Vfx.Play(find.Key?"eric_FX_LightPillar":"ga_vfx_LootDrop_01",find.transform.position+Vector3.up*.7f,Quaternion.identity,.6f);
-   if(find.Visual)find.Visual.SetActive(false);var label=find.GetComponentInChildren<TextMesh>();if(label)label.text="RECOVERED";
+   if(find.Visual)find.Visual.SetActive(false);var fcol=find.GetComponent<Collider>();if(fcol)fcol.enabled=false;var label=find.GetComponentInChildren<TextMesh>();if(label)label.text="RECOVERED";
   }
   void Update(){
    var g=RealmGame.I;if(!g||!g.Player||g.Screen!=GameScreen.Playing)return;
@@ -160,10 +160,19 @@ namespace LostRealms {
    }
   }
   void ExplorationTreasure(Transform island,bool key,int number){
-   var root=new GameObject(key?"Gate key "+number:"Hidden supply cache");root.transform.SetParent(island,false);root.transform.localPosition=new Vector3(0,0,3.1f);
+   var localPos=new Vector3(0,0,3.1f);
+   if(RealmProps.TryDeckSurface(island,localPos.x,localPos.z,null,out float deckY))localPos.y=deckY;
+   var root=new GameObject(key?"Gate key "+number:"Hidden supply cache");root.transform.SetParent(island,false);root.transform.localPosition=localPos;
+   TrapArt.Reserve(island,localPos,1.6f);
    var find=root.AddComponent<ExplorationFind>();find.Owner=Exploration;find.Key=key;find.Title=key?new[]{"WATCH KEY","ARCHIVE KEY","VAULT KEY"}[number]:"HIDDEN CACHE";Exploration.Finds.Add(find);
-   find.Visual=ExplorationArt.Fit("Props/Expansion/"+(key?"TempleKey":"SecretCache"),"Props/Expansion/Textures/"+(key?"TempleKey":"SecretCache")+"_basecolor",root.transform,new Vector3(0,key?.65f:0,0),key?Vector3.one*.85f:new Vector3(1.45f,1,1),false,false,Color.white);
-   var label=new GameObject("Treasure label");label.transform.SetParent(root.transform,false);label.transform.localPosition=Vector3.up*1.7f;var text=label.AddComponent<TextMesh>();text.text=key?find.Title:"SUPPLY CACHE";text.fontSize=40;text.characterSize=.032f;text.font=Resources.Load<Font>("UI/Fonts/Cinzel-Bold");if(text.font)label.GetComponent<Renderer>().sharedMaterial=text.font.material;text.anchor=TextAnchor.MiddleCenter;text.color=new Color(1,.86f,.45f);label.AddComponent<ExpansionBillboard>();
+   string modelName=key?((level+number)%2==0?"RunicKey":"TempleKey"):((level+number)%2==0?"TreasureCache":"SecretCache");
+   Vector3 fitSize=key?new Vector3(.65f,1.35f,.65f):new Vector3(1.35f,1.1f,1.05f);
+   find.Visual=ExplorationArt.Fit("Props/Expansion/"+modelName,"Props/Expansion/Textures/"+modelName+"_basecolor",root.transform,new Vector3(0,key?.25f:0,0),fitSize,false,false,Color.white);
+   var col=root.AddComponent<BoxCollider>();
+   col.center=new Vector3(0,fitSize.y*.5f,0);
+   col.size=new Vector3(.65f,fitSize.y,.55f);
+   ExpansionChapter.ClearOverlappingProps(island,root.transform.position,root.transform.position,1.4f);
+   var label=new GameObject("Treasure label");label.transform.SetParent(root.transform,false);label.transform.localPosition=Vector3.up*1.85f;var text=label.AddComponent<TextMesh>();text.text=key?find.Title:"SUPPLY CACHE";text.fontSize=40;text.characterSize=.032f;text.font=Resources.Load<Font>("UI/Fonts/Cinzel-Bold");if(text.font)label.GetComponent<Renderer>().sharedMaterial=text.font.material;text.anchor=TextAnchor.MiddleCenter;text.color=new Color(1,.86f,.45f);label.AddComponent<ExpansionBillboard>();
   }
   void ExplorationLandmark(Transform island,int i,bool astral,float width){
    Vector3 p=i==11&&IsBoss?new Vector3(-width*.31f,0,width*.25f):new Vector3(-width*.26f,0,-width*.23f);

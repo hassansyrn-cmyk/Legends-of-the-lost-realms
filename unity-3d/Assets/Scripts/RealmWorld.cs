@@ -16,16 +16,11 @@ namespace LostRealms {
    return go;
   }
   public static GameObject Crystal(Vector3 pos,float size,Color color,Transform parent){
-   var g=Shape("Realm crystal",PrimitiveType.Cube,pos,Vector3.one*size,color,parent);
-   g.transform.localRotation=Quaternion.Euler(45,45,0);return g;
+   var g=new GameObject("Realm crystal");g.transform.SetParent(parent,false);g.transform.localPosition=pos;g.transform.localScale=Vector3.one*(size*2.2f);
+   RelicArt.Gem(g.transform,color);return g;
   }
   public static GameObject Ring(Vector3 pos,float radius,Color color,Transform parent){
    var root=new GameObject("Rune ring");root.transform.SetParent(parent,false);root.transform.localPosition=pos;
-   for(int i=0;i<24;i++){
-    float a=i*Mathf.PI*2/24;
-    var g=Shape("Rune",PrimitiveType.Cube,new Vector3(Mathf.Sin(a)*radius,0,Mathf.Cos(a)*radius),new Vector3(.12f,.035f,.38f),color,root.transform);
-    g.transform.localRotation=Quaternion.Euler(0,a*Mathf.Rad2Deg,0);
-   }
    return root;
   }
   public static void CoinMesh(Transform parent){
@@ -671,12 +666,6 @@ public void Build(int stage,int world){if(stage>=21){BuildAstral(stage);return;}
         for(int sz=-1;sz<=1;sz+=2){
          Art.Shape("ArenaPillar",PrimitiveType.Cube,new Vector3(sx*5.2f,1.8f,sz*5.2f),new Vector3(.85f,3.6f,.85f),stone*1.2f,root.transform);
          Art.Crystal(new Vector3(sx*5.2f,3.8f,sz*5.2f),.5f,accent,root.transform);
-        }
-       }
-      }else if(realm==0){
-       for(int sx=-1;sx<=1;sx+=2){
-        for(int sz=-1;sz<=1;sz+=2){
-         Art.Crystal(new Vector3(sx*(width*.38f),1.1f,sz*(length*.38f)),.5f,accent,root.transform);
         }
        }
       }

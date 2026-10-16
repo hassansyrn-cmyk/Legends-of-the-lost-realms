@@ -55,6 +55,22 @@ static readonly Material[] villageByRealm=new Material[4];
    villageByRealm[realm]=material;return material;
   }
   static Material MaterialFor(string name,int realm)=>name.StartsWith("rpgpp_lt_")?VillageMat(realm):ForRealm(realm);
+  public static GameObject Container(Transform parent,bool barrel,float height,bool heavyBox=false){
+   string name=heavyBox?"rpgpp_lt_box_wood_01":barrel?"rpgpp_lt_barrel_01":"rpgpp_lt_crate_01";
+   var prefab=Model("Village",name)??Model("Village",barrel?"rpgpp_lt_barrel_02":"rpgpp_lt_crate_02");
+   if(!prefab)return null;
+   var model=Object.Instantiate(prefab,parent,false);model.name="Imported "+(barrel?"barrel":"crate");
+   foreach(var c in model.GetComponentsInChildren<Collider>(true)){c.enabled=false;if(Application.isPlaying)Object.Destroy(c);else Object.DestroyImmediate(c);}
+   Fit(model,height);
+   var rs=model.GetComponentsInChildren<Renderer>(true);
+   if(rs.Length>0){
+    Bounds b=rs[0].bounds;for(int i=1;i<rs.Length;i++)b.Encapsulate(rs[i].bounds);
+    model.transform.position+=parent.position-new Vector3(b.center.x,b.min.y,b.center.z);
+   }
+   var mat=VillageMat(RealmGame.I?Mathf.Clamp(RealmGame.I.Realm,0,3):0);
+   if(mat)foreach(var r in rs){r.sharedMaterial=mat;r.shadowCastingMode=ShadowCastingMode.On;r.receiveShadows=true;}
+   return model;
+  }
   static string[][] Sets(int realm){
    if(realm==0)return new[]{new[]{"Tree_01","Tree_03","Tree_04","rpgpp_lt_tree_01","rpgpp_lt_tree_02"},new[]{"Rock_01","Rock_02","Rock_03"},new[]{"Bush_01","Bush_02","Bush_03","Grass_01","Grass_02","Flowers_01","Mushroom_01","rpgpp_lt_bush_01","rpgpp_lt_flower_01","rpgpp_lt_flower_02","rpgpp_lt_grass_small_01a"}};
 if(realm==1)return new[]{new[]{"House_01","House_02","Tower_01","Ruin_01","Gate_01","Tent_01"},new[]{"Rock_03","Rock_04","Rock_05"},new[]{"Grass_02","Mushroom_01","Bush_02","rpgpp_lt_rock_small_01","rpgpp_lt_rock_small_02"}};
@@ -142,7 +158,7 @@ static void PlaceVillage(Transform island,int realm,float width,float length,Sys
      if(h.collider.name.StartsWith("Walkable")&&t.IsChildOf(island))return true;
      while(t!=null&&t!=island){
       var n=t.name;
-      if(n.StartsWith("Prop ")||n.StartsWith("Breakable")||n.StartsWith("Pushable"))return false;
+      if(n.StartsWith("Prop ")||n.StartsWith("Breakable")||n.StartsWith("Pushable")||n.StartsWith("Adventure ")||n.StartsWith("Crypt ")||n.StartsWith("Optional trial")||n.StartsWith("Gate key")||n.StartsWith("Hidden supply")||n.StartsWith("Watchkeeper")||n.StartsWith("Checkpoint")||n=="SolidCollider"||n.StartsWith("PuzzleModel"))return false;
       if(t.GetComponent<Enemy>()||t.GetComponent<RealmHeal>()||t.GetComponent<WeaponDrop>())return false;
       if(t.GetComponent<SawTrap>()||t.GetComponent<FloorBladeTrap>()||t.GetComponent<SpikeTrap>()||t.GetComponent<PendulumTrap>()||t.GetComponent<FireGeyser>()||t.GetComponent<CrusherPillar>()||t.GetComponent<DartTurret>()||t.GetComponent<RollingBoulder>()||t.GetComponent<WindVent>()||t.GetComponent<FlameBrazier>()||t.GetComponent<FrostTotem>()||t.GetComponent<SerpentStatue>())return false;
       t=t.parent;
@@ -392,35 +408,28 @@ static void PlaceVillage(Transform island,int realm,float width,float length,Sys
      x*=.8f;z*=.8f;
     }
     if(!valid)return;
-    if(!TrapArt.IsClear(island,new Vector3(x,localY,z),.8f))return;
-    var go=new GameObject("Prop Banner");go.transform.SetParent(island,false);
+    if(!TrapArt.IsClear(island,new Vector3(x,localY,z),.9f))return;
+    string modelName=x<0?"RallyBanner":"WatchkeeperBeacon";
+    var source=Resources.Load<GameObject>("Props/Expansion/"+modelName);
+    if(!source)return;
+    var go=Object.Instantiate(source,island);
+    go.name="Prop "+modelName;
     go.transform.localPosition=new Vector3(x,localY,z);
-    Art.Shape("Banner pole",PrimitiveType.Cylinder,Vector3.up*1.1f,new Vector3(.09f,2.2f,.09f),new Color(.3f,.2f,.14f),go.transform);
-    var cloth=Art.Shape("Banner cloth",PrimitiveType.Cube,new Vector3(.3f,1.75f,0),new Vector3(.55f,.7f,.05f),new Color(.75f,.16f,.14f),go.transform);
-    cloth.transform.localRotation=Quaternion.Euler(0,0,8);
-    foreach(var r in go.GetComponentsInChildren<Renderer>()){r.shadowCastingMode=ShadowCastingMode.On;r.receiveShadows=true;}
+    Fit(go,2.2f);
+    var rs=go.GetComponentsInChildren<Renderer>(true);
+    if(rs.Length>0){
+     Bounds gb=rs[0].bounds;for(int i=1;i<rs.Length;i++)gb.Encapsulate(rs[i].bounds);
+     float surfaceY=island.TransformPoint(new Vector3(x,localY,z)).y;
+     go.transform.position+=Vector3.up*(surfaceY-gb.min.y);
+    }
+    var tex=Resources.Load<Texture2D>("Props/Expansion/Textures/"+modelName+"_basecolor");
+    var mat=new Material(Shader.Find("Standard")){name="Banner "+modelName,color=Color.white};
+    if(tex)mat.mainTexture=tex;mat.SetFloat("_Glossiness",.28f);
+    foreach(var r in rs){r.sharedMaterial=mat;r.shadowCastingMode=ShadowCastingMode.On;r.receiveShadows=true;}
     AddCollider(go);
    }
    static void PlaceLantern(Transform island,float x,float z){
-    float localY=.02f;
-    bool valid=false;
-    for(int attempt=0;attempt<6;attempt++){
-     if(TrySurfaceY(island,x,z,out localY)){valid=true;break;}
-     x*=.8f;z*=.8f;
-    }
-    if(!valid)return;
-    if(!TrapArt.IsClear(island,new Vector3(x,localY,z),.8f))return;
-    var go=new GameObject("Prop Lantern");go.transform.SetParent(island,false);
-    go.transform.localPosition=new Vector3(x,localY,z);
-    Art.Shape("Lantern post",PrimitiveType.Cube,new Vector3(0,.15f,0),new Vector3(.3f,.3f,.3f),new Color(.25f,.28f,.33f),go.transform);
-    var pivot=new GameObject("Lantern pivot");pivot.transform.SetParent(go.transform,false);pivot.transform.localPosition=new Vector3(0,1.7f,0);
-    Art.Shape("Lantern arm",PrimitiveType.Cube,new Vector3(0,-.85f,0),new Vector3(.07f,1.7f,.07f),new Color(.25f,.28f,.33f),pivot.transform);
-    var orb=Art.Shape("Lantern orb",PrimitiveType.Sphere,new Vector3(0,-1.55f,0),Vector3.one*.34f,Color.white,pivot.transform);
-    orb.GetComponent<Renderer>().sharedMaterial=GlowMat(new Color(.55f,.85f,1f));
-    Art.Ring(new Vector3(0,-1.55f,0),.34f,new Color(.55f,.85f,1f),pivot.transform);
-    var swing=go.AddComponent<LanternSwing>();swing.Bind(pivot.transform);
-    foreach(var r in go.GetComponentsInChildren<Renderer>()){r.shadowCastingMode=ShadowCastingMode.Off;r.receiveShadows=false;}
-    AddCollider(go);
+    PlaceBanner(island,x,z);
    }
    // Interactive props: crates/barrels to smash, an occasional pushable block.
    static void PlaceBreakables(Transform island,int realm,float width,float length,System.Random rng){

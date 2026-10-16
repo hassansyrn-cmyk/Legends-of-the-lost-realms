@@ -16,7 +16,7 @@ namespace LostRealms {
   public static readonly string[] RoomNames={"THE LOST OATH","HALL OF WATCHERS","THE THREEFOLD CIPHER","THE BROKEN GUARD","OATHKEEPER'S VIGIL"};
   public static DungeonAdventure Build(RealmGame g){
    if(g.Level!=3)return null;var d=g.World.gameObject.AddComponent<DungeonAdventure>();
-   var island=g.Adventure.Branch;Vector3 p=ExpansionChapter.ClearSpot(g.World,island,island.position+Vector3.right*2.6f);d.Entrance=Marker(island,p,"OATHKEEPER'S CRYPT — STAND TO ENTER",new Color(.3f,.7f,1f),true);return d;
+   var island=g.Adventure.Branch;Vector3 p=ExpansionChapter.ClearSpot(g.World,island,island.position+Vector3.right*2.6f);d.Entrance=Marker(island,p,"OATHKEEPER'S CRYPT — STAND TO ENTER",new Color(.3f,.7f,1f),true,0);return d;
   }
   static readonly Dictionary<string,Material> cryptMaterials=new Dictionary<string,Material>();
   static GameObject PlaceCryptModel(string name,Transform parent,Vector3 pos,Vector3 scale,bool solid=false,Color? accent=null){
@@ -60,15 +60,32 @@ namespace LostRealms {
    }
    return go;
   }
-  internal static Transform Marker(Transform parent,Vector3 point,string caption,Color color,bool entrance=false){
+  internal static Transform Marker(Transform parent,Vector3 point,string caption,Color color,bool entrance=false,int index=0){
    var go=new GameObject("Crypt "+caption);go.transform.SetParent(parent,false);go.transform.position=point;
-   var model=entrance?PlaceCryptModel("CryptEntrance",go.transform,Vector3.zero,Vector3.one*2.8f,true,color):PlaceCryptModel("CryptMemoryAltar",go.transform,Vector3.zero,Vector3.one*1.6f,false,color);
-   if(entrance)CombatTelegraph.Ring(go.transform,1.6f,color,"Crypt entrance ring");
-   if(!model){
-    var fallback=new GameObject("Crypt memory crystal");fallback.transform.SetParent(go.transform,false);fallback.transform.localPosition=Vector3.up*.75f;fallback.transform.localScale=Vector3.one*.65f;RelicArt.Gem(fallback.transform,color);
+   string assetPath;
+   if(entrance){
+    assetPath=index%2==0?"Props/Crypt/CryptEntrance":"Props/Expansion/PortalArch";
+   }else if(caption.Contains("RETURN")){
+    assetPath=index%2==0?"Props/Expansion/PortalArch":"Props/Crypt/CryptEntrance";
+   }else if(caption.Contains("EMBER CIPHER")){
+    assetPath="Props/Expansion/EmberFocus";
+   }else if(caption.Contains("FROST CIPHER")){
+    assetPath="Props/Expansion/FrostFocus";
+   }else if(caption.Contains("GALE CIPHER")){
+    assetPath="Props/Expansion/GaleFocus";
+   }else{
+    string[] altarPool={"Props/Crypt/CryptMemoryAltar","Props/Expansion/SealStone","Props/Expansion/CrystalShrine"};
+    assetPath=altarPool[index%altarPool.Length];
    }
-   var label=new GameObject("Crypt inscription");label.transform.SetParent(go.transform,false);label.transform.localPosition=Vector3.up*(entrance?3.4f:2.1f);var t=label.AddComponent<TextMesh>();t.text=caption;t.fontSize=36;t.characterSize=.036f;t.anchor=TextAnchor.MiddleCenter;t.color=new Color(1f,.89f,.6f);var font=Resources.Load<Font>("UI/Fonts/Cinzel-Bold");if(font){t.font=font;t.GetComponent<Renderer>().sharedMaterial=font.material;}label.AddComponent<ExpansionBillboard>();
-   if(!entrance)foreach(var collider in go.GetComponentsInChildren<Collider>()){collider.enabled=false;Destroy(collider);}return go.transform;
+   var model=ExpansionChapter.PlacePuzzleModel(assetPath,go.transform,color,out float height);
+   if(!model){
+    var fallback=new GameObject("Crypt memory crystal");fallback.transform.SetParent(go.transform,false);fallback.transform.localPosition=new Vector3(0,.75f,.72f);fallback.transform.localScale=Vector3.one*.65f;RelicArt.Gem(fallback.transform,color);
+    height=1.6f;
+   }
+   ExpansionChapter.ClearOverlappingProps(parent,point,model?model.transform.position:point,1.45f);
+   Vector3 labelOffset=model?model.transform.localPosition:Vector3.zero;
+   var label=new GameObject("Crypt inscription");label.transform.SetParent(go.transform,false);label.transform.localPosition=labelOffset+Vector3.up*(height+.35f);var t=label.AddComponent<TextMesh>();t.text=caption;t.fontSize=36;t.characterSize=.036f;t.anchor=TextAnchor.MiddleCenter;t.color=new Color(1f,.89f,.6f);var font=Resources.Load<Font>("UI/Fonts/Cinzel-Bold");if(font){t.font=font;t.GetComponent<Renderer>().sharedMaterial=font.material;}label.AddComponent<ExpansionBillboard>();
+   return go.transform;
   }
   void BuildRoute(){
    var g=Game;
@@ -78,11 +95,11 @@ namespace LostRealms {
     var island=g.World.AdventureIsland(new Vector3(1000+(room%2)*1.2f,0,room*17f),700+room).transform;Islands.Add(island);
     PlaceCryptModel("CryptRoomDeck",island,Vector3.zero,new Vector3(14,1,14),false);
     Vector3 arrival=ExpansionChapter.ClearSpot(g.World,island,island.position+Vector3.back*4f);arrivals.Add(arrival+Vector3.up*.05f);
-    exits.Add(Marker(island,ExpansionChapter.ClearSpot(g.World,island,island.position+new Vector3(-3f,0,-3f)),"RETURN TO ROOTBOUND RUINS",new Color(.5f,.8f,1f)));
-    var altar=Marker(island,ExpansionChapter.ClearSpot(g.World,island,island.position+Vector3.forward*2.5f),RoomNames[room],new Color(1f,.76f,.28f));
+    exits.Add(Marker(island,ExpansionChapter.ClearSpot(g.World,island,island.position+new Vector3(-3f,0,-3f)),"RETURN TO ROOTBOUND RUINS",new Color(.5f,.8f,1f),false,room));
+    var altar=Marker(island,ExpansionChapter.ClearSpot(g.World,island,island.position+Vector3.forward*2.5f),RoomNames[room],new Color(1f,.76f,.28f),false,room);
     var focus=altar.gameObject.AddComponent<DungeonFocus>();focus.Owner=this;focus.Room=room;focus.Order=-1;Foci.Add(focus);
     PlaceArch(island);
-    if(room==2){for(int order=0;order<3;order++){var marker=Marker(island,ExpansionChapter.ClearSpot(g.World,island,island.position+new Vector3((order-1)*3f,0,-.7f)),new[]{"EMBER","FROST","GALE"}[order]+" CIPHER",RealmGame.ElementColors[order]);var f=marker.gameObject.AddComponent<DungeonFocus>();f.Owner=this;f.Room=room;f.Order=order;Foci.Add(f);}}
+    if(room==2){for(int order=0;order<3;order++){var marker=Marker(island,ExpansionChapter.ClearSpot(g.World,island,island.position+new Vector3((order-1)*3f,0,-.7f)),new[]{"EMBER","FROST","GALE"}[order]+" CIPHER",RealmGame.ElementColors[order],false,order);var f=marker.gameObject.AddComponent<DungeonFocus>();f.Owner=this;f.Room=room;f.Order=order;Foci.Add(f);}}
    }
    built=true;
   }
@@ -124,14 +141,14 @@ namespace LostRealms {
   void CompleteDungeon(){var g=Game;if(!g.Save.cryptCleared){g.Save.cryptCleared=true;g.Save.cryptRoom=5;g.Save.coins+=150;BuildProgression.Unlock(g,6);if(g.Save.wayfinderQuest==3)g.Save.wayfinderQuest=4;g.Persist();g.Tell("CRYPT RESTORED: Frost Emblem and 150 Gold banked. Return to Lyra if you hold her commission.",7f);}else g.Tell("Crypt restored again. Its first-clear reward has already been claimed.",5f);ActivateRoom();}
   public void Leave(){if(!Active)return;Active=false;foreach(var foe in Foes)if(foe)foe.gameObject.SetActive(false);foreach(var island in Islands)if(island)island.gameObject.SetActive(false);for(int i=0;i<mainObjects.Count;i++)if(mainObjects[i])mainObjects[i].SetActive(mainActive[i]);Game.Checkpoint=oldCheckpoint;Game.CheckpointActive=oldCheckpointActive;Game.Player.Warp(returnPoint);needsExit=true;exitDwell=entranceDwell=0;Game.Tell("Returned to Rootbound Ruins. Crypt room progress is saved.",5f);}
   void Update(){var g=Game;if(!g||!g.Player||g.Screen!=GameScreen.Playing)return;
-   if(!Active){if(!Entrance)return;bool near=Vector3.Distance(g.Player.transform.position,Entrance.position)<1.6f;if(needsExit){if(!near)needsExit=false;return;}entranceDwell=near&&g.Player.Grounded&&g.Player.HorizontalSpeed<.5f?entranceDwell+Time.deltaTime:0;if(entranceDwell>=1.2f){entranceDwell=0;Enter();}return;}
-   Transform exit=null;foreach(var t in exits)if(Vector3.Distance(g.Player.transform.position,t.position)<1.4f){exit=t;break;}
+   if(!Active){if(!Entrance)return;bool near=ExpansionChapter.NearPointOrModel(g.Player.transform.position,Entrance,1.65f);if(needsExit){if(!near)needsExit=false;return;}entranceDwell=near&&g.Player.Grounded&&g.Player.HorizontalSpeed<.5f?entranceDwell+Time.deltaTime:0;if(entranceDwell>=1.2f){entranceDwell=0;Enter();}return;}
+   Transform exit=null;foreach(var t in exits)if(ExpansionChapter.NearPointOrModel(g.Player.transform.position,t,1.5f)){exit=t;break;}
    exitDwell=exit&&g.Player.Grounded&&g.Player.HorizontalSpeed<.5f?exitDwell+Time.deltaTime:0;if(exitDwell>=1.2f){Leave();return;}
   }
  }
  public sealed class DungeonFocus:MonoBehaviour {
   public DungeonAdventure Owner;public int Room,Order;public bool Completed;float dwell;
-  void Update(){var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!Owner.CanRestore(this)) {dwell=0;return;}bool ready=g.Player.Grounded&&g.Player.HorizontalSpeed<.5f&&Vector3.Distance(g.Player.transform.position,transform.position)<1.6f;dwell=ready?dwell+Time.deltaTime:0;if(dwell>=.85f*BuildProgression.ChannelMultiplier(g.Save))Owner.Restore(this);}
+  void Update(){var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!Owner.CanRestore(this)) {dwell=0;return;}bool ready=g.Player.Grounded&&g.Player.HorizontalSpeed<.5f&&ExpansionChapter.NearPointOrModel(g.Player.transform.position,transform,1.65f);dwell=ready?dwell+Time.deltaTime:0;if(dwell>=.85f*BuildProgression.ChannelMultiplier(g.Save))Owner.Restore(this);}
  }
  public sealed class DungeonDefender:MonoBehaviour {public int Room;}
 }
