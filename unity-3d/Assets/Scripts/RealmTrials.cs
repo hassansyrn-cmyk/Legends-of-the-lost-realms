@@ -52,6 +52,8 @@ namespace LostRealms {
   }
   static Color GameColor()=>RealmGame.I?RealmGame.I.Accent:Color.cyan;
   internal static bool ShrineClear(Vector3 point,Transform world,float radius=1.1f){
+    var rw=world?world.GetComponent<RealmWorld>():null;
+    if(rw&&InteractionClearance.IsNearTrap(rw,point,2.3f))return false;
    foreach(var collider in Physics.OverlapCapsule(point+Vector3.up*.25f,point+Vector3.up*1.5f,radius,~0,QueryTriggerInteraction.Ignore)){
     for(var t=collider.transform;t&&t!=world;t=t.parent)
      if(ChapterLayout.IsProp(t)||ChapterLayout.IsTrap(t)||t.GetComponent<Enemy>())return false;
@@ -71,7 +73,8 @@ namespace LostRealms {
       if(!ChapterLayout.Supported(island,shrine,new Bounds(p,new Vector3(1.05f,.1f,1.05f)),out float y))continue;
       if(pass==0&&!ChapterLayout.Supported(island,shrine,new Bounds(p+Vector3.forward*.68f,new Vector3(.95f,.1f,.95f)),out _))continue;
       p.y=y+.04f;
-      if(!ShrineClear(p,world.transform,1.5f))continue;
+      if(!TrapArt.IsClear(island,island.InverseTransformPoint(p),1.8f))continue;
+       if(!ShrineClear(p,world.transform,1.6f))continue;
       if(pass==0&&!ExpansionChapter.ModelSpotClear(p+Vector3.forward*.68f,world.transform,.9f))continue;
       shrine.position=p;
       TrapArt.Reserve(island,island.InverseTransformPoint(p),1.6f);

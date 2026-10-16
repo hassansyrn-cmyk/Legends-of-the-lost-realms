@@ -21,8 +21,8 @@ namespace LostRealms {
    if(find.Claimed)return;find.Claimed=true;var g=RealmGame.I;
    if(find.Key){Keys++;g.Sound("upgrade");g.Tell(find.Title+" recovered — "+Keys+" / 3 gate keys",4);}
    else {g.Coins+=60;g.Gems+=2;g.Sound("discover");g.Tell("HIDDEN CACHE — +60 Gold, +2 Gems. Finish the chapter to bank them.",4);}
-   Vfx.Play(find.Key?"eric_FX_LightPillar":"ga_vfx_LootDrop_01",find.transform.position+Vector3.up*.7f,Quaternion.identity,.6f);
-   if(find.Visual)find.Visual.SetActive(false);var fcol=find.GetComponent<Collider>();if(fcol)fcol.enabled=false;var label=find.GetComponentInChildren<TextMesh>();if(label)label.text="RECOVERED";
+   Vfx.Play("ga_vfx_LootDrop_01",find.transform.position+Vector3.up*.7f,Quaternion.identity,.85f);
+   find.gameObject.SetActive(false);
   }
   void Update(){
    var g=RealmGame.I;if(!g||!g.Player||g.Screen!=GameScreen.Playing)return;

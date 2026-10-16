@@ -93,8 +93,15 @@ namespace LostRealms {
    foreach(Transform child in g.World.transform)if(child!=g.Player.transform&&!child.GetComponent<Light>()){mainObjects.Add(child.gameObject);mainActive.Add(child.gameObject.activeSelf);}
    for(int room=0;room<5;room++){
     var island=g.World.AdventureIsland(new Vector3(1000+(room%2)*1.2f,0,room*17f),700+room).transform;Islands.Add(island);
-    PlaceCryptModel("CryptRoomDeck",island,Vector3.zero,new Vector3(14,1,14),false);
-    Vector3 arrival=ExpansionChapter.ClearSpot(g.World,island,island.position+Vector3.back*4f);arrivals.Add(arrival+Vector3.up*.05f);
+    var deckObj=PlaceCryptModel("CryptRoomDeck",island,Vector3.zero,new Vector3(14,1,14),true);
+    if(deckObj){
+     var walkCol=deckObj.AddComponent<BoxCollider>();
+     walkCol.name="WalkableDeck";
+     walkCol.center=new Vector3(0,.22f,0);
+     walkCol.size=new Vector3(13.6f,.44f,13.6f);
+    }
+    Physics.SyncTransforms();
+    Vector3 arrival=ExpansionChapter.ClearSpot(g.World,island,island.position+Vector3.back*4f);arrivals.Add(arrival+Vector3.up*.25f);
     exits.Add(Marker(island,ExpansionChapter.ClearSpot(g.World,island,island.position+new Vector3(-3f,0,-3f)),"RETURN TO ROOTBOUND RUINS",new Color(.5f,.8f,1f),false,room));
     var altar=Marker(island,ExpansionChapter.ClearSpot(g.World,island,island.position+Vector3.forward*2.5f),RoomNames[room],new Color(1f,.76f,.28f),false,room);
     var focus=altar.gameObject.AddComponent<DungeonFocus>();focus.Owner=this;focus.Room=room;focus.Order=-1;Foci.Add(focus);
@@ -135,7 +142,7 @@ namespace LostRealms {
   string Instruction()=>Room==0?"Read the oath at the golden memory crystal. Return shrines can leave the dungeon at any time.":Room==1?"Defeat the shield watcher and caster, then restore the memory crystal.":Room==2?"Attune the three cipher crystals in order: Ember, Frost, Gale. Then restore the memory crystal.":Room==3?"Defeat the bruiser and ember archer, then restore the memory crystal.":Room==4?"Defeat the Oathkeeper, then restore his memory crystal to claim the Frost Emblem.":"Crypt restored. Stand at a return shrine to leave.";
   public bool CanRestore(DungeonFocus f){if(!Active||Room>=5||f.Room!=Room||f.Completed)return false;if(f.Order>=0)return Room==2&&f.Order==PuzzleCount&&Game.Player.Power==f.Order;if(Room==2&&PuzzleCount<3)return false;foreach(var e in Foes)if(e&&e.Health>0&&e.GetComponent<DungeonDefender>().Room==Room)return false;return true;}
   public void Restore(DungeonFocus f){if(!CanRestore(f))return;f.Completed=true;if(f.Order>=0){PuzzleCount++;Game.Sound("checkpoint");Game.Tell("Cipher attuned "+PuzzleCount+"/3. "+Instruction(),4f);return;}
-   Room++;if(!Game.Save.cryptCleared){Game.Save.cryptRoom=Room;Game.Persist();}Game.Sound("checkpoint");Vfx.Play("eric_FX_LightPillar",f.transform.position,Quaternion.identity,1.4f);Vfx.Play("ga_vfx_Portal_01",f.transform.position+Vector3.up*.5f,Quaternion.identity,1.2f);
+   Room++;if(!Game.Save.cryptCleared){Game.Save.cryptRoom=Room;Game.Persist();}Game.Sound("checkpoint");Vfx.Play("ga_vfx_Portal_01",f.transform.position+Vector3.up*.5f,Quaternion.identity,1.2f);Vfx.Play("ga_vfx_Portal_01",f.transform.position+Vector3.up*.5f,Quaternion.identity,1.2f);
    if(Room>=5){CompleteDungeon();return;}ActivateRoom();Game.Checkpoint=arrivals[Room];Game.CheckpointActive=true;Game.Tell("Oath memory restored. "+Instruction(),6f);
   }
   void CompleteDungeon(){var g=Game;if(!g.Save.cryptCleared){g.Save.cryptCleared=true;g.Save.cryptRoom=5;g.Save.coins+=150;BuildProgression.Unlock(g,6);if(g.Save.wayfinderQuest==3)g.Save.wayfinderQuest=4;g.Persist();g.Tell("CRYPT RESTORED: Frost Emblem and 150 Gold banked. Return to Lyra if you hold her commission.",7f);}else g.Tell("Crypt restored again. Its first-clear reward has already been claimed.",5f);ActivateRoom();}

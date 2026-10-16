@@ -27,7 +27,19 @@ namespace LostRealms {
    foreach(var c in t.GetComponentsInChildren<Collider>())if(c.enabled&&!c.isTrigger)b.Encapsulate(c.bounds);
    return true;
   }
-  public static bool Near(Bounds b,Vector3 p,float radius){
+  public static bool IsNearTrap(RealmWorld world,Vector3 point,float radius=2.2f){
+    if(!world)return false;
+    foreach(var s in world.GetComponentsInChildren<SpikeTrap>())
+     if((new Vector2(s.transform.position.x-point.x,s.transform.position.z-point.z)).sqrMagnitude<(radius+.3f)*(radius+.3f)&&Mathf.Abs(s.transform.position.y-point.y)<2f)return true;
+    foreach(var b in world.GetComponentsInChildren<FloorBladeTrap>())
+     if((new Vector2(b.transform.position.x-point.x,b.transform.position.z-point.z)).sqrMagnitude<(radius+.3f)*(radius+.3f)&&Mathf.Abs(b.transform.position.y-point.y)<2f)return true;
+    foreach(var p in world.GetComponentsInChildren<BouncePad>())
+     if((new Vector2(p.transform.position.x-point.x,p.transform.position.z-point.z)).sqrMagnitude<(radius+.2f)*(radius+.2f)&&Mathf.Abs(p.transform.position.y-point.y)<2f)return true;
+    foreach(var w in world.GetComponentsInChildren<SawTrap>())
+     if((new Vector2(w.transform.position.x-point.x,w.transform.position.z-point.z)).sqrMagnitude<radius*radius&&Mathf.Abs(w.transform.position.y-point.y)<2f)return true;
+    return false;
+   }
+   public static bool Near(Bounds b,Vector3 p,float radius){
    if(b.max.y<p.y-.7f||b.min.y>p.y+2.5f)return false;
    float x=Mathf.Clamp(p.x,b.min.x,b.max.x),z=Mathf.Clamp(p.z,b.min.z,b.max.z);
    return (new Vector2(x-p.x,z-p.z)).sqrMagnitude<radius*radius;
@@ -38,7 +50,10 @@ namespace LostRealms {
     spaces.Add(checkpoint.transform.position);radii.Add(1.5f);
     spaces.Add(checkpoint.SpawnPoint);radii.Add(.8f);
    }
-   foreach(var pad in world.GetComponentsInChildren<BouncePad>()){spaces.Add(pad.transform.position);radii.Add(1.7f);}
+   foreach(var pad in world.GetComponentsInChildren<BouncePad>()){spaces.Add(pad.transform.position);radii.Add(2.2f);}
+    foreach(var spike in world.GetComponentsInChildren<SpikeTrap>()){spaces.Add(spike.transform.position);radii.Add(2.3f);}
+    foreach(var blade in world.GetComponentsInChildren<FloorBladeTrap>()){spaces.Add(blade.transform.position);radii.Add(2.3f);}
+    foreach(var saw in world.GetComponentsInChildren<SawTrap>()){spaces.Add(saw.transform.position);radii.Add(2.0f);}
    var gate=world.transform.Find("Realm gate");
    var next=stage==6?RouteIsland(world,4):null;
    foreach(var prop in world.GetComponentsInChildren<Transform>()){

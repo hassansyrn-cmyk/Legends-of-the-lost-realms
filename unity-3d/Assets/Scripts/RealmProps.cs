@@ -159,7 +159,7 @@ static void PlaceVillage(Transform island,int realm,float width,float length,Sys
      while(t!=null&&t!=island){
       var n=t.name;
       if(n.StartsWith("Prop ")||n.StartsWith("Breakable")||n.StartsWith("Pushable")||n.StartsWith("Adventure ")||n.StartsWith("Crypt ")||n.StartsWith("Optional trial")||n.StartsWith("Gate key")||n.StartsWith("Hidden supply")||n.StartsWith("Watchkeeper")||n.StartsWith("Checkpoint")||n=="SolidCollider"||n.StartsWith("PuzzleModel"))return false;
-      if(t.GetComponent<Enemy>()||t.GetComponent<RealmHeal>()||t.GetComponent<WeaponDrop>())return false;
+      if(t.GetComponent<Enemy>()||t.GetComponent<RealmHeal>()||t.GetComponent<RealmAether>()||t.GetComponent<WeaponDrop>())return false;
       if(t.GetComponent<SawTrap>()||t.GetComponent<FloorBladeTrap>()||t.GetComponent<SpikeTrap>()||t.GetComponent<PendulumTrap>()||t.GetComponent<FireGeyser>()||t.GetComponent<CrusherPillar>()||t.GetComponent<DartTurret>()||t.GetComponent<RollingBoulder>()||t.GetComponent<WindVent>()||t.GetComponent<FlameBrazier>()||t.GetComponent<FrostTotem>()||t.GetComponent<SerpentStatue>())return false;
       t=t.parent;
      }

@@ -210,6 +210,7 @@ public void Build(int stage,int world){if(stage>=21){BuildAstral(stage);return;}
       Checkpoint(islandObj?islandObj.transform:null,p,width,length);
      }
     if(i>=2&&i%4==0){float hx=(i%2==0?-1:1)*(1.2f+(float)random.NextDouble()*.9f);HealPickup(p+new Vector3(hx,.6f,-1.2f+(float)random.NextDouble()*2.4f));}
+      if(i>=2&&i%4==2){float ax=(i%2==0?1:-1)*(1.2f+(float)random.NextDouble()*.9f);AetherPickup(p+new Vector3(ax,.6f,-1.2f+(float)random.NextDouble()*2.4f));}
     // Temporary user playtest drops; remove this override after weapon approval.
     if(stage<=2&&i==1&&System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-epicPlaytest")>=0)WeaponDrop(p+new Vector3(-1.4f,.18f,-1.2f),stage==1?WeaponId.Duskblade:WeaponId.Soulreaper);
     if(i==weaponIsland)WeaponDrop(p+new Vector3((i%2==0?-2.3f:2.3f),.18f,-1.4f),weaponId);
@@ -867,6 +868,33 @@ void WeaponDrop(Vector3 p,WeaponId id){
     }
     go.AddComponent<RealmHeal>().Origin=p;
    }
+   void AetherPickup(Vector3 p){
+    Physics.SyncTransforms();
+    var hits=Physics.RaycastAll(p+Vector3.up*6f,Vector3.down,12f,~0,QueryTriggerInteraction.Ignore);
+    float bestY=float.NegativeInfinity;
+    for(int i=0;i<hits.Length;i++){if(hits[i].normal.y>=.5f&&!hits[i].transform.name.StartsWith("Prop ")&&hits[i].point.y>bestY)bestY=hits[i].point.y;}
+    if(bestY>float.NegativeInfinity)p=new Vector3(p.x,bestY+.75f,p.z);
+    Transform parent=transform;
+    GameObject island=FindIsland(p);
+    if(island!=null)parent=island.transform;
+    var go=new GameObject("Aether pickup");go.transform.SetParent(parent,false);go.transform.position=p;
+    Color potionPurple=new Color(.72f,.18f,.95f);
+    var palTex=Resources.Load<Texture2D>("Pickups/Gradient Pallete");
+    Material potionMat=null;
+    if(palTex){
+     potionMat=new Material(Shader.Find("Standard")){name="AetherPotion_Mat",color=potionPurple,mainTexture=palTex};
+     potionMat.SetFloat("_Glossiness",.65f);
+     potionMat.SetFloat("_Metallic",.15f);
+     potionMat.EnableKeyword("_EMISSION");
+     potionMat.SetColor("_EmissionColor",potionPurple*.45f);
+    }
+    if(!Art.PickupModel("RedPotion",go.transform,potionPurple,.55f,potionMat)){
+     Art.Shape("PotionBulb",PrimitiveType.Sphere,new Vector3(0,.08f,0),new Vector3(.38f,.38f,.38f),potionPurple,go.transform);
+     Art.Shape("PotionNeck",PrimitiveType.Cylinder,new Vector3(0,.28f,0),new Vector3(.18f,.12f,.18f),new Color(.85f,.35f,1f),go.transform);
+     Art.Shape("PotionCork",PrimitiveType.Cylinder,new Vector3(0,.37f,0),new Vector3(.16f,.06f,.16f),new Color(.55f,.35f,.2f),go.transform);
+    }
+    go.AddComponent<RealmAether>().Origin=p;
+   }
    void Gate(Vector3 p){
     Physics.SyncTransforms();
     var hits=Physics.RaycastAll(p+Vector3.up*6f,Vector3.down,14f,~0,QueryTriggerInteraction.Ignore);
@@ -1028,6 +1056,35 @@ public class RealmPickup:MonoBehaviour {
      int before=g.Player.Health;g.Player.Health=Mathf.Min(g.Player.MaxHealth,before+Amount);
      if(g.Player.Health>before){Vfx.Play("ga_vfx_Heal_01",transform.position,Quaternion.identity,.9f);g.Sound("heal");}
      else{g.Sound("gem");}
+     Destroy(gameObject);
+    }
+   }
+  }
+  public class RealmAether:MonoBehaviour {
+   public Vector3 Origin;public float Amount=40f;
+   Vector3 localOrigin;bool hasLocal;
+   void Start(){
+    var hits=Physics.RaycastAll(Origin+Vector3.up*6f,Vector3.down,12f,~0,QueryTriggerInteraction.Ignore);
+    float bestY=float.NegativeInfinity;
+    for(int i=0;i<hits.Length;i++){if(hits[i].normal.y>=.5f&&hits[i].point.y>bestY)bestY=hits[i].point.y;}
+    if(bestY>float.NegativeInfinity){float minSafe=bestY+.75f;if(Origin.y<minSafe)Origin.y=minSafe;}
+    transform.position=Origin;
+    if(transform.parent!=null&&transform.parent!=RealmGame.I.World.transform){
+     localOrigin=transform.localPosition;hasLocal=true;
+    }
+   }
+   void Update(){
+    var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
+    transform.Rotate(0,28f*Time.deltaTime,0,Space.World);
+    if(hasLocal)transform.localPosition=localOrigin+Vector3.up*Mathf.Sin(RealmGame.I.Elapsed*1.4f)*.09f;
+    else transform.position=Origin+Vector3.up*Mathf.Sin(RealmGame.I.Elapsed*1.4f)*.09f;
+    if(Vector3.Distance(g.Player.transform.position+Vector3.up*.8f,transform.position)<1.15f){
+     float before=g.Player.Energy;g.Player.Energy=Mathf.Min(100f,before+Amount);
+     if(g.Player.Energy>before){
+      Vfx.Play("ga_vfx_Sparks_01",transform.position,Quaternion.identity,.9f);
+      g.Sound("power_charge");
+      DamageTip.Show(g.Player.transform.position+Vector3.up*2f,"+40 AETHER",new Color(.75f,.35f,1f));
+     }else{g.Sound("gem");}
      Destroy(gameObject);
     }
    }

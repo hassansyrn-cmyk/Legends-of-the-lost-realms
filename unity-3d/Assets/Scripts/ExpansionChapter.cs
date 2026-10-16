@@ -53,6 +53,8 @@ namespace LostRealms {
   }
   public static Transform Nearest(RealmWorld world,Vector3 point){Transform best=null;float distance=float.MaxValue;foreach(Transform t in world.transform){if(t.name!="Island")continue;float d=(t.position-point).sqrMagnitude;if(d<distance){distance=d;best=t;}}return best;}
   internal static bool ObjectiveSpotClear(Vector3 point,Transform world,float radius){
+    var rw=world?world.GetComponent<RealmWorld>():null;
+    if(rw&&InteractionClearance.IsNearTrap(rw,point,2.3f))return false;
    if(!RealmTrials.ShrineClear(point,world,radius))return false;
    foreach(var collider in Physics.OverlapCapsule(point+Vector3.up*.25f,point+Vector3.up*1.6f,radius,~0,QueryTriggerInteraction.Ignore)){
     for(var t=collider.transform;t&&t!=world;t=t.parent){
@@ -62,6 +64,8 @@ namespace LostRealms {
    return true;
   }
   internal static bool ModelSpotClear(Vector3 point,Transform world,float radius){
+    var rw=world?world.GetComponent<RealmWorld>():null;
+    if(rw&&InteractionClearance.IsNearTrap(rw,point,2.2f))return false;
    foreach(var collider in Physics.OverlapCapsule(point+Vector3.up*.25f,point+Vector3.up*1.6f,radius,~0,QueryTriggerInteraction.Ignore)){
     for(var t=collider.transform;t&&t!=world;t=t.parent){
      if(ChapterLayout.IsTrap(t)||t.GetComponent<Enemy>()||t.name.StartsWith("Adventure ")||t.name.StartsWith("Crypt ")||t.name.StartsWith("Optional trial")||t.GetComponent<RealmCheckpoint>()||t.GetComponent<BouncePad>()||t.GetComponent<RealmGate>())return false;
@@ -94,7 +98,8 @@ namespace LostRealms {
    for(int pass=0;pass<2&&best==float.MaxValue;pass++){
     for(int x=-7;x<=7;x++)for(int z=-7;z<=7;z++){
      Vector3 p=target+new Vector3(x*.45f,0,z*.45f);
-     if(!ChapterLayout.Supported(island,null,new Bounds(p,new Vector3(.8f,.1f,.8f)),out float y))continue;
+     if(!TrapArt.IsClear(island,island.InverseTransformPoint(p),1.8f))continue;
+      if(!ChapterLayout.Supported(island,null,new Bounds(p,new Vector3(.8f,.1f,.8f)),out float y))continue;
      if(pass==0&&!ChapterLayout.Supported(island,null,new Bounds(p+Vector3.forward*.68f,new Vector3(.8f,.1f,.8f)),out _))continue;
      p.y=y+.03f;
      if(pass==0?!ObjectiveSpotClear(p,world.transform,.95f)||!ModelSpotClear(p+Vector3.forward*.68f,world.transform,.75f):!RealmTrials.ShrineClear(p,world.transform,.9f))continue;
@@ -242,6 +247,10 @@ namespace LostRealms {
     Game.Tell("AMBUSH! Clear the reinforcements, then restore the rally point.",4f);return;
    }
    node.Completed=true;BuildProgression.OnObjective(Game,level,CompletedCount);node.MarkRestored();Game.Sound("checkpoint");
+   if(node.name.Contains("KEY")){
+    Vfx.Play("ga_vfx_LootDrop_01",node.transform.position+Vector3.up*.6f,Quaternion.identity,.85f);
+    node.gameObject.SetActive(false);
+   }
    Game.Tell(node.name.Replace("Adventure ","")+" RESTORED. "+Counter,4f);
    if(Ready){Game.Tell(Objective,5f);if(level==6)Game.Tell("Temple keys recovered. Stand by a return passage to travel between the two clearings.",5f);}
   }
@@ -263,7 +272,10 @@ namespace LostRealms {
    if(onBranch&&(Definition.EliteKind>=0||Near(secretPoint,2f))){BranchVisited=true;if(!RewardClaimed)hint=OptionalElite&&OptionalElite.Health>0?"OPTIONAL: defeat "+OptionalElite.DisplayName+" for "+GoldReward+" Gold and "+GemReward+" Gems.":"Claiming the secret clearing reward.";}
    bool cacheReady=onBranch&&Near(secretPoint,1.65f)&&g.Player.HorizontalSpeed<.5f;secretDwell=cacheReady?secretDwell+Time.deltaTime:0;
    if(onBranch&&!RewardClaimed&&(Definition.EliteKind>=0?(!OptionalElite||OptionalElite.Health<=0):secretDwell>=.85f)){
-    RewardClaimed=true;BuildProgression.OnSecret(g,level);g.Coins+=GoldReward;g.Gems+=GemReward;g.Sound("upgrade");g.Tell(Definition.Secret+" discovered: +"+GoldReward+" Gold, +"+GemReward+" Gems. Finish the chapter to bank rewards.",5f);
+    RewardClaimed=true;BuildProgression.OnSecret(g,level);g.Coins+=GoldReward;g.Gems+=GemReward;g.Sound("upgrade");
+     Vfx.Play("ga_vfx_LootDrop_01",secretPoint.position+Vector3.up*.6f,Quaternion.identity,1.0f);
+     if(secretPoint)secretPoint.gameObject.SetActive(false);
+     g.Tell(Definition.Secret+" discovered: +"+GoldReward+" Gold, +"+GemReward+" Gems. Finish the chapter to bank rewards.",5f);
    }
    if(level==6&&Ready&&g.Elapsed>=shortcutCooldown){
     if(shortcutNeedsExit&&!Near(shortcutStart,1.5f)&&!Near(shortcutEnd,1.5f))shortcutNeedsExit=false;
@@ -279,7 +291,34 @@ namespace LostRealms {
  public sealed class ExpansionNode:MonoBehaviour {
   public ExpansionChapter Owner;public int Order,Element=-1;public bool Completed,WaveStarted;public float DwellTime=.85f;public readonly List<Enemy> Guards=new List<Enemy>();float dwell;
   void Update(){var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||Completed||!g.Player)return;bool ready=Owner.CanActivate(this)&&g.Player.Grounded&&g.Player.HorizontalSpeed<.5f&&ExpansionChapter.NearPointOrModel(g.Player.transform.position,transform,1.65f);dwell=ready?dwell+Time.deltaTime:0;if(dwell>=DwellTime*BuildProgression.ChannelMultiplier(g.Save))Owner.Complete(this);}
-  public void MarkRestored(){foreach(var gem in GetComponentsInChildren<GemVisual>())gem.Accent=new Color(1f,.8f,.3f);foreach(var r in GetComponentsInChildren<Renderer>()){if(r.GetComponent<TextMesh>())continue;var p=new MaterialPropertyBlock();p.SetColor("_Color",new Color(1f,.8f,.3f));r.SetPropertyBlock(p);}}
+  public void MarkRestored(){
+   var greenColor=new Color(0.2f,0.95f,0.35f);
+   foreach(var gem in GetComponentsInChildren<GemVisual>())gem.Accent=greenColor;
+   var greenTex=Resources.Load<Texture2D>("Props/Expansion/Textures/RallyBanner_green");
+   foreach(var r in GetComponentsInChildren<Renderer>()){
+    if(r.GetComponent<TextMesh>())continue;
+    var instMat=r.material;
+    if(r.name.Contains("Banner")||(instMat&&instMat.name.Contains("RallyBanner"))){
+     if(greenTex)instMat.mainTexture=greenTex;
+     instMat.color=Color.white;
+     instMat.SetColor("_Color",Color.white);
+     instMat.SetColor("_EmissionColor",greenColor*.75f);
+     instMat.EnableKeyword("_EMISSION");
+    }else{
+     instMat.color=greenColor;
+     instMat.SetColor("_Color",greenColor);
+     instMat.SetColor("_EmissionColor",greenColor*.6f);
+     instMat.EnableKeyword("_EMISSION");
+    }
+    var p=new MaterialPropertyBlock();
+    r.GetPropertyBlock(p);
+    p.SetColor("_Color",instMat.GetColor("_Color"));
+    p.SetColor("_EmissionColor",instMat.GetColor("_EmissionColor"));
+    r.SetPropertyBlock(p);
+   }
+   var tm=GetComponentInChildren<TextMesh>();
+   if(tm)tm.color=new Color(.4f,1f,.55f);
+  }
  }
  public sealed class ExpansionBillboard:MonoBehaviour {void LateUpdate(){if(Camera.main)transform.rotation=Camera.main.transform.rotation;}}
  public sealed class PuzzleSpinner:MonoBehaviour {

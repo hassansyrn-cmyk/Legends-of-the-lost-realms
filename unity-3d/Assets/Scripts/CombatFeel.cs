@@ -37,7 +37,7 @@ namespace LostRealms {
     int totalBonus=bonusWeapon+bonusSkin;
     if(totalBonus>0){
      g.Player.Energy=Mathf.Min(100,g.Player.Energy+totalBonus);
-     Vfx.Play("eric_FX_LootDrop_Blue",e.transform.position+Vector3.up*.8f,Quaternion.identity,.7f);
+     Vfx.Play("ga_vfx_Sparks_01",e.transform.position+Vector3.up*.8f,Quaternion.identity,.7f);
     }
    }
    if(Codex.Record(g.Save,e.Kind,e.Boss)){
