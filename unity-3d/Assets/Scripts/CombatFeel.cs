@@ -32,7 +32,7 @@ namespace LostRealms {
    var g=RealmGame.I;if(!e||g==null||g.Save==null)return;
    if(g.Player&&BuildProgression.Has(g.Save,5))g.Player.Energy=Mathf.Min(100,g.Player.Energy+6);
    if(g.Player){
-    int bonusWeapon=g.CurrentWeapon!=null?WeaponCatalog.AetherOnKill(g.CurrentWeapon.Id):0;
+    int bonusWeapon=WeaponCatalog.AetherOnKill(g.CurrentWeapon.Id);
     int bonusSkin=SkinCatalog.Get(g.Save.equippedSkin).BonusAetherOnKill;
     int totalBonus=bonusWeapon+bonusSkin;
     if(totalBonus>0){

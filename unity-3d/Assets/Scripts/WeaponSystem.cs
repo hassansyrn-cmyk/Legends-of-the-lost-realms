@@ -136,6 +136,20 @@ public static class WeaponCatalog {
    if(normal){mat.SetTexture("_BumpMap",normal);mat.SetFloat("_BumpScale",1f);mat.EnableKeyword("_NORMALMAP");}
    skins[name]=mat;return mat;
   }
+  public static int AetherOnKill(WeaponId id){
+   switch(id){
+    case WeaponId.Soulreaper:return 20;
+    case WeaponId.VoidReaper:return 18;
+    case WeaponId.Duskblade:return 16;
+    case WeaponId.SwordGreat:return 15;
+    case WeaponId.AstralStaff:return 15;
+    case WeaponId.HovlMagic:return 15;
+    case WeaponId.PureScythe:return 14;
+    case WeaponId.HovlMoon:case WeaponId.HovlMoon2:return 14;
+    case WeaponId.SwordShort:return 12;
+    default:return 0;
+   }
+  }
   static Material bladeMat,gripMat;
   static Material BladeMaterial(){if(!bladeMat){bladeMat=new Material(Shader.Find("Standard"));bladeMat.color=new Color(.78f,.81f,.86f);bladeMat.SetFloat("_Metallic",.35f);bladeMat.SetFloat("_Glossiness",.5f);}return bladeMat;}
   static Material GripMaterial(){if(!gripMat){gripMat=new Material(Shader.Find("Standard"));gripMat.color=new Color(.16f,.12f,.09f);gripMat.SetFloat("_Metallic",.15f);gripMat.SetFloat("_Glossiness",.3f);}return gripMat;}
