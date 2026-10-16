@@ -31,6 +31,15 @@ namespace LostRealms {
   public static void OnEnemyKilled(Enemy e){
    var g=RealmGame.I;if(!e||g==null||g.Save==null)return;
    if(g.Player&&BuildProgression.Has(g.Save,5))g.Player.Energy=Mathf.Min(100,g.Player.Energy+6);
+   if(g.Player){
+    int bonusWeapon=g.CurrentWeapon!=null?WeaponCatalog.AetherOnKill(g.CurrentWeapon.Id):0;
+    int bonusSkin=SkinCatalog.Get(g.Save.equippedSkin).BonusAetherOnKill;
+    int totalBonus=bonusWeapon+bonusSkin;
+    if(totalBonus>0){
+     g.Player.Energy=Mathf.Min(100,g.Player.Energy+totalBonus);
+     Vfx.Play("eric_FX_LootDrop_Blue",e.transform.position+Vector3.up*.8f,Quaternion.identity,.7f);
+    }
+   }
    if(Codex.Record(g.Save,e.Kind,e.Boss)){
     int k=Mathf.Clamp(e.Kind,0,Codex.Kinds-1);
     g.Tell("Bestiary updated: "+Codex.Entries[k].Name,3f);

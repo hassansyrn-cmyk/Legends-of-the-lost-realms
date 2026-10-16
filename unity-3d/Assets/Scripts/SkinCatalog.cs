@@ -28,13 +28,15 @@ namespace LostRealms {
   public readonly float EnergyRegenMult;
   public readonly float BonusParryWindow;
   public readonly bool InnateHyperArmor;
+  public readonly int BonusAetherOnKill;
   public readonly string StatSummary;
   public readonly string Description;
 
   public SkinDefinition(SkinId id, string name, string title, string prefabName, string materialName,
    int costCoins, int costGems, int bonusHealth, float speedMult, float damageMult,
    float finisherDamageMult, float damageTakenMult, int bonusAirDashes, float energyRegenMult,
-   float bonusParryWindow, bool innateHyperArmor, string statSummary, string description) {
+   float bonusParryWindow, bool innateHyperArmor, int bonusAetherOnKill, string statSummary, string description) {
+   BonusAetherOnKill = bonusAetherOnKill;
    Id = id;
    Name = name;
    Title = title;
@@ -74,6 +76,7 @@ namespace LostRealms {
     energyRegenMult: 1.0f,
     bonusParryWindow: 0f,
     innateHyperArmor: false,
+    bonusAetherOnKill: 0,
     "Balanced baseline  •  Versatile movement & steady resilience",
     "Aster's original adventuring garb. Balanced, versatile, and battle-tested across all four realms."
    ),
@@ -93,7 +96,8 @@ namespace LostRealms {
     energyRegenMult: 1.1f,
     bonusParryWindow: 0f,
     innateHyperArmor: false,
-    "+18% Move Speed  •  +1 Air Dash  •  +25% Finisher DMG  •  -1 Max HP",
+    bonusAetherOnKill: 10,
+    "+18% Move Speed  •  +1 Air Dash  •  +25% Finisher DMG  •  +10 Aether on Kill",
     "Shroud yourself in twilight. Lethal agility with unmatched mobility, trading resilience for deadly swiftness."
    ),
    new SkinDefinition(
@@ -112,6 +116,7 @@ namespace LostRealms {
     energyRegenMult: 1.0f,
     bonusParryWindow: 0.12f,
     innateHyperArmor: false,
+    bonusAetherOnKill: 0,
     "+2 Max HP  •  +12% Melee DMG  •  +0.12s Parry Window  •  -5% DMG Taken",
     "Gilded plate of the Sunken Citadel. Inspires resolute combat with enhanced vitality and wider parry reflexes."
    ),
@@ -131,6 +136,7 @@ namespace LostRealms {
     energyRegenMult: 0.95f,
     bonusParryWindow: 0.05f,
     innateHyperArmor: true,
+    bonusAetherOnKill: 0,
     "+4 Max HP  •  -22% DMG Taken  •  Unstoppable Hyper-Armor  •  -10% Speed",
     "Heavy fortified bulwark forged in volcanic steel. Absorbs punishing strikes with unyielding hyper-armor."
    ),
@@ -150,7 +156,8 @@ namespace LostRealms {
     energyRegenMult: 1.25f,
     bonusParryWindow: 0f,
     innateHyperArmor: false,
-    "+22% Melee DMG  •  +35% Finisher DMG  •  +25% Aether Regen  •  +1 HP",
+    bonusAetherOnKill: 15,
+    "+22% Melee DMG  •  +35% Finisher DMG  •  +15 Aether on Kill  •  +1 HP",
     "Fierce northland raider imbued with primal frost fury. Unleashes savage blows and channels rapid aether regen."
    ),
    new SkinDefinition(
@@ -169,7 +176,8 @@ namespace LostRealms {
     energyRegenMult: 1.15f,
     bonusParryWindow: 0.08f,
     innateHyperArmor: false,
-    "+10% Speed  •  +15% Melee DMG  •  +1 Air Dash  •  +15% Aether Regen",
+    bonusAetherOnKill: 12,
+    "+10% Speed  •  +15% Melee DMG  •  +1 Air Dash  •  +12 Aether on Kill",
     "Tempered beneath blistering suns and endless dunes. Fluid bladecraft and whirlwind mobility grant superior traversal and quick recovery."
    )
   };

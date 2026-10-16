@@ -95,7 +95,7 @@ namespace LostRealms {
    if(Active||Completed)return;Active=true;
    foreach(var e in echoes)if(e)e.gameObject.SetActive(true);
    Game.Tell(Title+"  /  "+Objective+". Reward: "+GoldReward+" gold + 2 gems.",5f);
-   Game.Sound("checkpoint");Vfx.Play("ga_vfx_Sparks_01",shrine.position+Vector3.up*.7f,Quaternion.identity,.6f);
+   Game.Sound("checkpoint");Vfx.Play("eric_FX_LightPillar",shrine.position,Quaternion.identity,1.2f);Vfx.Play("ga_vfx_Shockwave_01",shrine.position,Quaternion.identity,1.2f);Vfx.Play("ga_vfx_Sparks_01",shrine.position+Vector3.up*1f,Quaternion.identity,1.2f);
   }
   public void EnemyDefeated(){if(Kind==TrialKind.Hunt)Advance();}
   public void WeaknessHit(){if(Kind==TrialKind.Elements)Advance();}
@@ -107,7 +107,7 @@ namespace LostRealms {
    Completed=true;Active=false;Game.Coins+=GoldReward;Game.Gems+=2;
    Game.Sound("upgrade");Game.Tell(Title+" RESTORED  /  +"+GoldReward+" gold +2 gems. Finish the chapter to bank them.",5f);
    DamageTip.Show(Game.Player.transform.position+Vector3.up*2f,"TRIAL COMPLETE",new Color(1f,.85f,.4f));
-   Vfx.Play("eric_FX_LootDrop_Blue",Game.Player.transform.position,Quaternion.identity,.65f);
+   Vfx.Play("eric_FX_LightPillar",shrine.position,Quaternion.identity,1.8f);Vfx.Play("ga_vfx_LootDrop_01",shrine.position+Vector3.up*1f,Quaternion.identity,1.5f);Vfx.Play("eric_FX_LootDrop_Blue",Game.Player.transform.position,Quaternion.identity,1.2f);
    if(shrineVisual){
     var props=new MaterialPropertyBlock();props.SetColor("_Color",new Color(1f,.85f,.4f));
     foreach(var r in shrineVisual.GetComponentsInChildren<Renderer>())r.SetPropertyBlock(props);

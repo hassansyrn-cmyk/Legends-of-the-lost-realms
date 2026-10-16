@@ -226,7 +226,7 @@ namespace LostRealms {
      }
    }else{stepTimer=.15f;}
    wasGrounded=nowGrounded;
-   Energy=Mathf.Min(100,Energy+dt*(12f+4f*RealmGame.I.Save.aetherRank)*(SkinCatalog.Get(RealmGame.I!=null?RealmGame.I.Save.equippedSkin:0).EnergyRegenMult));
+   // Passive Aether regeneration disabled; Aether is restored via Aether Potions and Kill Perks.
   }
 
   public void Warp(Vector3 p){platformDisplacement=Vector3.zero;Controller.enabled=false;transform.position=p;Controller.enabled=true;vertical=0;velocity=Vector3.zero;jumpBuffer=0;charging=false;plunging=false;dashUntil=0;attackBufferUntil=0;immuneUntil=RealmGame.I.Elapsed+1.2f;parryUntil=0;parryReady=0;counterUntil=0;RealmGame.I.CameraRig.Snap();}
