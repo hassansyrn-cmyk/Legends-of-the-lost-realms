@@ -98,15 +98,21 @@ namespace LostRealms {
    for(int pass=0;pass<2&&best==float.MaxValue;pass++){
     for(int x=-7;x<=7;x++)for(int z=-7;z<=7;z++){
      Vector3 p=target+new Vector3(x*.45f,0,z*.45f);
-     if(!TrapArt.IsClear(island,island.InverseTransformPoint(p),1.8f))continue;
-      if(!ChapterLayout.Supported(island,null,new Bounds(p,new Vector3(.8f,.1f,.8f)),out float y))continue;
+     if(!ChapterLayout.Supported(island,null,new Bounds(p,new Vector3(.8f,.1f,.8f)),out float y))continue;
      if(pass==0&&!ChapterLayout.Supported(island,null,new Bounds(p+Vector3.forward*.68f,new Vector3(.8f,.1f,.8f)),out _))continue;
      p.y=y+.03f;
      if(pass==0?!ObjectiveSpotClear(p,world.transform,.95f)||!ModelSpotClear(p+Vector3.forward*.68f,world.transform,.75f):!RealmTrials.ShrineClear(p,world.transform,.9f))continue;
      float score=(p-target).sqrMagnitude;if(score<best){best=score;result=p;}
     }
    }
-   if(best==float.MaxValue)throw new InvalidOperationException("No supported objective slot in chapter "+RealmGame.I.Level);
+   if(best==float.MaxValue){
+    if(island&&ChapterLayout.Supported(island,null,new Bounds(target,new Vector3(.8f,.1f,.8f)),out float fallbackY))
+     result=new Vector3(target.x,fallbackY+.03f,target.z);
+    else if(island)
+     result=island.position+Vector3.up*.05f;
+    else
+     result=target;
+   }
    TrapArt.Reserve(island,island.InverseTransformPoint(result),1.5f);return result;
   }
   ExpansionNode MakeNode(Transform island,Vector3 point,int order,string name){var t=Decoration(island,point,name,Definition.Elements!=null?RealmGame.ElementColors[Definition.Elements[order]]:new Color(.3f,.7f,1f),order);var n=t.gameObject.AddComponent<ExpansionNode>();n.Owner=this;n.Order=order;return n;}

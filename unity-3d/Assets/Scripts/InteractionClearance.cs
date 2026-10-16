@@ -27,16 +27,17 @@ namespace LostRealms {
    foreach(var c in t.GetComponentsInChildren<Collider>())if(c.enabled&&!c.isTrigger)b.Encapsulate(c.bounds);
    return true;
   }
-  public static bool IsNearTrap(RealmWorld world,Vector3 point,float radius=2.2f){
+  public static bool IsNearTrap(RealmWorld world,Vector3 point,float radius=1.85f){
     if(!world)return false;
+    float rsq=radius*radius;
     foreach(var s in world.GetComponentsInChildren<SpikeTrap>())
-     if((new Vector2(s.transform.position.x-point.x,s.transform.position.z-point.z)).sqrMagnitude<(radius+.3f)*(radius+.3f)&&Mathf.Abs(s.transform.position.y-point.y)<2f)return true;
+     if((new Vector2(s.transform.position.x-point.x,s.transform.position.z-point.z)).sqrMagnitude<rsq&&Mathf.Abs(s.transform.position.y-point.y)<1.8f)return true;
     foreach(var b in world.GetComponentsInChildren<FloorBladeTrap>())
-     if((new Vector2(b.transform.position.x-point.x,b.transform.position.z-point.z)).sqrMagnitude<(radius+.3f)*(radius+.3f)&&Mathf.Abs(b.transform.position.y-point.y)<2f)return true;
+     if((new Vector2(b.transform.position.x-point.x,b.transform.position.z-point.z)).sqrMagnitude<rsq&&Mathf.Abs(b.transform.position.y-point.y)<1.8f)return true;
     foreach(var p in world.GetComponentsInChildren<BouncePad>())
-     if((new Vector2(p.transform.position.x-point.x,p.transform.position.z-point.z)).sqrMagnitude<(radius+.2f)*(radius+.2f)&&Mathf.Abs(p.transform.position.y-point.y)<2f)return true;
+     if((new Vector2(p.transform.position.x-point.x,p.transform.position.z-point.z)).sqrMagnitude<rsq&&Mathf.Abs(p.transform.position.y-point.y)<1.8f)return true;
     foreach(var w in world.GetComponentsInChildren<SawTrap>())
-     if((new Vector2(w.transform.position.x-point.x,w.transform.position.z-point.z)).sqrMagnitude<radius*radius&&Mathf.Abs(w.transform.position.y-point.y)<2f)return true;
+     if((new Vector2(w.transform.position.x-point.x,w.transform.position.z-point.z)).sqrMagnitude<rsq&&Mathf.Abs(w.transform.position.y-point.y)<1.8f)return true;
     return false;
    }
    public static bool Near(Bounds b,Vector3 p,float radius){

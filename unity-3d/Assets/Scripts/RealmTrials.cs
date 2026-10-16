@@ -73,8 +73,7 @@ namespace LostRealms {
       if(!ChapterLayout.Supported(island,shrine,new Bounds(p,new Vector3(1.05f,.1f,1.05f)),out float y))continue;
       if(pass==0&&!ChapterLayout.Supported(island,shrine,new Bounds(p+Vector3.forward*.68f,new Vector3(.95f,.1f,.95f)),out _))continue;
       p.y=y+.04f;
-      if(!TrapArt.IsClear(island,island.InverseTransformPoint(p),1.8f))continue;
-       if(!ShrineClear(p,world.transform,1.6f))continue;
+      if(!ShrineClear(p,world.transform,1.6f))continue;
       if(pass==0&&!ExpansionChapter.ModelSpotClear(p+Vector3.forward*.68f,world.transform,.9f))continue;
       shrine.position=p;
       TrapArt.Reserve(island,island.InverseTransformPoint(p),1.6f);
