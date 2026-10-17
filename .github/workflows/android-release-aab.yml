@@ -30,10 +30,10 @@ jobs:
           echo "Disk space after cleanup:"
           df -h /
 
-      - name: Check out Astra3
+      - name: Check out selected source commit
         uses: actions/checkout@v4
         with:
-          ref: Astra3
+          ref: ${{ github.sha }}
           lfs: true
           fetch-depth: 1
 
@@ -162,6 +162,7 @@ jobs:
           test -s "$AAB"
 
           gh release create "$RELEASE_TAG" \
+            --target "$GITHUB_SHA" \
             --title "Lost Realms 3D Play Store AAB (Build ${{ github.run_number }})" \
             --notes "Signed production Android App Bundle (AAB) for Google Play Store.
 
@@ -190,7 +191,7 @@ jobs:
         uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
-          name: Legends-of-the-Lost-Realms-Unity-Astra3-${{ github.run_id }}
+          name: Legends-of-the-Lost-Realms-Unity-${{ github.ref_name }}-${{ github.run_id }}
           path: ${{ runner.temp }}/LostRealms3D-${{ github.run_id }}.aab
           if-no-files-found: error
           retention-days: 1
