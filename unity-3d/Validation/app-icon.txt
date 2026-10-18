@@ -1,0 +1,4 @@
+Default icon: Assets/Art/AppIcon/AppIcon.png
+Adaptive: 6 slots assigned
+APP_ICON_SUCCESS
+Source PNG matches supplied image byte-for-byte. Exports verified: 48, 72, 96, 144, 192, 512, 1024 pixels square. Android launcher resources match the new 512px export. Unity 6000.6.0f1 configuration run exited 0.
