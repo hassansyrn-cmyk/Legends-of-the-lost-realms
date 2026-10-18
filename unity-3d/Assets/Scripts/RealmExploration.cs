@@ -172,7 +172,7 @@ namespace LostRealms {
    col.center=new Vector3(0,fitSize.y*.5f,0);
    col.size=new Vector3(.65f,fitSize.y,.55f);
    ExpansionChapter.ClearOverlappingProps(island,root.transform.position,root.transform.position,1.4f);
-   var label=new GameObject("Treasure label");label.transform.SetParent(root.transform,false);label.transform.localPosition=Vector3.up*1.85f;var text=label.AddComponent<TextMesh>();text.text=key?find.Title:"SUPPLY CACHE";text.fontSize=40;text.characterSize=.032f;text.font=Resources.Load<Font>("UI/Fonts/Cinzel-Bold");if(text.font)label.GetComponent<Renderer>().sharedMaterial=text.font.material;text.anchor=TextAnchor.MiddleCenter;text.color=new Color(1,.86f,.45f);label.AddComponent<ExpansionBillboard>();
+   var label=new GameObject("Treasure label");label.transform.SetParent(root.transform,false);label.transform.localPosition=Vector3.up*1.85f;var text=label.AddComponent<TextMesh>();LocalizedWorldText.Set(text,key?find.Title:"SUPPLY CACHE");text.fontSize=40;text.characterSize=.032f;text.font=Resources.Load<Font>("UI/Fonts/Cinzel-Bold");if(text.font)label.GetComponent<Renderer>().sharedMaterial=text.font.material;text.anchor=TextAnchor.MiddleCenter;text.color=new Color(1,.86f,.45f);label.AddComponent<ExpansionBillboard>();
   }
   void ExplorationLandmark(Transform island,int i,bool astral,float width){
    Vector3 p=i==11&&IsBoss?new Vector3(-width*.31f,0,width*.25f):new Vector3(-width*.26f,0,-width*.23f);

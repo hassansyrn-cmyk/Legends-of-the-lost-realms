@@ -32,7 +32,7 @@ namespace LostRealms {
    ExpansionChapter.ClearOverlappingProps(island,root.transform.position,trial.shrineVisual?trial.shrineVisual.transform.position:root.transform.position,1.5f);
    var label=new GameObject("Trial shrine label");label.transform.SetParent(root.transform,false);
    label.transform.localPosition=(trial.shrineVisual?trial.shrineVisual.transform.localPosition:Vector3.zero)+Vector3.up*(visualHeight+.35f);
-   var text=label.AddComponent<TextMesh>();text.text=trial.Title;text.fontSize=34;text.characterSize=.034f;text.anchor=TextAnchor.MiddleCenter;text.color=new Color(1f,.9f,.65f);
+   var text=label.AddComponent<TextMesh>();LocalizedWorldText.Set(text,trial.Title);text.fontSize=34;text.characterSize=.034f;text.anchor=TextAnchor.MiddleCenter;text.color=new Color(1f,.9f,.65f);
    var font=Resources.Load<Font>("UI/Fonts/Cinzel-Bold");if(font){text.font=font;text.GetComponent<Renderer>().sharedMaterial=font.material;}
    label.AddComponent<ExpansionBillboard>();
    if(trial.Kind==TrialKind.Echoes){

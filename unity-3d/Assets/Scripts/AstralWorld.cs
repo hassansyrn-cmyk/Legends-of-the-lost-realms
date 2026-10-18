@@ -18,7 +18,7 @@ namespace LostRealms {
    materials[asset]=mat;
    return mat;
   }
-  public static void Label(Transform parent,string value,Vector3 position,Color color){var go=new GameObject(value+" label");go.transform.SetParent(parent,false);go.transform.localPosition=position;go.transform.localRotation=Quaternion.Euler(90,0,0);var text=go.AddComponent<TextMesh>();text.text=value;text.anchor=TextAnchor.MiddleCenter;text.fontSize=48;text.characterSize=.16f;text.color=color;text.font=Resources.Load<Font>("UI/Fonts/Cinzel-Bold");if(text.font)go.GetComponent<Renderer>().sharedMaterial=text.font.material;}
+  public static void Label(Transform parent,string value,Vector3 position,Color color){var go=new GameObject(value+" label");go.transform.SetParent(parent,false);go.transform.localPosition=position;go.transform.localRotation=Quaternion.Euler(90,0,0);var text=go.AddComponent<TextMesh>();LocalizedWorldText.Set(text,value);text.anchor=TextAnchor.MiddleCenter;text.fontSize=48;text.characterSize=.16f;text.color=color;text.font=Resources.Load<Font>("UI/Fonts/Cinzel-Bold");if(text.font)go.GetComponent<Renderer>().sharedMaterial=text.font.material;}
   public static GameObject Place(string asset,Transform parent,Vector3 pos,Vector3 scale,bool solid=false){
    var prefab=Resources.Load<GameObject>("Astral/"+asset);if(!prefab)throw new System.Exception("Missing Astral asset "+asset);
    var root=new GameObject(asset=="Arch"||asset=="Orrery"?"Prop Astral "+asset:asset);root.transform.SetParent(parent,false);root.transform.localPosition=pos;root.transform.localScale=scale;

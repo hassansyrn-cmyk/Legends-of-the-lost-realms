@@ -41,7 +41,7 @@ namespace LostRealms {
     label.fontSize=Mathf.RoundToInt(13*scale);label.normal.textColor=Color.white;
     var text=new Rect(bar.x-25*scale,bar.y-24*scale,bar.width+50*scale,22*scale);
     GUI.color=new Color(.015f,.03f,.05f,.95f);GUI.DrawTexture(new Rect(text.x,text.y,text.width,text.height+height+4*scale),Texture2D.whiteTexture);
-    GUI.color=Color.white;GUI.Label(text,Caption+"  "+RemainingSeconds.ToString("0.0")+"s",label);
+    GUI.color=Color.white;GameLanguage.Label(text,Caption+"  "+RemainingSeconds.ToString("0.0")+"s",label);
     GUI.color=new Color(.9f,.73f,.38f);GUI.DrawTexture(bar,Texture2D.whiteTexture);
     var inner=new Rect(bar.x+2*scale,bar.y+2*scale,bar.width-4*scale,bar.height-4*scale);
     GUI.color=new Color(.06f,.12f,.17f);GUI.DrawTexture(inner,Texture2D.whiteTexture);

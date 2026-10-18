@@ -395,7 +395,7 @@ namespace LostRealms {
     go.transform.localScale=Vector3.one*.06f;
     var tip=go.AddComponent<DamageTip>();tip.color=color;
     tip.mesh=go.AddComponent<TextMesh>();
-    tip.mesh.text=text;tip.mesh.anchor=TextAnchor.MiddleCenter;tip.mesh.alignment=TextAlignment.Center;tip.mesh.fontSize=24;
+    LocalizedWorldText.Set(tip.mesh,text);tip.mesh.anchor=TextAnchor.MiddleCenter;tip.mesh.alignment=TextAlignment.Center;tip.mesh.fontSize=24;
     tip.mesh.font=Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
     tip.mesh.color=color;
     var renderer=go.GetComponent<MeshRenderer>();

@@ -3,7 +3,7 @@ namespace LostRealms {
  public partial class RealmGame {
   bool showBuild;int buildTab,relicPage;
   public void OpenBuild(int tab=0){if(Screen==GameScreen.Playing)Pause();showArsenal=showSkins=showVault=showCodex=showAchievements=false;showBuild=true;buildTab=Mathf.Clamp(tab,0,2);relicPage=0;}
-  void BuildText(Rect rect,string message,int size=16,Color? color=null){var style=new GUIStyle(small){fontSize=size,wordWrap=true,alignment=TextAnchor.UpperLeft};style.normal.textColor=color??new Color(.93f,.9f,.79f);GUI.Label(rect,message,style);}
+  void BuildText(Rect rect,string message,int size=16,Color? color=null){var style=new GUIStyle(small){fontSize=size,wordWrap=true,alignment=TextAnchor.UpperLeft};style.normal.textColor=color??new Color(.93f,.9f,.79f);GameLanguage.Label(rect,message,style);}
   void BuildView(){
    Panel(120,30,1040,660);Text(160,48,960,38,"Mastery, Relics & Wayfinder",titleC);
    Text(160,90,960,20,"Choose a build in Sanctuary  /  "+Save.coins+" Gold",smallC);

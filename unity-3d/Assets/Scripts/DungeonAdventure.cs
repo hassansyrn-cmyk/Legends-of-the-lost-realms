@@ -84,7 +84,7 @@ namespace LostRealms {
    }
    ExpansionChapter.ClearOverlappingProps(parent,point,model?model.transform.position:point,1.45f);
    Vector3 labelOffset=model?model.transform.localPosition:Vector3.zero;
-   var label=new GameObject("Crypt inscription");label.transform.SetParent(go.transform,false);label.transform.localPosition=labelOffset+Vector3.up*(height+.35f);var t=label.AddComponent<TextMesh>();t.text=caption;t.fontSize=36;t.characterSize=.036f;t.anchor=TextAnchor.MiddleCenter;t.color=new Color(1f,.89f,.6f);var font=Resources.Load<Font>("UI/Fonts/Cinzel-Bold");if(font){t.font=font;t.GetComponent<Renderer>().sharedMaterial=font.material;}label.AddComponent<ExpansionBillboard>();
+   var label=new GameObject("Crypt inscription");label.transform.SetParent(go.transform,false);label.transform.localPosition=labelOffset+Vector3.up*(height+.35f);var t=label.AddComponent<TextMesh>();LocalizedWorldText.Set(t,caption);t.fontSize=36;t.characterSize=.036f;t.anchor=TextAnchor.MiddleCenter;t.color=new Color(1f,.89f,.6f);var font=Resources.Load<Font>("UI/Fonts/Cinzel-Bold");if(font){t.font=font;t.GetComponent<Renderer>().sharedMaterial=font.material;}label.AddComponent<ExpansionBillboard>();
    return go.transform;
   }
   void BuildRoute(){

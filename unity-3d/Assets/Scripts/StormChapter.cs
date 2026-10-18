@@ -47,7 +47,7 @@ namespace LostRealms {
    }
    for(int i=0;i<Rounds;i++){
     var t=StormArt.Place("Conductor",transform,new Vector3(i==0?0:4.5f,0,5.8f),Vector3.one*.8f,true).transform;receivers.Add(t);
-    var label=new GameObject("Receiver label");label.transform.SetParent(t,false);label.transform.localPosition=Vector3.up*2;var text=label.AddComponent<TextMesh>();text.text=i==0?"FOCUS I":"FOCUS II";text.characterSize=.09f;text.fontSize=36;text.anchor=TextAnchor.MiddleCenter;text.color=new Color(.55f,.85f,1);label.AddComponent<ExpansionBillboard>();
+    var label=new GameObject("Receiver label");label.transform.SetParent(t,false);label.transform.localPosition=Vector3.up*2;var text=label.AddComponent<TextMesh>();LocalizedWorldText.Set(text,i==0?"FOCUS I":"FOCUS II");text.characterSize=.09f;text.fontSize=36;text.anchor=TextAnchor.MiddleCenter;text.color=new Color(.55f,.85f,1);label.AddComponent<ExpansionBillboard>();
    }
    var source=new GameObject("Incoming current");source.transform.SetParent(transform,false);sourceWire=Line(source);
    RefreshPads();
@@ -65,7 +65,7 @@ namespace LostRealms {
    }
    if(Completed)return;
    if(linked&&!Guarded){powered+=Time.deltaTime;InteractionCountdown.Report(receivers[Round],powered,1.1f,"CHARGING");if(powered>1.1f){
-    receivers[Round].GetComponentInChildren<TextMesh>().text="FOCUS "+(Round+1)+" LIT";
+    LocalizedWorldText.Set(receivers[Round].GetComponentInChildren<TextMesh>(),"FOCUS "+(Round+1)+" LIT");
     if(Round+1<Rounds){Round++;powered=0;RefreshPads();g.Tell("FIRST FOCUS LIT — redirect the current along the new route to FOCUS II",4);g.Sound("storm_ground");}
     else {Completed=true;g.Tell("CIRCUIT "+(Index+1)+" RESTORED  /  "+Owner.Counter,3);g.Sound("storm_ground");}
    }}else powered=0;

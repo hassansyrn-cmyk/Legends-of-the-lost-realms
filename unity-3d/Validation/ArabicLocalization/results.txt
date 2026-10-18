@@ -1,0 +1,70 @@
+PASS English source remains unchanged
+PASS Arabic menu text loads
+PASS Dynamic values and fractions survive template translation
+PASS Decimal countdown translates without changing its value
+PASS Chest currency values translate accurately
+PASS Dynamic inserted equipment name is translated
+PASS Arabic connects letters while retaining number and keyboard runs
+PASS Bundled Arabic font loads through Resources
+PASS Timer template cannot intercept weapon names ending in S
+PASS Concatenated settings labels translate completely
+PASS Composed objective hints translate completely
+PASS Numeric protection retains percentages, signs and balanced parentheses
+PASS Dynamic template round-trip text.ea8819cf5385
+PASS Dynamic template round-trip text.b5eb8d27a864
+PASS Dynamic template round-trip text.5a5652737f0d
+PASS Dynamic template round-trip text.61bb84d06260
+PASS Dynamic template round-trip text.451b46961b82
+PASS Dynamic template round-trip text.eefecbd6e243
+PASS Dynamic template round-trip text.23a862f2bfc4
+PASS Dynamic template round-trip text.5d6ebbedbc30
+PASS Dynamic template round-trip text.f300e77e9c54
+PASS Dynamic template round-trip text.526cd4209fd3
+PASS Dynamic template round-trip text.feff9f63fab8
+PASS Dynamic template round-trip text.3a29b041a726
+PASS Dynamic template round-trip text.b671d0a40888
+PASS Dynamic template round-trip text.6764d8f1b276
+PASS Dynamic template round-trip text.b2779c29318f
+PASS Dynamic template round-trip text.0540c151e251
+PASS Dynamic template round-trip text.2e4b33d07530
+PASS Dynamic template round-trip text.a91e1d6a57d5
+PASS Dynamic template round-trip text.5857f369a808
+PASS Dynamic template round-trip text.fe49bbe6438a
+PASS Dynamic template round-trip text.f69f05b7a724
+PASS Dynamic template round-trip text.463d6ece984b
+PASS Dynamic template round-trip text.95d29e25dd12
+PASS Dynamic template round-trip text.1119407191a4
+PASS Dynamic template round-trip text.77a5116ef02f
+PASS Dynamic template round-trip text.b4db29039789
+PASS Dynamic template round-trip text.31c9fbf80210
+PASS Dynamic template round-trip text.9af5a39477ab
+PASS Dynamic template round-trip text.f3d2de82e0a5
+PASS Dynamic template round-trip text.d04527136ac4
+PASS Dynamic template round-trip text.4dd54600bf57
+PASS Dynamic template round-trip text.7c4b5d8a9afb
+PASS Dynamic template round-trip text.77684414776a
+PASS Dynamic template round-trip text.150be467d2b5
+PASS Dynamic template round-trip text.14e8bc9d8de1
+PASS Dynamic template round-trip text.ca33eb5faf0f
+PASS Dynamic template round-trip text.6975eab9a231
+PASS Dynamic template round-trip text.a13b865a8696
+PASS Dynamic template round-trip text.bb28bc6e3eb4
+PASS Dynamic template round-trip text.de37f5b08889
+PASS Dynamic template round-trip text.5f6a8a5beed5
+PASS Dynamic template round-trip text.5ca777fa0a4f
+PASS Dynamic template round-trip text.c7d71a230337
+PASS Dynamic template round-trip text.0db0055d9970
+PASS Dynamic template round-trip text.df0f4fcefb41
+PASS Dynamic template round-trip text.c3b5b2acc553
+PASS Dynamic template round-trip text.234951514282
+PASS Dynamic template round-trip text.6b4683c06154
+PASS All dynamic UI templates are exercised
+PASS Bundled font covers every shaped Arabic glyph (18276 occurrences); missing=
+PASS Developer Mode still activates
+PASS Developer Mode restoration keeps language preference
+PASS World labels are bound for live language updates
+PASS Existing world labels switch back to English without reloading
+PASS Existing world labels switch back to Arabic without reloading
+PASS Arabic gameplay countdown is live
+PASS QA leaves player's saved language preference untouched
+ARABIC_LOCALIZATION_PASSED

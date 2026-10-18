@@ -241,7 +241,7 @@ namespace LostRealms {
    ClearOverlappingProps(island,point,model?model.transform.position:point,1.45f);
    Vector3 labelOffset=model?model.transform.localPosition:Vector3.zero;
    var label=new GameObject("Objective label");label.transform.SetParent(go.transform,false);label.transform.localPosition=labelOffset+Vector3.up*(height+.35f);
-   var text=label.AddComponent<TextMesh>();text.text=title;text.fontSize=36;text.characterSize=.035f;text.anchor=TextAnchor.MiddleCenter;text.color=new Color(1f,.9f,.65f);
+   var text=label.AddComponent<TextMesh>();LocalizedWorldText.Set(text,title);text.fontSize=36;text.characterSize=.035f;text.anchor=TextAnchor.MiddleCenter;text.color=new Color(1f,.9f,.65f);
    var font=Resources.Load<Font>("UI/Fonts/Cinzel-Bold");if(font){text.font=font;text.GetComponent<Renderer>().sharedMaterial=font.material;}
    label.AddComponent<ExpansionBillboard>();return go.transform;
   }

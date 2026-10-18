@@ -70,9 +70,9 @@ namespace LostRealms {
 
    // Ad header
    GUI.color = new Color(0.75f, 0.85f, 0.95f);
-   GUI.Label(new Rect(panel.x + 20, panel.y + 20, panel.width - 40, 24), "TEST REWARDED ADVERTISEMENT  •  GOOGLE ADMOB / UNITY ADS PREVIEW", labelC);
+   GameLanguage.Label(new Rect(panel.x + 20, panel.y + 20, panel.width - 40, 24), "TEST REWARDED ADVERTISEMENT  •  GOOGLE ADMOB / UNITY ADS PREVIEW", labelC);
    GUI.color = new Color(1f, 0.88f, 0.45f);
-   GUI.Label(new Rect(panel.x + 20, panel.y + 54, panel.width - 40, 40), "Legends of the Lost Realms", titleC);
+   GameLanguage.Label(new Rect(panel.x + 20, panel.y + 54, panel.width - 40, 40), "Legends of the Lost Realms", titleC);
    GUI.color = Color.white;
 
    // Ad card art
@@ -84,11 +84,11 @@ namespace LostRealms {
    GUI.DrawTexture(new Rect(card.x, card.yMax - 2, card.width, 2), pixel);
    GUI.color = Color.white;
 
-   GUI.Label(new Rect(card.x + 20, card.y + 30, card.width - 40, 32), "✦ UNLOCK THE FULL EXPEDITION ✦", titleC);
+   GameLanguage.Label(new Rect(card.x + 20, card.y + 30, card.width - 40, 32), "✦ UNLOCK THE FULL EXPEDITION ✦", titleC);
    GUI.color = new Color(0.85f, 0.92f, 0.98f);
-   GUI.Label(new Rect(card.x + 30, card.y + 80, card.width - 60, 60), "Master 49 unique elemental blades, spears, and axes.\nConquer 15 floating island chapters and vanquish all four realm titans.", labelC);
+   GameLanguage.Label(new Rect(card.x + 30, card.y + 80, card.width - 60, 60), "Master 49 unique elemental blades, spears, and axes.\nConquer 15 floating island chapters and vanquish all four realm titans.", labelC);
    GUI.color = new Color(0.38f, 0.95f, 0.7f);
-   GUI.Label(new Rect(card.x + 30, card.y + 160, card.width - 60, 30), "Thank you for supporting Legends of the Lost Realms!", labelC);
+   GameLanguage.Label(new Rect(card.x + 30, card.y + 160, card.width - 60, 30), "Thank you for supporting Legends of the Lost Realms!", labelC);
    GUI.color = Color.white;
 
    // Progress bar
@@ -104,7 +104,7 @@ namespace LostRealms {
 
    bool ready = TimeRemaining <= 0f;
    string statusText = ready ? "✓ REWARD READY! Tap below to claim your Free Normal Chest." : $"Watching ad... Reward unlocks in {Mathf.CeilToInt(TimeRemaining)}s";
-   GUI.Label(new Rect(panel.x + 50, panel.y + 406, panel.width - 100, 24), statusText, labelC);
+   GameLanguage.Label(new Rect(panel.x + 50, panel.y + 406, panel.width - 100, 24), statusText, labelC);
 
    // Action buttons
    if (ready) {
@@ -112,7 +112,7 @@ namespace LostRealms {
     Rect claimBtn = new Rect(panel.x + 160, panel.y + 460, 400, 56);
     GUI.DrawTexture(claimBtn, pixel);
     GUI.color = new Color(0.02f, 0.05f, 0.08f);
-    GUI.Label(claimBtn, "CLAIM FREE CHEST", btnText);
+    GameLanguage.Label(claimBtn, "CLAIM FREE CHEST", btnText);
     GUI.color = Color.white;
     if (GUI.Button(claimBtn, GUIContent.none, GUIStyle.none)) {
      Claim();
@@ -122,7 +122,7 @@ namespace LostRealms {
     GUI.color = new Color(0.2f, 0.25f, 0.3f, 0.8f);
     GUI.DrawTexture(closeBtn, pixel);
     GUI.color = new Color(0.8f, 0.85f, 0.9f);
-    GUI.Label(closeBtn, "CANCEL (NO REWARD)", labelC);
+    GameLanguage.Label(closeBtn, "CANCEL (NO REWARD)", labelC);
     GUI.color = Color.white;
     if (GUI.Button(closeBtn, GUIContent.none, GUIStyle.none)) {
      Close();

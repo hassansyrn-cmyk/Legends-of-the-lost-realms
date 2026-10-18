@@ -41,7 +41,7 @@ public static readonly string[] Realms={"VERDANT KINGDOM","BURNING DUNES","FROZE
    // Never allow two game instances (two cameras/listeners/OnGUI = dead menus).
    for(int i=1;i<existing.Length;i++)if(existing[i])Destroy(existing[i].gameObject);
   }
-  void Awake(){ I=this;Pacing=gameObject.AddComponent<CampaignPacing>(); Application.targetFrameRate=60; QualitySettings.vSyncCount=1; Time.fixedDeltaTime=1f/60f; UnityEngine.Screen.orientation=ScreenOrientation.LandscapeLeft;
+  void Awake(){ I=this;GameLanguage.Initialize();Pacing=gameObject.AddComponent<CampaignPacing>(); Application.targetFrameRate=60; QualitySettings.vSyncCount=1; Time.fixedDeltaTime=1f/60f; UnityEngine.Screen.orientation=ScreenOrientation.LandscapeLeft;
 try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson<Progress>(PlayerPrefs.GetString("LostRealms3D.v2"))??new Progress();
      else if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v1")){Save=JsonUtility.FromJson<Progress>(PlayerPrefs.GetString("LostRealms3D.v1"))??new Progress();Save.version=2;Persist();}}catch{Save=new Progress();}
     Campaign.Normalize(Save);Save.equippedWeapon=Mathf.Clamp(Save.equippedWeapon,-1,WeaponCatalog.MaxId);
@@ -408,6 +408,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
   }
   void Box(Rect r,Color color){GUI.color=color;GUI.DrawTexture(r,pixel);GUI.color=Color.white;}
   GUIStyle FitText(GUIStyle source,Rect r,string value,bool wrap=false){
+   if(GameLanguage.IsArabic)return source;
    var fitted=new GUIStyle(source){wordWrap=wrap,clipping=TextClipping.Clip,padding=new RectOffset(0,0,0,0)};
    fitted.fontSize=Mathf.Min(source.fontSize,Mathf.Max(12,Mathf.FloorToInt(r.height*.82f)));
    var content=new GUIContent(value);
@@ -417,7 +418,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
   }
   void Text(float x,float y,float w,float h,string value,GUIStyle st=null){
    var rect=new Rect(x,y,w,h);var source=st??label;
-   GUI.Label(rect,value,FitText(source,rect,value,source.wordWrap&&(value.Contains("\n")||h>=source.fontSize*1.6f)));
+   GameLanguage.Label(rect,value,FitText(source,rect,value,source.wordWrap&&(value.Contains("\n")||h>=source.fontSize*1.6f)));
   }
   bool MenuButton(Rect r,string text,Texture2D icon=null,bool primary=false,bool smallBtn=false,GUIStyle st=null){
    bool hover=r.Contains(Event.current.mousePosition);
@@ -428,14 +429,18 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    else BoxOutline(r,new Color(.02f,.05f,.1f,.98f),MenuGold);
    float inset=r.width*.115f;
    float iconSize=Mathf.Min(primary?30f:26f,r.height*.48f);
-   if(icon)GUI.DrawTexture(new Rect(r.x+inset,r.center.y-iconSize*.5f,iconSize,iconSize),icon,ScaleMode.ScaleToFit);
+   if(icon){
+    var iconRect=new Rect(GameLanguage.IsArabic?r.xMax-inset-iconSize:r.x+inset,r.center.y-iconSize*.5f,iconSize,iconSize);
+    if(GameLanguage.IsArabic&&(icon==iconContinue||icon==iconBack||icon==iconResume))GUI.DrawTextureWithTexCoords(iconRect,icon,new Rect(1,0,-1,1));
+    else GUI.DrawTexture(iconRect,icon,ScaleMode.ScaleToFit);
+   }
    float textLeft=inset+(icon?iconSize+9f:0f);
-   Rect textRect=new Rect(r.x+textLeft,r.y+r.height*.22f,r.width-textLeft-inset,r.height*.56f);
-   var style=new GUIStyle(st??(primary?big:smallBtn?smallC:btnText)){alignment=TextAnchor.MiddleCenter,wordWrap=false,font=fantasyButton?fantasyButton:btnText.font,fontStyle=FontStyle.Normal};
+   Rect textRect=new Rect(r.x+(GameLanguage.IsArabic?inset:textLeft),r.y+r.height*.22f,r.width-textLeft-inset,r.height*.56f);
+   var style=new GUIStyle(st??(primary?big:smallBtn?smallC:btnText)){alignment=TextAnchor.MiddleCenter,wordWrap=false,font=st!=null&&st.font==GameLanguage.ArabicFont?st.font:fantasyButton?fantasyButton:btnText.font,fontStyle=FontStyle.Normal};
    style.fontSize=primary?23:smallBtn?16:19;
    if(st==tinyC)style.fontSize=14;
    style.normal.textColor=new Color(1f,.94f,.79f);
-   GUI.Label(textRect,text,FitText(style,textRect,text));
+   GameLanguage.Label(textRect,text,FitText(style,textRect,text));
    GUI.color=previous;
    return GUI.Button(r,GUIContent.none,GUIStyle.none);
   }
@@ -470,7 +475,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    ImageFrame(r,hudPanel,8f);GUI.color=Color.white;
    var style=new GUIStyle(center){font=fantasyButton,fontSize=16,wordWrap=false};
    Rect content=new Rect(r.x+12,r.y+10,r.width-24,r.height-20);
-   GUI.Label(content,caption,FitText(style,content,caption));
+   GameLanguage.Label(content,caption,FitText(style,content,caption));
    return GUI.Button(r,GUIContent.none,GUIStyle.none);
   }
   public void SelectWardrobePreview(int id){
@@ -563,7 +568,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
      Box(new Rect(0,172,1280,116),new Color(.01f,.03f,.05f,alpha*.66f));
      GUI.color=new Color(1f,1f,1f,alpha);
      Text(140,188,1000,40,"✦  GUARDIAN OF THE "+Realms[Realm]+"  ✦",tinyC);
-     GUI.Label(new Rect(90,216,1100,58),introName,titleC);
+     GameLanguage.Label(new Rect(90,216,1100,58),introName,titleC);
      Text(140,276,1000,20,"Break the corruption. Dodge the red warnings.",tinyC);
      GUI.color=Color.white;
     }
@@ -658,6 +663,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    }
 
    if(Screen==GameScreen.Menu){
+    LanguageButton();
     Text(240,48,800,24,"✦  A  3 D  A D V E N T U R E  ✦",tinyC);
     Text(140,74,1000,68,"LEGENDS OF THE LOST REALMS",titleC);
     if(headerOrnament)GUI.DrawTexture(new Rect(440,144,400,26),headerOrnament,ScaleMode.ScaleToFit);
@@ -750,6 +756,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
 
       if(Screen==GameScreen.Settings){
     Panel(200,45,880,630);
+    LanguageButton();
 
     Text(240,56,800,40,"Sanctuary & Blessings",titleC);
     if(headerOrnament)GUI.DrawTexture(new Rect(440,96,400,24),headerOrnament,ScaleMode.ScaleToFit);
@@ -879,7 +886,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
      GUI.DrawTexture(new Rect(842,174,212,318),wardrobePreview.Frame,ScaleMode.ScaleToFit,true);
     else Text(842,264,212,40,wardrobePreview?wardrobePreview.Error:"Loading preview",smallC);
     Text(840,494,216,20,Save.equippedSkin==wardrobePreviewSkin?"EQUIPPED":previewOwned?"OUTFIT PREVIEW":"LOCKED OUTFIT PREVIEW",tinyC);
-    Text(840,524,216,70,previewDef.StatSummary,tinyC);
+    Text(840,524,216,80,previewDef.StatSummary,tinyC);
     // Full outfit details remain available without compressing the list rows.
     Text(210,616,600,48,previewDef.Description,tinyC);
     if(MenuButton(new Rect(826,620,244,44),skinReturn==GameScreen.Paused?"BACK TO PAUSE":"BACK TO SANCTUARY",iconBack,smallBtn:true,st:smallC)){
@@ -1028,15 +1035,15 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
      var actionStyle=new GUIStyle(center){font=fantasyButton,fontSize=primary?23:14,wordWrap=false,alignment=TextAnchor.MiddleCenter};
      actionStyle.normal.textColor=new Color(1f,.94f,.79f);
      Rect nameRect=new Rect(drawRect.x+drawRect.width*.1f,drawRect.y+drawRect.height*.59f,drawRect.width*.8f,drawRect.height*.18f);
-     GUI.Label(nameRect,name,FitText(actionStyle,nameRect,name));
+     GameLanguage.Label(nameRect,name,FitText(actionStyle,nameRect,name));
      if(sub.Length>0){
       // Keep the whole hint above the bottom jewel and within the circle's
       // narrower lower chord, including when the pressed artwork shrinks.
       var hintStyle=new GUIStyle(tinyC){fontSize=primary?11:9,wordWrap=false,alignment=TextAnchor.MiddleCenter,clipping=TextClipping.Clip,padding=new RectOffset(0,0,0,0)};
-      Rect hintRect=new Rect(drawRect.x+drawRect.width*.22f,drawRect.y+drawRect.height*.77f,drawRect.width*.56f,drawRect.height*.11f);
+      Rect hintRect=new Rect(drawRect.x+drawRect.width*.22f,drawRect.y+drawRect.height*(GameLanguage.IsArabic?.75f:.77f),drawRect.width*.56f,drawRect.height*(GameLanguage.IsArabic?.17f:.11f));
       var hintContent=new GUIContent(sub);
       while(hintStyle.fontSize>8&&hintStyle.CalcSize(hintContent).x>hintRect.width)hintStyle.fontSize--;
-      GUI.Label(hintRect,hintContent,hintStyle);
+      GameLanguage.Label(hintRect,hintContent,hintStyle);
      }
      return;
     }
@@ -1049,8 +1056,8 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
      GUI.DrawTexture(new Rect(r.x+r.width*.08f,r.y+r.height*.08f,r.width*.84f,r.height*.84f),circleRing);
     }
     GUI.color=Color.white;
-    GUI.Label(new Rect(r.x,r.y+r.height*(primary?.16f:.26f),r.width,r.height*.38f),name,primary?big:center);
-    if(sub.Length>0)GUI.Label(new Rect(r.x,r.y+r.height*(primary?.58f:.6f),r.width,r.height*.26f),sub,tinyC);
+    GameLanguage.Label(new Rect(r.x,r.y+r.height*(primary?.16f:.26f),r.width,r.height*.38f),name,primary?big:center);
+    if(sub.Length>0)GameLanguage.Label(new Rect(r.x,r.y+r.height*(primary?.58f:.6f),r.width,r.height*.26f),sub,tinyC);
    }
    Texture2D WeaponIcon(WeaponDefinition def){
     if(string.IsNullOrEmpty(def.Resource))return null;

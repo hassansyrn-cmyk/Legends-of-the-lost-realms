@@ -1,0 +1,5 @@
+Noto Sans Arabic UI Regular (static TrueType)
+Source: https://github.com/notofonts/noto-fonts/blob/main/hinted/ttf/NotoSansArabicUI/NotoSansArabicUI-Regular.ttf
+Retrieved: 2026-10-19
+License: SIL Open Font License 1.1 (OFL-NotoSansArabic.txt).
+The UI variant has compact vertical metrics appropriate for game menus. Bundled in Resources for Android; no OS font dependency.
