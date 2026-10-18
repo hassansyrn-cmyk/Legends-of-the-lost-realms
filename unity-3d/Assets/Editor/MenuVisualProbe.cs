@@ -9,10 +9,11 @@ namespace LostRealms {
   const string Key="LostRealms.MenuVisualProbe";
   static double next;static int index=-1,waitFrames;static bool waiting;
   static readonly string[] AllViews={"main","atlas","atlas-locked","sanctuary","pause","arsenal","arsenal-page2","arsenal-empty","wardrobe","wardrobe-locked","bestiary","bestiary-page5","achievements","achievements-page6","vault","probabilities","vault-opening","vault-reward","vault-duplicate","complete","complete-final","defeated"};
-  static string[] Views=>SessionState.GetBool(Key+".wardrobe",false)?new[]{"wardrobe-preview-0","wardrobe-preview-1","wardrobe-preview-2","wardrobe-preview-3","wardrobe-preview-4","wardrobe-preview-5","wardrobe-preview-6","vault-legendary","skin-equipped-6","wardrobe-closed"}:SessionState.GetBool(Key+".hud",false)?new[]{"hud-idle","hud-frost","hud-gale","hud-low-health","hud-long-title","hud-boss"}:SessionState.GetBool(Key+".alignment",false)?new[]{"atlas","atlas-locked","vault"}:SessionState.GetBool(Key+".chests",false)?new[]{"atlas","vault","vault-rare","vault-reward","vault-duplicate","vault-common","vault-settled"}:AllViews;
+  static string[] Views=>SessionState.GetBool(Key+".developer",false)?new[]{"developer-main","developer-password","developer-error","developer-active","developer-wardrobe","developer-restored"}:SessionState.GetBool(Key+".wardrobe",false)?new[]{"wardrobe-preview-0","wardrobe-preview-1","wardrobe-preview-2","wardrobe-preview-3","wardrobe-preview-4","wardrobe-preview-5","wardrobe-preview-6","vault-legendary","skin-equipped-6","wardrobe-closed"}:SessionState.GetBool(Key+".hud",false)?new[]{"hud-idle","hud-frost","hud-gale","hud-low-health","hud-long-title","hud-boss"}:SessionState.GetBool(Key+".alignment",false)?new[]{"atlas","atlas-locked","vault"}:SessionState.GetBool(Key+".chests",false)?new[]{"atlas","vault","vault-rare","vault-reward","vault-duplicate","vault-common","vault-settled"}:AllViews;
   static MenuVisualProbe(){if(SessionState.GetBool(Key,false))EditorApplication.update+=Tick;}
   public static void RunAlignment(){SessionState.SetBool(Key+".alignment",true);Run();}
   public static void RunChests(){SessionState.SetBool(Key+".chests",true);Run();}
+  public static void RunDeveloper(){SessionState.SetBool(Key+".developer",true);Run();}
   public static void RunWardrobe(){SessionState.SetBool(Key+".wardrobe",true);Run();}
   public static void RunHUD(){
    // Exercise the unchanged input routing as well as the generated visuals.
@@ -83,6 +84,8 @@ namespace LostRealms {
    if(++index>=Views.Length){Debug.Log("MENU_VISUAL_REVIEW_CAPTURED "+Views.Length);Finish(0);return;}
    string capturePath="Validation/MenuReview/"+Views[index]+".png";if(File.Exists(capturePath))File.Delete(capturePath);
    foreach(string font in new[]{"CinzelDecorative-Bold","Cinzel-Bold","CrimsonText-Regular"})if(!Resources.Load<Font>("UI/Fonts/"+font)){Debug.LogError("MENU_FONT_MISSING "+font);Finish(4);return;}
+   if(g.DeveloperMode)g.DisableDeveloperMode();
+   Field(g,"showDeveloperPrompt",false);
    g.Save=new Progress{unlocked=15,coins=2345,gems=120,equippedWeapon=12};
    for(int i=0;i<=WeaponCatalog.MaxId;i++)g.Save.weapons.Add(i);
    g.Save.skins=new System.Collections.Generic.List<int>{0,1,2,3,4,5};
@@ -93,7 +96,25 @@ namespace LostRealms {
    Field(g,"vaultState",Enum.Parse(typeof(RealmGame).GetField("vaultState",BindingFlags.NonPublic|BindingFlags.Instance).FieldType,"Browse"));
    g.Screen=GameScreen.Menu;Time.timeScale=0;g.Notice="";
    string v=Views[index];
-   if(v.StartsWith("hud-")){
+   if(v.StartsWith("developer-")){
+    g.Save.weapons=new System.Collections.Generic.List<int>{1};g.Save.skins=new System.Collections.Generic.List<int>{0};g.Save.equippedWeapon=1;
+    if(v=="developer-password"||v=="developer-error"){g.OpenDeveloperPrompt();if(v=="developer-error")g.TryEnableDeveloperMode("0000");}
+    else if(v!="developer-main"){
+     if(!g.TryEnableDeveloperMode("3258")||g.Save.weapons.Count!=WeaponCatalog.MaxId+1||g.Save.skins.Count!=SkinCatalog.Count)throw new Exception("Developer test collection failed");
+     g.Screen=GameScreen.Settings;
+     if(v=="developer-wardrobe"||v=="developer-restored"){
+      g.EquipSkin(SkinId.AetherSovereign);g.EquipWeapon((WeaponId)WeaponCatalog.MaxId);
+      if(v=="developer-wardrobe"){g.Screen=GameScreen.Paused;Field(g,"showSkins",true);g.SelectWardrobePreview(6);}
+      else{
+       g.DisableDeveloperMode();
+       var equipment=g.Player.GetComponentInChildren<EquippedWeapon>();
+       if(g.DeveloperMode||g.Save.equippedSkin!=0||g.Save.equippedWeapon!=1||g.Save.skins.Count!=1||g.Save.weapons.Count!=1||!equipment||(int)equipment.Id!=1)throw new Exception("Developer equipment restoration failed");
+       Debug.Log("DEVELOPER_EQUIPMENT_RESTORE_PASSED");
+      }
+     }
+    }
+   }
+   else if(v.StartsWith("hud-")){
     g.LoadLevel(v=="hud-boss"?4:v=="hud-long-title"?7:1);Time.timeScale=0;
     g.Notice="";Field(g,"noticeUntil",0f);Field(g,"bossIntroUntil",0f);
     g.Coins=123;g.Gems=24;g.Elapsed=125;

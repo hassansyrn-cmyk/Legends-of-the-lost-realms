@@ -1,0 +1,2 @@
+DEVELOPER_MODE_CHECKS_PASSED
+Wrong passwords rejected; correct password accepted; all 48 weapons and 7 skins unlocked; repeated activation/disable safe; separate test progress; exact normal-save restoration.

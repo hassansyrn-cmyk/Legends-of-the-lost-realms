@@ -1,6 +1,6 @@
 # Aether Sovereign premium outfit
 
-Baseline: `origin/astra-downsize`, commit `bde00b4` (the latest fetched release branch on October 18, 2026). Work is isolated on `codex/premium-celestial-skin`; the original dirty `astra-expanded` checkout was preserved.
+Baseline: `origin/astra-downsize`, commit `bde00b4` (the latest fetched release branch on October 18, 2026). Work is isolated on `legendary-skin`; the original dirty `astra-expanded` checkout was preserved.
 
 ## Integration
 

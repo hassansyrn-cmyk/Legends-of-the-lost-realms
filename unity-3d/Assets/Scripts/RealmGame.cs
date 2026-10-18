@@ -64,7 +64,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    try{LoadLevel(1);}catch(System.Exception e){Debug.LogError("STARTUP_LOAD_FAILED "+e);}
    Screen=GameScreen.Menu; Tell("The Heart of Realms is waiting.",4);
   }
-  public void Persist(){if(Testing)return;PlayerPrefs.SetString("LostRealms3D.v2",JsonUtility.ToJson(Save));PlayerPrefs.Save();}
+  public void Persist(){if(Testing||DeveloperMode)return;PlayerPrefs.SetString("LostRealms3D.v2",JsonUtility.ToJson(Save));PlayerPrefs.Save();}
   public string ChapterLoadError {get;private set;}
   int requestedChapter;string chapterLoadStage;
   public void RequestChapter(int id){if(requestedChapter==0)requestedChapter=Mathf.Clamp(id,1,Campaign.Chapters);}
@@ -83,6 +83,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    }
   }
   void LoadLevelCore(int id){
+   EnsureDeveloperUnlocks();
    if(Pacing)Pacing.Close("restarted");
    showBuild=false;showArsenal=false;arsenalPage=0;showCodex=false;showAchievements=false;showVault=false;
    if(Audio)Audio.ClearRunSounds();
@@ -138,7 +139,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
      Tell("Spawned "+tk+" Turret ahead! [T cycles: Stone -> Dragon -> Lion]",3);
     }
    }
-   if(Input.GetKeyDown(KeyCode.Escape)){if(showEnding){showEnding=false;Screen=GameScreen.Map;}else if(RewardedAdManager.IsShowing)RewardedAdManager.Close();else if(showBuild)showBuild=false;else if(showVault)showVault=false;else if(showSkins)showSkins=false;else if(showArsenal)showArsenal=false;else if(showCodex)showCodex=false;else if(showAchievements)showAchievements=false;else if(Screen==GameScreen.Playing)Pause();else if(Screen==GameScreen.Paused)Resume();else Screen=GameScreen.Menu;}
+   if(Input.GetKeyDown(KeyCode.Escape)){if(showDeveloperPrompt)CloseDeveloperPrompt();else if(showEnding){showEnding=false;Screen=GameScreen.Map;}else if(RewardedAdManager.IsShowing)RewardedAdManager.Close();else if(showBuild)showBuild=false;else if(showVault)showVault=false;else if(showSkins)showSkins=false;else if(showArsenal)showArsenal=false;else if(showCodex)showCodex=false;else if(showAchievements)showAchievements=false;else if(Screen==GameScreen.Playing)Pause();else if(Screen==GameScreen.Paused)Resume();else Screen=GameScreen.Menu;}
     if(Screen==GameScreen.Menu||Screen==GameScreen.Map)SetMusic("verdant_theme");
     else if(Screen==GameScreen.Settings)SetMusic("frozen_exploration_theme");
     else if(Screen==GameScreen.Playing){
@@ -485,6 +486,8 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    if(Screen==GameScreen.Playing&&!Player)return;
    Styles();
    GUI.matrix=Matrix4x4.TRS(Vector3.zero,Quaternion.identity,new Vector3(UnityEngine.Screen.width/1280f,UnityEngine.Screen.height/720f,1));
+   if(showDeveloperPrompt){DeveloperModeView();return;}
+   if(DeveloperMode)Text(440,4,400,22,"DEVELOPER MODE / TEST SESSION",tinyC);
    if(showEnding){EndingView();return;}
    if(showBuild&&(Screen==GameScreen.Settings||Screen==GameScreen.Paused)){BuildView();return;}
    if(showSkins&&!showVault&&(Screen==GameScreen.Settings||Screen==GameScreen.Paused)){WardrobeView();return;}
@@ -668,9 +671,10 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     if(MenuButton(new Rect(440,356,400,56),"REALM ATLAS",iconAtlas))Screen=GameScreen.Map;
     if(MenuButton(new Rect(440,424,400,56),"SANCTUARY",iconSanctuary))Screen=GameScreen.Settings;
     if(MenuButton(new Rect(440,492,400,56),"NEW JOURNEY",iconNewJourney)){Save=new Progress();Save.equippedWeapon=-1;Persist();Sound("upgrade");RequestChapter(1);}
-    if(!string.IsNullOrEmpty(ChapterLoadError))Text(280,566,720,54,ChapterLoadError,smallC);
+    DeveloperModeButton(new Rect(440,558,400,48));
+    if(!string.IsNullOrEmpty(ChapterLoadError))Text(280,612,720,48,ChapterLoadError,smallC);
 
-    Text(240,672,800,22,"UNITY 3D EDITION   *   TOUCH + KEYBOARD   *   JOURNEY AUTOSAVES",tinyC);
+    Text(240,672,800,22,DeveloperMode?"TEST SESSION   *   NORMAL JOURNEY SAVE UNCHANGED":"UNITY 3D EDITION   *   TOUCH + KEYBOARD   *   JOURNEY AUTOSAVES",tinyC);
     return;
    }
 
@@ -823,7 +827,8 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
 
     if(MenuButton(new Rect(240,558,380,44),"MASTERY & RELICS",iconArsenal,smallBtn:true,st:smallC))OpenBuild();
     if(MenuButton(new Rect(660,558,380,44),"LYRA / WAYFINDER QUEST",iconAtlas,smallBtn:true,st:smallC))OpenBuild(2);
-    if(MenuButton(new Rect(480,620,320,42),"BACK",iconBack,smallBtn:true,st:smallC))Screen=GameScreen.Menu;
+    DeveloperModeButton(new Rect(240,620,380,44));
+    if(MenuButton(new Rect(660,620,380,44),"BACK",iconBack,smallBtn:true,st:smallC))Screen=GameScreen.Menu;
     return;
    }
 
@@ -973,6 +978,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     if(MenuButton(new Rect(355,506,280,46),"ATLAS",iconAtlas))Screen=GameScreen.Map;
     if(MenuButton(new Rect(645,506,280,46),"RESTART",iconRestart))LoadLevel(Level);
     if(MenuButton(new Rect(355,564,570,46),"MAIN MENU",iconMainMenu)){showSkins=false;showArsenal=false;showCodex=false;showAchievements=false;showVault=false;Audio.Suspend(false);Time.timeScale=1;Screen=GameScreen.Menu;}
+    DeveloperModeButton(new Rect(355,622,570,46));
     if(showArsenal){ArsenalView();return;}
     return;
    }else{
