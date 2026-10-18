@@ -9,7 +9,7 @@ namespace LostRealms {
   const string Key="LostRealms.MenuVisualProbe";
   static double next;static int index=-1,waitFrames;static bool waiting;
   static readonly string[] AllViews={"main","atlas","atlas-locked","sanctuary","pause","arsenal","arsenal-page2","arsenal-empty","wardrobe","wardrobe-locked","bestiary","bestiary-page5","achievements","achievements-page6","vault","probabilities","vault-opening","vault-reward","vault-duplicate","complete","complete-final","defeated"};
-  static string[] Views=>SessionState.GetBool(Key+".wardrobe",false)?new[]{"wardrobe-preview-0","wardrobe-preview-1","wardrobe-preview-2","wardrobe-preview-3","wardrobe-preview-4","wardrobe-preview-5","wardrobe-closed"}:SessionState.GetBool(Key+".hud",false)?new[]{"hud-idle","hud-frost","hud-gale","hud-low-health","hud-long-title","hud-boss"}:SessionState.GetBool(Key+".alignment",false)?new[]{"atlas","atlas-locked","vault"}:SessionState.GetBool(Key+".chests",false)?new[]{"atlas","vault","vault-rare","vault-reward","vault-duplicate","vault-common","vault-settled"}:AllViews;
+  static string[] Views=>SessionState.GetBool(Key+".wardrobe",false)?new[]{"wardrobe-preview-0","wardrobe-preview-1","wardrobe-preview-2","wardrobe-preview-3","wardrobe-preview-4","wardrobe-preview-5","wardrobe-preview-6","vault-legendary","skin-equipped-6","wardrobe-closed"}:SessionState.GetBool(Key+".hud",false)?new[]{"hud-idle","hud-frost","hud-gale","hud-low-health","hud-long-title","hud-boss"}:SessionState.GetBool(Key+".alignment",false)?new[]{"atlas","atlas-locked","vault"}:SessionState.GetBool(Key+".chests",false)?new[]{"atlas","vault","vault-rare","vault-reward","vault-duplicate","vault-common","vault-settled"}:AllViews;
   static MenuVisualProbe(){if(SessionState.GetBool(Key,false))EditorApplication.update+=Tick;}
   public static void RunAlignment(){SessionState.SetBool(Key+".alignment",true);Run();}
   public static void RunChests(){SessionState.SetBool(Key+".chests",true);Run();}
@@ -109,6 +109,12 @@ namespace LostRealms {
    else if(v=="sanctuary")g.Screen=GameScreen.Settings;
    else if(v=="pause")g.Screen=GameScreen.Paused;
    else if(v.StartsWith("arsenal")){g.Screen=GameScreen.Paused;Field(g,"showArsenal",true);Field(g,"arsenalPage",v.EndsWith("2")?1:0);if(v.EndsWith("empty")){g.Save.weapons.Clear();g.Save.equippedWeapon=-1;}}
+   else if(v=="skin-equipped-6"){
+    g.Save.skins.Add((int)SkinId.AetherSovereign);g.EquipSkin(SkinId.AetherSovereign);
+    if(g.Save.equippedSkin!=6||!g.Player.Visual||!g.Player.Visual.animator||!g.Player.Visual.animator.avatar.isValid||g.Player.MaxHealth!=5+g.Save.healthRank+SkinCatalog.Get(SkinId.AetherSovereign).BonusHealth)throw new Exception("Sovereign equip failed");
+    g.Screen=GameScreen.Paused;Field(g,"showSkins",true);g.SelectWardrobePreview(6);
+    Debug.Log("SOVEREIGN_GAMEPLAY_EQUIP_PASSED");
+   }
    else if(v=="wardrobe-closed")g.Screen=GameScreen.Map;
    else if(v.StartsWith("wardrobe")){
     g.Screen=GameScreen.Paused;Field(g,"showSkins",true);
@@ -120,9 +126,9 @@ namespace LostRealms {
    else if(v.StartsWith("vault")||v=="probabilities"){
     g.Screen=GameScreen.Paused;Field(g,"showVault",true);Field(g,"showDropRates",v=="probabilities");
     if(v=="vault-opening"){Field(g,"vaultState",Enum.Parse(typeof(RealmGame).GetField("vaultState",BindingFlags.NonPublic|BindingFlags.Instance).FieldType,"Opening"));Field(g,"vaultAnimTimer",-100f);}
-    if(v=="vault-reward"||v=="vault-duplicate"||v=="vault-rare"||v=="vault-common"||v=="vault-settled"){
+    if(v=="vault-reward"||v=="vault-legendary"||v=="vault-duplicate"||v=="vault-rare"||v=="vault-common"||v=="vault-settled"){
      Field(g,"vaultState",Enum.Parse(typeof(RealmGame).GetField("vaultState",BindingFlags.NonPublic|BindingFlags.Instance).FieldType,"Revealed"));
-     Field(g,"currentChestReward",v=="vault-common"?ChestReward.MakeResources(125,0,RewardRarity.Common):v=="vault-rare"?ChestReward.MakeWeapon((WeaponId)12,false,0,0,RewardRarity.Rare):ChestReward.MakeSkin((SkinId)4,v=="vault-duplicate",450,10));
+     Field(g,"currentChestReward",v=="vault-legendary"?ChestReward.MakeSkin(SkinId.AetherSovereign,false,0,0):v=="vault-common"?ChestReward.MakeResources(125,0,RewardRarity.Common):v=="vault-rare"?ChestReward.MakeWeapon((WeaponId)12,false,0,0,RewardRarity.Rare):ChestReward.MakeSkin((SkinId)4,v=="vault-duplicate",450,10));
      Field(g,"rewardRevealStarted",Time.unscaledTime-(v=="vault-settled"?5f:.35f));
      var reveal=typeof(RealmGame).GetMethod("HasRareItemReveal",BindingFlags.NonPublic|BindingFlags.Instance);
      bool expected=v!="vault-duplicate"&&v!="vault-common";

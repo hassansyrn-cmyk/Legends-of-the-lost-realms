@@ -11,11 +11,11 @@ namespace LostRealms {
     for(int i=weapons.Count-1;i>=0;i--)if(weapons[i]<0||weapons[i]>WeaponCatalog.MaxId||weapons.IndexOf(weapons[i])!=i)weapons.RemoveAt(i);
    }
    public void NormalizeSkins(){
-    equippedSkin=Mathf.Clamp(equippedSkin,0,5);
+    equippedSkin=Mathf.Clamp(equippedSkin,0,SkinCatalog.Count-1);
     if(skins==null)skins=new List<int>();
     if(!skins.Contains(0))skins.Add(0);
     if(!skins.Contains(equippedSkin))skins.Add(equippedSkin);
-    for(int i=skins.Count-1;i>=0;i--)if(skins[i]<0||skins[i]>5||skins.IndexOf(skins[i])!=i)skins.RemoveAt(i);
+    for(int i=skins.Count-1;i>=0;i--)if(skins[i]<0||skins[i]>=SkinCatalog.Count||skins.IndexOf(skins[i])!=i)skins.RemoveAt(i);
    }
    public void NormalizeCodex(){Codex.Normalize(this);}
    public int version=2;public int unlocked=1, equippedWeapon=-1, equippedSkin=0, coins, gems, healthRank, powerRank, arsenalRank, aetherRank, moxieRank, tempoRank, windRank, tipsSeen; public int[] stars=new int[Campaign.Chapters]; public float[] best=new float[Campaign.Chapters]; public bool music=true,sound=true,postFx=true,shake=true,haptics=true,softLock=true; public List<int> weapons=new List<int>(); public List<int> skins=new List<int>{0};
@@ -120,8 +120,8 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     if(vaultAnimTimer>=0.7f){
      vaultState=VaultState.Revealed;
      rewardRevealStarted=Time.unscaledTime;
-     Sound(currentChestReward!=null&&currentChestReward.Rarity==RewardRarity.Epic?"level_clear":"upgrade");
-     if(CameraRig)CameraRig.Shake=currentChestReward!=null&&currentChestReward.Rarity==RewardRarity.Epic?.35f:.15f;
+     Sound(currentChestReward!=null&&currentChestReward.Rarity>=RewardRarity.Epic?"level_clear":"upgrade");
+     if(CameraRig)CameraRig.Shake=currentChestReward!=null&&currentChestReward.Rarity>=RewardRarity.Epic?.35f:.15f;
     }
    }
    if(!I||!Player)return;
@@ -236,6 +236,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    public SkinDefinition CurrentSkin=>SkinCatalog.Get(Save.equippedSkin);
    public bool BuySkin(SkinId id){
     int skinIndex=(int)id;
+    if(skinIndex<0||skinIndex>=SkinCatalog.Count||SkinCatalog.IsLegendary(id))return false;
     var def=SkinCatalog.Get(id);
     if(Save.skins==null)Save.skins=new List<int>{0};
     if(Save.skins.Contains(skinIndex))return false;
@@ -473,6 +474,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
   }
   public void SelectWardrobePreview(int id){
    wardrobePreviewSkin=Mathf.Clamp(id,0,SkinCatalog.Count-1);
+   skinPage=wardrobePreviewSkin/5;
    if(!wardrobePreview)wardrobePreview=gameObject.AddComponent<WardrobePreview>();
    wardrobePreview.Show(SkinCatalog.Get(wardrobePreviewSkin));
   }
@@ -779,7 +781,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
      int cost=3+Save.powerRank*2;
      if(Save.powerRank<3){if(Save.gems>=cost){Save.gems-=cost;Save.powerRank++;Persist();Sound("upgrade");}else Sound("power_fail");}
     }
-    if(MenuButton(new Rect(770,274,270,44),$"WARDROBE ({Save.skins.Count}/{SkinCatalog.Count})",iconWardrobe,smallBtn:true,st:smallC)){showSkins=true;skinPage=0;skinReturn=GameScreen.Settings;Sound("power_select");}
+    if(MenuButton(new Rect(770,274,270,44),$"WARDROBE ({Save.skins.Count}/{SkinCatalog.Count})",iconWardrobe,smallBtn:true,st:smallC)){showSkins=true;skinPage=Save.equippedSkin/5;skinReturn=GameScreen.Settings;Sound("power_select");}
     if(showSkins){WardrobeView();return;}
 
     string aethCost=Save.aetherRank<3?(4+Save.aetherRank*2)+" Gems":"MAXED";
@@ -833,10 +835,13 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     if(dividerLine)GUI.DrawTexture(new Rect(210,95,860,8),dividerLine,ScaleMode.StretchToFill);
     Text(210,105,860,20,$"Available: {Save.coins} Gold  •  {Save.gems} Gems    |    Tap an outfit to preview",smallC);
 
-    for(int i=0;i<SkinCatalog.Count;i++){
+    const int skinsPerPage=5;
+    int skinPages=(SkinCatalog.Count+skinsPerPage-1)/skinsPerPage;
+    skinPage=Mathf.Clamp(skinPage,0,skinPages-1);
+    for(int i=skinPage*skinsPerPage;i<Mathf.Min(SkinCatalog.Count,(skinPage+1)*skinsPerPage);i++){
      var def=SkinCatalog.Get(i);
      bool owned=Save.skins!=null&&Save.skins.Contains(i),eq=Save.equippedSkin==i,selected=wardrobePreviewSkin==i;
-     float ry=128+i*81;
+     float ry=128+(i%skinsPerPage)*81;
      MenuCard(new Rect(210,ry,600,76),selected);
      // Preview selection is independent of equipping or spending currency.
      if(GUI.Button(new Rect(218,ry+4,394,68),GUIContent.none,GUIStyle.none)){
@@ -847,7 +852,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
      var portrait=SkinPortrait(def);
      if(portrait)GUI.DrawTexture(new Rect(slot.x+2,slot.y+2,64,64),portrait,ScaleMode.ScaleToFit,true);
      Text(298,ry+10,310,22,def.Name.ToUpper(),small);
-     Text(298,ry+36,310,28,def.Title,tinyC);
+     Text(298,ry+36,310,28,SkinCatalog.IsLegendary(def.Id)?"LEGENDARY  •  EPIC CHEST 0.5%":def.Title,tinyC);
      if(eq){Text(626,ry+26,164,24,"EQUIPPED",smallC);}
      else if(owned){
       if(MenuButton(new Rect(626,ry+14,164,48),"EQUIP",smallBtn:true,st:smallC)){
@@ -858,6 +863,9 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
      }
     }
 
+    if(skinPage>0&&MenuButton(new Rect(210,544,170,48),"PREVIOUS",iconBack,smallBtn:true,st:smallC))skinPage--;
+    Text(390,554,240,24,$"PAGE {skinPage+1}/{skinPages}",smallC);
+    if(skinPage<skinPages-1&&MenuButton(new Rect(640,544,170,48),"NEXT",iconContinue,smallBtn:true,st:smallC))skinPage++;
     var previewDef=SkinCatalog.Get(wardrobePreviewSkin);
     bool previewOwned=Save.skins!=null&&Save.skins.Contains(wardrobePreviewSkin);
     MenuCard(new Rect(826,128,244,480));
@@ -954,7 +962,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     Text(355,222,570,36,"Your journey is paused. All progress is safe.",smallC);
     if(MenuButton(new Rect(355,262,570,58),"RESUME JOURNEY",iconResume,primary:true))Resume();
     if(MenuButton(new Rect(355,332,280,46),"ARSENAL",iconArsenal)){showArsenal=true;arsenalPage=0;arsenalReturn=GameScreen.Paused;Sound("power_select");}
-    if(MenuButton(new Rect(645,332,280,46),"WARDROBE",iconWardrobe,smallBtn:true,st:smallC)){showSkins=true;skinPage=0;skinReturn=GameScreen.Paused;Sound("power_select");}
+    if(MenuButton(new Rect(645,332,280,46),"WARDROBE",iconWardrobe,smallBtn:true,st:smallC)){showSkins=true;skinPage=Save.equippedSkin/5;skinReturn=GameScreen.Paused;Sound("power_select");}
     if(showSkins){WardrobeView();return;}
     if(MenuButton(new Rect(355,390,570,46),"TREASURE VAULT & CHESTS",iconVault,smallBtn:true,st:smallC)){showVault=true;vaultState=VaultState.Browse;vaultReturn=GameScreen.Paused;Sound("power_select");}
     if(showVault){VaultView();return;}
@@ -1199,7 +1207,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     if(dividerLine)GUI.DrawTexture(new Rect(200,102,880,6),dividerLine,ScaleMode.StretchToFill);
     else Box(new Rect(200,98,880,2),new Color(Accent.r,Accent.g,Accent.b,.35f));
 
-    Text(200,112,880,18,$"Treasury:  {Save.coins} Gold    •    {Save.gems} Gems    |    Weapons: {Save.weapons.Count}/{WeaponCatalog.MaxId+1}    •    Outfits: {Save.skins.Count}/6",smallC);
+    Text(200,112,880,18,$"Treasury:  {Save.coins} Gold    •    {Save.gems} Gems    |    Weapons: {Save.weapons.Count}/{WeaponCatalog.MaxId+1}    •    Outfits: {Save.skins.Count}/{SkinCatalog.Count}",smallC);
 
     if(showDropRates){
      Rect modal=new Rect(320,130,640,460);
@@ -1218,7 +1226,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
      Text(380,366,540,18,"- 15% Stash (500-1000 Gold, 8-15 Gems)",tinyC);
      Text(380,384,540,18,"- 35% Standard Weapons",tinyC);
      Text(380,402,540,18,"- 35% RARE SPECIAL-HOLD WEAPONS",tinyC);
-     Text(380,420,540,18,"- 15% EPIC CHARACTER OUTFITS (5 Unlockable Skins)",tinyC);
+     Text(380,420,540,18,"- OUTFITS: 2.9% EACH (5 EPIC) + 0.5% LEGENDARY",tinyC);
 
      Text(360,452,560,36,"★ DUPLICATE PROTECTION: Already owned weapons & outfits automatically convert into compensatory Gold and Gems so no pull is ever wasted.",tinyC);
 
@@ -1242,10 +1250,10 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
 
     if(vaultState==VaultState.Revealed&&currentChestReward!=null){
      Rect rev=new Rect(340,130,600,460);
-     Color rBorder=currentChestReward.Rarity==RewardRarity.Epic?new Color(.82f,.45f,1f):currentChestReward.Rarity==RewardRarity.Rare?new Color(1f,.85f,.35f):new Color(.38f,.68f,.94f);
+     Color rBorder=currentChestReward.Rarity==RewardRarity.Legendary?new Color(1f,.70f,.20f):currentChestReward.Rarity==RewardRarity.Epic?new Color(.82f,.45f,1f):currentChestReward.Rarity==RewardRarity.Rare?new Color(1f,.85f,.35f):new Color(.38f,.68f,.94f);
      BoxOutline(rev,new Color(.03f,.06f,.10f,.98f),rBorder,2.5f);
 
-     string rarTag=currentChestReward.Rarity==RewardRarity.Epic?"✦ EPIC REWARD ✦":currentChestReward.Rarity==RewardRarity.Rare?"★ RARE REWARD ★":"• COMMON REWARD •";
+     string rarTag=currentChestReward.Rarity==RewardRarity.Legendary?"✦ LEGENDARY OUTFIT ✦":currentChestReward.Rarity==RewardRarity.Epic?"✦ EPIC REWARD ✦":currentChestReward.Rarity==RewardRarity.Rare?"★ RARE REWARD ★":"• COMMON REWARD •";
      GUI.color=rBorder;
      Text(360,146,560,26,rarTag,smallC);
      GUI.color=Color.white;
@@ -1358,7 +1366,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
     DrawVaultChest(c3,chestEpic);
     Text(c3.x+14,c3.y+166,cw-28,20,"• 35% Special-Hold Weapons",tinyC);
     GUI.color=new Color(.88f,.6f,1f);
-    Text(c3.x+14,c3.y+188,cw-28,20,"• 15% EPIC CHARACTER OUTFITS",tinyC);
+    Text(c3.x+14,c3.y+188,cw-28,20,"• OUTFITS: 14.5% Epic / 0.5% Legendary",tinyC);
     GUI.color=Color.white;
     Text(c3.x+14,c3.y+210,cw-28,20,"• 35% Standard Weapons / 15% Stash",tinyC);
 
@@ -1387,7 +1395,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    void DrawRareRewardReveal(Vector2 origin){
     if(!HasRareItemReveal()||!rewardHalo)return;
     float age=Mathf.Max(0f,Time.unscaledTime-rewardRevealStarted);
-    bool epic=currentChestReward.Rarity==RewardRarity.Epic;
+    bool epic=currentChestReward.Rarity>=RewardRarity.Epic;
     float duration=epic?2.8f:2.1f;
     if(age>=duration)return;
     float phase=Mathf.Clamp01(age/duration);

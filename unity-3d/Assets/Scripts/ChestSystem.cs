@@ -12,7 +12,8 @@ namespace LostRealms {
  public enum RewardRarity {
   Common = 0,
   Rare = 1,
-  Epic = 2
+  Epic = 2,
+  Legendary = 3
  }
 
  public enum ChestRewardType {
@@ -61,7 +62,7 @@ namespace LostRealms {
    var def = SkinCatalog.Get((int)skin);
    return new ChestReward {
     Type = ChestRewardType.Skin,
-    Rarity = RewardRarity.Epic,
+    Rarity = SkinCatalog.IsLegendary(skin) ? RewardRarity.Legendary : RewardRarity.Epic,
     Skin = skin,
     IsDuplicate = isDuplicate,
     Gold = isDuplicate ? dupGold : 0,
@@ -104,7 +105,12 @@ namespace LostRealms {
 
   public static readonly WeaponId[] EpicHoldWeapons = { WeaponId.PureScythe, WeaponId.WardenPike, WeaponId.EmberTorch, WeaponId.SageStaff, WeaponId.FantasyGreatsword, WeaponId.FierySword, WeaponId.OrnateCurvedBlade, WeaponId.AstralStaff, WeaponId.GlacierMaul, WeaponId.VoidReaper, WeaponId.FrostHalberd, WeaponId.Duskblade, WeaponId.Soulreaper };
 
-  // Unlockable skins (5 skins, skin 0 Wanderer is starter)
+  // The outfit category remains 15% of Epic Chests. Within it, one of 30
+  // equally likely tickets grants the premium skin: 15% / 30 = 0.5%.
+  // The other 29 tickets split uniformly across the original five: 2.9% each.
+  public const int PremiumSkinTickets = 30;
+  public const float PremiumSkinChancePercent = 0.5f;
+  // Standard unlockable skins; the legendary outfit has its own rarer ticket.
   public static readonly SkinId[] UnlockableSkins = {
    SkinId.ShadowAssassin,
    SkinId.RoyalKnight,
@@ -259,7 +265,9 @@ namespace LostRealms {
      }
     } else {
      // Epic Character Skin
-     var sid = UnlockableSkins[rng.Next(0, UnlockableSkins.Length)];
+     var sid = rng.Next(0, PremiumSkinTickets) == 0
+      ? SkinId.AetherSovereign
+      : UnlockableSkins[rng.Next(0, UnlockableSkins.Length)];
      bool has = save.skins != null && save.skins.Contains((int)sid);
      if (has) {
       int dupGold = 600, dupGems = 8;

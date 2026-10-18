@@ -60,6 +60,7 @@ namespace LostRealms {
 
    AssetDatabase.SaveAssets();
    AssetDatabase.Refresh();
+   SovereignSkinBuilder.Build();
    Debug.Log("SKINS_BUILD_COMPLETED_SUCCESSFULLY");
   }
 

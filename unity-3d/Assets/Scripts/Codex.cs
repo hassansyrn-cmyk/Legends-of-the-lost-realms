@@ -103,7 +103,7 @@ namespace LostRealms {
    new Achievement("weapons_15","Armory","Collect 15 weapons.",15,150,1,s=>s.weapons==null?0:s.weapons.Count),
    new Achievement("weapons_30","Arsenal Master","Collect 30 weapons.",30,300,3,s=>s.weapons==null?0:s.weapons.Count),
    new Achievement("skins_3","Fresh Look","Own 3 outfits.",3,50,0,s=>s.skins==null?0:s.skins.Count),
-   new Achievement("skins_6","Wardrobe Complete","Own every outfit.",6,200,2,s=>s.skins==null?0:s.skins.Count),
+   new Achievement("skins_6","Wardrobe Complete","Own every outfit.",SkinCatalog.Count,200,2,s=>s.skins==null?0:s.skins.Count),
    new Achievement("codex_6","Field Notes","Discover 6 bestiary entries.",6,50,0,Discovered),
    new Achievement("codex_12","Naturalist","Discover 12 bestiary entries.",12,120,1,Discovered),
    new Achievement("codex_22","Complete Bestiary","Discover every bestiary entry.",Kinds,300,3,Discovered),

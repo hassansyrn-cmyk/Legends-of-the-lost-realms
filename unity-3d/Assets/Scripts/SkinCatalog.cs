@@ -8,7 +8,8 @@ namespace LostRealms {
   RoyalKnight = 2,
   ArmoredJuggernaut = 3,
   ValhallaViking = 4,
-  DesertWarrior = 5
+  DesertWarrior = 5,
+  AetherSovereign = 6
  }
 
  public readonly struct SkinDefinition {
@@ -179,8 +180,30 @@ namespace LostRealms {
     bonusAetherOnKill: 12,
     "+10% Speed  •  +15% Melee DMG  •  +1 Air Dash  •  +12 Aether on Kill",
     "Tempered beneath blistering suns and endless dunes. Fluid bladecraft and whirlwind mobility grant superior traversal and quick recovery."
+   ),
+   new SkinDefinition(
+    SkinId.AetherSovereign,
+    "Aether Sovereign",
+    "THE ETERNAL CROWN",
+    "Aster_Sovereign",
+    "Aster_Sovereign",
+    0, 0,
+    bonusHealth: 2,
+    speedMult: 1.0f,
+    damageMult: 1.12f,
+    finisherDamageMult: 1.20f,
+    damageTakenMult: 0.92f,
+    bonusAirDashes: 0,
+    energyRegenMult: 1.1f,
+    bonusParryWindow: 0f,
+    innateHyperArmor: false,
+    bonusAetherOnKill: 10,
+    "+2 HP  •  +12% Melee DMG  •  +20% Finisher DMG  •  -8% DMG Taken",
+    "Legendary armor of the Eternal Crown. A treasure beyond kingdoms, found only in Epic Chests (0.5% chance)."
    )
   };
+
+  public static bool IsLegendary(SkinId id) => id == SkinId.AetherSovereign;
 
   public static SkinDefinition Get(int rawId) {
    if (rawId < 0 || rawId >= Definitions.Length) return Definitions[0];
