@@ -1,13 +1,14 @@
-Valid humanoid, right-hand weapon socket, triangles=24000
+Detailed near LOD=60000 triangles; distance LOD=20000 triangles; texture max=2048 ASTC 4x4 on Android
+Valid humanoid, right-hand weapon socket, triangles=80000
 idle posed bounds=Center: (0.00, 0.89, 0.00), Extents: (0.39, 0.90, 0.25)
-walk posed bounds=Center: (0.00, 0.91, 0.00), Extents: (0.34, 0.91, 0.45)
-walk hand/foot motion=0.9103444
+walk posed bounds=Center: (0.00, 0.91, 0.01), Extents: (0.34, 0.91, 0.45)
+walk hand/foot motion=0.910042
 run posed bounds=Center: (0.03, 0.86, -0.13), Extents: (0.41, 0.81, 0.64)
-run hand/foot motion=1.261222
-attack_1 posed bounds=Center: (-0.04, 0.93, -0.05), Extents: (0.63, 0.92, 0.46)
-attack_1 hand/foot motion=1.134761
+run hand/foot motion=1.260803
+attack_1 posed bounds=Center: (-0.03, 0.93, -0.05), Extents: (0.63, 0.92, 0.46)
+attack_1 hand/foot motion=1.134384
 roll posed bounds=Center: (0.05, 0.95, -0.03), Extents: (0.41, 0.33, 1.06)
 double_jump posed bounds=Center: (0.06, 0.85, 0.16), Extents: (0.42, 0.63, 0.65)
 cast posed bounds=Center: (0.03, 0.92, -0.01), Extents: (0.62, 0.89, 0.61)
-Portrait pixels=49697, magenta=0; all Aster root translation curves remain zero; source FBX excluded from runtime dependencies
+Portrait pixels=49681, magenta=0; all Aster root translation curves remain zero; source FBX excluded from runtime dependencies
 SOVEREIGN_SKIN_VALIDATION_PASSED

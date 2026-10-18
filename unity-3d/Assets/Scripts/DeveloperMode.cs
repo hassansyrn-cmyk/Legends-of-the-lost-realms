@@ -18,6 +18,7 @@ namespace LostRealms {
   void EnsureDeveloperUnlocks(){
    if(!DeveloperMode)return;
    Save.NormalizeWeapons();Save.NormalizeSkins();
+   Save.unlocked=Campaign.Chapters;
    for(int id=0;id<=WeaponCatalog.MaxId;id++)if(!Save.weapons.Contains(id))Save.weapons.Add(id);
    for(int id=0;id<SkinCatalog.Count;id++)if(!Save.skins.Contains(id))Save.skins.Add(id);
   }
@@ -46,13 +47,13 @@ namespace LostRealms {
   }
   void EnterDeveloperDigit(char digit){if(developerCode.Length<4){developerCode+=digit;developerError="";}}
   void SubmitDeveloperCode(){
-   if(TryEnableDeveloperMode(developerCode)){Tell("Developer mode on. All weapons and outfits unlocked for this test session.",5f);Sound("upgrade");}
+   if(TryEnableDeveloperMode(developerCode)){Tell("Developer mode on. All chapters, weapons and outfits unlocked for this test session.",5f);Sound("upgrade");}
    else Sound("power_fail");
   }
   void DeveloperModeView(){
    Box(new Rect(0,0,1280,720),new Color(.01f,.025f,.045f,.98f));Panel(390,50,500,620);
    Text(420,78,440,36,"Developer Mode",titleC);
-   Text(430,126,420,48,"Unlock every weapon and outfit for testing.\nYour normal journey stays saved.",smallC);
+   Text(430,126,420,48,"Unlock every chapter, weapon and outfit for testing.\nYour normal journey stays saved.",smallC);
    BoxOutline(new Rect(440,190,400,44),new Color(.02f,.05f,.09f,1),MenuGold,1f);
    Text(450,198,380,30,developerCode.Length==0?"ENTER 4-DIGIT PASSWORD":new string('*',developerCode.Length),smallC);
    Text(430,236,420,20,developerError,tinyC);

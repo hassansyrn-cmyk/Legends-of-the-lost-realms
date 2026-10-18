@@ -1248,9 +1248,9 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
      float pct=Mathf.Clamp01(vaultAnimTimer/0.7f);
      Rect barBg=new Rect(480,300,320,16);
      Box(barBg,new Color(.08f,.12f,.18f,.9f));
-     Box(new Rect(barBg.x,barBg.y,barBg.width*pct,barBg.height),new Color(1f,.85f,.3f));
+     Box(new Rect(barBg.x,barBg.y,barBg.width*(1f-pct),barBg.height),new Color(1f,.85f,.3f));
      BoxOutline(barBg,Color.clear,Accent,1f);
-     Text(440,336,400,24,"Gathering the realm's treasures...",tinyC);
+     Text(440,336,400,24,$"Time remaining: {Mathf.Max(0f,.7f-vaultAnimTimer):0.0}s",tinyC);
      return;
     }
 

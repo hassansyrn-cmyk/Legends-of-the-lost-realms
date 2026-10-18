@@ -1,0 +1,34 @@
+PASS Developer password accepted
+PASS All 25 test chapters unlocked without changing normal progression
+PASS Normal chapter locks restored
+PASS Countdown decreases from full to empty
+PASS Real ritual interaction displays its timer
+PASS Displayed bar drains as gameplay channel advances
+PASS Pause freezes the timer and hides its bar
+PASS Leaving cancels and hides an incomplete interaction
+PASS Faster channel relic uses its real reduced duration
+PASS Proximity completion applies restored visuals
+PASS Completed interaction hides countdown
+PASS Guarded key collection shows its real countdown after guards clear
+PASS Collected key and its countdown disappear together
+PASS Restoration preserves original texture, colour and shared material
+PASS Only jewel pixels receive the new emission shader
+PASS Restored light is a child and cannot move the objective
+PASS Repeated restoration cannot duplicate effects
+PASS Banner retains its red-to-green texture change
+PASS Banner keeps its original effect without a new cyan light
+PASS Jewel shader renders on Direct3D 11 without compiler errors
+PASS Astral focus activates through its existing controller
+PASS Astral controller retains selective jewel glow while updating its legacy emission property
+PASS Improved skin provides near and distance LODs
+PASS Improved skin uses the full 2048px texture
+PASS No magenta shader failure in astral-focus-restored.png
+PASS No magenta shader failure in banner-restored.png
+PASS No magenta shader failure in beacon-before.png
+PASS No magenta shader failure in beacon-restored.png
+PASS No magenta shader failure in developer-all-chapters.png
+PASS No magenta shader failure in key-countdown.png
+PASS No magenta shader failure in ritual-countdown.png
+PASS No magenta shader failure in sovereign-quality.png
+PASS No magenta shader failure in vault-countdown.png
+INTERACTION_FEEDBACK_PASSED

@@ -21,12 +21,14 @@ namespace LostRealms {
    // Clean checkouts generate these through the existing Phase 1 menu baker.
    if(!Resources.Load<AnimationClip>("Animations/Aster/idle"))AsterPhase1.Prepare();
    var textureImporter=(TextureImporter)AssetImporter.GetAtPath(TexturePath);
-   textureImporter.maxTextureSize=1024;textureImporter.mipmapEnabled=true;
-   textureImporter.textureCompression=TextureImporterCompression.Compressed;textureImporter.SaveAndReimport();
+   textureImporter.maxTextureSize=2048;textureImporter.mipmapEnabled=true;
+   textureImporter.textureCompression=TextureImporterCompression.CompressedHQ;
+   textureImporter.SetPlatformTextureSettings(new TextureImporterPlatformSettings{name="Android",overridden=true,maxTextureSize=2048,format=TextureImporterFormat.ASTC_4x4,compressionQuality=100});
+   textureImporter.SaveAndReimport();
    var importer=(ModelImporter)AssetImporter.GetAtPath(ModelPath);
    importer.materialImportMode=ModelImporterMaterialImportMode.None;
    importer.importCameras=false;importer.importLights=false;importer.importBlendShapes=false;
-   importer.importAnimation=false;importer.isReadable=false;importer.meshCompression=ModelImporterMeshCompression.Low;
+   importer.importAnimation=false;importer.isReadable=false;importer.meshCompression=ModelImporterMeshCompression.Off;
    importer.animationType=ModelImporterAnimationType.Human;
    importer.avatarSetup=ModelImporterAvatarSetup.CreateFromThisModel;
    importer.humanDescription=new HumanDescription{human=Array.Empty<HumanBone>(),skeleton=Array.Empty<SkeletonBone>(),upperArmTwist=.5f,lowerArmTwist=.5f,upperLegTwist=.5f,lowerLegTwist=.5f,armStretch=.05f,legStretch=.05f};
@@ -47,7 +49,7 @@ namespace LostRealms {
     PrefabUtility.UnpackPrefabInstance(model,PrefabUnpackMode.Completely,InteractionMode.AutomatedAction);
     foreach(var r in model.GetComponentsInChildren<Renderer>()){
      r.sharedMaterial=mat;
-     if(r is SkinnedMeshRenderer skin)skin.sharedMesh=BuildMobileMesh(skin.sharedMesh);
+     if(r is SkinnedMeshRenderer skin)skin.sharedMesh=BuildMobileMesh(skin.sharedMesh,60000,"Mobile");
     }
     var animator=model.GetComponentInChildren<Animator>();animator.applyRootMotion=false;
     var avatar=UnityEngine.Object.Instantiate(animator.avatar);avatar.name="Aster_Sovereign_Avatar";
@@ -61,7 +63,15 @@ namespace LostRealms {
     model.transform.position+=new Vector3(-bounds.center.x,-bounds.min.y,-bounds.center.z);
     animator.Rebind();animator.cullingMode=AnimatorCullingMode.CullUpdateTransforms;
     var renderers=root.GetComponentsInChildren<Renderer>();
-    var lod=root.AddComponent<LODGroup>();lod.SetLODs(new[]{new LOD(.025f,renderers)});lod.RecalculateBounds();
+    var distant=new System.Collections.Generic.List<Renderer>();
+    foreach(var high in renderers)if(high is SkinnedMeshRenderer skin){
+     var lowObject=new GameObject("Sovereign distance mesh");lowObject.transform.SetParent(skin.transform.parent,false);
+     lowObject.transform.localPosition=skin.transform.localPosition;lowObject.transform.localRotation=skin.transform.localRotation;lowObject.transform.localScale=skin.transform.localScale;
+     var low=lowObject.AddComponent<SkinnedMeshRenderer>();low.sharedMesh=BuildMobileMesh(skin.sharedMesh,20000,"Distance");
+     low.bones=skin.bones;low.rootBone=skin.rootBone;low.sharedMaterials=skin.sharedMaterials;low.localBounds=skin.localBounds;low.quality=skin.quality;
+     distant.Add(low);
+    }
+    var lod=root.AddComponent<LODGroup>();lod.SetLODs(new[]{new LOD(.12f,renderers),new LOD(.025f,distant.ToArray())});lod.RecalculateBounds();
     if(!PrefabUtility.SaveAsPrefabAsset(root,PrefabPath))throw new Exception("Could not save Sovereign prefab");
    }finally{UnityEngine.Object.DestroyImmediate(root);}
    AssetDatabase.SaveAssets();BakePortrait();Validate();
@@ -69,22 +79,27 @@ namespace LostRealms {
 
   static T SaveGenerated<T>(T value,string path) where T:UnityEngine.Object{
    var existing=AssetDatabase.LoadAssetAtPath<T>(path);
-   if(existing){EditorUtility.CopySerialized(value,existing);UnityEngine.Object.DestroyImmediate(value);EditorUtility.SetDirty(existing);return existing;}
+   if(existing){
+    if(existing is Mesh oldMesh)oldMesh.Clear(false);
+    EditorUtility.CopySerialized(value,existing);
+    if(existing is Mesh updatedMesh)updatedMesh.UploadMeshData(false);
+    UnityEngine.Object.DestroyImmediate(value);EditorUtility.SetDirty(existing);return existing;
+   }
    AssetDatabase.CreateAsset(value,path);return value;
   }
 
-  static Mesh BuildMobileMesh(Mesh source){
+  static Mesh BuildMobileMesh(Mesh source,int targetTriangles,string suffix){
    var input=UnityEngine.Object.Instantiate(source);
    // Normalize coordinates for the simplifier's error tolerance, then restore
    // them so the original bind poses and bone weights remain compatible.
    float unit=Mathf.Max(.00001f,input.bounds.size.y);var vertices=input.vertices;
    for(int i=0;i<vertices.Length;i++)vertices[i]/=unit;input.vertices=vertices;input.RecalculateBounds();
    var simplifier=new UnityMeshSimplifier.MeshSimplifier();simplifier.Initialize(input);
-   simplifier.SimplifyMesh(Mathf.Min(1f,24000f/(source.triangles.Length/3)));
+   simplifier.SimplifyMesh(Mathf.Min(1f,targetTriangles/(float)(source.triangles.Length/3)));
    var mesh=simplifier.ToMesh();vertices=mesh.vertices;
    for(int i=0;i<vertices.Length;i++)vertices[i]*=unit;mesh.vertices=vertices;mesh.RecalculateBounds();
-   mesh.name="Aster_Sovereign_Mobile";UnityEngine.Object.DestroyImmediate(input);
-   return SaveGenerated(mesh,"Assets/Art/Models/Skins/Aster_Sovereign_Mobile.asset");
+   mesh.name="Aster_Sovereign_"+suffix;UnityEngine.Object.DestroyImmediate(input);
+   return SaveGenerated(mesh,"Assets/Art/Models/Skins/Aster_Sovereign_"+suffix+".asset");
   }
 
   public static void Sample(Animator animator,AnimationClip clip,float time){
@@ -145,7 +160,11 @@ namespace LostRealms {
     if(!animator||!animator.avatar.isValid||!animator.avatar.isHuman)throw new Exception("Invalid avatar");
     if(!animator.GetBoneTransform(HumanBodyBones.RightHand))throw new Exception("Weapon hand missing");
     int triangles=model.GetComponentsInChildren<SkinnedMeshRenderer>().Sum(r=>r.sharedMesh.triangles.Length/3);
-    if(triangles>30000)throw new Exception("Mobile mesh exceeds budget: "+triangles);
+    var lods=model.GetComponent<LODGroup>().GetLODs();
+    int nearTriangles=lods[0].renderers.OfType<SkinnedMeshRenderer>().Sum(r=>r.sharedMesh.triangles.Length/3);
+    int farTriangles=lods[1].renderers.OfType<SkinnedMeshRenderer>().Sum(r=>r.sharedMesh.triangles.Length/3);
+    if(nearTriangles>65000||farTriangles>25000)throw new Exception("Skin LOD exceeds mobile budgets");
+    report.AppendLine("Detailed near LOD="+nearTriangles+" triangles; distance LOD="+farTriangles+" triangles; texture max=2048 ASTC 4x4 on Android");
     if(AssetDatabase.GetDependencies(PrefabPath,true).Contains(ModelPath))throw new Exception("Runtime prefab still depends on high-detail source FBX");
     report.AppendLine("Valid humanoid, right-hand weapon socket, triangles="+triangles);
     foreach(string state in new[]{"idle","walk","run","attack_1","roll","double_jump","cast"}){

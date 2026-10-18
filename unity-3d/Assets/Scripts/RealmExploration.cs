@@ -46,7 +46,7 @@ namespace LostRealms {
   public bool Guarded {get {foreach(var e in RealmGame.I.Enemies)if(e&&e.Health>0&&!e.Boss&&Vector3.Distance(e.transform.position,transform.position)<8)return true;return false;}}
   void Update(){var g=RealmGame.I;if(Claimed||!g||g.Screen!=GameScreen.Playing||!g.Player)return;
    bool near=g.Player.Grounded&&Vector3.Distance(g.Player.transform.position,transform.position)<1.7f;
-   dwell=near&&!Guarded?dwell+Time.deltaTime:0;if(dwell>=.65f)Owner.Collect(this);
+   dwell=near&&!Guarded?dwell+Time.deltaTime:0;InteractionCountdown.Report(transform,dwell,.65f,"COLLECTING");if(dwell>=.65f)Owner.Collect(this);
    if(Visual&&Key)Visual.transform.localRotation=Quaternion.Euler(0,g.Elapsed*22,0);
   }
  }

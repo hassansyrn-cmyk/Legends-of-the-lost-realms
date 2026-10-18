@@ -12,11 +12,11 @@ Baseline: `origin/astra-downsize`, commit `bde00b4` (the latest fetched release 
 
 ## Model preparation
 
-The original supplied `Rigged fantasy armor 3d model.fbx` is preserved as the source FBX. Its embedded diffuse image was extracted and resized to 1024px. Blender re-export of this AccuRig rig distorted its bind poses, so the final asset is simplified inside Unity using the original imported bind poses and bone weights.
+The original supplied `Rigged fantasy armor 3d model.fbx` is preserved as the source FBX. Its embedded diffuse image was extracted at its full 2048px resolution, with Android ASTC 4x4 compression. Blender re-export of this AccuRig rig distorted its bind poses, so the final asset is simplified inside Unity using the original imported bind poses and bone weights.
 
 `Lost Realms > Skins > Build Aether Sovereign` builds the reduced mesh, standalone avatar, material, self-contained prefab and transparent 512px portrait. The existing Build All Aster Skins menu also builds this outfit. The mesh simplifier is editor-only, MIT licensed, and pinned in `Assets/Editor/ThirdParty/UnityMeshSimplifier/SOURCE.md`.
 
-The 24,000-triangle runtime mesh replaces the 166,744-triangle source. The runtime prefab has no dependency on the high-detail source FBX. Existing Aster clips are generated only through `AsterPhase1.Prepare`; neither that baker nor Aster movement code was edited.
+The runtime prefab uses a 60,000-triangle near LOD and a 20,000-triangle distance LOD instead of the 166,744-triangle source. Source mesh quantization is disabled to preserve fine geometry. Only one LOD renders at a time. The runtime prefab has no dependency on the high-detail source FBX. Existing Aster clips are generated only through `AsterPhase1.Prepare`; neither that baker nor Aster movement code was edited.
 
 ## Verification
 
@@ -25,7 +25,7 @@ Unity 6000.6.0f1, Direct3D 11:
 - Valid humanoid avatar and right-hand weapon socket.
 - Idle, walk, run, attack, roll, double jump and cast poses checked. Walk, run and attack additionally require measured hand/foot motion to reject static clips.
 - Idle feet within 8cm of ground; all generated Aster RootT curves remain zero.
-- Portrait contains 49,697 visible pixels and zero magenta pixels.
+- Regenerated portrait passes visible-pixel coverage and zero-magenta checks.
 - Exhaustive 15,000 Epic Chest outcome combinations verify 0.5% legendary and 2.9% for each existing outfit, unchanged non-outfit categories, lower-tier exclusions, duplicate refunds, old-save migration and new-skin persistence.
 - All six existing verification shell scripts pass.
 - In-game UI probe passed all seven independently animated outfit previews, including the locked legendary outfit, the Legendary chest reveal, gameplay equipping with the expected health bonus, and preview cleanup on close. Ten 1280x720 screens were captured, with no text-overflow or shader-error reports.

@@ -377,6 +377,7 @@ namespace LostRealms {
    // 2. Activating transition
    else if (State == GateState.Activating) {
     activationTimer += Time.deltaTime;
+    InteractionCountdown.Report(transform,activationTimer,Mathf.Max(.1f,ActivationDuration),"AWAKENING");
     float t = Mathf.Clamp01(activationTimer / Mathf.Max(0.1f, ActivationDuration));
     if (PortalLight) PortalLight.intensity = Mathf.Lerp(BaseLightIntensity * 0.4f, BaseLightIntensity, t);
     if (t >= 1f) {

@@ -91,6 +91,7 @@ namespace LostRealms {
    Vector3 dm=pPos-(shrine.position+Vector3.forward*.72f);
    bool near=(new Vector2(d.x,d.z).sqrMagnitude<1.55f*1.55f||new Vector2(dm.x,dm.z).sqrMagnitude<1.55f*1.55f)&&Mathf.Abs(d.y)<1.2f&&g.Player.Grounded&&g.Player.HorizontalSpeed<.5f;
    dwell=near?dwell+Time.deltaTime:0;
+   InteractionCountdown.Report(shrine,dwell,.85f,"ACTIVATING");
    if(dwell>=.85f)Begin();
   }
   public void Begin(){

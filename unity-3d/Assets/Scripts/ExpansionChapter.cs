@@ -273,10 +273,11 @@ namespace LostRealms {
     bool guarded=node.Guards.Exists(e=>e&&e.Health>0);
     hint=guarded?"Defeat the guards to restore this point.":Definition.Ordered&&node.Order!=CompletedCount?"Restore the marked objectives in order. "+Definition.Instruction:node.Element>=0&&g.Player.Power!=node.Element?"Select "+new[]{"EMBER","FROST","GALE"}[node.Element]+" using the power selector above.":"Stand still beside "+node.name.Replace("Adventure ","")+" to restore it.";break;
    }
-   if(choice&&!Nodes[1].Completed){bool ready=Near(choice,1.65f)&&g.Player.Grounded&&g.Player.HorizontalSpeed<.5f&&CanActivate(Nodes[1]);choiceDwell=ready?choiceDwell+Time.deltaTime:0;if(choiceDwell>=.85f)Complete(Nodes[1]);}
+   if(choice&&!Nodes[1].Completed){bool ready=Near(choice,1.65f)&&g.Player.Grounded&&g.Player.HorizontalSpeed<.5f&&CanActivate(Nodes[1]);choiceDwell=ready?choiceDwell+Time.deltaTime:0;InteractionCountdown.Report(choice,choiceDwell,.85f,"RESTORING");if(choiceDwell>=.85f)Complete(Nodes[1]);}
    bool onBranch=Near(Branch,7f)&&g.Player.Grounded&&RealmProps.TryDeckSurface(Branch,Branch.InverseTransformPoint(g.Player.transform.position).x,Branch.InverseTransformPoint(g.Player.transform.position).z,secretPoint,out float branchLocalY)&&Mathf.Abs(Branch.TransformPoint(new Vector3(0,branchLocalY,0)).y-g.Player.transform.position.y)<.35f;
    if(onBranch&&(Definition.EliteKind>=0||Near(secretPoint,2f))){BranchVisited=true;if(!RewardClaimed)hint=OptionalElite&&OptionalElite.Health>0?"OPTIONAL: defeat "+OptionalElite.DisplayName+" for "+GoldReward+" Gold and "+GemReward+" Gems.":"Claiming the secret clearing reward.";}
    bool cacheReady=onBranch&&Near(secretPoint,1.65f)&&g.Player.HorizontalSpeed<.5f;secretDwell=cacheReady?secretDwell+Time.deltaTime:0;
+   if(!RewardClaimed&&Definition.EliteKind<0)InteractionCountdown.Report(secretPoint,secretDwell,.85f,"COLLECTING");
    if(onBranch&&!RewardClaimed&&(Definition.EliteKind>=0?(!OptionalElite||OptionalElite.Health<=0):secretDwell>=.85f)){
     RewardClaimed=true;BuildProgression.OnSecret(g,level);g.Coins+=GoldReward;g.Gems+=GemReward;g.Sound("upgrade");
      Vfx.Play("ga_vfx_LootDrop_01",secretPoint.position+Vector3.up*.6f,Quaternion.identity,1.0f);
@@ -288,6 +289,7 @@ namespace LostRealms {
     Transform source=shortcutNeedsExit?null:Near(shortcutStart,1.5f)?shortcutStart:Near(shortcutEnd,1.5f)?shortcutEnd:null;
     bool clear=source&&g.Player.Grounded&&g.Player.HorizontalSpeed<.5f&&!g.Enemies.Exists(e=>e&&e.Health>0&&Vector3.Distance(e.transform.position,g.Player.transform.position)<5f);
     shortcutDwell=clear?shortcutDwell+Time.deltaTime:0;
+    InteractionCountdown.Report(source,shortcutDwell,1.2f,"TRAVELLING");
     if(source)hint="Stand still in the return passage to use the shortcut.";
     if(shortcutDwell>=1.2f){var destination=source==shortcutStart?shortcutEnd:shortcutStart;g.Player.Warp(destination.position+Vector3.up*.05f);shortcutCooldown=g.Elapsed+3f;shortcutDwell=0;shortcutNeedsExit=true;g.Sound("respawn");g.Tell("Temple return passage crossed. Step away before using it again.",3f);}
    }
@@ -296,35 +298,9 @@ namespace LostRealms {
  }
  public sealed class ExpansionNode:MonoBehaviour {
   public ExpansionChapter Owner;public int Order,Element=-1;public bool Completed,WaveStarted;public float DwellTime=.85f;public readonly List<Enemy> Guards=new List<Enemy>();float dwell;
-  void Update(){var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||Completed||!g.Player)return;bool ready=Owner.CanActivate(this)&&g.Player.Grounded&&g.Player.HorizontalSpeed<.5f&&ExpansionChapter.NearPointOrModel(g.Player.transform.position,transform,1.65f);dwell=ready?dwell+Time.deltaTime:0;if(dwell>=DwellTime*BuildProgression.ChannelMultiplier(g.Save))Owner.Complete(this);}
-  public void MarkRestored(){
-   var greenColor=new Color(0.2f,0.95f,0.35f);
-   foreach(var gem in GetComponentsInChildren<GemVisual>())gem.Accent=greenColor;
-   var greenTex=Resources.Load<Texture2D>("Props/Expansion/Textures/RallyBanner_green");
-   foreach(var r in GetComponentsInChildren<Renderer>()){
-    if(r.GetComponent<TextMesh>())continue;
-    var instMat=r.material;
-    if(r.name.Contains("Banner")||(instMat&&instMat.name.Contains("RallyBanner"))){
-     if(greenTex)instMat.mainTexture=greenTex;
-     instMat.color=Color.white;
-     instMat.SetColor("_Color",Color.white);
-     instMat.SetColor("_EmissionColor",greenColor*.75f);
-     instMat.EnableKeyword("_EMISSION");
-    }else{
-     instMat.color=greenColor;
-     instMat.SetColor("_Color",greenColor);
-     instMat.SetColor("_EmissionColor",greenColor*.6f);
-     instMat.EnableKeyword("_EMISSION");
-    }
-    var p=new MaterialPropertyBlock();
-    r.GetPropertyBlock(p);
-    p.SetColor("_Color",instMat.GetColor("_Color"));
-    p.SetColor("_EmissionColor",instMat.GetColor("_EmissionColor"));
-    r.SetPropertyBlock(p);
-   }
-   var tm=GetComponentInChildren<TextMesh>();
-   if(tm)tm.color=new Color(.4f,1f,.55f);
-  }
+  void Update(){var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||Completed||!g.Player)return;bool ready=Owner.CanActivate(this)&&g.Player.Grounded&&g.Player.HorizontalSpeed<.5f&&ExpansionChapter.NearPointOrModel(g.Player.transform.position,transform,1.65f);dwell=ready?dwell+Time.deltaTime:0;float duration=DwellTime*BuildProgression.ChannelMultiplier(g.Save);InteractionCountdown.Report(transform,dwell,duration,"RESTORING");if(dwell>=duration)Owner.Complete(this);}
+  public void MarkRestored(){ObjectiveRestoration.Activate(gameObject);}
+
  }
  public sealed class ExpansionBillboard:MonoBehaviour {void LateUpdate(){if(Camera.main)transform.rotation=Camera.main.transform.rotation;}}
  public sealed class PuzzleSpinner:MonoBehaviour {

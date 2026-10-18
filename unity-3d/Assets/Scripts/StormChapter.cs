@@ -14,9 +14,10 @@ namespace LostRealms {
   public bool GroundArena(int index){var g=RealmGame.I;if(index<0||index>=ArenaRods.Count||g.Elapsed<rodCooldown)return false;var boss=g.Enemies.Find(e=>e&&e.Kind==28&&e.Health>0);if(!boss)return false;rodCooldown=g.Elapsed+10f;boss.InterruptStorm();g.Sound("storm_ground");g.Tell("LIGHTNING GROUNDED — the Regent is exposed",2.5f);return true;}
   static readonly string[] Memories={"LYRA: The Warden's fall revealed another fracture, above the cloud sea. These conductors once kept Stormveil safe.","WATCHKEEPER RECORD: The Regent sealed our towers. Each relay feeds the next; amber arms carry no current.","GALEWEAVER RECORD: Listen to the wind. Cross while the warning is green; the rising gust is your cue to wait.","STORMKEEPER RECORD: Grounding a conductor draws the Regent's storm away. Its armour opens while the current drains.","LYRA: Stormveil is free, but a silver fracture still leads into the Astral Reach. Our journey continues."};
   void Update(){var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
-   if(memory&&!MemoryClaimed&&(Chapter!=20||Ready)&&Vector3.Distance(g.Player.transform.position,memory.position)<1.7f){memoryDwell+=Time.deltaTime;if(memoryDwell>.9f){MemoryClaimed=true;g.Coins+=80;g.Gems+=3;g.Tell(Memories[Chapter-16]+"  /  +80 Gold +3 Gems",8f);g.Sound("discover");}}else memoryDwell=0;
+   if(memory&&!MemoryClaimed&&(Chapter!=20||Ready)&&Vector3.Distance(g.Player.transform.position,memory.position)<1.7f){memoryDwell+=Time.deltaTime;InteractionCountdown.Report(memory,memoryDwell,.9f,"READING");if(memoryDwell>.9f){MemoryClaimed=true;g.Coins+=80;g.Gems+=3;g.Tell(Memories[Chapter-16]+"  /  +80 Gold +3 Gems",8f);g.Sound("discover");}}else memoryDwell=0;
    if(Chapter==20){int id=ArenaRods.FindIndex(r=>r&&Vector3.Distance(r.position,g.Player.transform.position)<1.8f);if(id<0){rodMustExit=false;rodDwell=0;nearbyRod=-1;}else if(!rodMustExit){if(id!=nearbyRod){nearbyRod=id;rodDwell=0;}if(g.Elapsed>=hintAt){g.Tell(g.Elapsed<rodCooldown?"CONDUCTOR RECHARGING":"Stand beside this conductor to ground the Regent's lightning",1.4f);hintAt=g.Elapsed+1.2f;}}
-    if(id>=0&&!rodMustExit&&g.Elapsed>=rodCooldown){rodDwell+=Time.deltaTime;if(rodDwell>=1.1f){GroundArena(id);rodMustExit=true;rodDwell=0;}}
+    if(id>=0&&g.Elapsed<rodCooldown)InteractionCountdown.Report(ArenaRods[id],10f-(rodCooldown-g.Elapsed),10f,"RECHARGING");
+    if(id>=0&&!rodMustExit&&g.Elapsed>=rodCooldown){rodDwell+=Time.deltaTime;InteractionCountdown.Report(ArenaRods[id],rodDwell,1.1f,"GROUNDING");if(rodDwell>=1.1f){GroundArena(id);rodMustExit=true;rodDwell=0;}}
    }
   }
  }
@@ -63,7 +64,7 @@ namespace LostRealms {
     arms[i].rotation=Quaternion.LookRotation(direction);wires[i].enabled=incoming;wires[i].SetPosition(0,a);wires[i].SetPosition(1,b);wires[i].startColor=wires[i].endColor=new Color(.45f,.85f,1);
    }
    if(Completed)return;
-   if(linked&&!Guarded){powered+=Time.deltaTime;if(powered>1.1f){
+   if(linked&&!Guarded){powered+=Time.deltaTime;InteractionCountdown.Report(receivers[Round],powered,1.1f,"CHARGING");if(powered>1.1f){
     receivers[Round].GetComponentInChildren<TextMesh>().text="FOCUS "+(Round+1)+" LIT";
     if(Round+1<Rounds){Round++;powered=0;RefreshPads();g.Tell("FIRST FOCUS LIT — redirect the current along the new route to FOCUS II",4);g.Sound("storm_ground");}
     else {Completed=true;g.Tell("CIRCUIT "+(Index+1)+" RESTORED  /  "+Owner.Counter,3);g.Sound("storm_ground");}
@@ -71,7 +72,7 @@ namespace LostRealms {
    int pad=-1;for(int i=0;i<Relays.Count;i++)for(int c=0;c<3;c++)if(Vector3.Distance(g.Player.transform.position,PadPosition(i,c))<.62f)pad=i*3+c;
    if(pad<0){selected=-1;dwell=0;needsExit=false;return;}
    if(g.Elapsed>hintAt){hintAt=g.Elapsed+2;g.Tell(Guarded?"CLEAR THE CONDUCTOR GUARDS":"FOLLOW THE LIGHT — each arrow aims its relay. Feed the next conductor, then the numbered focus.",2);}
-   if(Guarded||needsExit)return;if(pad!=selected){selected=pad;dwell=0;}dwell+=Time.deltaTime;if(dwell>.65f){Turn(pad/3,pad%3);needsExit=true;g.Sound("storm_turn");}
+   if(Guarded||needsExit)return;if(pad!=selected){selected=pad;dwell=0;}dwell+=Time.deltaTime;InteractionCountdown.Report(Relays[pad/3],dwell,.65f,"TURNING");if(dwell>.65f){Turn(pad/3,pad%3);needsExit=true;g.Sound("storm_turn");}
   }
  }
 }
