@@ -1,0 +1,5 @@
+New realm CPU microbenchmark (Editor; target-device FPS not measured)
+Chapter 16: mesh renderers=393, repeated mesh/material instances=319, instancing enabled=0
+Chapter 21: mesh renderers=416, repeated mesh/material instances=347, instancing enabled=0
+Previous renderer/material update: 2000 iterations 23.67ms, managed bytes=0
+Cached material update: 2000 iterations 5.77ms, managed bytes=0

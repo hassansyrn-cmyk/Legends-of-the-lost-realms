@@ -6,7 +6,7 @@ namespace LostRealms {
   public static Material Beam {get{if(!beam)beam=new Material(Shader.Find("Sprites/Default")){name="Stormveil lightning and wind markings"};return beam;}}
   public static Material GetMaterial(string asset){
    if(materials.TryGetValue(asset,out var m)&&m)return m;
-   var mat=new Material(Shader.Find("Standard")){name="Stormveil "+asset};
+   var mat=new Material(Shader.Find("Standard")){enableInstancing=true,name="Stormveil "+asset};
    var tex=Resources.Load<Texture2D>("Stormveil/Textures/"+asset+"_basecolor");
    var norm=Resources.Load<Texture2D>("Stormveil/Textures/"+asset+"_normal");
    mat.mainTexture=tex?tex:Resources.Load<Texture2D>("Stormveil/StormPalette");

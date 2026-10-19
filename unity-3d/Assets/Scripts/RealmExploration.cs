@@ -217,7 +217,7 @@ namespace LostRealms {
    // Scale the identity wrapper along world axes. Imported roots can be rotated 270 degrees.
    root.transform.localScale=new Vector3(size.x/Mathf.Max(.001f,b.size.x),size.y/Mathf.Max(.001f,b.size.y),size.z/Mathf.Max(.001f,b.size.z));
    b=renderers[0].bounds;foreach(var r in renderers)b.Encapsulate(r.bounds);model.transform.position+=root.transform.position-new Vector3(b.center.x,top?b.max.y:b.min.y,b.center.z);
-   string key=texture+tint.ToString();if(!Materials.TryGetValue(key,out var mat)||!mat){mat=new Material(Shader.Find("Standard")){mainTexture=Resources.Load<Texture2D>(texture),color=tint};mat.SetFloat("_Glossiness",.2f);Materials[key]=mat;}
+   string key=texture+tint.ToString();if(!Materials.TryGetValue(key,out var mat)||!mat){mat=new Material(Shader.Find("Standard")){enableInstancing=true,mainTexture=Resources.Load<Texture2D>(texture),color=tint};mat.SetFloat("_Glossiness",.2f);Materials[key]=mat;}
    foreach(var r in renderers)r.sharedMaterial=mat;
    foreach(var c in root.GetComponentsInChildren<Collider>()){c.enabled=false;Object.Destroy(c);}
    if(solid)foreach(var mesh in model.GetComponentsInChildren<MeshFilter>()){var c=mesh.gameObject.AddComponent<MeshCollider>();c.sharedMesh=mesh.sharedMesh;}

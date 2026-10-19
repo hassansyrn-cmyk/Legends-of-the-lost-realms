@@ -6,6 +6,12 @@ PASS Chest currency values translate accurately
 PASS Dynamic inserted equipment name is translated
 PASS Arabic connects letters while retaining number and keyboard runs
 PASS Bundled Arabic font loads through Resources
+PASS Bidi control has only empty atlas padding and zero advance in NotoSansArabicUI-Regular U+202D
+PASS Bidi control has only empty atlas padding and zero advance in NotoSansArabicUI-Regular U+202C
+PASS Bidi control has only empty atlas padding and zero advance in LostRealmsArabicDisplay U+202D
+PASS Bidi control has only empty atlas padding and zero advance in LostRealmsArabicDisplay U+202C
+PASS Attack caption includes armed and unarmed combat
+PASS Charged attack uses the requested Arabic wording
 PASS Timer template cannot intercept weapon names ending in S
 PASS Concatenated settings labels translate completely
 PASS Composed objective hints translate completely
@@ -58,8 +64,9 @@ PASS Dynamic template round-trip text.df0f4fcefb41
 PASS Dynamic template round-trip text.c3b5b2acc553
 PASS Dynamic template round-trip text.234951514282
 PASS Dynamic template round-trip text.6b4683c06154
+PASS Dynamic template round-trip phone.942
 PASS All dynamic UI templates are exercised
-PASS Bundled font covers every shaped Arabic glyph (18276 occurrences); missing=
+PASS Bundled font covers every shaped Arabic glyph (18309 occurrences); missing=
 PASS Developer Mode still activates
 PASS Developer Mode restoration keeps language preference
 PASS World labels are bound for live language updates

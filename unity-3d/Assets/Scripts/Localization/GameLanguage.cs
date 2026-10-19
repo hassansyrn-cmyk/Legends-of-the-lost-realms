@@ -16,10 +16,11 @@ namespace LostRealms {
   static readonly Dictionary<string,Layout> layouts=new Dictionary<string,Layout>();
   static readonly List<Template> templates=new List<Template>();
   sealed class Template {public Regex pattern;public string arabic;}
-  static Regex phrases;static bool initialized,arabic;static Font font;
+  static Regex phrases;static bool initialized,arabic;static Font font,displayFont;
   public static int Version {get;private set;}
   public static bool IsArabic {get{Initialize();return arabic;}}
   public static Font ArabicFont {get{if(!font)font=Resources.Load<Font>("UI/Fonts/NotoSansArabicUI-Regular");return font;}}
+  public static Font ArabicDisplayFont {get{if(!displayFont)displayFont=Resources.Load<Font>("UI/Fonts/LostRealmsArabicDisplay");return displayFont?displayFont:ArabicFont;}}
   public static Entry[] Entries {get;private set;}
   public static readonly Dictionary<string,string> ObservedText=new Dictionary<string,string>();
   public static void Initialize(){
@@ -93,7 +94,7 @@ namespace LostRealms {
    return visual;
   }
   public static GUIStyle Style(GUIStyle original){
-   var result=new GUIStyle(original){font=ArabicFont,fontStyle=FontStyle.Normal,richText=false};
+   var result=new GUIStyle(original){font=original.fontSize>=19?ArabicDisplayFont:ArabicFont,fontStyle=FontStyle.Normal,richText=false};
    switch(result.alignment){
     case TextAnchor.UpperLeft:result.alignment=TextAnchor.UpperRight;break;
     case TextAnchor.MiddleLeft:result.alignment=TextAnchor.MiddleRight;break;
@@ -122,14 +123,15 @@ namespace LostRealms {
    if(!ContainsArabic(logical)){GUI.Label(rect,logical,original);return;}
    var style=Style(original);bool wrap=original.wordWrap&&rect.height>=original.fontSize*1.6f;
    style.wordWrap=false;style.clipping=TextClipping.Clip;
-   string key=logical+"|"+original.fontSize+"|"+rect.width+"|"+rect.height+"|"+wrap+"|"+style.padding.horizontal+"|"+style.padding.vertical;
+   string key=style.font.name+"|"+logical+"|"+original.fontSize+"|"+rect.width+"|"+rect.height+"|"+wrap+"|"+style.padding.horizontal+"|"+style.padding.vertical;
    if(!layouts.TryGetValue(key,out var layout)){
-    style.fontSize=Math.Min(original.fontSize,Mathf.Max(9,Mathf.FloorToInt(rect.height*.7f)));
+    int minimum=Math.Min(8,original.fontSize);
+    style.fontSize=Math.Min(original.fontSize,Mathf.Max(minimum,Mathf.FloorToInt(rect.height*.7f)));
     string visual;
     do{
      visual=wrap?Wrap(logical,style,rect.width):Shape(logical);
      var size=style.CalcSize(new GUIContent(visual));
-     if(size.x<=rect.width+1&&size.y<=rect.height+1||style.fontSize<=9)break;
+     if(size.x<=rect.width+1&&size.y<=rect.height+1||style.fontSize<=minimum)break;
      style.fontSize--;
     }while(true);
     // IMGUI in Unity 6000.6 performs bidi reordering. These lines already have visual order;

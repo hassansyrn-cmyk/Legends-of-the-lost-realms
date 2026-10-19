@@ -643,7 +643,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
      }
      // Action cluster: big attack button, movement row along the bottom,
      // cast/defend actions above it (rects owned by TouchRouter.ActionRect).
-     RoundButton(TouchRouter.ActionRect(2),btnBlade,"BLADE","HOLD TO CHARGE",true,touch.BladeHeld||(Application.isEditor&&Input.GetKey(KeyCode.J)));
+     RoundButton(TouchRouter.ActionRect(2),btnBlade,"ATTACK","HOLD TO CHARGE",true,touch.BladeHeld||(Application.isEditor&&Input.GetKey(KeyCode.J)));
      RoundButton(TouchRouter.ActionRect(3),btnJump,"JUMP","×2",false,touch.Jump||(Application.isEditor&&Input.GetKey(KeyCode.Space)));
      RoundButton(TouchRouter.ActionRect(0),btnDodge,"DODGE","",false,touch.Dodge||(Application.isEditor&&Input.GetKey(KeyCode.LeftShift)));
      RoundButton(TouchRouter.ActionRect(1),btnPower,"POWER","",false,touch.Power||(Application.isEditor&&Input.GetKey(KeyCode.K)));
@@ -664,14 +664,18 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
 
    if(Screen==GameScreen.Menu){
     LanguageButton();
-    Text(240,48,800,24,"✦  A  3 D  A D V E N T U R E  ✦",tinyC);
+    Text(240,48,800,24,"A 3D ADVENTURE",tinyC);
     Text(140,74,1000,68,"LEGENDS OF THE LOST REALMS",titleC);
     if(headerOrnament)GUI.DrawTexture(new Rect(440,144,400,26),headerOrnament,ScaleMode.ScaleToFit);
     else{Box(new Rect(440,154,400,2),new Color(Accent.r,Accent.g,Accent.b,.55f));Box(new Rect(628,151,24,8),Accent);}
     Text(240,174,800,44,"Six realms. One lost heart.\nCross the floating isles, master elemental blades, restore the ancient portals.",smallC);
 
     if(resourceCapsule)GUI.DrawTexture(new Rect(310,224,660,38),resourceCapsule,ScaleMode.StretchToFill);
-    Text(310,232,660,22,$"JOURNEY  {Save.unlocked}/{Campaign.Chapters} CHAPTERS    ✦    {TotalStars()}/{Campaign.Stars} STARS    ✦    {Save.coins} GOLD    ✦    {Save.gems} GEMS",tinyC);
+    // Resource artwork does not depend on the device font's symbol coverage.
+    Text(328,232,180,22,$"{Save.unlocked}/{Campaign.Chapters} CHAPTERS",tinyC);
+    var journeyIcons=new[]{iconStar,iconCoin,iconGem};
+    var journeyValues=new[]{TotalStars()+"/"+Campaign.Stars,Save.coins.ToString(),Save.gems.ToString()};
+    for(int i=0;i<3;i++){float x=530+i*140;if(journeyIcons[i])GUI.DrawTexture(new Rect(x,232,22,22),journeyIcons[i],ScaleMode.ScaleToFit);Text(x+26,232,100,22,journeyValues[i],tinyC);}
 
     if(MenuButton(new Rect(410,278,460,66),"CONTINUE JOURNEY",iconContinue,primary:true))RequestChapter(Save.unlocked);
     if(MenuButton(new Rect(440,356,400,56),"REALM ATLAS",iconAtlas))Screen=GameScreen.Map;
@@ -739,7 +743,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
        float sx=x+(216-(stars*sw+(stars-1)*sp))*0.5f;
        for(int s=0;s<stars;s++)GUI.DrawTexture(new Rect(sx+s*(sw+sp),y+100,sw,sw),iconStar,ScaleMode.ScaleToFit);
       }else{
-       Text(x+14,y+100,188,20,stars>0?new string('★',stars):"—",tinyC);
+       if(stars>0&&iconStar){for(int n=0;n<stars;n++)GUI.DrawTexture(new Rect(x+108-stars*10+n*20,y+100,18,18),iconStar,ScaleMode.ScaleToFit);}else Text(x+14,y+100,188,20,"—",tinyC);
       }
      }
 
@@ -948,7 +952,7 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
    }
 
    // Pause / Complete / Defeat Screens
-   Panel(320,80,640,560);
+   Panel(320,80,640,Screen==GameScreen.Paused?620:560);
 
    string heading=Screen==GameScreen.Paused?"A Moment of Rest":Screen==GameScreen.Complete?(Level==25?"The Realms Reconnected":Level==20?"Stormveil Restored!":Level==15?"Beyond the Four Realms":"Chapter Cleared!"):"The Light Remains";
    Text(340,115,600,50,heading,titleC);
@@ -1034,16 +1038,15 @@ try{if(!Testing&&PlayerPrefs.HasKey("LostRealms3D.v2"))Save=JsonUtility.FromJson
      GUI.color=Color.white;
      var actionStyle=new GUIStyle(center){font=fantasyButton,fontSize=primary?23:14,wordWrap=false,alignment=TextAnchor.MiddleCenter};
      actionStyle.normal.textColor=new Color(1f,.94f,.79f);
-     Rect nameRect=new Rect(drawRect.x+drawRect.width*.1f,drawRect.y+drawRect.height*.59f,drawRect.width*.8f,drawRect.height*.18f);
+     Rect nameRect=new Rect(drawRect.x+drawRect.width*.1f,drawRect.y+drawRect.height*.55f,drawRect.width*.8f,drawRect.height*.17f);
      GameLanguage.Label(nameRect,name,FitText(actionStyle,nameRect,name));
      if(sub.Length>0){
       // Keep the whole hint above the bottom jewel and within the circle's
       // narrower lower chord, including when the pressed artwork shrinks.
-      var hintStyle=new GUIStyle(tinyC){fontSize=primary?11:9,wordWrap=false,alignment=TextAnchor.MiddleCenter,clipping=TextClipping.Clip,padding=new RectOffset(0,0,0,0)};
-      Rect hintRect=new Rect(drawRect.x+drawRect.width*.22f,drawRect.y+drawRect.height*(GameLanguage.IsArabic?.75f:.77f),drawRect.width*.56f,drawRect.height*(GameLanguage.IsArabic?.17f:.11f));
-      var hintContent=new GUIContent(sub);
-      while(hintStyle.fontSize>8&&hintStyle.CalcSize(hintContent).x>hintRect.width)hintStyle.fontSize--;
-      GameLanguage.Label(hintRect,hintContent,hintStyle);
+      var hintStyle=new GUIStyle(tinyC){fontSize=primary?10:9,wordWrap=true,alignment=TextAnchor.MiddleCenter,clipping=TextClipping.Clip,padding=new RectOffset(0,0,0,0)};
+      Rect hintRect=new Rect(drawRect.x+drawRect.width*.27f,drawRect.y+drawRect.height*.71f,drawRect.width*.46f,drawRect.height*.18f);
+      string hint=GameLanguage.IsArabic?(primary?"اضغط مطولا\nللهجوم المشحون":"مطولا"):sub;
+      GameLanguage.Label(hintRect,hint,hintStyle);
      }
      return;
     }

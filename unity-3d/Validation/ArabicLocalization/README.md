@@ -10,7 +10,7 @@ Implemented on the legendary-skin worktree from fc4a8b9. The original dirty astr
 
 ## Translation
 
-940 authored catalog entries cover menus, HUD and control hints, all 25 chapter names and objectives, story records and ending, Lyra's quest, mastery/relics, crypt, trials/discoveries, bestiary and achievements, weapons/outfits and stat descriptions, chests/probability disclosures/rewards, combat notifications, developer controls and interaction countdowns. Modern Standard Arabic uses a consistent fantasy glossary. Keyboard letters, numerical values and third-party brand names remain recognizable. No authored spoken dialogue was found; music, combat voices and SFX are preserved.
+943 authored catalog entries cover menus, HUD and control hints, all 25 chapter names and objectives, story records and ending, Lyra's quest, mastery/relics, crypt, trials/discoveries, bestiary and achievements, weapons/outfits and stat descriptions, chests/probability disclosures/rewards, combat notifications, developer controls and interaction countdowns. Modern Standard Arabic uses a consistent fantasy glossary. Keyboard letters, numerical values and third-party brand names remain recognizable. No authored spoken dialogue was found; music, combat voices and SFX are preserved.
 
 The editable English/Arabic catalog is Assets/Resources/Localization/GameText.json. Every entry includes a stable content key, source, Arabic text, context and a character budget. Exact entries and parameterized templates take priority; source fragments support the existing composed messages. Only text at rendering sinks is localized, so internal model names and gameplay comparisons cannot change language.
 

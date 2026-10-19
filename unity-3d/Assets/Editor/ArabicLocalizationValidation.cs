@@ -64,6 +64,17 @@ namespace LostRealms {
    var shaped=GameLanguage.Shape("العربية لا 3258 12.5% WASD");
    Check(shaped.Any(c=>c>='\uFB50'&&c<='\uFEFF')&&shaped.Contains("3258")&&shaped.Contains("12.5")&&shaped.Contains("WASD"),"Arabic connects letters while retaining number and keyboard runs");
    Check(GameLanguage.ArabicFont!=null,"Bundled Arabic font loads through Resources");
+   foreach(var font in new[]{GameLanguage.ArabicFont,GameLanguage.ArabicDisplayFont}){
+    font.RequestCharactersInTexture("\u202D\u202C",24);
+    foreach(char control in "\u202D\u202C"){
+     bool resolved=font.GetCharacterInfo(control,out var info,24);
+     Debug.Log("BIDI_METRICS "+font.name+" resolved="+resolved+" advance="+info.advance+" width="+info.glyphWidth+" height="+info.glyphHeight);
+     // Unity includes a transparent one-pixel atlas border around an empty glyph.
+     Check(!resolved||(info.advance==0&&info.glyphWidth<=2&&info.glyphHeight<=2),"Bidi control has only empty atlas padding and zero advance in "+font.name+" U+"+((int)control).ToString("X4"));
+    }
+   }
+   Check(GameLanguage.Translate("ATTACK")=="الهجوم","Attack caption includes armed and unarmed combat");
+   Check(GameLanguage.Translate("HOLD TO CHARGE")=="اضغط مطولا للهجوم المشحون","Charged attack uses the requested Arabic wording");
    Check(GameLanguage.Translate("WEAPON  FISTS").StartsWith("السلاح"),"Timer template cannot intercept weapon names ending in S");
    Check(GameLanguage.Translate("MUSIC: ENABLED")=="الموسيقى: مفعّلة","Concatenated settings labels translate completely");
    Check(!System.Text.RegularExpressions.Regex.IsMatch(GameLanguage.Translate("Stand still beside SHRINES 1 to restore it."),"[A-Za-z]"),"Composed objective hints translate completely");
@@ -122,6 +133,7 @@ namespace LostRealms {
    yield return null;camera.Render();var previous=RenderTexture.active;RenderTexture.active=target;var image=new Texture2D(1280,720,TextureFormat.RGB24,false);image.ReadPixels(new Rect(0,0,1280,720),0,0);image.Apply();File.WriteAllBytes("Validation/ArabicLocalization/world-rendering-fixture.png",image.EncodeToPNG());RenderTexture.active=previous;
    Destroy(root);Destroy(cameraObject);Destroy(image);target.Release();Destroy(target);
    Check(PlayerPrefs.GetString(GameLanguage.PreferenceKey,"<unset>")==oldPreference,"QA leaves player's saved language preference untouched");
+   RealmPerformanceProbe.Measure(game);
   }
  }
 }

@@ -3,3 +3,15 @@ Source: https://github.com/notofonts/noto-fonts/blob/main/hinted/ttf/NotoSansAra
 Retrieved: 2026-10-19
 License: SIL Open Font License 1.1 (OFL-NotoSansArabic.txt).
 The UI variant has compact vertical metrics appropriate for game menus. Bundled in Resources for Android; no OS font dependency.
+
+LostRealmsArabicDisplay.ttf derives from Amiri Bold, a traditional Naskh design.
+Source: https://github.com/google/fonts/blob/main/ofl/amiri/Amiri-Bold.ttf
+Upstream project: https://github.com/aliftype/amiri
+Retrieved: 2026-10-19
+License: SIL Open Font License 1.1 (Amiri-OFL.txt).
+
+Both files are modified derivatives, renamed internally to Lost Realms Arabic UI
+and Lost Realms Arabic Display. U+202C and U+202D explicitly map to an empty,
+zero-advance glyph to prevent missing/control symbols on Android while retaining
+the controls' bidi semantics. No visible glyph outlines or metrics were changed.
+Reproducible preparation: tools/prepare_arabic_fonts.py (requires fonttools).

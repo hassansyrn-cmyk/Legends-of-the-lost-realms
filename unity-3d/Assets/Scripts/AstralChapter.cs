@@ -27,6 +27,8 @@ namespace LostRealms {
  public sealed class AstralRoute:MonoBehaviour {
   public AstralChapter Owner;public int Index;public bool[] Attuned=new bool[2];public int Side {get;private set;}public bool Shifting=>shiftUntil>0;
   public Transform Bridge;public readonly List<Transform> Courts=new List<Transform>();public readonly List<Transform> Focuses=new List<Transform>();
+  readonly List<Material>[] focusMaterials={new List<Material>(),new List<Material>()};
+  int glowState=-1;
   float shiftUntil,channel,hintAt,padDwell;int requested,selected=-1;bool padExit;
   public Vector3 PadPosition(int side)=>transform.position+new Vector3(side==0?-2:2,.03f,-2.5f);
   bool OnBridge(Vector3 p){var q=Bridge.InverseTransformPoint(p);return Mathf.Abs(q.x)<2&&Mathf.Abs(q.z)<3.8f&&Mathf.Abs(q.y)<3;}
@@ -46,6 +48,10 @@ namespace LostRealms {
   }
    Bridge=new GameObject("Astral shifting bridge").transform;Bridge.SetParent(Owner.transform,false);PoseBridge();AstralArt.Place("Bridge",Bridge,Vector3.zero,new Vector3(3.2f,1,7.2f),true);
    AstralArt.Place("Orrery",transform,new Vector3(3.2f,0,3.2f),Vector3.one*2.4f,true);
+   for(int i=0;i<2;i++)foreach(var renderer in Focuses[i].GetComponentsInChildren<Renderer>()){
+    var material=new Material(renderer.sharedMaterial);material.EnableKeyword("_EMISSION");renderer.sharedMaterial=material;focusMaterials[i].Add(material);
+   }
+   RefreshFocusGlow();
   }
   void Update(){var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
    if(Shifting&&g.Elapsed>=shiftUntil){if(Occupied){shiftUntil=g.Elapsed+.4f;g.Tell("BRIDGE OCCUPIED — leave the bridge before shifting",1.5f);}else{Side=requested;PoseBridge();Physics.SyncTransforms();shiftUntil=0;}}
@@ -55,7 +61,18 @@ namespace LostRealms {
    if(!g.NoticeActive&&g.Elapsed>=hintAt&&Vector3.Distance(g.Player.transform.position,transform.position)<5){hintAt=g.Elapsed+2;g.Tell(Shifting?"ROUTE SHIFTING":Side==0?"MOON ROUTE — reconnect its focus, then return for SUN":"SUN ROUTE — reconnect its focus, then return for MOON",2.1f);}
    bool near=!Shifting&&!Attuned[Side]&&Vector3.Distance(g.Player.transform.position,Focuses[Side].position)<1.8f&&!Guarded(Side);
    if(near){channel+=Time.deltaTime;InteractionCountdown.Report(Focuses[Side],channel,1f,"ATTUNING");if(channel>=1){Attune(Side);channel=0;g.Tell("ASTRAL FOCUS CONNECTED",2);}}else channel=0;
-   for(int i=0;i<2;i++){var tint=Attuned[i]?new Color(.35f,.85f,1):i==Side?new Color(1,.77f,.25f):new Color(.45f,.25f,.65f);foreach(var renderer in Focuses[i].GetComponentsInChildren<Renderer>()){renderer.material.EnableKeyword("_EMISSION");renderer.material.SetColor("_EmissionColor",tint*.2f);}}
+   RefreshFocusGlow();
   }
+  void RefreshFocusGlow(){
+   int state=Side|(Attuned[0]?2:0)|(Attuned[1]?4:0);if(glowState==state)return;glowState=state;
+   for(int i=0;i<2;i++){
+    // Attuned focuses use ObjectiveRestoration's jewel-only shader and light.
+    if(Attuned[i])continue;
+    var tint=i==Side?new Color(1,.77f,.25f):new Color(.45f,.25f,.65f);
+    foreach(var material in focusMaterials[i])material.SetColor("_EmissionColor",tint*.2f);
+   }
+  }
+  void OnDestroy(){foreach(var group in focusMaterials)foreach(var material in group)if(material)Destroy(material);}
+
  }
 }

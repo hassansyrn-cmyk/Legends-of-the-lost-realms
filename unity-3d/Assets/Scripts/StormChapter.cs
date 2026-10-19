@@ -27,6 +27,7 @@ namespace LostRealms {
   public readonly List<Transform> Relays=new List<Transform>();
   readonly List<LineRenderer> wires=new List<LineRenderer>();readonly List<Transform> arms=new List<Transform>();
   readonly List<Transform> pads=new List<Transform>();readonly List<Transform> receivers=new List<Transform>();
+  int[] drawnOrientations;int drawnRound=-1;Matrix4x4 drawnPose;
   int selected=-1;float dwell,hintAt,powered;bool needsExit;LineRenderer sourceWire;
   public int CorrectFor(int relay)=>(Owner.Chapter+Index+relay+Round)%3;
   int RelayInPath(int step){if(Round==0||step==0)return step;return Relays.Count-step;}
@@ -50,19 +51,14 @@ namespace LostRealms {
     var label=new GameObject("Receiver label");label.transform.SetParent(t,false);label.transform.localPosition=Vector3.up*2;var text=label.AddComponent<TextMesh>();LocalizedWorldText.Set(text,i==0?"FOCUS I":"FOCUS II");text.characterSize=.09f;text.fontSize=36;text.anchor=TextAnchor.MiddleCenter;text.color=new Color(.55f,.85f,1);label.AddComponent<ExpansionBillboard>();
    }
    var source=new GameObject("Incoming current");source.transform.SetParent(transform,false);sourceWire=Line(source);
-   RefreshPads();
+   RefreshPads();drawnOrientations=new int[count];for(int i=0;i<count;i++)drawnOrientations[i]=-1;
   }
   // The supplied arrow artwork is angled 22.5 degrees from its imported backward axis.
   void RefreshPads(){for(int i=0;i<Relays.Count;i++)for(int c=0;c<3;c++)pads[i*3+c].rotation=Quaternion.LookRotation(BeamDirection(i,c))*Quaternion.Euler(0,202.5f,0);}
   public bool Turn(int relay,int choice){if(Completed||Guarded||relay<0||relay>=Relays.Count||choice<0||choice>2)return false;Orientations[relay]=choice;return true;}
   void Update(){var g=RealmGame.I;if(!g||g.Screen!=GameScreen.Playing||!g.Player)return;
-   var first=Relays[0].position+Vector3.up*.72f;sourceWire.SetPosition(0,first+Vector3.left*1.7f);sourceWire.SetPosition(1,first);sourceWire.startColor=sourceWire.endColor=new Color(.5f,.85f,1);
-   bool linked=true;
-   for(int step=0;step<Relays.Count;step++){
-    int i=RelayInPath(step);bool incoming=linked;bool good=Orientations[i]==CorrectFor(i);linked&=good;
-    var a=Relays[i].position+Vector3.up*.72f;var direction=BeamDirection(i,Orientations[i]);var b=good?Target(i)+Vector3.up*.72f:a+direction*2.5f;
-    arms[i].rotation=Quaternion.LookRotation(direction);wires[i].enabled=incoming;wires[i].SetPosition(0,a);wires[i].SetPosition(1,b);wires[i].startColor=wires[i].endColor=new Color(.45f,.85f,1);
-   }
+   bool linked=true;for(int i=0;i<Relays.Count;i++)linked&=Orientations[i]==CorrectFor(i);
+   RefreshCurrent();
    if(Completed)return;
    if(linked&&!Guarded){powered+=Time.deltaTime;InteractionCountdown.Report(receivers[Round],powered,1.1f,"CHARGING");if(powered>1.1f){
     LocalizedWorldText.Set(receivers[Round].GetComponentInChildren<TextMesh>(),"FOCUS "+(Round+1)+" LIT");
@@ -74,5 +70,19 @@ namespace LostRealms {
    if(g.Elapsed>hintAt){hintAt=g.Elapsed+2;g.Tell(Guarded?"CLEAR THE CONDUCTOR GUARDS":"FOLLOW THE LIGHT — each arrow aims its relay. Feed the next conductor, then the numbered focus.",2);}
    if(Guarded||needsExit)return;if(pad!=selected){selected=pad;dwell=0;}dwell+=Time.deltaTime;InteractionCountdown.Report(Relays[pad/3],dwell,.65f,"TURNING");if(dwell>.65f){Turn(pad/3,pad%3);needsExit=true;g.Sound("storm_turn");}
   }
+  void RefreshCurrent(){
+   var pose=transform.localToWorldMatrix;bool changed=drawnRound!=Round||drawnPose!=pose;
+   for(int i=0;i<Relays.Count;i++)changed|=drawnOrientations[i]!=Orientations[i];
+   if(!changed)return;
+   drawnRound=Round;drawnPose=pose;for(int i=0;i<Relays.Count;i++)drawnOrientations[i]=Orientations[i];
+   var first=Relays[0].position+Vector3.up*.72f;sourceWire.SetPosition(0,first+Vector3.left*1.7f);sourceWire.SetPosition(1,first);sourceWire.startColor=sourceWire.endColor=new Color(.5f,.85f,1);
+   bool linked=true;
+   for(int step=0;step<Relays.Count;step++){
+    int i=RelayInPath(step);bool incoming=linked;bool good=Orientations[i]==CorrectFor(i);linked&=good;
+    var a=Relays[i].position+Vector3.up*.72f;var direction=BeamDirection(i,Orientations[i]);var b=good?Target(i)+Vector3.up*.72f:a+direction*2.5f;
+    arms[i].rotation=Quaternion.LookRotation(direction);wires[i].enabled=incoming;wires[i].SetPosition(0,a);wires[i].SetPosition(1,b);wires[i].startColor=wires[i].endColor=new Color(.45f,.85f,1);
+   }
+  }
+
  }
 }

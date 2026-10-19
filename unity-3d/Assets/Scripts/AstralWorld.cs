@@ -4,7 +4,7 @@ namespace LostRealms {
   static readonly System.Collections.Generic.Dictionary<string,Material> materials=new System.Collections.Generic.Dictionary<string,Material>();
   public static Material GetMaterial(string asset){
    if(materials.TryGetValue(asset,out var m)&&m)return m;
-   var mat=new Material(Shader.Find("Standard")){name="Astral "+asset};
+   var mat=new Material(Shader.Find("Standard")){enableInstancing=true,name="Astral "+asset};
    var tex=Resources.Load<Texture2D>("Astral/Textures/"+asset+"_basecolor");
    var norm=Resources.Load<Texture2D>("Astral/Textures/"+asset+"_normal");
    mat.mainTexture=tex?tex:Resources.Load<Texture2D>("Astral/AstralPalette");

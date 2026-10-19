@@ -2,10 +2,12 @@ TRIAL OF COURAGE	اختبار الشجاعة
 SHRINES 1	المزارات 1
 OPTIONAL: EXPLORER'S CACHE	اختياري: كنز المستكشف
 English	English
-✦  A  3 D  A D V E N T U R E  ✦	✦ مغامرة ثلاثية الأبعاد ✦
+A 3D ADVENTURE	مغامرة ثلاثية الأبعاد
 LEGENDS OF THE LOST REALMS	أساطير العوالم المفقودة
 Six realms. One lost heart.\nCross the floating isles, master elemental blades, restore the ancient portals.	ستة عوالم. قلب واحد مفقود.\nاعبر الجزر العائمة، وأتقن نصال العناصر، وأعد إحياء البوابات القديمة.
-JOURNEY  1/25 CHAPTERS    ✦    0/75 STARS    ✦    0 GOLD    ✦    0 GEMS	الرحلة 1/25 فصلًا ✦ 0/75 نجمة ✦ 0 ذهب ✦ 0 جواهر
+1/25 CHAPTERS	1/25 فصلا
+0/75	0/75
+0	0
 CONTINUE JOURNEY	متابعة الرحلة
 REALM ATLAS	أطلس العوالم
 SANCTUARY	الملاذ
@@ -16,6 +18,8 @@ HP 8/12	الصحة 8/12
 Time remaining: 1.8s	الوقت المتبقي: 1.8 ث
 OPEN: 35 GEMS	فتح: 35 جواهر
 WEAPON  WAR AXE	السلاح فأس الحرب
+ATTACK	الهجوم
+HOLD TO CHARGE	اضغط مطولا للهجوم المشحون
 WEAPON  FISTS	السلاح القبضتان
 MUSIC: ENABLED	الموسيقى: مفعّلة
 Stand still beside SHRINES 1 to restore it.	قف دون حراك بجوار المزارات 1 لاستعادته.
@@ -67,6 +71,7 @@ OPEN: 12 GOLD	فتح: 12 ذهب
 OPEN: 12 GEMS	فتح: 12 جواهر
 Watching ad... Reward unlocks in 12s	جارٍ عرض الإعلان… تتاح المكافأة بعد 12 ث
 12  13s	12 13 ث
+12/13 CHAPTERS	12/13 فصلا
 Sanctuary & Blessings	الملاذ والبركات
 Available:  0 Gold   •   0 Gems    |    * Recommended	الرصيد: 0 ذهب • 0 جواهر | * موصى به
 VITALITY 0/3  |  +0 HP  |  50 Gold *	الحيوية 0/3 | +0 صحة | 50 ذهب *
@@ -90,7 +95,6 @@ MASTERY & RELICS	الإتقان والآثار
 LYRA / WAYFINDER QUEST	ليرا / مهمة دليل المسالك
 BACK	عودة
 Realm Atlas	أطلس العوالم
-0	0
 0/75 Stars	0/75 نجمة
 CHAPTER 01	الفصل 01
 Mosslight Trail	درب الطحالب المضيئة
@@ -309,14 +313,13 @@ EMBER [FIRE]	الجمر [النار]
 AETHER	الأثير
 TIME 00:00	الوقت 00:00
 PAUSE	إيقاف مؤقت
-HOLD TO CHARGE	اضغط مطولًا للشحن
+اضغط مطولا\nللهجوم المشحون	اضغط مطولا\nللهجوم المشحون
 JUMP	قفز
-×2	×2
+مطولا	مطولا
 DODGE	تفادٍ
 POWER	قوة
 PARRY	صدّ
 SPELL	تعويذة
-HOLD	اضغط مطولًا
 WASD Move   •   SPACE Jump   •   SHIFT Dash   •   J Attack   •   K Power   •   L Parry   •   F Spell	WASD للحركة • SPACE للقفز • SHIFT للاندفاع • J للهجوم • K للقوة • L للصدّ • F للتعويذة
 Defeat the guards to restore this point.	اهزم الحراس لاستعادة هذا الموقع.
 RESTORING  1.8s	جارٍ الاستعادة 1.8 ث

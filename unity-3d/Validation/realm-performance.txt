@@ -1,0 +1,8 @@
+New realm CPU microbenchmark (Editor; target-device FPS not measured)
+Chapter 16: mesh renderers=393, repeated mesh/material instances=319, instancing enabled=190
+Instancing image comparison: pixels differing by >3/255=0/230400
+PASS cached Storm relay tracks orientation and parent motion
+Chapter 21: mesh renderers=416, repeated mesh/material instances=341, instancing enabled=186
+Instancing image comparison: pixels differing by >3/255=0/230400
+Previous renderer/material update: 2000 iterations 34.11ms, managed bytes=counter unavailable
+Cached material update: 2000 iterations 6.90ms, managed bytes=counter unavailable

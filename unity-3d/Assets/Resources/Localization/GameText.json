@@ -1144,7 +1144,7 @@
     {
       "key": "text.9483dbe65e1d",
       "english": "HOLD TO CHARGE",
-      "arabic": "اضغط مطولًا للشحن",
+      "arabic": "اضغط مطولا للهجوم المشحون",
       "context": "RealmGame.cs:641; preserve numeric placeholders; logical RTL text; responsive font fitting",
       "maxCharacters": 70
     },
@@ -6578,6 +6578,27 @@
       "english": "Lion",
       "arabic": "أسد",
       "context": "Dynamic composed UI text; preserve numeric placeholders; logical RTL text; responsive font fitting",
+      "maxCharacters": 70
+    },
+    {
+      "key": "phone.940",
+      "english": "ATTACK",
+      "arabic": "الهجوم",
+      "context": "Phone UI",
+      "maxCharacters": 70
+    },
+    {
+      "key": "phone.941",
+      "english": "A 3D ADVENTURE",
+      "arabic": "مغامرة ثلاثية الأبعاد",
+      "context": "Phone UI",
+      "maxCharacters": 70
+    },
+    {
+      "key": "phone.942",
+      "english": "{0}/{1} CHAPTERS",
+      "arabic": "{0}/{1} فصلا",
+      "context": "Phone UI",
       "maxCharacters": 70
     }
   ]
